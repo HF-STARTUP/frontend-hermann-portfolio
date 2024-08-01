@@ -1,0 +1,11 @@
+class CustomQueryError extends Error {
+    code?: number;
+
+    constructor(message: string, code?: number) {
+        super(message);
+        this.name = "CustomError";
+        this.code = code;
+    }
+}
+
+export default CustomQueryError

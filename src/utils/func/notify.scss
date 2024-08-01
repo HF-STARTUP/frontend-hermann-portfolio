@@ -1,0 +1,85 @@
+/* Réinitialisation et personnalisation du conteneur de toasts */
+.Toastify__toast-container {
+  /* Supprimez les marges et les paddings par défaut */
+  padding: 0;
+  /* Ajustez la position et d'autres propriétés selon vos besoins */
+}
+
+/* Réinitialisation et personnalisation des toasts */
+.Toastify__toast {
+  /* Suppression du style par défaut des toasts */
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: none;
+  /* Appliquez votre style personnalisé ici */
+  background-color: #ffffff; /* Fond blanc par exemple */
+  color: #000000; /* Texte noir par exemple */
+  border: 1px solid #000000; /* Bordure noire par exemple */
+  padding: 10px; /* Padding intérieur */
+  margin-bottom: 10px; /* Espacement entre les toasts */
+}
+
+/* Réinitialisation et personnalisation de l'icône de fermeture */
+.Toastify__close-button {
+  /* Suppression du style par défaut du bouton de fermeture */
+  color: inherit;
+  opacity: 1.0;
+  /* Appliquez votre style personnalisé ici */
+}
+
+/* Réinitialisation et personnalisation du corps du toast */
+.Toastify__toast-body {
+  /* Suppression du padding par défaut */
+  padding: 0;
+  /* Appliquez votre style personnalisé ici */
+}
+
+/* Vous pouvez également ajouter des styles pour les toasts d'info, de succès, d'erreur et d'avertissement */
+.Toastify__toast--info {
+  /* Votre style pour les toasts d'info */
+}
+
+.Toastify__toast--success {
+  /* Votre style pour les toasts de succès */
+}
+
+.Toastify__toast--warning {
+  /* Votre style pour les toasts d'avertissement */
+}
+
+.Toastify__toast--error {
+  /* Votre style pour les toasts d'erreur */
+}
+.Toastify__toast-icon{
+  display: none;
+}
+
+.Toastify__toast{
+  background-color: transparent;
+  padding: 0;
+  border: none;
+  overflow: hidden;
+  border-radius: 5px;
+}
+
+.Toastify__toast-container{
+  width: unset;
+}
+
+.Toastify__close-button{
+  display: none;
+}
+
+.Toastify__progress-bar--bg{
+  height: 2px;
+  background: transparent;
+}
+
+.Toastify__progress-bar{
+  height:2px;
+  border-radius: 50px;
+  margin-left:5px;
+}
