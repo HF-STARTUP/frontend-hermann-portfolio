@@ -65,6 +65,7 @@ abstract class Service {
             if (window?.location) {
                 window.location = `${window.location.origin}/auth/login` as unknown as Location
             }
+            console.log("Session expiré")
             throw new CustomQueryError("Session expiré, veuillez vous reconnecter")
         }
 
@@ -96,6 +97,16 @@ abstract class Service {
             }
             return response.data.data
         }).catch((error: AxiosError<GlobalResponseType<T>>) => {
+            const isTokenExpired = this.tokenExpired((error.response?.data.code) as unknown as SystemHttpCodeGeneric)
+            console.log("Error occured", isTokenExpired)
+            console.log(error)
+            
+            if(isTokenExpired){
+                AuthManagerGuard.signOut()
+                if (window?.location) {
+                    window.location = `${window.location.origin}/login` as unknown as Location
+                }
+            }
             throw new CustomQueryError(error.message)
         })
     }
@@ -209,6 +220,10 @@ abstract class Service {
 
     protected requestIsSuccess(httpCode: SystemHttpCodeGeneric) {
         return httpCode === SYSTEM_HTTP_CODE.SUCCESS;
+    }
+
+    protected tokenExpired(httpCode: SystemHttpCodeGeneric) {
+        return httpCode === SYSTEM_HTTP_CODE.INVALID_PROFIL;
     }
 
     protected isEmail(email: string) {

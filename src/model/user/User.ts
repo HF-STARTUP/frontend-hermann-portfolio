@@ -1,64 +1,70 @@
 import Model from "@/model/Model";
-import {UserProfileResponseData} from "@/types/__form/profile.type";
+import {AdminProfileResponseType, UserProfileResponseData} from "@/types/__form/profile.type";
 import Permission from "@/model/user/Permission";
 import Region from "@/model/location/Region";
 import HisAccount from "@/model/user/HisAccount";
+import AuthManagerGuard from "@/guard/AuthManagerGuard";
 
 class UserProfile extends Model {
 
-    private _instance: UserProfileResponseData
+    private _instance: AdminProfileResponseType
 
-    constructor(userProfileData: UserProfileResponseData) {
+    constructor(userProfileData: AdminProfileResponseType) {
         super();
         this._instance = userProfileData
     }
 
-    get getID(){
+    get username() {
+        return this._instance.last_name + " " + this._instance.first_name
+    }
+
+    get listPark() {
+        return this._instance.admin_on_city
+    }
+
+    get defaultPark() {
+        const default_park = this._instance.admin_on_city[0]
+        return default_park
+    }
+
+    get getID() {
         return this._instance.id
     }
 
-    get getOrganisationName(){
-        return this._instance.ets_name ?? ''
+    get getOrganisationName() {
+        return ''
     }
 
-    get getOrganisationLogo(){
-        return this.resolveImage(this._instance.ets_logo ?? '')
+    get getOrganisationLogo() {
+        return ''
     }
 
-    get getUsername(){
+    get getUsername() {
         return this._instance.first_name
     }
 
-    get isGranted(){
-        return this._instance ? !!this._instance.ets_logo : false
+    get isGranted() {
+        return false
     }
 
-    get getOrganisationCity(){
-        return this._instance.parks[0].city
+    get parks() {
+        return []
     }
 
-    get getParkID(){
-        return this._instance.parks[0].id
-    }
-
-    get parks(){
-        return this._instance.parks
-    }
-
-    get getActiveCurrency(){
-        return this._instance.parks[0].currency
+    get getActiveCurrency() {
+        return ""
     }
 
 
-    get getActiveRegion(){
+    get getActiveRegion() {
         return "Unknow"
     }
 
-    get getUserFirstRegionCurrency(){
+    get getUserFirstRegionCurrency() {
         return "Unknow"
     }
 
-    get getCurrencyObj(){
+    get getCurrencyObj() {
         return "Unknow"
     }
 

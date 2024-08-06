@@ -1,3 +1,5 @@
+"use client"
+
 import SupplierService from "@/services/SupplierService";
 import {useGetParkID} from "@/hooks/__globlal/useGlobalHook";
 

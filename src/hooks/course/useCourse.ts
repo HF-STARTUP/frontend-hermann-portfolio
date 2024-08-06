@@ -88,7 +88,6 @@ export const useEndCourse = () => {
     })
 
 
-
     React.useEffect(() => {
         if (isError && error) {
             notify(error.message, 'error')
@@ -99,14 +98,14 @@ export const useEndCourse = () => {
     React.useEffect(() => {
         if (isSuccess) {
             CourseService.refreshCourse().then(() => {
-                notify(isCancel ? "Course annulé" :"Course terminé")
+                notify(isCancel ? "Course annulé" : "Course terminé")
             })
             seLoading(false)
         }
     }, [isSuccess])
 
     const handleEndCourse = ({start_hour, end_hour, ...course}: CreateCourseInputs) => {
-        if(course.status === TASK_STATUS.CANCELED) setIsCancel(true)
+        if (course.status === TASK_STATUS.CANCELED) setIsCancel(true)
         else setIsCancel(false)
 
         seLoading(true)
@@ -142,7 +141,7 @@ export const useGetCourse = (courseID?: string) => {
 
 
     const {isLoading, data, isSuccess} = useQuery({
-        queryKey: [CourseApiPath.getCourses+`:${courseID}`],
+        queryKey: [CourseApiPath.getCourses + `:${courseID}`],
         queryFn: () => courseService.getCourse(courseID as string),
         enabled: !!courseID
     })

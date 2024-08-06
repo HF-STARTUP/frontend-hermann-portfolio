@@ -1,13 +1,17 @@
 "use client"
 
 import * as React from "react";
-import {usePathname} from "next/navigation";
+import {usePathname, useParams} from "next/navigation";
 import Link from "next/link";
 import {cn} from "@/lib/utils";
 
 export const PageNavigation = () => {
 
-    const base_url = "/app/fleet/03fecf9a-3715-480f-b41a-daa35256257a"
+    const params = useParams() as {fleetID: string}
+
+    const parkID = params.fleetID
+
+    const base_url = `/app/fleet/${parkID}`
     const links = [
         {
             label: "Dashboard",

@@ -53,7 +53,7 @@ class EntretienService extends Service {
 
 
     public static async getEntretiens(parkID: string): Promise<Entretien[]> {
-        const entretiensUri = EntretienApiPath.GetEntretien + '?park_id=' + parkID
+        const entretiensUri = EntretienApiPath.GetEntretien + '/by/' + parkID
         const createEntretienRequestResult = await EntretienService.makeRequest<ResponseWithPagination<EntretienResponseType[]>>(entretiensUri, 'GET');
         return Entretien.toArrays(createEntretienRequestResult.data)
     }

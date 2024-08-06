@@ -43,7 +43,7 @@ export const registerSchema = Joi.object({
 });
 
 export const loginSchema = Joi.object<LoginInputs>({
-    identifier: _JoiConfig.strRequired,
+    email: _JoiConfig.strRequired,
     password: Joi.string().required()
         .messages({
             'string.empty': `Le mot de passe est requis`,

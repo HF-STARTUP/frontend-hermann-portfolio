@@ -35,7 +35,7 @@ class ClientService extends Service {
     }
 
     public static async getClients(parkID: string): Promise<ClientModel[]> {
-        const clientUril = ClientApiPath.GetClient + '?park_id=' + parkID
+        const clientUril = ClientApiPath.GetClient + '/by/' + parkID
         const clients = await ClientService.makeRequest<ResponseWithPagination<ClientResponseType[]>>(clientUril, 'GET');
         return ClientModel.toArrays(clients.data)
     }

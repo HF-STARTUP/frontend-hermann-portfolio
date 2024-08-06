@@ -10,6 +10,8 @@ import {
 } from "@/app/(protected)/dashboard/status-accounts/simplified/actions/createAccountingActionDialog/CreateAccountingOrSubAccountingDialog";
 import {AccountingPnlResponseType} from "@/types/Accounting.types";
 import {useRouter} from "next/navigation";
+import {useGetFleetsList} from "@/hooks/admin/useFleetHook";
+import {FleetModel} from "@/model/ADMIN/fleet";
 
 function generateTableData(data: AccountingPnlResponseType) {
 
@@ -35,7 +37,7 @@ function generateTableData(data: AccountingPnlResponseType) {
     };
 }
 
-export default function FleetListAccount() {
+export default function FleetListAccount({fleets}: { fleets: FleetModel[] }) {
 
     const $router = useRouter()
 
@@ -52,8 +54,20 @@ export default function FleetListAccount() {
         'Statut'
     ];
 
-    const body = Array.from({length: 6}).map(() => {
-        return ["Yfleet Cameroun", "Christian Onguene", "Kinshasa", "15", "24", "15/08/2024", "1,500,000", "ESSENTIEL", "15/11/2024", "Active"]
+    const body = fleets.map((fleet, index) => {
+        return [
+            fleet.id,
+            fleet.name,
+            fleet.ownerName,
+            fleet.city,
+            fleet.number_vehicle,
+            fleet.driver_number,
+            fleet.start_date,
+            fleet.ca_total,
+            fleet.suscription_name,
+            fleet.end_date,
+            fleet.abon_status
+        ]
     })
 
 
@@ -62,15 +76,16 @@ export default function FleetListAccount() {
         head: headers,
         body: body,
         footer: [],
-        callback: () => {
-            $router.push("/app/fleet/03fecf9a-3715-480f-b41a-daa35256257a/dashboard")
+        callback: function (index) {
+            //if(index)
+            //$router.push(`/app/fleet/${this.body[index]}/dashboard`)
         }
     };
 
 
     return (
         <div className={`flex gap-[30px] flex-wrap flex-col`}>
-            <AdminTableDisplayData data={config}/>
+            <AdminTableDisplayData data={config} isv2={true}/>
         </div>
     )
 }

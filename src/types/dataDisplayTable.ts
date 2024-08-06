@@ -4,7 +4,7 @@ export type DisplayTableHeadProps = {
 
 
 export type DisplayTableBodyProps = {
-    body?: string[][]
+    body?: any[][]
 }
 
 export type DisplayTableFooter = {
@@ -18,7 +18,7 @@ export type DisplayPropsUtils = {
 
 export type AdminDataTableDisplayProps =
     {
-        callback?: () => void
+        callback?: (index?: number) => void
     }
     & DisplayTableHeadProps
     & DisplayTableBodyProps

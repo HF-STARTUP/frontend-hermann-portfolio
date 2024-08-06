@@ -2,6 +2,7 @@ import VehiculeService from "@/services/VehiculeService";
 import React from "react";
 import {useGetParkID, useGetRegion} from "@/hooks/__globlal/useGlobalHook";
 import {useQuery} from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 
 export function useGetVehiculeTypes() {
 
@@ -31,7 +32,9 @@ export function useGetCurencies() {
 
 export function useGetVehicules() {
 
-    const {parkID} = useGetParkID()
+    const params = useParams() as {fleetID: string}
+
+    const parkID = params.fleetID
 
     return VehiculeService.getVehiculesQuery(parkID);
 }

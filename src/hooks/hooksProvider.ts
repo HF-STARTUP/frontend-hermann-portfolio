@@ -1,3 +1,5 @@
+"use client"
+
 import {useEffect, useState} from 'react';
 import {useMutation, UseMutationResult, useQuery} from '@tanstack/react-query';
 import notify from "@/utils/func/notification";

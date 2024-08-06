@@ -1,7 +1,7 @@
 import {LoginInputs, LoginVerifyOtpInputs} from "@/schema/auth.schema";
 import Service from "@/services/Service";
-import {AdminLoginResponseData, LoginOtpResponseData} from "@/types/__form/auth.type";
-import {UserProfileResponseData} from "@/types/__form/profile.type";
+import {LoginOtpResponseData} from "@/types/__form/auth.type";
+import {AdminLoginResponseType, AdminProfileResponseType} from "@/types/__form/profile.type";
 import UserProfile from "@/model/user/User";
 
 enum LoginType {
@@ -16,7 +16,7 @@ class LoginService extends Service {
     private static instance: LoginService = new LoginService();
     private static loginPath = '/login-root'
     private static loginVerifyOtpPath = '/login-verify-otp'
-    private static profilePath = '/profile'
+    private static profilePath = '/root/profile'
 
     constructor() {
         super();
@@ -28,7 +28,7 @@ class LoginService extends Service {
 
     static async login(formData: LoginInputs) {
 
-        return await LoginService.getInstance().execHttpRequest<AdminLoginResponseData>({
+        return await LoginService.getInstance().execHttpRequest<AdminLoginResponseType>({
             url: LoginService.loginPath,
             method: 'POST',
             secure: false,
@@ -59,14 +59,14 @@ class LoginService extends Service {
     }
 
     static async getProfileInfo() {
-        const request = await LoginService.getInstance().execHttpRequest<UserProfileResponseData[]>({
+        const response = await LoginService.getInstance().execHttpRequest<AdminProfileResponseType>({
             url: LoginService.profilePath + ``,
             method: 'GET',
             secure: false,
         })
 
 
-        return new UserProfile(request[0])
+        return new UserProfile(response)
     }
 
 }

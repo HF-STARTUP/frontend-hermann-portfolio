@@ -1,3 +1,4 @@
+import { useParams } from "next/navigation";
 import useAppStore from "@/stores/global/useAppStore";
 import React from "react";
 import {useUserProfile} from "@/hooks/__form/auth/useUserProfile";
@@ -21,12 +22,12 @@ export const useGetRegion = () => {
 
 export const useGetParkID = () => {
 
-    const {user} = useAppStore()
+    const params = useParams() as {fleetID: string}
 
-    const park_id = AuthManagerGuard.getParkID
+    const parkID = params.fleetID
 
     return {
-        parkID: park_id as RegionID
+        parkID: parkID as RegionID
     }
 }
 

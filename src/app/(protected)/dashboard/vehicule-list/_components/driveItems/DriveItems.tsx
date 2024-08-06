@@ -1,3 +1,5 @@
+"use client"
+
 import React from "react";
 import DriveItem from "./_components/driveItem/DriveItem";
 import {useGetVehicules} from "@/hooks/vehicule/useVehicule";
@@ -17,13 +19,13 @@ const DriveItems: React.FC = () => {
 
     const dataFiltered = useDynamicSearch<Vehicule>(vehicules || [], getFindToken(), getFilterToken() as keyof Vehicule, getSortAsc());
 
-    if(isLoading){
+    if (isLoading) {
         return (
             <Loading/>
         )
     }
 
-    if(isError){
+    if (isError) {
         logger.log(error)
         return (
             <div>Erreur lors du chargement des données.</div>

@@ -11,7 +11,7 @@ export type SystemHttpCodeType = {
     readonly WRONG_PASSWORD: 5008;
     readonly ALREADY_EXIST: 5009;
     readonly NOT_VERIFIED: 5010;
-    readonly GOOGLE_ACCOUNT_REDIRECT: 5011;
+    readonly INVALID_PROFIL: 5011;
 };
 
 export type SystemHttpCodeGeneric = 5000 | 5001 | 5003 | 5004 | 5005 | 5006 | 5007 | 5008 | 5009 | 5010 | 5011

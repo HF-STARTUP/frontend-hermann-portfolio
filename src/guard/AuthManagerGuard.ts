@@ -5,7 +5,9 @@ const TOKEN_KEYS = {
     refresh_token: 'refresh_token',
     profile_id: 'profile_id',
     park_id: 'park_id',
-    transaction_id: 'transaction_id'
+    transaction_id: 'transaction_id',
+    enabled_city_id: 'enable_city_id',
+    enabled_fleet_type: 'enabled_fleet_type',
 }
 
 class AuthManagerGuard {
@@ -51,8 +53,29 @@ class AuthManagerGuard {
 
     }
 
+    static setEnabledCityID(id: number) {
+        Cookies.set(TOKEN_KEYS.enabled_city_id, String(id))
+    }
+
+
+    static setEnabledFleetType(fleetType: string) {
+        Cookies.set(TOKEN_KEYS.enabled_fleet_type, fleetType)
+    }
+
+    static get getEnabledFleetType() {
+        return Cookies.get(TOKEN_KEYS.enabled_fleet_type)
+    }
+
+    static get getEnabledCity() {
+        return Cookies.get(TOKEN_KEYS.enabled_city_id)
+    }
+
     static removeTransactionID() {
         Cookies.remove(TOKEN_KEYS.transaction_id)
+    }
+
+    static removeActiveFleet() {
+        Cookies.remove(TOKEN_KEYS.enabled_fleet_type)
     }
 
     static removeProfileID() {

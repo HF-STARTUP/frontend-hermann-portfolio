@@ -32,7 +32,7 @@ class CourseService extends Service {
     }
 
     public static async getCourses(parkID: string): Promise<Course[]> {
-        const courseUri = CourseApiPath.getCourses + '?park_id=' + parkID
+        const courseUri = CourseApiPath.getCourses + '/by/' + parkID
         const courseResponse = await CourseService.makeRequest<ResponseWithPagination<CourseResponseType[]>>(courseUri, 'GET');
         return Course.toArrays(courseResponse.data)
     }

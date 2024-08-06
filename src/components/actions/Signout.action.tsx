@@ -25,7 +25,7 @@ const SignOutAction: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({children
     const handleSignOut = async () => {
         setSigningOut(true)
         AuthManagerGuard.logoutToApp()
-        $router.replace(NAVIGATIONS_URL.login.url, {scroll: true})
+        $router.replace("/login", {scroll: true})
         notify('Déconnexion reusis !')
     }
 
@@ -34,7 +34,7 @@ const SignOutAction: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({children
             <div onClick={toggleModal}>{children}</div>
             <DialogBase variant={'sm'} isOpenned={isOpen} onClose={toggleModal} bgType={'whited'}>
                 <DialogContentText>
-                    Vous êtes sur le point de vous déconnecter de VTCCONTROL, vos données seront restituées à votre
+                    Vous êtes sur le point de vous déconnecter de VTCADMIN, vos données seront restituées à votre
                     prochaine connexion.
                 </DialogContentText>
                 <DialogActions className={`mt-[50px]`}>

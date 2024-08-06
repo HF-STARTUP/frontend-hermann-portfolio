@@ -1,22 +1,31 @@
 "use client"
 
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {cn} from "@/lib/utils";
-import {ArrowDropDownIcon, ChevronBackIcon} from "@/components/ui/__icons";
+import {ChevronBackIcon} from "@/components/ui/__icons";
 import React from "react";
 import {useRouter} from "next/navigation";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
+
+type SelectType = { key: string; value: string }
+
+const defaultSelect: SelectType[] = [
+    {key: "particulier", value: "Particuliers"},
+    {key: "professionnel", value: "Professionnels"},
+]
 
 export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     page_title: string,
     isSecondFleet?: boolean,
-    items?: string[]
-}> = ({page_title, isSecondFleet, items}) => {
+    items?: [],
+    onValueChange?: (selectedValue: string) => void,
+}> = ({page_title, isSecondFleet, items = defaultSelect, onValueChange}) => {
 
     const $router = useRouter();
 
@@ -24,43 +33,29 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
         <div className={"flex items-center gap-[16px] mb-[26px]"}>
             <div
                 className="text-vaTextPrimary text-[34px] font-bold font-['DM Sans'] leading-[42px] flex items-center gap-1">
-                {isSecondFleet && <button onClick={() => $router.back()}>
+                {isSecondFleet && <button onClick={() => $router.replace("/app/fleet/")}>
                     <ChevronBackIcon/>
                 </button>}
                 <div>{page_title}</div>
             </div>
 
-            <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <button className={cn(
-                        "text-gray-100 text-base font-medium leading-normal outline-none bottom-0 focus:border-0 focus:outline-none group",
-                        "flex items-center gap-1",
-                        "bg-[#d9e4ff] px-3 py-2 rounded-[7px] text-center text-[#2554ae] text-lg font-medium font-['DM Sans'] leading-normal"
-                    )}>
-                        <div>{items ? items[0] : (isSecondFleet ? "Flotte de Christian (Cameroun)" : "Particulier")}</div>
-                        <ArrowDropDownIcon className={"opacity-75 group-hover:scale-[1.3]"}/>
-                    </button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent className="w-56">
-                    <DropdownMenuLabel>Selectionner le type de flotte</DropdownMenuLabel>
-                    <DropdownMenuSeparator/>
-                    <DropdownMenuRadioGroup value={"1"}>
+            <Select onValueChange={onValueChange} defaultValue={items[0]?.key ?? undefined}>
+                <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Selectionner"/>
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        <SelectLabel>Selectionner</SelectLabel>
                         {
-                            isSecondFleet
-                                ? items ?? [
-                                    "Flotte de arsene (Cameroun)",
-                                    "Flotte de christian (Cameroun)"
-                                ]
-                                : items ?? [
-                                    "Particulier",
-                                    "Professionnel"
-                                ].map((p, i) => (
-                                    <DropdownMenuRadioItem key={i} value={p}>{p}</DropdownMenuRadioItem>
-                                ))
+                            items?.map((item, index) => (
+                                <SelectItem key={item.key}
+                                            value={item.key}>{item.value}</SelectItem>
+                            ))
                         }
-                    </DropdownMenuRadioGroup>
-                </DropdownMenuContent>
-            </DropdownMenu>
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+
 
         </div>
     );

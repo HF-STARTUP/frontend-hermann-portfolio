@@ -102,7 +102,7 @@ class DriverService extends Service {
 
     private static async getDrivers(parkID: string | undefined, toEncaiss: boolean) {
         const response = await DriverService.getInstance().execHttpRequest<{ data: DriverResponseType[] }>({
-            url: toEncaiss ? driverServiceRoutes.driversToEncaiss + `?park_id=${parkID}` : driverServiceRoutes.addDriver + `?park_id=${parkID}`,
+            url: toEncaiss ? driverServiceRoutes.driversToEncaiss + `/by/${parkID}` : driverServiceRoutes.addDriver + `/by/${parkID}`,
             method: DriverService.getInstance().httpMethods.get,
         })
         return Driver.toDrivers(response.data)
@@ -110,7 +110,7 @@ class DriverService extends Service {
 
     static async getDriver(driverID: string | undefined | null) {
         const response = await DriverService.getInstance().execHttpRequest<DriverResponseType>({
-            url: driverServiceRoutes.getDriver + `/${driverID}`,
+            url: driverServiceRoutes.getDriver + `/by/${driverID}`,
             method: DriverService.getInstance().httpMethods.get,
         })
         return new Driver(response)

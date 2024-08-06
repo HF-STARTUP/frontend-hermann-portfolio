@@ -166,7 +166,7 @@ class VehiculeService extends Service {
 
     private static async getVehicules(parkID: string) {
         const response = await VehiculeService.getInstance().execHttpRequest<{ data: VehiculeResponseType[] }>({
-            url: vehicleServiceRoutes.getVehicules + `?park_id=${parkID}`,
+            url: vehicleServiceRoutes.getVehicules + `/by/${parkID}`,
             method: VehiculeService.getInstance().httpMethods.get,
         })
         return Vehicle.toVehicles(response.data)

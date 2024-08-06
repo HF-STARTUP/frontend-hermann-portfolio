@@ -11,6 +11,8 @@ import {LoginInputs, loginSchema} from "@/schema/auth.schema";
 import {joiResolver} from "@hookform/resolvers/joi";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import notify from "@/utils/func/notification";
+import AppLogo from "@/components/app/AppLogo";
+import BtnBase from "@/components/elements/BtnBase";
 
 
 export default function LoginPage() {
@@ -48,8 +50,9 @@ export default function LoginPage() {
 
             notify('Connexion ruusis !', 'success');
             console.log($login.data)
-            AuthManagerGuard.loginToApp($login.data.token, $login.data.refresh_token)
+            AuthManagerGuard.loginToApp(loginData.token, loginData.refresh_token)
             $router.push(`/app/dashboard`)
+            console.log("Redirect to Admin !")
         }
     }, [$login.isSuccess]);
 
@@ -64,16 +67,19 @@ export default function LoginPage() {
 
     return (
         <React.Suspense fallback={<LoadingLoader/>}>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form className="w-[500px] m-auto mt-[100px]" onSubmit={handleSubmit(onSubmit)}>
+                <div className="mb-[40px]">
+                    <AppLogo />
+                </div>
                 <AuthHead
-                    title={'Connexion'}
+                    title={'Admin'}
                     subtitle={'Entrez vos identifiants VTC pour vous connecter'}
                 />
                 <AuthFormContainer>
                     <FormGroup auth={true}>
                         <Input
                             type={"email"}
-                            label={`Numéro de téléphone / Adresse e-mail`}
+                            label={`Adresse e-mail`}
                             placeholder={''}
                             error={errors.email}
                             {...register("email")}
@@ -99,9 +105,16 @@ export default function LoginPage() {
                     </FormGroup>
                 </AuthFormContainer>
                 <div className={`mt-[24px] lg:mt-[36.2px]`}>
-                    <Button>
+                    <BtnBase
+                        responsiveW={true}
+                        fit={false}
+                        fullwidth={true}
+                        to={''}
+                        disabled={$login.isLoading || $login.isSuccess}
+                        loading={$login.isLoading || $login.isSuccess}
+                        color={'blue'} variant={'contained'}>
                         Se connecter
-                    </Button>
+                    </BtnBase>
                 </div>
             </form>
         </React.Suspense>

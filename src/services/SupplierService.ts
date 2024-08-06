@@ -81,7 +81,7 @@ class SupplierService extends Service {
 
     private static async getSuppliers(regionID: string) {
         const response = await SupplierService.getInstance().execHttpRequest<ResponseWithPagination<SupplierResponseType[]>>({
-            url: supplierServiceRoutes.getSupplier+`?park_id=${regionID}`,
+            url: supplierServiceRoutes.getSupplier+`/by/${regionID}`,
             method: SupplierService.getInstance().httpMethods.get,
         })
         return Supplier.toSuppliers(response.data)
