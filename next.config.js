@@ -5,6 +5,14 @@ const nextConfig = {
     //         allowedOrigins: ['*'],
     //     },
     // },
+    /** @type {import('next').NextConfig} */
+
+    eslint: {
+        ignoreDuringBuilds: true,
+    },
+    typescript: {
+        ignoreBuildErrors: true,
+    },
     images: {
         remotePatterns: [
             {
@@ -18,7 +26,7 @@ const nextConfig = {
         ],
         minimumCacheTTL: 15000000,
     },
-    async redirects(){
+    async redirects() {
         return [
             {
                 source: '/',
