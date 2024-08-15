@@ -4,7 +4,7 @@ import * as React from "react";
 import {ChatUser} from "@/app/(protected)/dashboard/chat/_components/chatUtils/chatUtils";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
-import {UserCircle} from "lucide-react";
+import {ListChecksIcon, UserCircle} from "lucide-react";
 import {RiGlobalLine} from "react-icons/ri";
 import {useCreateDiscussion, useGetDiscussionMembers, useGetDiscussions} from "@/hooks/chat/useDiscussions";
 import Loading from "@/components/ui/Loader";
@@ -17,6 +17,10 @@ import Driver from "@/model/driver/Driver";
 import {DialogDriverItem} from "@/components/dialog/Dialog";
 import {useGetDrivers} from "@/hooks/driver/useDriver";
 import {DISCUSSION_TYPE} from "@/types/chat.types";
+import {useGetTicketList} from "@/hooks/admin/useTicketHook";
+import {TbPlaylistX} from "react-icons/tb";
+import {PiPlaylist} from "react-icons/pi";
+import {ListIcon} from "@/components/ui/__icons";
 
 export const ChatUsersNav = () => {
     return (
@@ -34,26 +38,26 @@ const Users = () => {
                 <TabsList className="grid w-full grid-cols-2 p-1 bg-zinc-100 rounded-[40px] mb-[36px]">
                     <TabsTrigger value="account" className={"mt-[-3px]"}>
                         <div className={"flex items-center gap-2"}>
-                            <UserCircle/>
-                            <div>Individuel</div>
+                            <ListChecksIcon/>
+                            <div>Tous</div>
                         </div>
                     </TabsTrigger>
                     <TabsTrigger value="password" className={"mt-[-3px]"}>
                         <div className={"flex items-center gap-2"}>
-                            <RiGlobalLine fontSize={"24"}/>
-                            <div>Global</div>
+                            <TbPlaylistX fontSize={"24"}/>
+                            <div>Non lus</div>
                         </div>
                     </TabsTrigger>
                 </TabsList>
-                <NewDiscussion className={"mb-[24px]"}/>
+                {/*<NewDiscussion className={"mb-[24px]"}/>*/}
                 <TabsContent value="account">
-                    <ScrollArea className="h-[58vh]">
-                        <MembersList/>
-                    </ScrollArea>
+                    <div className={"flex flex-col gap-[8px]"}>
+                        <MembersList discussionType={"general"}/>
+                    </div>
                 </TabsContent>
                 <TabsContent value="password">
                     <div className={"flex flex-col gap-[8px]"}>
-                        <MembersList discussionType={"general"}/>
+                        <MembersList discussionType={"not-replied"}/>
                     </div>
                 </TabsContent>
             </Tabs>
@@ -61,45 +65,38 @@ const Users = () => {
     )
 }
 
-const MembersList:React.FC<React.HTMLAttributes<HTMLDivElement>&{discussionType?: "general"}> = ({discussionType }) => {
+const MembersList: React.FC<React.HTMLAttributes<HTMLDivElement> & {
+    discussionType?: "general" | "not-replied"
+}> = ({discussionType}) => {
 
-    const [activeDiscution, setActiveDiscution] = React.useState<Discussion>()
-
-    const {data: discussions, isLoading: loadingDisucssion} = useGetDiscussions()
-    const {data: discussionsMembers, isLoading} = useGetDiscussionMembers(activeDiscution?.id)
+    const {data: discussionsMembers, isLoading} = useGetTicketList()
 
     const isGeneral = discussionType === "general"
-
     const {setActiveDiscussion} = usePrompStore()
 
-    React.useEffect(() => {
-
-        if (!loadingDisucssion && discussions?.length) {
-            if (discussions.length > 0) {
-                //setActiveDiscution(discussions[0])
-                //setActiveDiscussion(discussions[0])
-            }
-        }
-
-    }, [loadingDisucssion, discussions])
-
-    if (loadingDisucssion) {
+    if (isLoading) {
         return (
             <Loading/>
         )
     }
 
-    if (discussions?.length) {
+    const messages = discussionsMembers?.length ? discussionsMembers.filter((msg) => isGeneral ? true : msg.isPending) : []
+
+    if (messages.length) {
         return (
             <div className={"flex flex-col gap-[8px]"}>
-
-                {isGeneral&&discussions.filter(d=>d.isGenenal).map((discussion, i) => (
-                    <ChatUser discussion={discussion} key={i}/>
+                {messages.map((ticket, i) => (
+                    <ChatUser ticket={ticket} key={i}/>
                 ))}
+            </div>
+        )
+    }
 
-                {!isGeneral&&discussions.filter(d=>!d.isGenenal).map((discussion, i) => (
-                    <ChatUser discussion={discussion} key={i}/>
-                ))}
+    if (!messages.length) {
+
+        return (
+            <div>
+                <p className={"text-center text-gray-4"}>ça semble vide ici !</p>
             </div>
         )
     }

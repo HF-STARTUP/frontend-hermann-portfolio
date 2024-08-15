@@ -69,6 +69,10 @@ class LoginService extends Service {
         return new UserProfile(response)
     }
 
+    static refreshProfile() {
+        return LoginService.getInstance().queryClient.invalidateQueries({queryKey: ["userprofile"]})
+    }
+
 }
 
 

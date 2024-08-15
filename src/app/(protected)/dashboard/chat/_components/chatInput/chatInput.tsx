@@ -8,17 +8,17 @@ import {useChatSocket} from "@/lib/socketio";
 import Image from "next/image";
 import {useUploadFile} from "@/hooks/__globlal/useMedia";
 import {imageBaseUrl} from "@/model/Model";
+import {useSendMessageTicket} from "@/hooks/admin/useTicketHook";
 
 
 export const ChatInputPrompt = () => {
 
-    const {socket, sendTextMessage, } = useChatSocket()
+    const {socket, sendTextMessage,} = useChatSocket()
     const {promptValue, setPromptValue} = usePrompStore()
 
 
-
-    const onSendTextMessage = ()=> {
-        if(!promptValue.length) return
+    const onSendTextMessage = () => {
+        if (!promptValue.length) return
         sendTextMessage(promptValue)
         setPromptValue("")
     }
@@ -27,7 +27,7 @@ export const ChatInputPrompt = () => {
     return (
         <div className={"flex gap-[24px] py-4"}>
             <InputActions/>
-            <form onSubmit={(e)=>{
+            <form onSubmit={(e) => {
                 e.preventDefault()
                 onSendTextMessage()
             }} className={"w-full"}>
@@ -51,10 +51,10 @@ const InputText = () => {
                 "w-full h-12 pl-3 pr-1 py-1  rounded-l-[5px] bg-transparent focus:border-0 outline-0",
                 "focus:border-transparent outline:border-transparent text-zinc-900 text-[15px] font-medium  leading-normal"
             )}
-            type="text"
-            placeholder={"Écrivez votre message ici"}
+                   type="text"
+                   placeholder={"Écrivez votre message ici"}
                    value={promptValue}
-                   onChange={e=>setPromptValue(e.currentTarget.value)}
+                   onChange={e => setPromptValue(e.currentTarget.value)}
             />
         </div>
     )
@@ -62,25 +62,32 @@ const InputText = () => {
 
 const SendMessageBtn: React.FC<React.HTMLAttributes<HTMLButtonElement>> = ({children}) => {
 
-    const {socket, sendTextMessage, } = useChatSocket()
-    const {promptValue, setPromptValue} = usePrompStore()
+    const {socket, sendTextMessage,} = useChatSocket()
+    const {promptValue, setPromptValue, activeDiscussion} = usePrompStore()
+
+    const {handleSendMessage, loading} = useSendMessageTicket()
 
 
-
-    const onSendTextMessage = ()=> {
-        if(!promptValue.length) return
+    const onSendTextMessage = () => {
+        if (!promptValue.length) return
+        if (activeDiscussion) handleSendMessage({description: promptValue, ticket_id: activeDiscussion.id})
         sendTextMessage(promptValue)
         setPromptValue("")
     }
 
     return (
-        <SendBtnCore  onClick={onSendTextMessage}>
+        <SendBtnCore onClick={onSendTextMessage}>
             Envoyer
         </SendBtnCore>
     )
 }
 
-export const SendBtnCore: React.FC<React.HTMLAttributes<HTMLButtonElement>&{disabled?: boolean}> = ({children, disabled, className, ...props})=> {
+export const SendBtnCore: React.FC<React.HTMLAttributes<HTMLButtonElement> & { disabled?: boolean }> = ({
+                                                                                                            children,
+                                                                                                            disabled,
+                                                                                                            className,
+                                                                                                            ...props
+                                                                                                        }) => {
     return (
         <button
             disabled={disabled}
@@ -124,19 +131,19 @@ const InputActions = () => {
 
     const btnImgRef = useRef<HTMLButtonElement>()
 
-    React.useEffect(()=>{
-        if(preview){
-            if(btnImgRef.current){
+    React.useEffect(() => {
+        if (preview) {
+            if (btnImgRef.current) {
                 console.log("before")
                 console.log(btnImgRef.current)
                 console.log("Show preview")
-               void  btnImgRef.current.click()
+                void btnImgRef.current.click()
             }
         }
     }, [preview])
 
-    React.useEffect(()=>{
-        if(!loading&&data){
+    React.useEffect(() => {
+        if (!loading && data) {
             setMenuOpen(false)
             console.log("File uploaded")
             console.log(data)
@@ -158,8 +165,8 @@ const InputActions = () => {
                         {preview && <Image src={preview} alt={"img"} width={400} height={400}/>}
                         <div className={"py-2 flex items-end justify-end"}>
                             <SendBtnCore
-                                onClick={()=>{
-                                    file&&onUploadFile({file})
+                                onClick={() => {
+                                    file && onUploadFile({file})
                                 }}
                                 disabled={loading}
                                 children={`${loading ? "Envoie en cour..." : "Envoyer"}`}

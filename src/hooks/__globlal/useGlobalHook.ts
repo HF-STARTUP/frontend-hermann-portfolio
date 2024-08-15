@@ -1,4 +1,4 @@
-import { useParams } from "next/navigation";
+import {useParams} from "next/navigation";
 import useAppStore from "@/stores/global/useAppStore";
 import React from "react";
 import {useUserProfile} from "@/hooks/__form/auth/useUserProfile";
@@ -22,7 +22,7 @@ export const useGetRegion = () => {
 
 export const useGetParkID = () => {
 
-    const params = useParams() as {fleetID: string}
+    const params = useParams() as { fleetID: string }
 
     const parkID = params.fleetID
 
@@ -41,6 +41,7 @@ export const useGetProfileID = () => {
         profile_id: profile_id as string
     }
 }
+
 
 export const useResetSearchState = () => {
     const {resetFindToken} = useAppStore()

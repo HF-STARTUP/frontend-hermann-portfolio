@@ -85,6 +85,7 @@ export type AdminProfileResponseType = {
 export type AdminLoginResponseType = {
     token: string;
     refresh_token: string;
+    id: string;
 }
 
 export type AdminOnCity = {

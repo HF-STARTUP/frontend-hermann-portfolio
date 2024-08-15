@@ -1,10 +1,18 @@
 "use client"
 
 import React from "react";
-import {DashboardIcon, GeolocationIcon, LayoutListIcon, SettingIcon} from "@/components/ui/__icons";
+import {
+    DashboardIcon,
+    GeolocationIcon,
+    InfoIcon,
+    LayoutListIcon,
+    ReclamsIcon,
+    SettingIcon
+} from "@/components/ui/__icons";
 import {cn} from "@/lib/utils";
 import Link from "next/link";
 import {useRouter, usePathname} from "next/navigation";
+import {CreditCardIcon} from "lucide-react";
 
 export const Sidebar = () => {
 
@@ -25,6 +33,16 @@ export const Sidebar = () => {
                 label={"Géolocalisation"}
                 icon={<GeolocationIcon/>}
                 to={"/app/geolocalisation"}
+            />
+            <SidebarItem
+                label={"Transactions bancaires"}
+                icon={<CreditCardIcon/>}
+                to={"/app/transactions"}
+            />
+            <SidebarItem
+                label={"Tickets de réclamations"}
+                icon={<InfoIcon/>}
+                to={"/app/tickets"}
             />
             <SidebarItem
                 label={"Paramètres"}

@@ -1,4 +1,4 @@
-import {differenceInDays, format} from "date-fns";
+import {differenceInDays, format, formatDistanceToNow} from "date-fns";
 
 export const imageBaseUrl = `https://s3.us-west-2.amazonaws.com/images.vtccontrol.com`
 
@@ -9,7 +9,7 @@ abstract class Model {
     }
 
     protected toDate(date: Date, dateFormat: string = 'dd/MM/yyyy ') {
-        return format(date, dateFormat)
+        return formatDistanceToNow(date)
     }
 
     public getDifferenceInDays(dateLeft: Date, dateRight: Date): number {

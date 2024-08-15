@@ -5,6 +5,9 @@ import {CiClock1} from "react-icons/ci";
 import {VTCC} from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
 import Image from "next/image";
 import {cn} from "@/lib/utils";
+import {MessageTicket} from "@/types/admin/ticket";
+import {MessageTicketModel} from "@/model/ADMIN/ticket";
+import AuthManagerGuard from "@/guard/AuthManagerGuard";
 
 export const MessageDate: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({children}) => {
 
@@ -14,9 +17,10 @@ export const MessageDate: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({chi
     )
 }
 export const ChatMdgContent: React.FC<React.HTMLAttributes<HTMLDivElement> & {
-    isReverse?: boolean,
-    message: MessageModel
-}> = ({children, message, isReverse = false}) => {
+    message: MessageTicketModel
+}> = ({children, message}) => {
+
+    const isReverse = AuthManagerGuard.getProfileID === message.senderProfileId
 
     return (
         <>
@@ -27,24 +31,24 @@ export const ChatMdgContent: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                 )}>
                 {!message.isImage && <>
                     <div className="text-neutral-500 text-base font-normal font-vInter text-left line-clamp-5">
-                        {message.content}
+                        {message.description}
                     </div>
                     <div
                         className="text-right text-neutral-500 text-base font-normal font-vInter mt-1 flex gap-2 justify-end">
-                        <div>{message.sendedAt}</div>
-                        <div>
-                            {message.isSended && <LiaCheckDoubleSolid className={"text-green-500"}/>}
-                            {!message.isSended && <CiClock1 className={"text-gray-600"}/>}
-                        </div>
+                        <div>{message.createdAt}</div>
+                        {/*<div>*/}
+                        {/*    {message.isSended && <LiaCheckDoubleSolid className={"text-green-500"}/>}*/}
+                        {/*    {!message.isSended && <CiClock1 className={"text-gray-600"}/>}*/}
+                        {/*</div>*/}
                     </div>
                 </>}
                 {message.isImage &&
-                    <Image src={message.imagePath}
+                    <Image src={message.getImage}
                            alt={""}
                            width={321} height={214}
                            className={cn(
                                "h-[214px] w-auto  bg-white rounded-[21.40px] border border-gray-500/50",
-                               message.isImage&&"w-fit"
+                               message.isImage && "w-fit"
                            )}
                     />
                 }
@@ -53,12 +57,12 @@ export const ChatMdgContent: React.FC<React.HTMLAttributes<HTMLDivElement> & {
             {isReverse && <div className={"flex justify-end items-center"}>
                 {!message.isImage && <div
                     className={"max-w-[566px] text-right text-black text-base font-normal cursor-default font-vInter p-2 bg-blue-50 rounded-tl-xl rounded-bl-xl rounded-br-xl border border-sky-100 hover:bg-slate-50 transition"}>
-                    <div className="text-blue-800 text-base font-normal font-vInter">{message.content}</div>
+                    <div className="text-blue-800 text-base font-normal font-vInter">{message.description}</div>
                     <div
-                        className="text-right text-black text-base font-normal font-vInter mt-1">{message.sendedAt}</div>
+                        className="text-right text-black text-base font-normal font-vInter mt-1">{message.createdAt}</div>
                 </div>}
                 {message.isImage && <Image
-                    src={message.imagePath}
+                    src={message.description}
                     alt={""}
                     width={321}
                     height={214}

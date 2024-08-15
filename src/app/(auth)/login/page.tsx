@@ -50,7 +50,7 @@ export default function LoginPage() {
 
             notify('Connexion ruusis !', 'success');
             console.log($login.data)
-            AuthManagerGuard.loginToApp(loginData.token, loginData.refresh_token)
+            AuthManagerGuard.loginToApp(loginData.token, loginData.refresh_token, loginData.id)
             $router.push(`/app/dashboard`)
             console.log("Redirect to Admin !")
         }
@@ -69,7 +69,7 @@ export default function LoginPage() {
         <React.Suspense fallback={<LoadingLoader/>}>
             <form className="w-[500px] m-auto mt-[100px]" onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-[40px]">
-                    <AppLogo />
+                    <AppLogo/>
                 </div>
                 <AuthHead
                     title={'Admin'}

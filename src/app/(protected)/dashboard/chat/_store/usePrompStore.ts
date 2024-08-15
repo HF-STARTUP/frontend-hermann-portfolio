@@ -1,25 +1,25 @@
 import {create} from 'zustand';
-import {Discussion, MessageModel} from "@/model/message/Message";
+import {MessageModel} from "@/model/message/Message";
+import {TicketModel} from "@/model/ADMIN/ticket";
 
 
 type AppStore = {
-    promptValue: string;
-    setPromptValue: (v: string)=>void
 
-    activeDiscussion?: Discussion
-    setActiveDiscussion: (discussion: Discussion)=>void
+    promptValue: string;
+    setPromptValue: (v: string) => void
+
+    activeDiscussion?: TicketModel
+    setActiveDiscussion: (discussion: TicketModel) => void
 
     activeMessages?: MessageModel[]
-    initMessages: (messages: MessageModel[])=>void
-    addNewMessage: (message: MessageModel)=>void
-
+    initMessages: (messages: MessageModel[]) => void
+    addNewMessage: (message: MessageModel) => void
 
 }
 
 
 const usePromptStore = create<AppStore>((set, getState) => ({
     promptValue: '',
-
     setPromptValue: (v) => set({promptValue: v}),
     setActiveDiscussion: (discussion) => set({activeDiscussion: discussion}),
 
@@ -35,9 +35,8 @@ const usePromptStore = create<AppStore>((set, getState) => ({
             currentMessages.push(message);
         }
 
-        set({ activeMessages: currentMessages });
+        set({activeMessages: currentMessages});
     },
-
 
 
 }));

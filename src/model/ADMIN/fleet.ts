@@ -60,7 +60,6 @@ export class FleetModel extends Model {
             ? "Active"
             : "Désactivé"
     }
-
 }
 
 

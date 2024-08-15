@@ -38,6 +38,13 @@ const nextConfig = {
                 destination: '/dashboard/schedule/schedule-settings/add-group/planing',
                 permanent: true,
             },
+
+            //ADMIN
+            {
+                source: '/app/settings',
+                destination: '/app/settings/profile',
+                permanent: true,
+            },
         ]
     }
 }

@@ -7,7 +7,7 @@ import AuthManagerGuard from "@/guard/AuthManagerGuard";
 
 class UserProfile extends Model {
 
-    private _instance: AdminProfileResponseType
+    public _instance: AdminProfileResponseType
 
     constructor(userProfileData: AdminProfileResponseType) {
         super();
@@ -37,6 +37,14 @@ class UserProfile extends Model {
 
     get getOrganisationLogo() {
         return ''
+    }
+
+    get firstName() {
+        return this._instance.first_name
+    }
+
+    get lastName() {
+        return this._instance.last_name
     }
 
     get getUsername() {

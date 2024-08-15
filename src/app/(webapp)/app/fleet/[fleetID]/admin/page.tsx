@@ -4,7 +4,6 @@ import {ABlockTitle} from "@/app/(webapp)/app/dashboard/_components/abonEvolutio
 import {ABtnAction} from "@/components/ui/custom/actions";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {cn} from "@/lib/utils";
-import {CrownIcon} from "@/components/ui/__icons";
 import * as React from "react";
 
 export default function AdminsPage() {

@@ -8,7 +8,7 @@ import AuthHead from "@/app/(main)/auth/_components/AuthHead";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {VerifyOtpInputs, verifyOtpSchema} from "@/schema/auth.schema";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {useLoginVerifyOtp} from "@/hooks/__form/auth/useLogin";
+//import {useLoginVerifyOtp} from "@/hooks/__form/auth/useLogin";
 import Loading from "@/components/ui/Loader";
 import VLinkProvider from "@/components/helpers/VLinkProvider";
 import notify from "@/utils/func/notification";
@@ -23,14 +23,14 @@ export default function LoginVerifyOtpPage() {
     } = useForm<VerifyOtpInputs>({
         resolver: joiResolver(verifyOtpSchema)
     })
-    const {
-        onVerifyOtp,
-        isLoading
-    } = useLoginVerifyOtp()
+    // const {
+    //     onVerifyOtp,
+    //     isLoading
+    // } = useLoginVerifyOtp()
 
-    const onSubmit: SubmitHandler<VerifyOtpInputs> = (loginInfo) => {
-        onVerifyOtp(loginInfo)
-    }
+    // const onSubmit: SubmitHandler<VerifyOtpInputs> = (loginInfo) => {
+    //     onVerifyOtp(loginInfo)
+    // }
 
     const onResendOtp = () => {
         notify("Nouveau code otp envoyé")
@@ -38,47 +38,48 @@ export default function LoginVerifyOtpPage() {
 
     return (
         <React.Suspense fallback={<Loading/>}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-                <AuthHead
-                    title={'Verification de compte'}
-                    subtitle={'Entrez le code qui vous a été envoyé par numéro de téléphone'}
-                />
-                <AuthFormContainer>
-                    <FormGroup auth={true}>
-                        <TextField
-                            label={'Code'}
-                            placeholder={''}
-                            errors={errors}
-                            register={register("code")}
-                            inputType={"text"}
-                        />
+            <div></div>
+            {/*<form onSubmit={handleSubmit(onSubmit)}>*/}
+            {/*    <AuthHead*/}
+            {/*        title={'Verification de compte'}*/}
+            {/*        subtitle={'Entrez le code qui vous a été envoyé par numéro de téléphone'}*/}
+            {/*    />*/}
+            {/*    <AuthFormContainer>*/}
+            {/*        <FormGroup auth={true}>*/}
+            {/*            <TextField*/}
+            {/*                label={'Code'}*/}
+            {/*                placeholder={''}*/}
+            {/*                errors={errors}*/}
+            {/*                register={register("code")}*/}
+            {/*                inputType={"text"}*/}
+            {/*            />*/}
 
-                        <div className={`flex justify-between mt-[10.78px]`}>
-                            <VLinkProvider
-                                className={`text-right text-blue-700 
-                        font-medium leading-snug hover:underline underline-offset-2 ease-in delay-75 duration-150 text-[12px] lg:text-base`}
-                                onClick={onResendOtp}
-                                type={"button"}
+            {/*            <div className={`flex justify-between mt-[10.78px]`}>*/}
+            {/*                <VLinkProvider*/}
+            {/*                    className={`text-right text-blue-700 */}
+            {/*            font-medium leading-snug hover:underline underline-offset-2 ease-in delay-75 duration-150 text-[12px] lg:text-base`}*/}
+            {/*                    onClick={onResendOtp}*/}
+            {/*                    type={"button"}*/}
 
-                            >
-                                Renvoyer le code
-                            </VLinkProvider>
-                        </div>
-                    </FormGroup>
-                </AuthFormContainer>
-                <div className={`mt-[24px] lg:mt-[36.2px]`}>
-                    <BtnBase
-                        responsiveW={true}
-                        fit={false}
-                        fullwidth={true}
-                        to={''}
-                        disabled={isLoading}
-                        loading={isLoading}
-                        color={'blue'} variant={'contained'}>
-                        Suivant
-                    </BtnBase>
-                </div>
-            </form>
+            {/*                >*/}
+            {/*                    Renvoyer le code*/}
+            {/*                </VLinkProvider>*/}
+            {/*            </div>*/}
+            {/*        </FormGroup>*/}
+            {/*    </AuthFormContainer>*/}
+            {/*    <div className={`mt-[24px] lg:mt-[36.2px]`}>*/}
+            {/*        <BtnBase*/}
+            {/*            responsiveW={true}*/}
+            {/*            fit={false}*/}
+            {/*            fullwidth={true}*/}
+            {/*            to={''}*/}
+            {/*            disabled={isLoading}*/}
+            {/*            loading={isLoading}*/}
+            {/*            color={'blue'} variant={'contained'}>*/}
+            {/*            Suivant*/}
+            {/*        </BtnBase>*/}
+            {/*    </div>*/}
+            {/*</form>*/}
         </React.Suspense>
     )
 }

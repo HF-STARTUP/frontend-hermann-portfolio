@@ -24,8 +24,9 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     page_title: string,
     isSecondFleet?: boolean,
     items?: [],
+    withSelect?: boolean
     onValueChange?: (selectedValue: string) => void,
-}> = ({page_title, isSecondFleet, items = defaultSelect, onValueChange}) => {
+}> = ({page_title, isSecondFleet, items = defaultSelect, onValueChange, withSelect = true}) => {
 
     const $router = useRouter();
 
@@ -38,23 +39,23 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                 </button>}
                 <div>{page_title}</div>
             </div>
-
-            <Select onValueChange={onValueChange} defaultValue={items[0]?.key ?? undefined}>
-                <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Selectionner"/>
-                </SelectTrigger>
-                <SelectContent>
-                    <SelectGroup>
-                        <SelectLabel>Selectionner</SelectLabel>
-                        {
-                            items?.map((item, index) => (
-                                <SelectItem key={item.key}
-                                            value={item.key}>{item.value}</SelectItem>
-                            ))
-                        }
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
+            {withSelect &&
+                <Select onValueChange={onValueChange} defaultValue={items[0]?.key ?? undefined}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Selectionner"/>
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Selectionner</SelectLabel>
+                            {
+                                items?.map((item, index) => (
+                                    <SelectItem key={item.key}
+                                                value={item.key}>{item.value}</SelectItem>
+                                ))
+                            }
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>}
 
 
         </div>

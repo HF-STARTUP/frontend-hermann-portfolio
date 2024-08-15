@@ -123,40 +123,20 @@ const _SETTINGS_PAGE_NAVIGATION = [
         icon: <UserIcon/>
     },
     {
-        label: 'Mon entreprise',
-        url: 'company',
-        icon: <CompanyIcon/>
-    },
-    {
-        label: 'Mot de passe',
-        url: 'password',
-        icon: <PasswordIcon/>
-    },
-    {
-        label: 'Systeme',
-        url: 'system',
-        icon: <GrDocumentConfig/>
-    },
-    {
-        label: 'Utilisateurs',
+        label: 'Administrateurs',
         url: 'users',
         icon: <AlbumIcon/>
     },
-    {
-        label: 'Notifications',
-        url: 'notifications',
-        icon: <Notification2Icon/>
-    },
-    {
-        label: 'Abonnement',
-        url: 'subscription',
-        icon: <CardPPosIcon/>
-    },
+    // {
+    //     label: 'Notifications',
+    //     url: 'notifications',
+    //     icon: <Notification2Icon/>
+    // },
 ]
 
 export const SETTINGS_PAGE_NAVIGATION = _SETTINGS_PAGE_NAVIGATION.map(url => ({
     ...url,
-    url: `/dashboard/settings/` + url.url
+    url: `/app/settings/` + url.url
 }))
 
 
