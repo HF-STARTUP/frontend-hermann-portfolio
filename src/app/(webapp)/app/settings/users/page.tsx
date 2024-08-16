@@ -14,13 +14,15 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {AddAdminDialog} from "@/app/(webapp)/app/settings/profile/actions/addAdmin/AddAdminDialog";
-import {useGetAdminList} from "@/hooks/admin/useSettingsHook";
+import {useDeactivateOrActivateAdmin, useGetAdminList} from "@/hooks/admin/useSettingsHook";
 import UserProfile from "@/model/user/User";
 import Loading from "@/components/ui/Loader";
 
 const UsersPage: React.FC = () => {
 
     const [isOpen, setIsOpen] = React.useState(false)
+    const {data: admins, isLoading} = useGetAdminList()
+
 
     return (
         <div>
@@ -31,7 +33,7 @@ const UsersPage: React.FC = () => {
                     }}
                     withMb={true}
                 >
-                    Administrateurs
+                    Administrateurs({admins?.length ?? "-"})
                 </AdminPageTitle>
                 <AdminUsers/>
                 <AddAdminDialog isOpen={isOpen} setIsOpen={v => setIsOpen(v)}/>
@@ -63,7 +65,9 @@ const AdminUsers: React.FC = () => {
 
 const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
 
+    const {onToggleStatus, loading: loadingToggle} = useDeactivateOrActivateAdmin()
     const {username, readRoles, writeRoles} = user
+    const [isOpen, setIsOpen] = React.useState(false)
 
     return (
         <div
@@ -85,10 +89,18 @@ const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
-                            <DropdownMenuItem>Modifier l’administrateur</DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => setIsOpen(true)}
+                            >Modifier l’administrateur</DropdownMenuItem>
                             <DropdownMenuSeparator/>
-                            <DropdownMenuItem className={"text-[#E51D13] hover:text-[#E51D13]"}>Désactiver
-                                l’administrateur</DropdownMenuItem>
+                            <DropdownMenuItem
+                                onClick={() => {
+                                    onToggleStatus(user.getID)
+                                }}
+                                className={"text-[#E51D13] hover:text-[#E51D13]"}
+                            >
+                                Désactiver l’administrateur
+                            </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -110,6 +122,11 @@ const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
                 </div>
 
             </div>
+            <AddAdminDialog
+                profile={user}
+                isOpen={isOpen}
+                setIsOpen={v => setIsOpen(v)}
+            />
         </div>
     )
 }

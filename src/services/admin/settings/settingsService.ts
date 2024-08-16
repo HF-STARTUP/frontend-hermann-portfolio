@@ -10,6 +10,7 @@ export enum SettingsApiPath {
     UpdatePassword = '/admin-reset-password',
     AdminAccess = '/access-root',
     createAdmin = '/root/create-admin-on-city',
+    DeactivateActiveAdmin = "/root/deactivate-activate"
 }
 
 export type RoleType = {
@@ -41,6 +42,10 @@ class SettingsService extends Service {
 
     public static async updateProfile({id: profile_id, ...formData}: UpdateProfileInput) {
         return await SettingsService.makeRequest<CourseResponseType>(SettingsApiPath.UpdateProfile + "/" + profile_id, 'PUT', formData)
+    }
+
+    public static async deactivateActivate({id}: { id: string }) {
+        return await SettingsService.makeRequest<CourseResponseType>(SettingsApiPath.DeactivateActiveAdmin + "/" + id, 'GET')
     }
 
     public static async updatePassword({old_password, new_password, email}: UpdatePasswordInput) {

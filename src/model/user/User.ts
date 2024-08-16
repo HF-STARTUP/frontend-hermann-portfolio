@@ -19,6 +19,10 @@ class UserProfile extends Model {
         return this._instance.last_name + " " + this._instance.first_name
     }
 
+    get roles() {
+        return this._instance.admin_on_city[0].permissions
+    }
+
     get readRoles() {
         return this._instance.admin_on_city[0].permissions
     }

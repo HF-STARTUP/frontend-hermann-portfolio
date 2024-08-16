@@ -129,3 +129,32 @@ export const useCreateAdmin = () => {
     }
 
 }
+
+export const useDeactivateOrActivateAdmin = () => {
+    const {
+        data,
+        loading,
+        isSuccess,
+        isError,
+        handleMutation,
+    } = useMutationProvider({
+        mutationFn: SettingsService.deactivateActivate,
+        successMessage: "Status mise à jour",
+    });
+
+    const onToggleStatus = (id: string) => {
+        handleMutation({id})
+    }
+
+    React.useEffect(() => {
+        void SettingsService.refreshAdmins()
+    }, [isSuccess, data])
+
+    return {
+        data,
+        loading,
+        isSuccess,
+        onToggleStatus,
+    }
+
+}

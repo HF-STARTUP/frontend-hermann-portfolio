@@ -8,7 +8,7 @@ import {Stack} from "@/components/box/Grid";
 import {SubmitHandler, useForm} from "react-hook-form";
 import {AddAdminInput, AddAdminInputSchema, AdminAccessType} from "@/schema/ADMIN/settings.schema";
 import {joiResolver} from "@hookform/resolvers/joi";
-import {useCreateAdmin, useGetAdminAccess} from "@/hooks/admin/useSettingsHook";
+import {useCreateAdmin, useGetAdminAccess, useUpdateProfile} from "@/hooks/admin/useSettingsHook";
 import {ACCESS_TYPE, RoleType} from "@/services/admin/settings/settingsService";
 import {useGetCurrency} from "@/hooks/__globlal/useGlobalHook";
 import {CheckStatusIcon, UncheckStatusIcon} from "@/components/ui/__icons";
@@ -18,14 +18,17 @@ import Country from "@/model/location/Country";
 import City from "@/model/location/City";
 import {useCountries} from "@/hooks/location/useCountry/useCountry";
 import {useCity} from "@/hooks/location/useCity/useCity";
+import UserProfile from "@/model/user/User";
 
 export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     isOpen: boolean,
-    setIsOpen: (status: boolean) => void
+    setIsOpen: (status: boolean) => void,
+    profile?: UserProfile
 }> = ({
           children,
           isOpen,
           setIsOpen,
+          profile,
           ...props
       }) => {
 
@@ -40,7 +43,10 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
 
     const {data: countriesData, error: fetchCountriesError, isLoading: fetchingCountries} = useCountries()
     const {data: citiesData, error: fetchCitiesError, isLoading: fetchingCities} = useCity(selectedCountry)
+    const {onUpdateProfile, loading: loadingProfile} = useUpdateProfile()
 
+
+    const isEdit = !!profile
 
     const {
         register,
@@ -53,9 +59,25 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
         resolver: joiResolver(AddAdminInputSchema)
     })
 
+    React.useEffect(() => {
+        if (profile) {
+            setValue("first_name", profile._instance.first_name)
+            setValue("last_name", profile._instance.last_name)
+            setValue("phone", profile._instance.user.phone)
+            setValue("email", profile._instance.user.email)
+        }
+    }, [profile])
+
     const onSubmit: SubmitHandler<AddAdminInput> = (adminInfos, event) => {
+
         console.log("Submit")
-        onCreateAdmin({...adminInfos, access: JSON.stringify(access) as unknown as AdminAccessType[]})
+
+        if (isEdit) {
+            onUpdateProfile({...adminInfos, id: profile?.getID})
+        } else {
+            onCreateAdmin({...adminInfos, access: JSON.stringify(access) as unknown as AdminAccessType[]})
+        }
+
     }
 
     const handleAddAccess = ({id}: { id: number }) => {
@@ -97,7 +119,7 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                             bgType={'whited'}>
                     <AdminDialogHead
                         withBack={true}
-                        title={"Ajouter un administrateur"}
+                        title={isEdit ? "Modifier l'administrateur" : "Ajouter un administrateur"}
                         handleToggle={() => setIsOpen(false) as unknown as MouseEventHandler<HTMLDivElement>}/>
                     <DefaultDialogMainBody>
 
@@ -168,28 +190,35 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                                 />
                             </Stack>
 
-                            <div
+                            {!isEdit && <div
                                 className="text-[#506D82] text-sm font-bold font-['DM Sans'] leading-normal mb-[5px] mt-[20px]">
                                 Autoriser l’accès aux onglets
-                            </div>
-                            <div>
+                            </div>}
+                            {!isEdit && <div>
                                 {roles && <FormGroup adminForm={true} groupTitle={''}>
-                                    {roles.map(r => (
-                                        <RoleElement
-                                            key={r.id}
-                                            RoleType={r}
-                                            onIdChange={(id) => {
-                                                console.log("id" + id)
-                                                handleAddAccess({id: id})
-                                            }}
-                                            onValueChange={(id, atype) => {
-                                                handleChangeAccessRole({id, atype})
-                                            }}
-                                        />))
+                                    {roles.map(r => {
+
+                                        // const usersRoles = profile?.roles
+                                        // const checked = roles.find()
+
+                                        return (
+                                            <RoleElement
+                                                key={r.id}
+                                                RoleType={r}
+                                                onIdChange={(id) => {
+                                                    console.log("id" + id)
+                                                    handleAddAccess({id: id})
+                                                }}
+                                                onValueChange={(id, atype) => {
+                                                    handleChangeAccessRole({id, atype})
+                                                }}
+                                            />
+                                        )
+                                    })
                                     }
                                 </FormGroup>}
                                 {isLoading && <Loading/>}
-                            </div>
+                            </div>}
                         </FormGroup>
 
 
@@ -204,7 +233,7 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                             loading={loading}
                             onClick={handleSubmit(onSubmit)}
                         >
-                            {loading ? "Ajout en cour..." : "Confirmer"}
+                            {(loading || loadingProfile) ? (isEdit ? "Mettre à jour" : "Ajout en cour...") : "Confirmer"}
                         </BtnBase>
                     </DialogActions>
                 </DialogBase>
@@ -216,16 +245,18 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
 const RoleElement: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     RoleType: RoleType,
     onIdChange: (id: number) => void,
+    alreadyChecked?: boolean,
     onValueChange: (v: number, atype: ACCESS_TYPE) => void
 }> = ({
           children,
           RoleType,
           onValueChange,
           onIdChange,
+          alreadyChecked = false,
           ...props
       }) => {
 
-    const [checked, setCChecked] = React.useState(false)
+    const [checked, setCChecked] = React.useState(alreadyChecked)
     const {currency} = useGetCurrency()
 
     return (
