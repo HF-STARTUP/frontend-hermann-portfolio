@@ -1,5 +1,11 @@
 import Model from "@/model/Model";
-import {AdminOnFleetResponseType, FleetListResponseType} from "@/types/admin/fleet";
+import {
+    AdminOnFleetResponseType,
+    FleetListResponseType,
+    FleetResponseType,
+    Info,
+    Subscription
+} from "@/types/admin/fleet";
 import {formatDistanceToNow} from "date-fns";
 
 
@@ -157,4 +163,203 @@ export class AdminOnFleetModel extends Model {
 }
 
 
+export class AbonResponseModel extends Model {
+    private _instance: FleetResponseType;
 
+    constructor(datas: FleetResponseType) {
+        super()
+        this._instance = datas;
+    }
+
+    static fromArray(datas: FleetResponseType[]): AbonResponseModel[] {
+        return datas.map(data => new AbonResponseModel(data)).reverse();
+    }
+
+    get id() {
+        return this._instance.id;
+    }
+
+    get startDate() {
+        return this.formatDate(this._instance.start_date);
+    }
+
+    get endDate() {
+        return `${this.formatDate(this._instance.end_date)} (${this.toDate(this._instance.end_date)} Left)`;
+    }
+
+    get abonResume() {
+        return `${this.subscription.amount ?? 0}/${this.subscription.period}`;
+    }
+
+    get isActive() {
+        return this._instance.is_active;
+    }
+
+    get subscriptionPlan() {
+        return this._instance.subscription_plan;
+    }
+
+    get vehicleNumber() {
+        return this._instance.vehicle_number;
+    }
+
+    get offer() {
+        return this._instance.offer;
+    }
+
+    get renew() {
+        return this._instance.renew;
+    }
+
+    get amount() {
+        return this._instance.amount;
+    }
+
+    get subscription() {
+        return new SubscriptionModel(this._instance.subscription);
+    }
+
+    get info() {
+        return new InfoModel(this._instance.info);
+    }
+
+}
+
+export class SubscriptionModel {
+    private _instance: Subscription;
+
+    constructor(datas: Subscription) {
+        this._instance = datas;
+    }
+
+    get id() {
+        return this._instance.id;
+    }
+
+    get accountType() {
+        return this._instance.account_type;
+    }
+
+    get subscriptionType() {
+        return this._instance.subscription_type;
+    }
+
+    get period() {
+        return this._instance.period;
+    }
+
+    get code() {
+        return this._instance.code;
+    }
+
+    get name() {
+        return this._instance.name;
+    }
+
+    get remise() {
+        return this._instance.remise;
+    }
+
+    get amount() {
+        return this._instance.amount;
+    }
+
+    get crossedOutAmount() {
+        return this._instance.crossed_out_amount;
+    }
+
+    get description() {
+        return this._instance.description;
+    }
+
+    get vehicleNumber() {
+        return this._instance.vehicle_number;
+    }
+
+    get driverNumber() {
+        return this._instance.driver_number;
+    }
+
+    get gps() {
+        return this._instance.gps;
+    }
+
+    get textRemise() {
+        return this._instance.text_remise;
+    }
+
+    get textLimitation() {
+        return this._instance.text_limitation;
+    }
+
+    get createdAt() {
+        return this.toDate(this._instance.created_at);
+    }
+
+    get updatedAt() {
+        return this.toDate(this._instance.updated_at);
+    }
+
+    get enable() {
+        return this._instance.enable;
+    }
+
+    // Helper methods
+    private capitalizeFirstLetter(str: string): string {
+        return str.charAt(0).toUpperCase() + str.slice(1);
+    }
+
+    private toDate(date: Date | null): string | null {
+        return date ? new Date(date).toLocaleDateString() : null;
+    }
+}
+
+export class InfoModel {
+    private _instance: Info;
+
+    constructor(datas: Info) {
+        this._instance = datas;
+    }
+
+    get subscriptionVehicleLimit() {
+        return this._instance.subscription_vehicle_limit;
+    }
+
+    get subscriptionDriverLimit() {
+        return this._instance.subscription_driver_limit;
+    }
+
+    get gps() {
+        return this._instance.gps;
+    }
+
+    get currentTotalVehicle() {
+        return this._instance.current_total_vehicle;
+    }
+
+    get currentTotalDriver() {
+        return this._instance.current_total_driver;
+    }
+}
+
+
+
+export type ParkStatResponseType = {
+    vehicle:   Driver;
+    driver:    Driver;
+    entretien: CaTotal;
+    course:    CaTotal;
+    ca_total:  CaTotal;
+}
+
+export type CaTotal = {
+    total:            number;
+    indicateur:       string;
+    indicateur_value: number;
+}
+
+export type Driver = {
+    total:            number;
+    indicateur:       string;
+    indicateur_value: string;
+}

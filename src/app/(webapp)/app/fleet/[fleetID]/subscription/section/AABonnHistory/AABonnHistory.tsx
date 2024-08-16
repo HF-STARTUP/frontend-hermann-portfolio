@@ -1,3 +1,5 @@
+"use client"
+
 import {ABlockTitle} from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
 import * as React from "react";
 import {
@@ -16,6 +18,10 @@ import {
 } from "@/components/ui/table";
 import {cn} from "@/lib/utils";
 import {CrownIcon} from "@/components/ui/__icons";
+import {useGetSubscriptionHistoryOnFleet} from "@/hooks/admin/useFleetHook";
+import Loading from "@/components/ui/Loader";
+import {Calendar} from "@/components/ui/calendar";
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
 
 export const AABonnHistory = () => {
 
@@ -30,99 +36,105 @@ export const AABonnHistory = () => {
 }
 
 export function TabsNav() {
+
+    const {data: abonList, isLoading} = useGetSubscriptionHistoryOnFleet()
+    const [date, setDate] = React.useState<Date | undefined>(new Date())
+
     return (
-        <Tabs defaultValue="account">
-            <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="account">Tous (15)</TabsTrigger>
-                <TabsTrigger value="password">Sélectionnez une période</TabsTrigger>
-            </TabsList>
-            <TabsContent value="account" className={""}>
-                <HistoryTable/>
-            </TabsContent>
-            <TabsContent value="password">
-                <HistoryTable/>
-            </TabsContent>
-        </Tabs>
+        <>
+            <Tabs defaultValue="account">
+                <TabsList className="grid w-full grid-cols-2">
+                    <TabsTrigger value="account">Tous ({abonList?.length ?? "-"})</TabsTrigger>
+                    <TooltipProvider>
+                        <Tooltip defaultOpen={true}>
+                            <TooltipTrigger>
+                                <TabsTrigger value="password" disabled={true}>Sélectionnez une période</TabsTrigger>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Pas encore assez de données.</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </TabsList>
+                <TabsContent value="account" className={""}>
+                    <HistoryTable/>
+                </TabsContent>
+                <TabsContent value="password">
+                    <HistoryTable/>
+                </TabsContent>
+            </Tabs>
+            {/*<Calendar*/}
+            {/*    mode="single"*/}
+            {/*    selected={date}*/}
+            {/*    onSelect={setDate}*/}
+            {/*    className="rounded-md border"*/}
+            {/*/>*/}
+        </>
     )
 }
 
 
 const HistoryTable = () => {
 
-    const invoices = [
-        {
-            start: "12/08/2024",
-            end: "12/08/2024",
-            type: "PREMIUM"
-        },
-        {
-            start: "12/08/2024",
-            end: "12/08/2024",
-            type: "ESSENTIEL"
-        },
-        {
-            start: "12/08/2024",
-            end: "12/08/2024",
-            type: "PREMIUM"
-        },
-        {
-            start: "12/08/2024",
-            end: "12/08/2024",
-            type: "ESSENTIEL"
-        },
-        {
-            start: "12/08/2024",
-            end: "12/08/2024",
-            type: "PREMIUM"
-        },
-    ]
+    const {data: abonList, isLoading} = useGetSubscriptionHistoryOnFleet()
 
-    return (
-        <div className={"w-full"}>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>Date souscription</TableHead>
-                        <TableHead>Date d’expiration</TableHead>
-                        <TableHead>Abonnement</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {invoices.map((invoice) => {
+    if (isLoading) {
 
-                        const isAbon = invoice.type === "ESSENTIEL" || invoice.type === "PREMIUM"
-                        const isEssential = invoice.type === "ESSENTIEL"
-                        const isPremium = invoice.type === "PREMIUM"
+        return <Loading/>
+    }
 
-                        return (
-                            <TableRow key={invoice.start}>
-                                <TableCell className="font-medium">{invoice.start}</TableCell>
-                                <TableCell>{invoice.end}</TableCell>
-                                <TableCell className={cn(
-                                    "font-bold",
-                                    isEssential && "text-[#e51d13] bg-[#FFEBEA] flex items-center justify-center gap-[8.8px] h-[30px] px-[2px] py-[0.88px] rounded-sm",
-                                    isPremium && "text-[#E89900] bg-[#FFF8DE] flex items-center justify-center gap-[8.8px] h-[30px] px-[15px] py-[0.88px] rounded-sm",
-                                )}>
-                                    {isAbon && <CrownIcon/>}
-                                    {invoice.type}
-                                </TableCell>
-                            </TableRow>
-                        )
-                    })}
-                </TableBody>
-            </Table>
-        </div>
-    )
+    if (abonList && abonList.length) {
+        return (
+            <div className={"w-full"}>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Date souscription</TableHead>
+                            <TableHead>Date d’expiration</TableHead>
+                            <TableHead>Abonnement</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {abonList.map((abon) => {
+
+                            const abonType = abon.subscription.subscriptionType
+
+                            const isAbon = abonType === "ESSENTIEL" || abonType === "PREMIUM"
+                            const isEssential = abonType === "ESSENTIEL" || abonType == "tryfree"
+                            const isPremium = abonType === "PREMIUM"
+
+                            return (
+                                <TableRow key={abon.id}>
+                                    <TableCell className="font-medium">{abon.startDate}</TableCell>
+                                    <TableCell>{abon.endDate}</TableCell>
+                                    <TableCell>
+                                        <div className={cn(
+                                            "font-bold",
+                                            isEssential && "text-[#e51d13] bg-[#FFEBEA] flex items-center justify-center gap-[8.8px] h-[30px] px-[2px] py-[0.88px] rounded-sm",
+                                            isPremium && "text-[#E89900] bg-[#FFF8DE] flex items-center justify-center gap-[8.8px] h-[30px] px-[15px] py-[0.88px] rounded-sm",
+                                        )}>
+                                            {isAbon && <CrownIcon/>}
+                                            {abon.subscription.name}
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        })}
+                    </TableBody>
+                </Table>
+            </div>
+        )
+    }
 }
 
 export const AbonnTag: React.FC<{ label: string }> = ({label}) => {
-    const isAbon = label === "ESSENTIEL" || label === "PREMIUM"
+    const isAbon = label === "ESSENTIEL" || label === "PREMIUM" || label == "tryfree"
     const isEssential = label === "ESSENTIEL"
-    const isPremium = label === "PREMIUM"
+    const isPremium = label === "PREMIUM" || label == "tryfree"
 
     return (
         <div className={cn(
-            "font-bold",
+            "font-bold uppercase",
             isEssential && "text-[#e51d13] bg-[#FFEBEA] flex items-center justify-center gap-[8.8px] h-[30px] px-[2px] py-[0.88px] rounded-sm",
             isPremium && "text-[#E89900] bg-[#FFF8DE] flex items-center justify-center gap-[8.8px] h-[30px] px-[15px] py-[0.88px] rounded-sm",
         )}>

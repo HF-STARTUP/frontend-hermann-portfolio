@@ -40,3 +40,46 @@ export type AdminOnFleetResponseType = {
     ets_name: string;
     ets_logo: string;
 }
+
+export type FleetResponseType = {
+    id:                string;
+    start_date:        Date;
+    end_date:          Date;
+    is_active:         boolean;
+    subscription_plan: null;
+    vehicle_number:    null;
+    offer:             string;
+    renew:             boolean;
+    amount:            null;
+    subscription:      Subscription;
+    info:              Info;
+}
+
+export type Info = {
+    subscription_vehicle_limit: number;
+    subscription_driver_limit:  number;
+    gps:                        boolean;
+    current_total_vehicle:      number;
+    current_total_driver:       number;
+}
+
+export type Subscription = {
+    id:                 string;
+    account_type:       null;
+    subscription_type:  string;
+    period:             string;
+    code:               null;
+    name:               string;
+    remise:             null;
+    amount:             null;
+    crossed_out_amount: null;
+    description:        null;
+    vehicle_number:     number;
+    driver_number:      number;
+    gps:                boolean;
+    text_remise:        null;
+    text_limitation:    null;
+    created_at:         Date;
+    updated_at:         Date;
+    enable:             boolean;
+}

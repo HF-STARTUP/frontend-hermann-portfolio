@@ -12,6 +12,10 @@ abstract class Model {
         return formatDistanceToNow(date)
     }
 
+    protected formatDate(date: Date, dateFormat: string = 'dd/MM/yyyy'): string {
+        return format(date, dateFormat);
+    }
+
     public getDifferenceInDays(dateLeft: Date, dateRight: Date): number {
         return differenceInDays(dateLeft, dateRight);
     }

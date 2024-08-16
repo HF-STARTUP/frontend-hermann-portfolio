@@ -4,7 +4,8 @@ import {ArrowUpIcon} from "lucide-react";
 
 export enum AverageType {
     POSITIVE = "POSITIVE",
-    NEGATIVE = "NEGATIVIE"
+    NEGATIVE = "NEGATIVIE",
+    NEUTRAL = "NEUTRAL"
 }
 
 type ActionCardProps = {
@@ -47,13 +48,14 @@ export const ActionCard: React.FC<React.HTMLAttributes<HTMLDivElement> & ActionC
             </div>
             <div className={cn(
                 "flex items-center gap-[6px] text-[#00a656]",
-                average.type === AverageType.NEGATIVE && "text-[#e51d13]"
+                average.type === AverageType.NEGATIVE && "text-[#e51d13]",
+                average.type === AverageType.NEUTRAL && "text-warning-400"
             )}>
-                <div className={cn(
+                {average.type !== AverageType.NEUTRAL && <div className={cn(
                     average.type === AverageType.NEGATIVE && "rotate-180"
                 )}>
                     <ArrowUpIcon/>
-                </div>
+                </div>}
                 <div className="text-xs font-medium">{average.label}</div>
             </div>
         </div>

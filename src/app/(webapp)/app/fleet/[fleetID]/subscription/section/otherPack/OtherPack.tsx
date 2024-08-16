@@ -19,9 +19,9 @@ export function PackCaroussel() {
                         <AbonnTypeCard
                             title={"PREMIUM PARTICULIER"}
                             subtitle={"1000XAF/véhicule/mois"}
-                            action={
-                                <ChangePackBtn/>
-                            }
+                            // action={
+                            //     <ChangePackBtn/>
+                            // }
                             logoColor={"text-[#E51D13]"}
                             className={"bg-gradient-to-r from-[#A70000] via-[#ff0000] to-[#A70000]"}
                         />
@@ -32,9 +32,9 @@ export function PackCaroussel() {
                         <AbonnTypeCard
                             title={"STARTER PARTICULIER"}
                             subtitle={"1000XAF/véhicule/mois"}
-                            action={
-                                <ChangePackBtn/>
-                            }
+                            // action={
+                            //     <ChangePackBtn/>
+                            // }
                             logoColor={"text-[#002978]"}
                             className={"bg-gradient-to-r from-[#002978] via-[#2746C9] to-[#002978]"}
                         />
@@ -45,9 +45,9 @@ export function PackCaroussel() {
                         <AbonnTypeCard
                             title={"STARTER PARTICULIER"}
                             subtitle={"1000XAF/véhicule/mois"}
-                            action={
-                                <ChangePackBtn/>
-                            }
+                            // action={
+                            //     <ChangePackBtn/>
+                            // }
                             logoColor={"text-[#002978]"}
                             className={"bg-gradient-to-r from-[#2E003E] via-[#6B27C9] to-[#2E003E]"}
                         />
