@@ -16,7 +16,6 @@ import {
 export default function DashboardPage() {
 
     const {} = useGetFleetDetails()
-    const {} = useGetFleetProfilesVehiclesDetails()
     const {} = useGetFleetStats()
 
     return (

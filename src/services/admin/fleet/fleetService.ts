@@ -1,5 +1,10 @@
 import Service from "@/services/Service";
-import {AdminOnFleetResponseType, FleetListResponseType, FleetResponseType} from "@/types/admin/fleet";
+import {
+    AdminOnFleetResponseType,
+    BestDiverAndVehicleResponseType,
+    FleetListResponseType,
+    FleetResponseType
+} from "@/types/admin/fleet";
 import {AbonResponseModel, AdminOnFleetModel, FleetModel, ParkStatResponseType} from "@/model/ADMIN/fleet";
 import {ResponseWithPagination} from "@/types/generic";
 
@@ -116,18 +121,16 @@ class FleetService extends Service {
 
     public static async getFleetVehiclesAndProfilesDetails({fleetID}: {
         fleetID: string
-    }): Promise<AdminOnFleetModel[]> {
+    }): Promise<BestDiverAndVehicleResponseType> {
 
         const uri = FleetApiPath.FleetVehiclesAndProfiles + "?park_id=" + fleetID
 
-        const data = await FleetService.makeRequest<AdminOnFleetResponseType[]>(
+        return await FleetService.makeRequest<BestDiverAndVehicleResponseType>(
             uri,
             'GET',
             undefined,
             true
         )
-
-        return AdminOnFleetModel.fromArray(data)
     }
 
 

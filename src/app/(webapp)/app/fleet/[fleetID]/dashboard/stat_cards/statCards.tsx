@@ -4,14 +4,17 @@ import {ActionCard, AverageType} from "@/app/(webapp)/app/dashboard/_components/
 import {CarAltIcon, CarCrashIcon, CashAltIcon, ToolIcon, UserIcon} from "@/components/ui/__icons";
 import {cn} from "@/lib/utils";
 import * as React from "react";
-import {useGetSpecificFleetStats} from "@/hooks/admin/useFleetHook";
+import {useGetFleetProfilesVehiclesDetails, useGetSpecificFleetStats} from "@/hooks/admin/useFleetHook";
 import Loading from "@/components/ui/Loader";
+import Image from "next/image";
+import {imageBaseUrl} from "@/model/Model";
 
 export const StatCards = () => {
 
     const {data, isLoading} = useGetSpecificFleetStats()
+    const {data: profileAndVehicle, isLoading: loadingProfileAndVehicle} = useGetFleetProfilesVehiclesDetails()
 
-    if (isLoading) {
+    if (isLoading || loadingProfileAndVehicle) {
 
         return (
             <Loading className={"h-[90px]"}/>
@@ -103,26 +106,42 @@ export const StatCards = () => {
                 )
                 }
             </div>
-            <div className={"col-span-4"}>
+            {<div className={"col-span-4"}>
                 <div className={"grid grid-cols-12 gap-[24px] h-full"}>
                     <div className={"col-span-6 h-full"}>
                         <StatCardLarge
-                            title={"Toyota RAV4 - CE 920 BF"}
-                            subtitle={"175.000XAF"}
-                            icon={<CarCrashIcon/>}
+                            title={`${profileAndVehicle?.best_vehicle?.vehicle?.brand ?? "-"} ${profileAndVehicle?.best_vehicle?.vehicle?.model ?? "-"} - ${profileAndVehicle?.best_vehicle?.vehicle?.registration_number ?? "-"}`}
+                            subtitle={`${profileAndVehicle?.best_vehicle?.value ?? "-"}XAF`}
+                            icon={profileAndVehicle?.best_vehicle?.vehicle?.image
+                                ? <Image
+                                    width={90}
+                                    height={90}
+                                    className={"rounded-full bg-contain w-[100px]"}
+                                    alt={""}
+                                    src={`${imageBaseUrl}/` + profileAndVehicle?.best_vehicle?.vehicle.image}
+                                /> : <CarCrashIcon/>}
                         />
                     </div>
                     <div className={"col-span-6 h-full"}>
                         <StatCardLarge
-                            title={"Ebenezer Kepombia"}
-                            subtitle={"178.540XAF"}
-                            icon={<UserIcon/>}
+                            title={`${profileAndVehicle?.best_driver?.profile?.last_name ?? "-"} ${profileAndVehicle?.best_driver?.profile?.first_name ?? "-"}`}
+                            subtitle={`${profileAndVehicle?.best_driver?.value ?? "-"}XAF`}
+                            icon={profileAndVehicle?.best_driver?.profile?.image
+                                ? <Image
+                                    width={90}
+                                    height={90}
+                                    alt={""}
+                                    className={"w-[40px]"}
+                                    src={`${imageBaseUrl}/` + profileAndVehicle?.best_driver?.profile?.image}
+                                />
+                                : <UserIcon/>
+                            }
                             className={"border-[#2554ae] bg-[#eff1ff]"}
                             iconColor={"text-[#2554AE]"}
                         />
                     </div>
                 </div>
-            </div>
+            </div>}
         </div>
     )
 }
@@ -148,12 +167,12 @@ const StatCardLarge: React.FC<React.HTMLAttributes<HTMLDivElement> & {
             <div>
                 <div
                     className={cn(
-                        "size-[42px] p-[9px] bg-white rounded-[60px] justify-center items-center inline-flex mb-[15px] text-[#ff9900] text-[24px]",
+                        "size-[42px] border-2 border-slate-100 overflow-hidden bg-white rounded-full justify-center items-center inline-flex mb-[15px] text-[#ff9900] text-[24px]",
                         iconColor
                     )}>
                     {icon}
                 </div>
-                <div className="text-black text-sm font-semibold mb-[3px]">{title}</div>
+                <div className="text-black text-sm font-semibold mb-[3px] capitalize">{title}</div>
                 <div className="text-[#000b20] text-xl font-semibold">{subtitle}</div>
             </div>
             <div className="text-[#00a656] text-xs font-medium mt-[8px]">Meilleure performance mensuelle</div>

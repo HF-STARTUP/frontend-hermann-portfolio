@@ -42,44 +42,82 @@ export type AdminOnFleetResponseType = {
 }
 
 export type FleetResponseType = {
-    id:                string;
-    start_date:        Date;
-    end_date:          Date;
-    is_active:         boolean;
+    id: string;
+    start_date: Date;
+    end_date: Date;
+    is_active: boolean;
     subscription_plan: null;
-    vehicle_number:    null;
-    offer:             string;
-    renew:             boolean;
-    amount:            null;
-    subscription:      Subscription;
-    info:              Info;
+    vehicle_number: null;
+    offer: string;
+    renew: boolean;
+    amount: null;
+    subscription: Subscription;
+    info: Info;
 }
 
 export type Info = {
     subscription_vehicle_limit: number;
-    subscription_driver_limit:  number;
-    gps:                        boolean;
-    current_total_vehicle:      number;
-    current_total_driver:       number;
+    subscription_driver_limit: number;
+    gps: boolean;
+    current_total_vehicle: number;
+    current_total_driver: number;
 }
 
 export type Subscription = {
-    id:                 string;
-    account_type:       null;
-    subscription_type:  string;
-    period:             string;
-    code:               null;
-    name:               string;
-    remise:             null;
-    amount:             null;
+    id: string;
+    account_type: null;
+    subscription_type: string;
+    period: string;
+    code: null;
+    name: string;
+    remise: null;
+    amount: null;
     crossed_out_amount: null;
-    description:        null;
-    vehicle_number:     number;
-    driver_number:      number;
-    gps:                boolean;
-    text_remise:        null;
-    text_limitation:    null;
-    created_at:         Date;
-    updated_at:         Date;
-    enable:             boolean;
+    description: null;
+    vehicle_number: number;
+    driver_number: number;
+    gps: boolean;
+    text_remise: null;
+    text_limitation: null;
+    created_at: Date;
+    updated_at: Date;
+    enable: boolean;
 }
+
+export type BestDiverAndVehicleResponseType = {
+    best_driver: BestDriver;
+    best_vehicle: BestVehicle;
+}
+
+
+export type BestDriver = {
+    profile: Profile;
+    value: number;
+}
+
+export type Profile = {
+    id: string;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    email: null;
+    driver_type: string;
+    image: string;
+    grade: string;
+}
+
+export type BestVehicle = {
+    vehicle: Vehicle;
+    value: number;
+}
+
+export type Vehicle = {
+    id: string;
+    brand: string;
+    model: string;
+    color: string;
+    registration_number: string;
+    label: null;
+    image: string;
+}
+
