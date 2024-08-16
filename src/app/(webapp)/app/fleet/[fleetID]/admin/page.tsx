@@ -1,19 +1,24 @@
 "use client"
 
 import {ABlockTitle} from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
-import {ABtnAction} from "@/components/ui/custom/actions";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {cn} from "@/lib/utils";
 import * as React from "react";
+import {useGetFleetAdmin} from "@/hooks/admin/useFleetHook";
+import Loading from "@/components/ui/Loader";
+import Image from "next/image";
 
 export default function AdminsPage() {
+
+    const {data: admins, isLoading} = useGetFleetAdmin()
+
     return (
         <div className={"px-[23.70px] py-[22.57px] bg-white rounded-[22.57px] max-w-[974px]"}>
             <div className={"mt-[24px] flex items-center  justify-between gap-[26px]"}>
                 <div className={"mb-[43px]"}>
-                    <ABlockTitle>Administrateurs de la flotte (12)</ABlockTitle>
+                    <ABlockTitle>Administrateurs de la flotte ({admins?.length ?? 0})</ABlockTitle>
                 </div>
-                <ABtnAction>Ajouter un administrateur</ABtnAction>
+                {/*<ABtnAction>Ajouter un administrateur</ABtnAction>*/}
             </div>
             <div>
                 <AdminTab/>
@@ -24,77 +29,64 @@ export default function AdminsPage() {
 
 const AdminTab = () => {
 
-    const roles = [
-        {
-            id: "#40325",
-            name: "Pierre-Stéphane",
-            role: "Super admin",
-            date: "Date d’ajout",
-            statut: "Active"
-        },
-        {
-            id: "#40325",
-            name: "Pierre-Stéphane",
-            role: "Super admin",
-            date: "Date d’ajout",
-            statut: "Active"
-        },
+    const {data: admins, isLoading} = useGetFleetAdmin()
 
-        {
-            id: "#40325",
-            name: "Pierre-Stéphane",
-            role: "Super admin",
-            date: "Date d’ajout",
-            statut: "Active"
-        },
-        {
-            id: "#40325",
-            name: "Pierre-Stéphane",
-            role: "Super admin",
-            date: "Date d’ajout",
-            statut: "Active"
-        },
+    if (isLoading) {
+        return (
+            <Loading/>
+        )
+    }
 
-    ]
-
-    return (
-        <div className={"w-full"}>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>ID</TableHead>
-                        <TableHead>Nom</TableHead>
-                        <TableHead>Rôle</TableHead>
-                        <TableHead>Date d'ajout</TableHead>
-                        <TableHead>Status</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {roles.map((role) => {
+    if (admins && admins.length) {
+        return (
+            <div className={"w-full"}>
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>ID</TableHead>
+                            <TableHead>Nom</TableHead>
+                            <TableHead>Rôle</TableHead>
+                            <TableHead>Date d'ajout</TableHead>
+                            <TableHead>Status</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {admins.map((admin) => {
 
 
-                        const isActive = role.statut === "Active"
-                        const isInactive = role.statut === "Désactivé"
+                            const isActive = admin.status === "Active"
+                            const isInactive = admin.status === "inactive"
 
-                        return (
-                            <TableRow key={role.id}>
-                                <TableCell className="font-medium">{role.id}</TableCell>
-                                <TableCell>{role.name}</TableCell>
-                                <TableCell>{role.role}</TableCell>
-                                <TableCell>{role.date}</TableCell>
-                                <TableCell className={cn(
-                                    "font-bold",
-                                    isActive && "text-[#82be6d] bg-[#eafae5] flex items-center justify-center gap-[8.8px] h-[30px] px-[2px] py-[0.88px] rounded-sm",
-                                    isInactive && "text-[#ff0000] bg-[#fae5e5] flex items-center justify-center gap-[8.8px] h-[30px] px-[15px] py-[0.88px] rounded-sm",
-                                )}>
-                                    {role.role}
-                                </TableCell>
-                            </TableRow>
-                        )
-                    })}
-                </TableBody>
-            </Table>
-        </div>
-    )
+                            return (
+                                <TableRow key={admin.id}>
+                                    <TableCell className="font-medium">{admin.id}</TableCell>
+                                    <TableCell>
+                                        <div className={"flex items-center gap-2"}>
+                                            {admin.imageUrl &&
+                                                <Image className={"size-[40px] rounded-full border-2 border-blue-400"}
+                                                       src={admin.imageUrl}
+                                                       alt={"Admin avatar"} width={50} height={50}/>}
+                                            <p>{admin.username}</p>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>{admin.role}</TableCell>
+                                    <TableCell>{admin.createdAt}</TableCell>
+                                    <TableCell>
+                                        <div className={cn(
+                                            "font-bold",
+                                            isActive && "text-[#82be6d] bg-[#eafae5] flex items-center justify-center gap-[8.8px] h-[30px] px-[2px] py-[0.88px] rounded-sm",
+                                            isInactive && "text-[#ff0000] bg-[#fae5e5] flex items-center justify-center gap-[8.8px] h-[30px] px-[15px] py-[0.88px] rounded-sm",
+                                        )}>
+                                            {admin.status}
+                                        </div>
+                                    </TableCell>
+                                </TableRow>
+                            )
+                        })}
+                    </TableBody>
+                </Table>
+            </div>
+        )
+    }
 }
 

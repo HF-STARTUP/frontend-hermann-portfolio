@@ -1,4 +1,5 @@
 import {CurencyResponseType} from "@/types/vehicule.type";
+import {ACCESS_TYPE} from "@/services/admin/settings/settingsService";
 
 
 export type UserProfileResponseData = {
@@ -101,12 +102,9 @@ export type Permission = {
 
 export type Onglet = {
     name: string;
-    access: Access;
+    access: ACCESS_TYPE;
 }
 
-export enum Access {
-    Write = "write",
-}
 
 export type User = {
     phone: string;

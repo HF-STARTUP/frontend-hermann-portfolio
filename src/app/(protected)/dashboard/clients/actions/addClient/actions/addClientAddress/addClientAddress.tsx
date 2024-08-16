@@ -7,6 +7,10 @@ import {PlaceFieldInput} from "@/components/form/PlacField";
 import {CourseAddress} from "@/schema/course.schema";
 import notify from "@/utils/func/notification";
 import useClientStore from "@/app/(protected)/dashboard/clients/store/useAddClientStore";
+import {CarComponent} from "@/model/entretien/Entretien";
+import {useGetCurrency} from "@/hooks/__globlal/useGlobalHook";
+import {CheckStatusIcon, UncheckStatusIcon} from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
+import {useGetAdminAccess} from "@/hooks/admin/useSettingsHook";
 
 export const AddClientAddressDialog: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
                                                                                            children,
@@ -80,3 +84,6 @@ export const AddClientAddressDialog: React.FC<React.HTMLAttributes<HTMLDivElemen
         </div>
     )
 }
+
+
+

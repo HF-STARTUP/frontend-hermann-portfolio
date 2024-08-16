@@ -1,14 +1,28 @@
 import Service from "@/services/Service";
-import {ResponseWithPagination} from "@/types/generic";
-import {CreateCourseInputs} from "@/schema/course.schema";
-import Course from "@/model/course/Course";
 import {CourseResponseType} from "@/types/course.types";
-import {UpdatePasswordInput, UpdateProfileInput} from "@/schema/ADMIN/settings.schema";
+import {AddAdminInput, UpdatePasswordInput, UpdateProfileInput} from "@/schema/ADMIN/settings.schema";
+import UserProfile from "@/model/user/User";
+import {AdminProfileResponseType} from "@/types/__form/profile.type";
 
 export enum SettingsApiPath {
     UpdateProfile = '/profile',
+    AdminList = '/root',
     UpdatePassword = '/admin-reset-password',
+    AdminAccess = '/access-root',
+    createAdmin = '/root/create-admin-on-city',
 }
+
+export type RoleType = {
+    id: number;
+    name: string;
+    enable: boolean;
+}
+
+export enum ACCESS_TYPE {
+    READ = "read",
+    WRITE = "write"
+}
+
 
 class SettingsService extends Service {
     private static instance: SettingsService = new SettingsService();
@@ -21,35 +35,38 @@ class SettingsService extends Service {
         return SettingsService.instance;
     }
 
-    // public static async createNewCourse(formData: CreateCourseInputs): Promise<Course> {
-    //     const courseResult = await SettingsService.makeRequest<CourseResponseType>(SettingsApiPath.createCourse, 'POST', formData);
-    //     return new Course(courseResult)
-    // }
+    public static async createNewAdmin(formData: AddAdminInput) {
+        return await SettingsService.makeRequest(SettingsApiPath.createAdmin, 'POST', formData);
+    }
 
     public static async updateProfile({id: profile_id, ...formData}: UpdateProfileInput) {
-        const updateResult = await SettingsService.makeRequest<CourseResponseType>(SettingsApiPath.UpdateProfile + "/" + profile_id, 'PUT', formData);
-        return updateResult
+        return await SettingsService.makeRequest<CourseResponseType>(SettingsApiPath.UpdateProfile + "/" + profile_id, 'PUT', formData)
     }
 
     public static async updatePassword({old_password, new_password, email}: UpdatePasswordInput) {
-        const updateResult = await SettingsService.makeRequest<CourseResponseType>(SettingsApiPath.UpdatePassword, 'POST', {
+        return await SettingsService.makeRequest<CourseResponseType>(SettingsApiPath.UpdatePassword, 'POST', {
             email: email,
             password: old_password,
             new_password
-        });
-        return updateResult
+        })
     }
 
-    // public static async getCourses(parkID: string): Promise<Course[]> {
-    //     const courseUri = SettingsApiPath.getCourses + '/by/' + parkID
-    //     const courseResponse = await SettingsService.makeRequest<ResponseWithPagination<CourseResponseType[]>>(courseUri, 'GET');
-    //     return Course.toArrays(courseResponse.data)
-    // }
+    public static async getAdminAccess(): Promise<RoleType[]> {
+        const uri = SettingsApiPath.AdminAccess
+        return await SettingsService.makeRequest<RoleType[]>(uri, 'GET')
+    }
+
+    public static async getAdminList(): Promise<UserProfile[]> {
+        const uri = SettingsApiPath.AdminList
+        const list = await SettingsService.makeRequest<AdminProfileResponseType[]>(uri, 'GET')
+
+        return UserProfile.fromArray(list)
+    }
 
 
-    // static refreshCourse() {
-    //     return SettingsService.getInstance().queryClient.invalidateQueries({queryKey: [SettingsApiPath.getCourses]})
-    // }
+    static refreshAdmins() {
+        return SettingsService.getInstance().queryClient.invalidateQueries({queryKey: [SettingsApiPath.AdminList]})
+    }
 
     protected static async makeRequest<T>(url: string, method: 'GET' | 'POST' | 'PUT', body?: any): Promise<T> {
         return this.getInstance().execHttpRequest<T>({url, method, body});

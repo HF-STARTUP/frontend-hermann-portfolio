@@ -7,6 +7,20 @@ import {PlaceFieldInput} from "@/components/form/PlacField";
 import {CourseAddress} from "@/schema/course.schema";
 import notify from "@/utils/func/notification";
 import useClientStore from "@/app/(protected)/dashboard/clients/store/useAddClientStore";
+import {useGetCurrency} from "@/hooks/__globlal/useGlobalHook";
+import {CheckStatusIcon, UncheckStatusIcon} from "@/components/ui/__icons";
+import {useGetAdminAccess} from "@/hooks/admin/useSettingsHook";
+import {RoleType} from "@/services/admin/settings/settingsService";
+import Loading from "@/components/ui/Loader";
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue
+} from "@/components/ui/select";
 
 export const ConfigAccessDialog: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
                                                                                        children,
@@ -40,28 +54,15 @@ export const ConfigAccessDialog: React.FC<React.HTMLAttributes<HTMLDivElement>> 
                         bgType={'whited'}>
                 <AdminDialogHead
                     withBack={true}
-                    title={"Ajouter une adresse"}
+                    title={"Configurez les accès"}
                     handleToggle={() => setIsOpen(false) as unknown as MouseEventHandler<HTMLDivElement>}/>
                 <DefaultDialogMainBody>
+                    <div
+                        className="text-[#506D82] text-sm font-bold font-['DM Sans'] leading-normal mb-[20px]">Autoriser
+                        l’accès aux onglets
+                    </div>
 
-                    <FormGroup adminForm={true} groupTitle={''}>
 
-                        <TextField
-                            size={'md'}
-                            label={'Nom de l’adrese'}
-                            value={place}
-                            onChange={(v) => setPlace(v.currentTarget.value)}
-                            required={true}
-                            inputType={"text"}
-                            placeholder={"Burau"}
-                        />
-
-                        <PlaceFieldInput
-                            label={'Localisation'}
-                            onSelectLocation={setAddress}
-                        />
-
-                    </FormGroup>
 
                 </DefaultDialogMainBody>
                 <DialogActions className={`pt-[30px]`}><BtnBase

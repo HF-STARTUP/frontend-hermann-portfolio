@@ -1,13 +1,10 @@
-import {useMutation} from "@tanstack/react-query";
 import TicketService from "@/services/admin/ticket/ticketService";
 import React from "react";
 import {useRouter} from "next/navigation";
-import {UpdatePasswordInput, UpdateProfileInput} from "@/schema/ADMIN/settings.schema";
-import SettingsService from "@/services/admin/settings/settingsService";
+import {AddAdminInput, UpdatePasswordInput, UpdateProfileInput} from "@/schema/ADMIN/settings.schema";
+import SettingsService, {SettingsApiPath} from "@/services/admin/settings/settingsService";
 import LoginService from "@/services/__form/auth/LoginService";
-import {useMutationProvider} from "@/hooks/hooksProvider";
-import ClientService from "@/services/ClientService";
-import {useUserProfile} from "@/hooks/__form/auth/useUserProfile";
+import {useMutationProvider, useQueryProvider} from "@/hooks/hooksProvider";
 
 export const useUpdateProfile = () => {
 
@@ -78,6 +75,57 @@ export const useUpdatePassword = () => {
         loading,
         isSuccess,
         onUpdatePassword,
+    }
+
+}
+
+export const useGetAdminAccess = () => {
+
+    const {isLoading, data} = useQueryProvider({
+        queryKey: [SettingsApiPath.AdminAccess],
+        queryFn: () => SettingsService.getAdminAccess(),
+    });
+
+    return {isLoading, data};
+};
+
+export const useGetAdminList = () => {
+
+    const {isLoading, data} = useQueryProvider({
+        queryKey: [SettingsApiPath.AdminList],
+        queryFn: () => SettingsService.getAdminList(),
+    });
+
+    return {isLoading, data};
+};
+
+
+export const useCreateAdmin = () => {
+
+    const {
+        data,
+        loading,
+        isSuccess,
+        isError,
+        handleMutation,
+    } = useMutationProvider({
+        mutationFn: SettingsService.createNewAdmin,
+        successMessage: "Admin ajouté.",
+    });
+
+    const onCreateAdmin = (data: AddAdminInput) => {
+        handleMutation(data)
+    }
+
+    React.useEffect(() => {
+        void SettingsService.refreshAdmins()
+    }, [isSuccess, data])
+
+    return {
+        data,
+        loading,
+        isSuccess,
+        onCreateAdmin,
     }
 
 }

@@ -1,9 +1,6 @@
 import Model from "@/model/Model";
-import {AdminProfileResponseType, UserProfileResponseData} from "@/types/__form/profile.type";
-import Permission from "@/model/user/Permission";
-import Region from "@/model/location/Region";
-import HisAccount from "@/model/user/HisAccount";
-import AuthManagerGuard from "@/guard/AuthManagerGuard";
+import {AdminProfileResponseType} from "@/types/__form/profile.type";
+import {ACCESS_TYPE} from "@/services/admin/settings/settingsService";
 
 class UserProfile extends Model {
 
@@ -14,8 +11,20 @@ class UserProfile extends Model {
         this._instance = userProfileData
     }
 
+    static fromArray(datas: AdminProfileResponseType[]): UserProfile[] {
+        return datas.map(data => new UserProfile(data));
+    }
+
     get username() {
         return this._instance.last_name + " " + this._instance.first_name
+    }
+
+    get readRoles() {
+        return this._instance.admin_on_city[0].permissions
+    }
+
+    get writeRoles() {
+        return this._instance.admin_on_city[0].permissions.filter(p => p.onglet.access === ACCESS_TYPE.WRITE)
     }
 
     get listPark() {

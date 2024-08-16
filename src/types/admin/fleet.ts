@@ -18,3 +18,25 @@ type Owner = {
     first_name: string;
     last_name: string;
 }
+
+export type AdminOnFleetResponseType = {
+    id: string;
+    owner_type: string;
+    first_name: string;
+    email: string;
+    code: string;
+    phone: string;
+    last_name: string;
+    birthday: null;
+    place_birth: null;
+    blocked_at: null;
+    suspended: boolean;
+    desactivate_at: null;
+    status: string;
+    created_at: Date;
+    role: string;
+    image: string;
+    permissions: string[];
+    ets_name: string;
+    ets_logo: string;
+}

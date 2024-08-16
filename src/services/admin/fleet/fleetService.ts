@@ -1,9 +1,10 @@
 import Service from "@/services/Service";
-import {FleetListResponseType} from "@/types/admin/fleet";
-import {FleetModel} from "@/model/ADMIN/fleet";
+import {AdminOnFleetResponseType, FleetListResponseType} from "@/types/admin/fleet";
+import {AdminOnFleetModel, FleetModel} from "@/model/ADMIN/fleet";
 
 export enum FleetApiPath {
     GetFleetByCityID = '/park/by',
+    GetAdminByCityID = '/admin/by',
 }
 
 class FleetService extends Service {
@@ -33,6 +34,21 @@ class FleetService extends Service {
         )
 
         return FleetModel.fromArray(data)
+
+    }
+
+    public static async getAdminsOnFleet({park_id}: { park_id: string }): Promise<AdminOnFleetModel[]> {
+
+        const uri = FleetApiPath.GetAdminByCityID + "/" + park_id
+
+        const data = await FleetService.makeRequest<AdminOnFleetResponseType[]>(
+            uri,
+            'GET',
+            undefined,
+            true
+        )
+
+        return AdminOnFleetModel.fromArray(data)
 
     }
 

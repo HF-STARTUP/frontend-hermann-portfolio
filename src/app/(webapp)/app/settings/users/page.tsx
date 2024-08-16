@@ -14,6 +14,9 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {AddAdminDialog} from "@/app/(webapp)/app/settings/profile/actions/addAdmin/AddAdminDialog";
+import {useGetAdminList} from "@/hooks/admin/useSettingsHook";
+import UserProfile from "@/model/user/User";
+import Loading from "@/components/ui/Loader";
 
 const UsersPage: React.FC = () => {
 
@@ -39,37 +42,38 @@ const UsersPage: React.FC = () => {
 
 const AdminUsers: React.FC = () => {
 
-    const users = [
-        {name: 'Christian Onguene Ludovic', role: 'Caissier'},
-        {name: 'Victoire Joelle', role: 'Agent'},
-        {name: 'Roberto Carlos', role: 'Administrateur'},
-        {name: 'Florent Ewane', role: 'Administrateur'},
-        {name: 'L’incontournable John Doe', role: 'Superviseur'},
-    ]
+    const {data: admins, isLoading} = useGetAdminList()
 
-    return (
-        <div className={`flex gap-[9px] flex-col w-full`}>
-            {users.map(user => (
-                <OneAdminUser user={user} key={user.name}/>
-            ))
-            }
-        </div>
-    )
+    if (isLoading) {
+
+        return <Loading/>
+    }
+
+    if (admins && admins.length) {
+        return (
+            <div className={`flex gap-[9px] flex-col w-full`}>
+                {admins.map(admin => (
+                    <OneAdminUser user={admin} key={admin.getID}/>
+                ))
+                }
+            </div>
+        )
+    }
 }
 
-const OneAdminUser: React.FC<{ user: { name: string, role: string } }> = ({user}) => {
+const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
 
-    const {name, role} = user
+    const {username, readRoles, writeRoles} = user
 
     return (
         <div
             className={"bg-[#eeeeff] transition hover:bg-[#e4e4ff] border p-[10px] rounded-xl flex flex-col gap-[10px]"}>
             <div className={"flex justify-between items-center"}>
                 <div className={"flex gap-[9px] items-center"}>
-                    <div className="text-black text-xl font-medium leading-[30.12px]">Christian Onguene Ludovic</div>
+                    <div className="text-black text-xl font-medium leading-[30.12px]">{username}</div>
                     <div className={"text-black text-sm font-medium leading-[21.08px] flex gap-[9px] items-center"}>
-                        <div className="">ludovicchristian1@gmail.com</div>
-                        <div>+237 698112491</div>
+                        <div className="">{user._instance.user.email}</div>
+                        <div>{user._instance.user.phone}</div>
                     </div>
                 </div>
                 <div>
@@ -89,20 +93,19 @@ const OneAdminUser: React.FC<{ user: { name: string, role: string } }> = ({user}
                     </DropdownMenu>
                 </div>
             </div>
-            <div className={"bg-[#fdfdfd] px-[20px] py-[10px] rounded-md flex flex-col gap-[10px]"}>
+            <div className={"bg-[#fdfdfd] px-[20px] py-[10px] rounded-md flex flex-col gap-[10px] overflow-hidden"}>
 
                 <div className={"flex gap-[12px]"}>
-                    <RoleTitle>Lecture :</RoleTitle>
-                    <div className={"flex items-center gap-[10px]"}>
-                        <RoleTag>Véhicules</RoleTag>
-                        <RoleTag>Chauffeurs</RoleTag>
+                    <RoleTitle>Lecture:</RoleTitle>
+                    <div className={"flex flex-wrap items-center gap-[10px]"}>
+                        {readRoles.map((r, i) => <RoleTag key={i}>{r.onglet.name}</RoleTag>)}
                     </div>
                 </div>
 
                 <div className={"flex gap-[12px]"}>
-                    <RoleTitle>Ecriture :</RoleTitle>
-                    <div className={"flex items-center gap-[10px]"}>
-                        <RoleTag tagType={"write"}>Client </RoleTag>
+                    <RoleTitle>Ecriture:</RoleTitle>
+                    <div className={"flex flex-wrap items-center gap-[10px]"}>
+                        {writeRoles.map((r, i) => <RoleTag key={i} tagType={"write"}>{r.onglet.name}</RoleTag>)}
                     </div>
                 </div>
 
@@ -114,7 +117,7 @@ const OneAdminUser: React.FC<{ user: { name: string, role: string } }> = ({user}
 const RoleTitle: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({children}) => {
 
     return (
-        <div className="text-slate-500 text-sm font-medium leading-[21.08px]">{children}</div>
+        <div className="text-slate-500 text-sm font-medium leading-[21.08px] w-fit">{children}</div>
     )
 }
 

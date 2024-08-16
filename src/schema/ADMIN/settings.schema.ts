@@ -1,6 +1,7 @@
 import Joi from "joi";
 import {_JoiConfig} from "@/schema/_joiConfig";
 import {TASK_STATUS} from "@/types/entretien.types";
+import {ACCESS_TYPE} from "@/services/admin/settings/settingsService";
 
 
 export type UpdateProfileInput = {
@@ -43,6 +44,28 @@ export const updatePasswordInputSchema = Joi.object<UpdatePasswordInput>({
     new_password_confirm: Joi.string().valid(Joi.ref('new_password')).required().messages({
         'any.only': 'Les mots de passe ne correspondent pas.'
     })
+})
+
+export interface AdminAccessType {
+    access_id: number
+    type: ACCESS_TYPE
+}
+
+export type AddAdminInput = {
+    email: string
+    phone: string
+    city_id: string
+    access: AdminAccessType[]
+    first_name: string
+    last_name: string
+}
+
+export const AddAdminInputSchema = Joi.object<AddAdminInput>({
+    email: _JoiConfig.emailRequired,
+    phone: _JoiConfig.phoneRequired,
+    first_name: _JoiConfig.strRequired,
+    last_name: _JoiConfig.strRequired,
+    city_id: _JoiConfig.strRequired,
 })
 
 

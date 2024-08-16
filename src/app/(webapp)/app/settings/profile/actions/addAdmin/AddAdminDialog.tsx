@@ -1,15 +1,23 @@
 import React, {MouseEventHandler} from "react";
 import DialogBase, {AdminDialogHead, DefaultDialogMainBody, DialogActions} from "@/components/dialog/Dialog";
 import FormGroup from "@/components/box/FormGroup";
-import TextField, {BtnField} from "@/components/form/TextField";
+import TextField, {SelectField} from "@/components/form/TextField";
 import BtnBase from "@/components/elements/BtnBase";
-import {PlaceFieldInput} from "@/components/form/PlacField";
-import {CourseAddress} from "@/schema/course.schema";
-import notify from "@/utils/func/notification";
 import useClientStore from "@/app/(protected)/dashboard/clients/store/useAddClientStore";
-import {
-    ConfigAccessDialog
-} from "@/app/(webapp)/app/settings/profile/actions/addAdmin/actions/configAccess/configAccessDialog";
+import {Stack} from "@/components/box/Grid";
+import {SubmitHandler, useForm} from "react-hook-form";
+import {AddAdminInput, AddAdminInputSchema, AdminAccessType} from "@/schema/ADMIN/settings.schema";
+import {joiResolver} from "@hookform/resolvers/joi";
+import {useCreateAdmin, useGetAdminAccess} from "@/hooks/admin/useSettingsHook";
+import {ACCESS_TYPE, RoleType} from "@/services/admin/settings/settingsService";
+import {useGetCurrency} from "@/hooks/__globlal/useGlobalHook";
+import {CheckStatusIcon, UncheckStatusIcon} from "@/components/ui/__icons";
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import Loading from "@/components/ui/Loader";
+import Country from "@/model/location/Country";
+import City from "@/model/location/City";
+import {useCountries} from "@/hooks/location/useCountry/useCountry";
+import {useCity} from "@/hooks/location/useCity/useCity";
 
 export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     isOpen: boolean,
@@ -22,104 +30,232 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
       }) => {
 
     // const [isOpen, setIsOpen] = React.useState(false)
-    const [place, setPlace] = React.useState("")
-    const [address, setAddress] = React.useState<CourseAddress>()
+    const [access, setAccess] = React.useState<AdminAccessType[]>([])
     const {setAddress: setNewAddress} = useClientStore()
+    const {onCreateAdmin, loading, data, isSuccess} = useCreateAdmin()
+    const {data: roles, isLoading} = useGetAdminAccess()
+
+    const [selectedCountry, setSelectedCountry] = React.useState('AF')
+    const [selectedCity, setSelectedCity] = React.useState('1')
+
+    const {data: countriesData, error: fetchCountriesError, isLoading: fetchingCountries} = useCountries()
+    const {data: citiesData, error: fetchCitiesError, isLoading: fetchingCities} = useCity(selectedCountry)
 
 
-    const onAddAddress = () => {
-        if (!place || !address) {
-            notify("Veuillez fournir les informations demandées", "error")
+    const {
+        register,
+        handleSubmit,
+        setValue,
+        watch,
+        reset: resetForm,
+        formState: {errors},
+    } = useForm<AddAdminInput>({
+        resolver: joiResolver(AddAdminInputSchema)
+    })
+
+    const onSubmit: SubmitHandler<AddAdminInput> = (adminInfos, event) => {
+        console.log("Submit")
+        onCreateAdmin({...adminInfos, access: JSON.stringify(access) as unknown as AdminAccessType[]})
+    }
+
+    const handleAddAccess = ({id}: { id: number }) => {
+
+        if (access.find(a => a.access_id === id)) {
+            setAccess(access.filter(a => a.access_id !== id))
             return
         }
 
-        setNewAddress({...address, description: place})
-        setAddress(undefined)
-        setPlace("")
-        setIsOpen(false)
+        setAccess([...access, {access_id: id, type: ACCESS_TYPE.READ}])
     }
+
+    React.useEffect(() => {
+        if (data && isSuccess) {
+            resetForm()
+            setIsOpen(false)
+        }
+    }, [data, isSuccess])
+
+    const handleChangeAccessRole = ({id, atype}: { id: number, atype: ACCESS_TYPE }) => {
+        if (access.find(a => a.access_id === id)) {
+            setAccess(access.map(a => {
+                if (a.access_id === id) {
+                    return {...a, type: atype}
+                } else return a
+            }))
+            return
+        }
+    }
+
 
     return (
         <div {...props}>
-            <DialogBase isSubDialog={false} variant={'sm'} isOpenned={isOpen} onClose={() => setIsOpen(false)}
-                        bgType={'whited'}>
-                <AdminDialogHead
-                    withBack={true}
-                    title={"Ajouter un administrateur"}
-                    handleToggle={() => setIsOpen(false) as unknown as MouseEventHandler<HTMLDivElement>}/>
-                <DefaultDialogMainBody>
+            <form onSubmit={() => {
+                console.log("Submit form")
+                handleSubmit(onSubmit)
+            }}>
+                <DialogBase isSubDialog={false} variant={'sm'} isOpenned={isOpen} onClose={() => setIsOpen(false)}
+                            bgType={'whited'}>
+                    <AdminDialogHead
+                        withBack={true}
+                        title={"Ajouter un administrateur"}
+                        handleToggle={() => setIsOpen(false) as unknown as MouseEventHandler<HTMLDivElement>}/>
+                    <DefaultDialogMainBody>
 
-                    <FormGroup adminForm={true} groupTitle={''}>
+                        <FormGroup adminForm={true} groupTitle={''}>
 
-                        <TextField
-                            size={'md'}
-                            label={'Nom de l’administrateur'}
-                            value={place}
-                            onChange={(v) => setPlace(v.currentTarget.value)}
-                            required={true}
-                            inputType={"text"}
-                            placeholder={""}
-                        />
+                            <div
+                                className="text-[#506D82] text-sm font-bold font-['DM Sans'] leading-normal mb-[5px] mt-[20px]">
+                                Infos personnelles
+                            </div>
 
-                        <TextField
-                            size={'md'}
-                            label={'Numéro de téléphone'}
-                            value={place}
-                            onChange={(v) => setPlace(v.currentTarget.value)}
-                            required={true}
-                            inputType={"text"}
-                            placeholder={""}
-                        />
+                            <Stack>
+                                <TextField
+                                    size={'md'}
+                                    label={'Nom de famille'}
+                                    required={true}
+                                    inputType={"text"}
+                                    placeholder={""}
+                                    register={register("last_name")}
+                                    errors={errors}
+                                />
+                                <TextField
+                                    size={'md'}
+                                    label={'Prénom'}
+                                    required={true}
+                                    inputType={"text"}
+                                    placeholder={""}
+                                    register={register("first_name")}
+                                    errors={errors}
+                                />
+                            </Stack>
 
-                        <TextField
-                            size={'md'}
-                            label={'Adresse email'}
-                            value={place}
-                            onChange={(v) => setPlace(v.currentTarget.value)}
-                            required={true}
-                            inputType={"text"}
-                            placeholder={""}
-                        />
+                            <TextField
+                                size={'md'}
+                                label={'Numéro de téléphone'}
+                                required={true}
+                                inputType={"text"}
+                                placeholder={""}
+                                register={register("phone")}
+                                errors={errors}
+                            />
 
-                        <ConfigAccessDialog>
-                            <BtnField label={"Configurer les access"}/>
-                        </ConfigAccessDialog>
+                            <TextField
+                                size={'md'}
+                                label={'Adresse email'}
+                                required={true}
+                                inputType={"text"}
+                                placeholder={""}
+                                register={register("email")}
+                                errors={errors}
+                            />
 
-                        <TextField
-                            size={'md'}
-                            label={'Attribuer un mot de passe de connexion'}
-                            value={place}
-                            onChange={(v) => setPlace(v.currentTarget.value)}
-                            inputType={"text"}
-                            placeholder={""}
-                        />
+                            <Stack>
+                                <SelectField
+                                    mode={"search"}
+                                    label={'Pays*'}
+                                    loading={fetchingCountries}
+                                    items={Country.toVSelect(countriesData)}
+                                    handleSelect={(v) => setSelectedCountry('' + v)}
+                                />
+                                <SelectField
+                                    mode={"search"}
+                                    label={'Ville*'}
+                                    loading={fetchingCities}
+                                    items={City.toVSelect(citiesData)}
+                                    handleSelect={(v) => setSelectedCity('' + v)}
+                                    register={register("city_id")}
+                                    errors={errors}
+                                />
+                            </Stack>
 
-                        <TextField
-                            size={'md'}
-                            label={'Confirmer le mot de passe de connexion'}
-                            value={place}
-                            onChange={(v) => setPlace(v.currentTarget.value)}
-                            inputType={"text"}
-                            placeholder={""}
-                        />
+                            <div
+                                className="text-[#506D82] text-sm font-bold font-['DM Sans'] leading-normal mb-[5px] mt-[20px]">
+                                Autoriser l’accès aux onglets
+                            </div>
+                            <div>
+                                {roles && <FormGroup adminForm={true} groupTitle={''}>
+                                    {roles.map(r => (
+                                        <RoleElement
+                                            key={r.id}
+                                            RoleType={r}
+                                            onIdChange={(id) => {
+                                                console.log("id" + id)
+                                                handleAddAccess({id: id})
+                                            }}
+                                            onValueChange={(id, atype) => {
+                                                handleChangeAccessRole({id, atype})
+                                            }}
+                                        />))
+                                    }
+                                </FormGroup>}
+                                {isLoading && <Loading/>}
+                            </div>
+                        </FormGroup>
 
 
-                    </FormGroup>
+                    </DefaultDialogMainBody>
+                    <DialogActions className={`pt-[30px]`}>
+                        <BtnBase
+                            color={'blue'}
+                            variant={'contained'}
+                            type={'submit'}
+                            fullwidth={true}
+                            shape={'square'}
+                            loading={loading}
+                            onClick={handleSubmit(onSubmit)}
+                        >
+                            {loading ? "Ajout en cour..." : "Confirmer"}
+                        </BtnBase>
+                    </DialogActions>
+                </DialogBase>
+            </form>
+        </div>
+    )
+}
 
-                </DefaultDialogMainBody>
-                <DialogActions className={`pt-[30px]`}><BtnBase
-                    color={'blue'}
-                    variant={'contained'}
-                    type={'button'}
-                    fullwidth={true}
-                    shape={'square'}
-                    onClick={onAddAddress}
-                    to={''}
-                >
-                    Confirmer
-                </BtnBase>
-                </DialogActions>
-            </DialogBase>
+const RoleElement: React.FC<React.HTMLAttributes<HTMLDivElement> & {
+    RoleType: RoleType,
+    onIdChange: (id: number) => void,
+    onValueChange: (v: number, atype: ACCESS_TYPE) => void
+}> = ({
+          children,
+          RoleType,
+          onValueChange,
+          onIdChange,
+          ...props
+      }) => {
+
+    const [checked, setCChecked] = React.useState(false)
+    const {currency} = useGetCurrency()
+
+    return (
+        <div className={"flex justify-between items-center overflow-hidden"}>
+            <div className={"flex items-center gap-[11.22px]"}>
+                <button type={"button"} onClick={() => {
+                    onIdChange(RoleType.id)
+                    setCChecked(!checked)
+                }}
+                        className={"cursor-pointer opacity-85 hover:opacity-100 transition ease-in"}>
+                    {checked && <CheckStatusIcon/>}
+                    {!checked && <UncheckStatusIcon/>}
+                </button>
+                <div className="text-slate-500 text-[16.82px] font-medium leading-7">{RoleType.name}</div>
+            </div>
+            {checked && <div className={"flex items-center gap-[5.6px]"}>
+                <Select defaultValue={"read"} onValueChange={v => {
+                    onValueChange(RoleType.id, v as ACCESS_TYPE)
+                }}>
+                    <SelectTrigger className="w-fit border-0 outline-0 focus:outline-none text-[#7f878c]">
+                        <SelectValue placeholder="Type d'access"/>
+                    </SelectTrigger>
+                    <SelectContent className={"text-[#7f878c]"}>
+                        <SelectGroup>
+                            <SelectItem value="read">Lecture</SelectItem>
+                            <SelectItem value="write">Lecture + Ecriture</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>
+            </div>}
         </div>
     )
 }

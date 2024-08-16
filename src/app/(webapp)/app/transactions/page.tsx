@@ -15,6 +15,7 @@ import {
     SubTitle2,
     TitleItem
 } from "@/app/(protected)/dashboard/races/components/racesList/racesList";
+import {EmptyData} from "@/components/box/PageNetworkState";
 
 export default function TransactionPage() {
 
@@ -37,7 +38,7 @@ export default function TransactionPage() {
                         />
                     </div>
                     <div className={"mt-2"}>
-
+                        <EmptyData message={"Aucune transaction pour le moment."}/>
                     </div>
                 </div>
             </div>

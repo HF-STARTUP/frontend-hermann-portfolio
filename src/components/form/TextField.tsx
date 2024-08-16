@@ -56,9 +56,9 @@ const TextField: React.FC<TextFieldProps> = ({
                                                  inputType = 'text',
                                                  placeholder,
                                                  size,
+                                                 errors,
                                                  register,
                                                  onChange,
-                                                 errors,
                                                  disabled
                                              }) => {
 
@@ -259,6 +259,8 @@ export const SelectField: React.FC<TextFieldProps & SelectFieldProp & React.HTML
                                                                                                                       mode = 'default',
                                                                                                                       fit,
                                                                                                                       size,
+                                                                                                                      errors,
+                                                                                                                      register,
                                                                                                                       handleSelect,
                                                                                                                       ...props
                                                                                                                   }) => {
@@ -311,108 +313,28 @@ export const SelectField: React.FC<TextFieldProps & SelectFieldProp & React.HTML
         handleSelect && handleSelect(item.value);
     };
 
-    if (!isSearch) {
-        return (
-            <div className={`${isFited ? '' : 'w-full'}`}>
-                <div className={`flex-col justify-start items-start gap-2 inline-flex ${isFited ? '' : 'w-full'}`}>
-                    {label && <label
-                        className={`${isMd ? 'text-[14px] leading-[24.57px] tracking-[-2%]' : 'text-xs'} font-medium ${loading ? 'text-slate-400' : (isSm ? 'text-text-body' : 'text-admin-primary')}`}> {label}</label>}
-                    <select
-                        {...props}
-                        className={`border-text-body/20 border-opacity-60 bg-white m-0 block w-full ${isMd ? 'rounded-[10px]' : (isAdminCtx ? 'rounded-[14px]' : (isRounded ? `${isSm ? 'rounded-[10px]' : 'rounded-[200px]'}` : 'rounded-md'))} border border-solid border-text-body border-opacity-60 bg-transparent
-                bg-clip-padding text-base leading-tight text-neutral-700 transition duration-200
-                ease-linear placeholder:text-stone-300 focus:border-primary text-[10px] font-normal ${isSm ? 'px-[8px] h-[32px] text-text-body' : (isMd ? 'h-[45px] px-[20px] py-[10px] text-text-body' : 'h-[58px] px-[20px] py-[10px] text-stone-500')}
-                focus:text-neutral-700 focus:outline-none peer-focus:text-primary`}
-                        onChange={(v) => handleSelect && handleSelect(v.currentTarget.value)}
-                    >
-                        {loading && <option>Chargement...</option>}
-                        {!loading && items?.map((item, k) => (
-                            <option className={`text-base leading-tight text-neutral-700`} key={k}
-                                    value={item.value}>{item.label}</option>
-                        ))}
-                    </select>
-                </div>
-            </div>
-        )
-    }
+    const hasError = errors && register && errors[register.name];
 
     return (
         <div className="flex-col justify-start items-start gap-2 inline-flex w-full">
-            {label && <label
-                className={`${isMd ? 'text-[14px] leading-[24.57px] tracking-[-2%]' : 'text-xs'} font-medium ${loading ? 'text-slate-400' : (isSm ? 'text-text-body' : 'text-admin-primary')}`}> {label}</label>}
-            <Combobox value={selected} onChange={handleSelectItem}>
-                <div className={`relative ${isFited ? '' : 'w-full'}`}>
-                    <div className={`relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left 
-                        focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 
-                        focus-visible:ring-offset-teal-300 sm:text-sm`}>
-                        <Combobox.Input
-                            className={`bg-white m-0 block w-full ${isMd ? 'rounded-[10px]' : (isAdminCtx ? 'rounded-[14px]' : (isRounded ? `${isSm ? 'rounded-[10px]' : 'rounded-[200px]'}` : 'rounded-md'))} border border-solid border-text-body/20 border-opacity-60 bg-transparent
-                                bg-clip-padding text-base leading-tight text-neutral-700 transition duration-200
-                                ease-linear placeholder:text-stone-300 focus:border-primary text-[10px] font-normal ${isSm ? 'px-[8px] h-[32px] text-text-body' : (isMd ? 'h-[45px] px-[20px] py-[10px] text-text-body' : 'h-[58px] px-[20px] py-[10px] text-stone-500')}
-                                focus:text-neutral-700 focus:outline-none peer-focus:text-primary`}
-                            displayValue={(item: VSelectProp) => item.label}
-                            onChange={(event) => setQuery(event.target.value)}
-                        />
-                        <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
-                            <ChevronDownIcon
-                                className="h-5 w-5 text-gray-400"
-                                aria-hidden="true"
-                            />
-                        </Combobox.Button>
-                    </div>
-                    <Transition
-                        as={Fragment}
-                        leave="transition ease-in duration-100"
-                        leaveFrom="opacity-100"
-                        leaveTo="opacity-0"
-                        afterLeave={() => setQuery('')}
-                    >
-                        <Combobox.Options
-                            className="z-10 absolute mt-1 max-h-60 overflow-auto rounded-md bg-white py-1
-                            text-base shadow-lg ring-1 ring-black/5 focus:outline-none sm:text-sm w-full">
-                            {loading && <div>Chargement...</div>}
-                            {!loading && filteredItems && filteredItems.length === 0 && query !== '' ? (
-                                <div className="relative cursor-default select-none px-4 py-2 text-gray-700">
-                                    Nothing found.
-                                </div>
-                            ) : (
-                                filteredItems && filteredItems.map((item) => (
-                                    <Combobox.Option
-                                        key={item.value}
-                                        className={({active}) =>
-                                            `relative cursor-default select-none py-2 pl-10 pr-4 ${
-                                                active ? 'bg-blue-primary text-white' : 'text-gray-900'
-                                            }`
-                                        }
-                                        value={item}
-                                    >
-                                        {({selected, active}) => (
-                                            <>
-                        <span
-                            className={`block truncate ${
-                                selected ? 'font-medium' : 'font-normal'
-                            }`}
-                        >
-                          {item.label}
-                        </span>
-                                                {selected ? (
-                                                    <span
-                                                        className={`absolute inset-y-0 left-0 flex items-center pl-3 ${
-                                                            active ? 'text-white' : 'text-teal-600'
-                                                        }`}
-                                                    >
-                            <CheckIcon className="h-5 w-5" aria-hidden="true"/>
-                          </span>
-                                                ) : null}
-                                            </>
-                                        )}
-                                    </Combobox.Option>
-                                ))
-                            )}
-                        </Combobox.Options>
-                    </Transition>
-                </div>
-            </Combobox>
+            <label htmlFor=""
+                   className={"text-[14px] leading-[24.57px] tracking-[-2%] text-admin-primary"}>{label}</label>
+            <select
+                {...(register ? register : {})}
+                onChange={e => handleSelect && handleSelect(e.currentTarget.value)}
+                defaultValue={items?.length && items[0].value} className={cn(
+                `m-0 block 
+          h-[45px] px-[20px] py-[10px] text-text-body
+          w-full rounded-[10px] 
+          border-neutral-300 border border-solid border-opacity-60 bg-transparent
+          bg-clip-padding text-base leading-tight text-neutral-700 transition duration-200
+          ease-linear placeholder:text-stone-300 focus:border-primary text-[16px] font-normal
+          focus:text-neutral-700 focus:outline-none peer-focus:text-primary focus:outline-offset-1 focus:outline-2 focus:outline-blue-200`
+            )}>
+                {items?.map(i => (<option key={i.value} value={i.value}>{i.label}</option>))}
+            </select>
+            {hasError &&
+                <p className="text-red-500">{errors && register ? `${errors[register.name]?.message}` : ''}</p>}
         </div>
     )
 }
