@@ -16,7 +16,10 @@ export enum FleetApiPath {
     FleetDetails = "/dashboard/city/park/best-and-least-profitable",
     FleetVehiclesAndProfiles = "/dashboard/park/best-vehicle-and-profile",
     FleetStats = "/dashboard/city/details",
-    SpecificFleetStat = "/dashboard/park/details"
+    SpecificFleetStat = "/dashboard/park/details",
+    CourseEvolution = "/dashboard/park/course/evolution",
+    RevenusEvolution = "/dashboard/park/revenue/evolution",
+    EntretienEvolution = "/dashboard/park/entretien/evolution",
 }
 
 class FleetService extends Service {
@@ -133,7 +136,6 @@ class FleetService extends Service {
         )
     }
 
-
     public static async getSpecificFleetStat({fleetID}: { fleetID: string }): Promise<ParkStatResponseType> {
 
         const uri = FleetApiPath.SpecificFleetStat + "?park_id=" + fleetID
@@ -144,9 +146,47 @@ class FleetService extends Service {
             undefined,
             true
         )
-
     }
 
+    public static async getCourseEvolution({fleetID, graphType}: { fleetID: string, graphType: "month" | "year" }) {
+
+        const uri = FleetApiPath.CourseEvolution + "?park_id=" + fleetID + "&graph=" + graphType
+
+        return await FleetService.makeRequest(
+            uri,
+            'GET',
+            undefined,
+            true
+        )
+    }
+
+    public static async getEntretienEvolution({fleetID, graphType, date}: {
+        fleetID: string,
+        graphType: "month" | "year",
+        date: Date
+    }) {
+
+        const uri = FleetApiPath.EntretienEvolution + "?park_id=" + fleetID + "&graph=" + graphType + "&date=" + date
+
+        return await FleetService.makeRequest(
+            uri,
+            'GET',
+            undefined,
+            true
+        )
+    }
+
+    public static async getRevenusEvolution({fleetID, graphType}: { fleetID: string, graphType: "month" | "year" }) {
+
+        const uri = FleetApiPath.RevenusEvolution + "?park_id=" + fleetID + "&graph=" + graphType
+
+        return await FleetService.makeRequest(
+            uri,
+            'GET',
+            undefined,
+            true
+        )
+    }
 
     protected static async makeRequest<T>(url: string, method: 'GET' | 'POST' | 'PUT', body?: any, secure: boolean = true): Promise<T> {
         return this.getInstance().execHttpRequest<T>({url, method, body, secure});

@@ -12,6 +12,7 @@ import {
 import {cn} from "@/lib/utils";
 import {ArrowDropDownIcon} from "@/components/ui/__icons";
 import React from "react";
+import {useGetCourseEvolution, useGetEntretienEvolution, useGetRevenusEvolution} from "@/hooks/admin/useFleetHook";
 
 export const AbonnEvolution = () => {
 
@@ -50,6 +51,8 @@ export const AbonnEvolution = () => {
 
 export const CourseEvolution = () => {
 
+    const {data: courseEvolution, isLoading} = useGetCourseEvolution()
+
     return (
         <div className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[77px] rounded-[20px]"}>
             <div className={"flex items-center justify-between"}>
@@ -58,7 +61,7 @@ export const CourseEvolution = () => {
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <button className={cn(
-                                "text-gray-100 text-base font-medium leading-normal outline-none bottom-0 focus:border-0 focus:outline-none group",
+                                "text-gray-100 text-[12px] font-medium leading-normal outline-none bottom-0 focus:border-0 focus:outline-none group",
                                 "flex items-center gap-1",
                                 "bg-[#f4f7fe] px-3 py-2 rounded-[7px] text-center text-[#A3AED0] text-lg font-medium font-['DM Sans'] leading-normal"
                             )}>
@@ -85,6 +88,8 @@ export const CourseEvolution = () => {
 
 
 export const CashEvolution = () => {
+
+    const {} = useGetRevenusEvolution()
 
     return (
         <div className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[77px] rounded-[20px]"}>
@@ -120,6 +125,8 @@ export const CashEvolution = () => {
 }
 
 export const EntretienEvolution = () => {
+
+    const {} = useGetEntretienEvolution()
 
     return (
         <div className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[77px] rounded-[20px]"}>

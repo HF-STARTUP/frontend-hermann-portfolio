@@ -2,15 +2,12 @@ import {useQuery} from "@tanstack/react-query";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import FleetService, {FleetApiPath} from "@/services/admin/fleet/fleetService";
 import {useQueryProvider} from "@/hooks/hooksProvider";
-import SettingsService, {SettingsApiPath} from "@/services/admin/settings/settingsService";
 import {useGetParkID} from "@/hooks/__globlal/useGlobalHook";
 
 export const useGetFleetsList = () => {
 
     const enable_city_id = AuthManagerGuard.getEnabledCity
     const fleetType = AuthManagerGuard.getEnabledFleetType
-
-    //console.log(fleetType, "====")
 
     const {isLoading, data, isSuccess} = useQuery({
         queryKey: [FleetApiPath.GetFleetByCityID, enable_city_id, fleetType],
@@ -35,7 +32,7 @@ export const useGetFleetAdmin = () => {
         enabled: !!parkID
     })
 
-    return {isLoading, data};
+    return {isLoading, data}
 }
 
 export const useGetSubscriptionHistoryOnFleet = () => {
@@ -48,7 +45,7 @@ export const useGetSubscriptionHistoryOnFleet = () => {
         enabled: !!parkID
     });
 
-    return {isLoading, data};
+    return {isLoading, data}
 }
 
 export const useGetActiveSubscriptionOnFleet = () => {
@@ -61,7 +58,7 @@ export const useGetActiveSubscriptionOnFleet = () => {
         enabled: !!parkID
     });
 
-    return {isLoading, data};
+    return {isLoading, data}
 }
 
 export const useGetFleetDetails = () => {
@@ -74,7 +71,7 @@ export const useGetFleetDetails = () => {
         enabled: !!enable_city_id
     });
 
-    return {isLoading, data};
+    return {isLoading, data}
 }
 
 export const useGetFleetProfilesVehiclesDetails = () => {
@@ -87,7 +84,7 @@ export const useGetFleetProfilesVehiclesDetails = () => {
         enabled: !!parkID
     });
 
-    return {isLoading, data};
+    return {isLoading, data}
 }
 
 
@@ -101,7 +98,7 @@ export const useGetFleetStats = () => {
         enabled: !!cityID
     });
 
-    return {isLoading, data};
+    return {isLoading, data}
 }
 
 export const useGetSpecificFleetStats = () => {
@@ -114,6 +111,48 @@ export const useGetSpecificFleetStats = () => {
         enabled: !!parkID
     });
 
-    return {isLoading, data};
+    return {isLoading, data}
+}
+
+
+//Fleet Graph
+export const useGetCourseEvolution = () => {
+    const {parkID} = useGetParkID()
+
+    const {isLoading, data} = useQueryProvider({
+        queryKey: [FleetApiPath.CourseEvolution, parkID],
+        queryFn: () => FleetService.getCourseEvolution({fleetID: parkID as string, graphType: "month"}),
+        enabled: !!parkID
+    });
+
+    return {isLoading, data}
+}
+
+export const useGetRevenusEvolution = () => {
+    const {parkID} = useGetParkID()
+
+    const {isLoading, data} = useQueryProvider({
+        queryKey: [FleetApiPath.RevenusEvolution, parkID],
+        queryFn: () => FleetService.getRevenusEvolution({fleetID: parkID as string, graphType: "month"}),
+        enabled: !!parkID
+    });
+
+    return {isLoading, data}
+}
+
+export const useGetEntretienEvolution = () => {
+    const {parkID} = useGetParkID()
+
+    const {isLoading, data} = useQueryProvider({
+        queryKey: [FleetApiPath.EntretienEvolution, parkID],
+        queryFn: () => FleetService.getEntretienEvolution({
+            fleetID: parkID as string,
+            graphType: "month",
+            date: new Date()
+        }),
+        enabled: !!parkID
+    });
+
+    return {isLoading, data}
 }
 

@@ -6,12 +6,7 @@ import {
     CourseEvolution,
     EntretienEvolution
 } from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
-import {
-    useGetFleetDetails,
-    useGetFleetProfilesVehiclesDetails,
-    useGetFleetStats,
-    useGetSpecificFleetStats
-} from "@/hooks/admin/useFleetHook";
+import {useGetFleetDetails, useGetFleetStats} from "@/hooks/admin/useFleetHook";
 
 export default function DashboardPage() {
 
