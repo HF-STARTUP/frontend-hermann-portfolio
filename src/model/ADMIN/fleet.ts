@@ -47,11 +47,11 @@ export class FleetModel extends Model {
     }
 
     get start_date() {
-        return this.toDate(this._instance.end_date)
+        return this.formatDate(this._instance.end_date)
     }
 
     get end_date() {
-        return this.toDate(this._instance.end_date)
+        return this.formatDate(this._instance.end_date)
     }
 
     get ca_total() {
@@ -343,23 +343,22 @@ export class InfoModel {
 }
 
 
-
 export type ParkStatResponseType = {
-    vehicle:   Driver;
-    driver:    Driver;
+    vehicle: Driver;
+    driver: Driver;
     entretien: CaTotal;
-    course:    CaTotal;
-    ca_total:  CaTotal;
+    course: CaTotal;
+    ca_total: CaTotal;
 }
 
 export type CaTotal = {
-    total:            number;
-    indicateur:       string;
+    total: number;
+    indicateur: string;
     indicateur_value: number;
 }
 
 export type Driver = {
-    total:            number;
-    indicateur:       string;
+    total: number;
+    indicateur: string;
     indicateur_value: string;
 }

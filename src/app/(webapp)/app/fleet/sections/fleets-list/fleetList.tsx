@@ -25,7 +25,7 @@ export const FleetList = () => {
 
     if (data && data.length > 0) {
         return (
-            <div className={"overflow-x-scroll"}>
+            <div className={"custom-scrollbar overflow-y-scroll rounded-lg"}>
                 <FleetListAccount fleets={data}/>
             </div>
         )

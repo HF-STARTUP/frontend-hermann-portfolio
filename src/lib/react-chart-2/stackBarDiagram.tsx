@@ -8,7 +8,7 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
-import { Bar } from 'react-chartjs-2';
+import {Bar} from 'react-chartjs-2';
 
 
 ChartJS.register(
@@ -32,7 +32,7 @@ export const options = {
         },
         y: {
             stacked: true,
-            ticks:{
+            ticks: {
                 //display: false,
                 //beginAtZero: true,
             },
@@ -56,29 +56,11 @@ export const options = {
     },
 };
 
-const labels = ['01', '02', '03', '04', '05', '06'];
 
-export const data = {
-    labels,
-    datasets: [
-        {
-            label: 'Dataset 1',
-            data: [200, 300, 100, 50, 180, 40],
-            backgroundColor: '#FF716A',
-        },
-        {
-            label: 'Dataset 2',
-            data: [300, 120, 400, 50, 180, 50],
-            backgroundColor: '#BFC2F5',
-        },
-        {
-            label: 'Dataset 3',
-            data: [250, 150, 100, 50, 180, 200],
-            backgroundColor: '#FFDE6C',
-        },
-    ],
-};
-
-export default function StackBarChart() {
-    return <Bar options={options} data={data} className={"min-h-[300px]"} />
+export default function StackBarChart({idata, ilabels}: { idata: any[], ilabels: any[] }) {
+    const datas = {
+        labels: ilabels,
+        datasets: idata,
+    }
+    return <Bar options={options} data={datas} className={"min-h-[300px]"}/>
 }

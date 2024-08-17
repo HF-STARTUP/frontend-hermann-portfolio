@@ -107,5 +107,4 @@ html, body {
 .custom-scrollbar:hover {
     scrollbar-width: thin; /* Taille fine de la scrollbar */
     scrollbar-color: #e1dede transparent; /* Couleur du thumb et de la piste */
-    border-radius: 20px;
 }

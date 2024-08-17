@@ -40,7 +40,7 @@ export default function ADahboardPage() {
                     <ABlockTitle>Sélectionnez une flotte</ABlockTitle>
                     {/*<ABtnAction>Ajouter une flotte</ABtnAction>*/}
                 </div>
-                <UserAccountSection/>
+                {/*<UserAccountSection/>*/}
             </div>
 
             <div className={"mt-[32px]"}>

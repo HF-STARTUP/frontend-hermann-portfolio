@@ -84,7 +84,7 @@ export const Activities = () => {
                 {/*    fleetUser={"Flotte de Christian"}*/}
                 {/*    hour={"11:07"}*/}
                 {/*/>*/}
-                {!isLoading && <EmptyData message={"Aucun evenement pour  dans cette période."} className={"h-[300px]"}/>}
+                {!isLoading && <EmptyData message={"Aucun evenement dans cette période."} className={"h-[300px]"}/>}
                 {isLoading && (
                     <Loading className={"h-[300px]"}/>
                 )}

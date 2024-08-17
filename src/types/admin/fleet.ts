@@ -137,14 +137,32 @@ export type CaTotal = {
 }
 
 export type DashboardBestAndLeastProfilableResponseType = {
-    most_profitable:  StProfitable;
+    most_profitable: StProfitable;
     least_profitable: StProfitable;
 }
 
 export type StProfitable = {
-    id:            string;
-    name:          string;
-    ca_total:      number;
+    id: string;
+    name: string;
+    ca_total: number;
     total_vehicle: number;
-    flux:          number;
+    flux: number;
+}
+
+
+export type RevenusEvolution = {
+    item: string;
+    revenue: number;
+}
+
+
+export type CarburantEvolution = {
+    item: string;
+    data: Carburant;
+}
+
+export type Carburant = {
+    carburant: number;
+    breakdown: number;
+    change: number;
 }

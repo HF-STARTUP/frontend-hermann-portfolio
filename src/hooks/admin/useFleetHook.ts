@@ -64,10 +64,15 @@ export const useGetActiveSubscriptionOnFleet = () => {
 export const useGetFleetDetails = () => {
 
     const enable_city_id = AuthManagerGuard.getEnabledCity as string
+    const fleetType = AuthManagerGuard.getEnabledFleetType
+
 
     const {isLoading, data} = useQueryProvider({
-        queryKey: [FleetApiPath.FleetDetails, enable_city_id],
-        queryFn: () => FleetService.getFleetDetails({fleetID: enable_city_id}),
+        queryKey: [FleetApiPath.FleetDetails, enable_city_id, fleetType],
+        queryFn: () => FleetService.getFleetDetails({
+            fleetID: AuthManagerGuard.getEnabledCity as string,
+            fleetType: AuthManagerGuard.getEnabledFleetType as string
+        }),
         enabled: !!enable_city_id
     });
 
@@ -87,14 +92,17 @@ export const useGetFleetProfilesVehiclesDetails = () => {
     return {isLoading, data}
 }
 
-
 export const useGetFleetStats = () => {
 
     const cityID = AuthManagerGuard.getEnabledCity
+    const fleetType = AuthManagerGuard.getEnabledFleetType
 
     const {isLoading, data} = useQueryProvider({
-        queryKey: [FleetApiPath.FleetStats, cityID],
-        queryFn: () => FleetService.getFleetStats({fleetID: cityID as string}),
+        queryKey: [FleetApiPath.FleetStats, cityID, fleetType],
+        queryFn: () => FleetService.getFleetStats({
+            fleetID: AuthManagerGuard.getEnabledCity as string,
+            fleetType: AuthManagerGuard.getEnabledFleetType as string
+        }),
         enabled: !!cityID
     });
 
@@ -114,40 +122,39 @@ export const useGetSpecificFleetStats = () => {
     return {isLoading, data}
 }
 
-
 //Fleet Graph
-export const useGetCourseEvolution = () => {
+export const useGetCourseEvolution = (graphType: string) => {
     const {parkID} = useGetParkID()
 
     const {isLoading, data} = useQueryProvider({
-        queryKey: [FleetApiPath.CourseEvolution, parkID],
-        queryFn: () => FleetService.getCourseEvolution({fleetID: parkID as string, graphType: "month"}),
+        queryKey: [FleetApiPath.CourseEvolution, parkID, graphType],
+        queryFn: () => FleetService.getCourseEvolution({fleetID: parkID as string, graphType: graphType}),
         enabled: !!parkID
     });
 
     return {isLoading, data}
 }
 
-export const useGetRevenusEvolution = () => {
+export const useGetRevenusEvolution = (graphType: string) => {
     const {parkID} = useGetParkID()
 
     const {isLoading, data} = useQueryProvider({
-        queryKey: [FleetApiPath.RevenusEvolution, parkID],
-        queryFn: () => FleetService.getRevenusEvolution({fleetID: parkID as string, graphType: "month"}),
+        queryKey: [FleetApiPath.RevenusEvolution, parkID, graphType],
+        queryFn: () => FleetService.getRevenusEvolution({fleetID: parkID as string, graphType: graphType}),
         enabled: !!parkID
     });
 
     return {isLoading, data}
 }
 
-export const useGetEntretienEvolution = () => {
+export const useGetEntretienEvolution = (graphType: string) => {
     const {parkID} = useGetParkID()
 
     const {isLoading, data} = useQueryProvider({
-        queryKey: [FleetApiPath.EntretienEvolution, parkID],
+        queryKey: [FleetApiPath.EntretienEvolution, parkID, graphType],
         queryFn: () => FleetService.getEntretienEvolution({
             fleetID: parkID as string,
-            graphType: "month",
+            graphType: graphType,
             date: new Date()
         }),
         enabled: !!parkID
@@ -156,6 +163,8 @@ export const useGetEntretienEvolution = () => {
     return {isLoading, data}
 }
 
+
+//Dashboard
 export const useGetParkStats = () => {
     const cityID = AuthManagerGuard.getEnabledCity
     const type = AuthManagerGuard.getEnabledFleetType as string
@@ -175,7 +184,10 @@ export const useGetBestAndLestOnCity = () => {
 
     const {isLoading, data} = useQueryProvider({
         queryKey: [FleetApiPath.BestAndLeastOnCity, cityID, type],
-        queryFn: () => FleetService.getBestAndLestOnCity({city_id: cityID as string, type: type}),
+        queryFn: () => FleetService.getBestAndLestOnCity({
+            city_id: AuthManagerGuard.getEnabledCity as string,
+            type: AuthManagerGuard.getEnabledFleetType as string
+        }),
         enabled: !!cityID
     })
 
@@ -193,6 +205,23 @@ export const useGetDashboardActivities = (start_date: Date, end_date: Date) => {
             type: AuthManagerGuard.getEnabledFleetType as string,
             start_date: start_date,
             end_date: end_date
+        }),
+        enabled: !!cityID
+    })
+
+    return {isLoading, data}
+}
+
+export const useGetDashboardSubscriptionEvolution = (graphType: string) => {
+    const cityID = AuthManagerGuard.getEnabledCity
+    const fleetType = AuthManagerGuard.getEnabledFleetType as string
+
+    const {isLoading, data} = useQueryProvider({
+        queryKey: [FleetApiPath.DashboardSubscriptionEvolution, cityID, fleetType, graphType],
+        queryFn: () => FleetService.getDashboardSubscriptionEvolution({
+            cityID: AuthManagerGuard.getEnabledCity as string,
+            type: AuthManagerGuard.getEnabledFleetType as string,
+            graphType: graphType
         }),
         enabled: !!cityID
     })

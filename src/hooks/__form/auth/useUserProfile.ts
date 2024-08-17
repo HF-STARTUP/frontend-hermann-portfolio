@@ -16,7 +16,7 @@ export function useUserProfile() {
     React.useEffect(() => {
         if (data && !error) {
             setUser(data)
-            AuthManagerGuard.setEnabledCityID(data.defaultPark.id)
+            if (!AuthManagerGuard.getEnabledCity) AuthManagerGuard.setEnabledCityID(data.defaultPark.id)
             AuthManagerGuard.setEnabledFleetType("particulier")
         }
     }, [data, isLoading])

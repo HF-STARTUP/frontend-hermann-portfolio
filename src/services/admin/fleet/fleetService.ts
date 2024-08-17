@@ -1,9 +1,9 @@
 import Service from "@/services/Service";
 import {
     AdminOnFleetResponseType,
-    BestDiverAndVehicleResponseType, DashboardBestAndLeastProfilableResponseType,
+    BestDiverAndVehicleResponseType, CarburantEvolution, DashboardBestAndLeastProfilableResponseType,
     FleetListResponseType,
-    FleetResponseType, ParkDetailsResponseType
+    FleetResponseType, ParkDetailsResponseType, RevenusEvolution
 } from "@/types/admin/fleet";
 import {AbonResponseModel, AdminOnFleetModel, FleetModel, ParkStatResponseType} from "@/model/ADMIN/fleet";
 import {ResponseWithPagination} from "@/types/generic";
@@ -23,7 +23,8 @@ export enum FleetApiPath {
     RevenusEvolution = "/dashboard/park/revenue/evolution",
     EntretienEvolution = "/dashboard/park/entretien/evolution",
     BestAndLeastOnCity = "/dashboard/city/park/best-and-least-profitable",
-    DashboardActivities = "/dashboard/city/activity"
+    DashboardActivities = "/dashboard/city/activity",
+    DashboardSubscriptionEvolution = "/dashboard/city/subscription/evolution",
 }
 
 class FleetService extends Service {
@@ -98,9 +99,12 @@ class FleetService extends Service {
         return new AbonResponseModel(abonn)
     }
 
-    public static async getFleetDetails({fleetID}: { fleetID: string }): Promise<AdminOnFleetModel[]> {
+    public static async getFleetDetails({fleetID, fleetType}: {
+        fleetID: string,
+        fleetType: string
+    }): Promise<AdminOnFleetModel[]> {
 
-        const uri = FleetApiPath.FleetDetails + "?city_id=" + fleetID + "&type=particulier"
+        const uri = FleetApiPath.FleetDetails + "?city_id=" + fleetID + `&type=${fleetType}`
 
         const data = await FleetService.makeRequest<AdminOnFleetResponseType[]>(
             uri,
@@ -112,9 +116,12 @@ class FleetService extends Service {
         return AdminOnFleetModel.fromArray(data)
     }
 
-    public static async getFleetStats({fleetID}: { fleetID: string }): Promise<AdminOnFleetModel[]> {
+    public static async getFleetStats({fleetID, fleetType}: {
+        fleetID: string,
+        fleetType: string
+    }): Promise<AdminOnFleetModel[]> {
 
-        const uri = FleetApiPath.FleetStats + "?city_id=" + fleetID + "&type=particulier"
+        const uri = FleetApiPath.FleetStats + "?city_id=" + fleetID + `&type=${fleetType}`
 
         const data = await FleetService.makeRequest<AdminOnFleetResponseType[]>(
             uri,
@@ -166,11 +173,14 @@ class FleetService extends Service {
         )
     }
 
-    public static async getCourseEvolution({fleetID, graphType}: { fleetID: string, graphType: "month" | "year" }) {
+    public static async getCourseEvolution({fleetID, graphType}: {
+        fleetID: string,
+        graphType: string
+    }): Promise<RevenusEvolution[]> {
 
         const uri = FleetApiPath.CourseEvolution + "?park_id=" + fleetID + "&graph=" + graphType
 
-        return await FleetService.makeRequest(
+        return await FleetService.makeRequest<RevenusEvolution[]>(
             uri,
             'GET',
             undefined,
@@ -180,13 +190,13 @@ class FleetService extends Service {
 
     public static async getEntretienEvolution({fleetID, graphType, date}: {
         fleetID: string,
-        graphType: "month" | "year",
+        graphType: string,
         date: Date
-    }) {
+    }): Promise<CarburantEvolution[]> {
 
         const uri = FleetApiPath.EntretienEvolution + "?park_id=" + fleetID + "&graph=" + graphType + "&date=" + date
 
-        return await FleetService.makeRequest(
+        return await FleetService.makeRequest<CarburantEvolution[]>(
             uri,
             'GET',
             undefined,
@@ -194,11 +204,14 @@ class FleetService extends Service {
         )
     }
 
-    public static async getRevenusEvolution({fleetID, graphType}: { fleetID: string, graphType: "month" | "year" }) {
+    public static async getRevenusEvolution({fleetID, graphType}: {
+        fleetID: string,
+        graphType: string
+    }): Promise<RevenusEvolution[]> {
 
         const uri = FleetApiPath.RevenusEvolution + "?park_id=" + fleetID + "&graph=" + graphType
 
-        return await FleetService.makeRequest(
+        return await FleetService.makeRequest<RevenusEvolution[]>(
             uri,
             'GET',
             undefined,
@@ -245,6 +258,23 @@ class FleetService extends Service {
             true
         )
     }
+
+    public static async getDashboardSubscriptionEvolution({cityID, graphType, type}: {
+        cityID: string,
+        graphType: string,
+        type: string
+    }): Promise<RevenusEvolution[]> {
+
+        const uri = FleetApiPath.DashboardSubscriptionEvolution + "?city_id=" + cityID + "&graph=" + graphType + "&type=" + type
+
+        return await FleetService.makeRequest<RevenusEvolution[]>(
+            uri,
+            'GET',
+            undefined,
+            true
+        )
+    }
+
 
     protected static async makeRequest<T>(url: string, method: 'GET' | 'POST' | 'PUT', body?: any, secure: boolean = true): Promise<T> {
         return this.getInstance().execHttpRequest<T>({url, method, body, secure});

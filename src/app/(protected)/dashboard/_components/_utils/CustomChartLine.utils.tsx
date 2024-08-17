@@ -205,7 +205,7 @@ export const CustomChartLineUtils2:React.FC<{isWeekly?: boolean}> = ({isWeekly =
 }
 
 
-export const CustomChartLineUtils3:React.FC<{isWeekly?: boolean}> = ({isWeekly = false})=> {
+export const CustomChartLineUtils3:React.FC<{isWeekly?: boolean, idata: number[], ilabels: string[]}> = ({isWeekly = false, idata, ilabels})=> {
 
     const datasetConfBase = {
         backgroundColor: 'white',
@@ -219,10 +219,10 @@ export const CustomChartLineUtils3:React.FC<{isWeekly?: boolean}> = ({isWeekly =
     }
 
     const driverData = {
-        labels: ['JAN', 'FEV', 'MAR', 'AVR', 'MAI', 'JUI', "JUL", "AOUT", "SEPT", "OCT", "NOV", "DEC"],
+        labels: ilabels,
         datasets: [
             {
-                data: [0,0,0,0,0,0],
+                data: idata,
                 borderColor: "#FFC700",
                 ...datasetConfBase
             }
@@ -230,7 +230,7 @@ export const CustomChartLineUtils3:React.FC<{isWeekly?: boolean}> = ({isWeekly =
     }
 
     const driverDataWeekly = {
-        labels: ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Semadi', 'Dimanche'],
+        labels: ilabels,
         datasets: [
             {
                 data: [getRandomNumber(), getRandomNumber(), getRandomNumber(), getRandomNumber(), getRandomNumber(), getRandomNumber(), getRandomNumber(), getRandomNumber()],
