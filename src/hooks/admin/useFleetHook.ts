@@ -171,8 +171,11 @@ export const useGetParkStats = () => {
 
     const {isLoading, data} = useQueryProvider({
         queryKey: [FleetApiPath.ParkStats, cityID],
-        queryFn: () => FleetService.getParkStats({cityID: cityID as string, type: type}),
-        enabled: !!cityID
+        queryFn: () => FleetService.getParkStats({
+            cityID: AuthManagerGuard.getEnabledCity as string,
+            type: AuthManagerGuard.getEnabledFleetType as string
+        }),
+        enabled: !!AuthManagerGuard.getEnabledCity
     });
 
     return {isLoading, data}

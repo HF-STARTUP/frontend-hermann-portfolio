@@ -93,6 +93,7 @@ export type AdminLoginResponseType = {
     status: AdminAccountStatus;
     refresh_token: string;
     id: string;
+    admin_on_city: AdminOnCity[]
 }
 
 export type AdminOnCity = {
