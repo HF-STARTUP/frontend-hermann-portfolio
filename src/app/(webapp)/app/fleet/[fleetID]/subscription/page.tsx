@@ -8,13 +8,13 @@ export default function ASubscriptionPage() {
     return (
         <div>
             <div className={"grid grid-cols-12 gap-[32px]"}>
-                <div className={"col-span-6"}>
+                <div className={"col-span-12 2xl:col-span-6"}>
                     <ActiveAbonnSection/>
                     <div className={"mt-[42px]"}>
                         <OtherPack/>
                     </div>
                 </div>
-                <div className={"col-span-6"}>
+                <div className={"col-span-12 2xl:col-span-6"}>
                     <AABonnHistory/>
                 </div>
             </div>

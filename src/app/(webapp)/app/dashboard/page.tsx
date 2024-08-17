@@ -19,10 +19,10 @@ export default function DahboardPage() {
             <PageTitle page_title={"Dashboard"}/>
             <HeadSection/>
             <div className={"mt-[24px] grid grid-cols-12 gap-[24px] gap-x-[30px]"}>
-                <div className={"col-span-5"}>
+                <div className={"col-span-12 2xl:col-span-5 "}>
                     <AbonnEvolution/>
                 </div>
-                <div className={"col-span-7"}>
+                <div className={"col-span-12 2xl:col-span-7"}>
                     <Activities/>
                 </div>
             </div>

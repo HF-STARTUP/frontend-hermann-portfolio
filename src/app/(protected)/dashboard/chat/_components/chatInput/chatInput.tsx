@@ -111,6 +111,9 @@ const InputActions = () => {
 
     const {onUploadFile, loading, data} = useUploadFile()
     const {sendTextMessage} = useChatSocket()
+    const {activeDiscussion} = usePrompStore()
+    const {handleSendMessage, loading: sendingMessage} = useSendMessageTicket()
+
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
@@ -147,6 +150,7 @@ const InputActions = () => {
             setMenuOpen(false)
             console.log("File uploaded")
             console.log(data)
+            if (activeDiscussion) handleSendMessage({description: `vtcImg${data.path}`, ticket_id: activeDiscussion.id})
             sendTextMessage(data.path, true)
         }
     }, [loading, data])

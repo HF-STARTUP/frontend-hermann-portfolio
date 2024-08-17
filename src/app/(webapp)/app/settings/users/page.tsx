@@ -2,14 +2,13 @@
 
 import React from "react";
 import {AdminSettingBox} from "@/components/box/Card";
-import {AdminPageSublink, AdminPageTitle} from "@/components/typo/typo";
-import {MoreVerIcon, TrashIcon} from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
+import {AdminPageTitle} from "@/components/typo/typo";
 import {cn} from "@/lib/utils";
-import {MoreHorizontal, MoreVertical} from "lucide-react";
+import {MoreVertical} from "lucide-react";
 import {
     DropdownMenu,
-    DropdownMenuContent, DropdownMenuItem,
-    DropdownMenuLabel,
+    DropdownMenuContent,
+    DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
@@ -17,6 +16,8 @@ import {AddAdminDialog} from "@/app/(webapp)/app/settings/profile/actions/addAdm
 import {useDeactivateOrActivateAdmin, useGetAdminList} from "@/hooks/admin/useSettingsHook";
 import UserProfile from "@/model/user/User";
 import Loading from "@/components/ui/Loader";
+import {AdminAccountStatus} from "@/types/__form/profile.type";
+import AuthManagerGuard from "@/guard/AuthManagerGuard";
 
 const UsersPage: React.FC = () => {
 
@@ -69,15 +70,22 @@ const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
     const {username, readRoles, writeRoles} = user
     const [isOpen, setIsOpen] = React.useState(false)
 
+    const isDeactivated = user._instance.status === AdminAccountStatus.Deactivated
+    const isLoggedAdmin = AuthManagerGuard.getProfileID === user.getID
+
     return (
         <div
-            className={"bg-[#eeeeff] transition hover:bg-[#e4e4ff] border p-[10px] rounded-xl flex flex-col gap-[10px]"}>
+            className={cn(
+                "bg-[#eeeeff] transition hover:bg-[#e4e4ff] border p-[10px] rounded-xl flex flex-col gap-[10px]",
+                isDeactivated && "bg-red-200 hover:bg-red-100"
+            )}>
             <div className={"flex justify-between items-center"}>
                 <div className={"flex gap-[9px] items-center"}>
                     <div className="text-black text-xl font-medium leading-[30.12px]">{username}</div>
                     <div className={"text-black text-sm font-medium leading-[21.08px] flex gap-[9px] items-center"}>
                         <div className="">{user._instance.user.email}</div>
                         <div>{user._instance.user.phone}</div>
+                        {isDeactivated && <div className={"text-red-800"}>Désactivé</div>}
                     </div>
                 </div>
                 <div>
@@ -93,14 +101,14 @@ const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
                                 onClick={() => setIsOpen(true)}
                             >Modifier l’administrateur</DropdownMenuItem>
                             <DropdownMenuSeparator/>
-                            <DropdownMenuItem
+                            {!isLoggedAdmin && <DropdownMenuItem
                                 onClick={() => {
                                     onToggleStatus(user.getID)
                                 }}
                                 className={"text-[#E51D13] hover:text-[#E51D13]"}
                             >
-                                Désactiver l’administrateur
-                            </DropdownMenuItem>
+                                {isDeactivated ? "Activer l'admin" : "Désactiver l’administrateur"}
+                            </DropdownMenuItem>}
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>

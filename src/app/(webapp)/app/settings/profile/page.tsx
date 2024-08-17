@@ -25,10 +25,10 @@ import Loading from "@/components/ui/Loader";
 const ProfilePage: React.FC = () => {
     return (
         <div className={`grid grid-cols-12`}>
-            <div className={`col-span-8 border-r border-r-[#89acff]`}>
+            <div className={`col-span-12 2xl:col-span-8 border-r border-r-[#89acff]`}>
                 <PersonalInfosForm/>
             </div>
-            <div className={"col-span-4"}>
+            <div className={"col-span-12 2xl:col-span-4"}>
                 <UpdatePasswordForm/>
             </div>
         </div>

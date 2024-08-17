@@ -29,11 +29,11 @@ export const Sidebar = () => {
                 to={"/app/fleet"}
 
             />
-            <SidebarItem
-                label={"Géolocalisation"}
-                icon={<GeolocationIcon/>}
-                to={"/app/geolocalisation"}
-            />
+            {/*<SidebarItem*/}
+            {/*    label={"Géolocalisation"}*/}
+            {/*    icon={<GeolocationIcon/>}*/}
+            {/*    to={"/app/geolocalisation"}*/}
+            {/*/>*/}
             <SidebarItem
                 label={"Transactions bancaires"}
                 icon={<CreditCardIcon/>}

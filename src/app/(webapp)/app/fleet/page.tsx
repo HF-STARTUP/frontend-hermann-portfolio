@@ -31,7 +31,6 @@ export default function ADahboardPage() {
                         AuthManagerGuard.setEnabledFleetType(new_value)
                         console.log(AuthManagerGuard.getEnabledFleetType, ": New value setted")
                         await FleetService.invalidFleets()
-
                     }}
                 />
             </div>

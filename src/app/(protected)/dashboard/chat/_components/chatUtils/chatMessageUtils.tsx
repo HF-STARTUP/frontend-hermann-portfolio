@@ -62,7 +62,7 @@ export const ChatMdgContent: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                         className="text-right text-black text-base font-normal font-vInter mt-1">{message.createdAt}</div>
                 </div>}
                 {message.isImage && <Image
-                    src={message.description}
+                    src={message.getImage}
                     alt={""}
                     width={321}
                     height={214}

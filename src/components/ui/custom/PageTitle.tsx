@@ -2,7 +2,7 @@
 
 import {ChevronBackIcon} from "@/components/ui/__icons";
 import React from "react";
-import {useRouter} from "next/navigation";
+import {usePathname, useRouter} from "next/navigation";
 import {
     Select,
     SelectContent,
@@ -12,6 +12,8 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select";
+import {useGetFleetsList} from "@/hooks/admin/useFleetHook";
+import {useGetParkID} from "@/hooks/__globlal/useGlobalHook";
 
 type SelectType = { key: string; value: string }
 
@@ -28,7 +30,23 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     onValueChange?: (selectedValue: string) => void,
 }> = ({page_title, isSecondFleet, items = defaultSelect, onValueChange, withSelect = true}) => {
 
+    const {parkID} = useGetParkID()
+
+    const [activeFleet, setActiveFleet] = React.useState(parkID)
     const $router = useRouter();
+    const {data, isLoading} = useGetFleetsList()
+    const pathname = usePathname()
+
+
+    React.useEffect(() => {
+        if (activeFleet) {
+
+            const splitedPages = pathname.split("/")
+            const lastPage = splitedPages[splitedPages.length - 1]
+            $router.push(`/app/fleet/${activeFleet}/${lastPage}`)
+        }
+    }, [activeFleet])
+
 
     return (
         <div className={"flex items-center gap-[16px] mb-[26px]"}>
@@ -39,6 +57,25 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                 </button>}
                 <div>{page_title}</div>
             </div>
+            {isSecondFleet && <div>
+                {data && <Select defaultValue={activeFleet} onValueChange={v => setActiveFleet(v)}>
+                    <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Selectionner"/>
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectLabel>Flotte active</SelectLabel>
+                            {
+                                data.map((item, index) => (
+                                    <SelectItem key={item.id}
+                                                value={item.id}>{item.name}</SelectItem>
+                                ))
+                            }
+                        </SelectGroup>
+                    </SelectContent>
+                </Select>}
+            </div>
+            }
             {withSelect &&
                 <Select onValueChange={onValueChange} defaultValue={items[0]?.key ?? undefined}>
                     <SelectTrigger className="w-[180px]">

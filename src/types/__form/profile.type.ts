@@ -73,6 +73,10 @@ export type PermissionType = {
     permission_id: string;
 }
 
+export enum AdminAccountStatus {
+    Deactivated = "deactivated",
+    Inactive = "inactive"
+}
 
 export type AdminProfileResponseType = {
     id: string;
@@ -80,11 +84,13 @@ export type AdminProfileResponseType = {
     last_name: string;
     user: User;
     created_at: Date;
-    admin_on_city: AdminOnCity[];
+    status: AdminAccountStatus
+    admin_on_city: AdminOnCity[]
 }
 
 export type AdminLoginResponseType = {
     token: string;
+    status: AdminAccountStatus;
     refresh_token: string;
     id: string;
 }

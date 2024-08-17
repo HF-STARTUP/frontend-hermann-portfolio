@@ -3,7 +3,6 @@
 import React, {useEffect} from "react";
 import {cn} from "@/lib/utils";
 import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
 import {useRouter} from "next/navigation";
 import {useLogin} from "@/hooks/__form/auth/useLogin";
 import {SubmitHandler, useForm} from "react-hook-form";
@@ -13,6 +12,7 @@ import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import notify from "@/utils/func/notification";
 import AppLogo from "@/components/app/AppLogo";
 import BtnBase from "@/components/elements/BtnBase";
+import {AdminAccountStatus} from "@/types/__form/profile.type";
 
 
 export default function LoginPage() {
@@ -47,6 +47,12 @@ export default function LoginPage() {
     useEffect(() => {
         if (!$login.isError && $login.isSuccess && $login.data) {
             const loginData = $login.data
+            const isDeactivated = loginData.status === AdminAccountStatus.Deactivated
+
+            if (isDeactivated) {
+                $router.push(`/redirect/unauthorized`)
+                return
+            }
 
             notify('Connexion ruusis !', 'success');
             console.log($login.data)

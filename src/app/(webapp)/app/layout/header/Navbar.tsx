@@ -27,6 +27,7 @@ import {
 import * as React from "react";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import {queryClient} from "@/app/_utils/network/reactQuery";
+import {useParams, useRouter} from "next/navigation";
 
 export const Navbar = () => {
     return (
@@ -45,7 +46,8 @@ export const Navbar = () => {
 const UserOption: React.FC = () => {
 
     const {data, isLoading} = useUserProfile()
-
+    const $router = useRouter()
+    const $params = useParams()
 
     if (isLoading) {
 
@@ -63,12 +65,15 @@ const UserOption: React.FC = () => {
                     <Select onValueChange={(new_city_id) => {
                         AuthManagerGuard.setEnabledCityID(+new_city_id)
                         queryClient.invalidateQueries().then((() => {
-                            //
                         }))
+                        if ($params.hasOwnProperty("fleetID")) {
+                            $router.push("/app/fleet")
+                        }
                     }}
-                            defaultValue={AuthManagerGuard.getEnabledCity}
+                            defaultValue={AuthManagerGuard.getEnabledCity ?? String(data.listPark[0].id)}
                     >
-                        <SelectTrigger className="w-fit bg-transparent border-transparent text-[#f2f2f2] text-base font-medium">
+                        <SelectTrigger
+                            className="w-fit bg-transparent border-transparent text-[#f2f2f2] text-base font-medium">
                             <SelectValue placeholder="Selectionner"/>
                         </SelectTrigger>
                         <SelectContent>

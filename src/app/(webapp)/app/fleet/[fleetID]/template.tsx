@@ -23,15 +23,15 @@ const Template: React.FC<{ children: React.ReactNode }> = ({children}) => {
                         label: "Particuliers /",
                         url: "/fleet",
                     },
-                    {
-                        label: "Flotte de Christian",
-                        url: "/fleet",
-                    },
+                    // {
+                    //     label: "Flotte de Christian",
+                    //     url: "/fleet",
+                    // },
 
                 ]}
             />
             <div className={"flex items-center justify-between"}>
-                <PageTitle isSecondFleet={true} page_title={"Flottes"}/>
+                <PageTitle withSelect={false} isSecondFleet={true} page_title={"Flottes"}/>
                 {activeSubscription && <div className={"p-[11px] bg-white flex items-center gap-[13px]"}>
                     <AbonnTag label={activeSubscription.subscription.subscriptionType}/>
                     <div className="text-center text-[#506d82] text-sm font-normal tracking-tight">

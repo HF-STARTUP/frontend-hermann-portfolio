@@ -17,13 +17,13 @@ export default function DashboardPage() {
         <div>
             <StatCards/>
             <div className={"mt-[24px] grid grid-cols-12 gap-[24px]"}>
-                <div className={"col-span-4"}>
+                <div className={"col-span-6 2xl:col-span-4"}>
                     <CourseEvolution/>
                 </div>
-                <div className={"col-span-4"}>
+                <div className={"col-span-6 2xl:col-span-4"}>
                     <CashEvolution/>
                 </div>
-                <div className={"col-span-4"}>
+                <div className={"col-span-12 2xl:col-span-4"}>
                     <EntretienEvolution/>
                 </div>
             </div>

@@ -57,7 +57,7 @@ export const HeadSection = () => {
     if (data) {
         return (
             <div className={"grid grid-cols-12 gap-[24px]"}>
-                <div className={"col-span-8"}>
+                <div className={"col-span-12 2xl:col-span-8"}>
                     <div className={"flex items-center gap-[24px]"}>
 
                         <ActionCard
@@ -137,7 +137,7 @@ export const HeadSection = () => {
 
                     </div>
                 </div>
-                <div className={"col-span-4"}>
+                <div className={"col-span-12 2xl:col-span-4"}>
                     <div className={"grid grid-cols-12"}>
                         <div className={"col-span-12"}>
                             {activeProfilable && <div className={"h-full bg-white rounded-3xl p-[20px]"}>

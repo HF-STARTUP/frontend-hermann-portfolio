@@ -7,7 +7,7 @@ import {cn} from "@/lib/utils";
 
 export const PageNavigation = () => {
 
-    const params = useParams() as {fleetID: string}
+    const params = useParams() as { fleetID: string }
 
     const parkID = params.fleetID
 
@@ -55,7 +55,7 @@ export const PageNavigation = () => {
 
 
     return (
-        <div className={"flex items-center"}>
+        <div className={"flex items-center overflow-x-scroll custom-scrollbar"}>
             {links.map(({label, last, url}, index) => (
                 <PageLink
                     key={index}

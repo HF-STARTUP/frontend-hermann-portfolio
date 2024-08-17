@@ -23,7 +23,7 @@ export const StatCards = () => {
 
     return (
         <div className={"grid grid-cols-12 gap-[24px]"}>
-            <div className={"col-span-8"}>
+            <div className={"col-span-12 2xl:col-span-8"}>
                 {data && (
                     <div className={"flex items-center gap-[24px]"}>
 
@@ -106,7 +106,7 @@ export const StatCards = () => {
                 )
                 }
             </div>
-            {<div className={"col-span-4"}>
+            {<div className={"col-span-12 2xl:col-span-4"}>
                 <div className={"grid grid-cols-12 gap-[24px] h-full"}>
                     <div className={"col-span-6 h-full"}>
                         <StatCardLarge

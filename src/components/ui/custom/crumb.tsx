@@ -2,6 +2,7 @@
 
 import React from "react";
 import {cn} from "@/lib/utils";
+import Link from "next/link";
 
 type CrumbType = { label: string, url: string }
 
@@ -13,7 +14,7 @@ export const Crumb: React.FC<React.HTMLAttributes<HTMLDivElement> & { items: Cru
 
     const crumbItemsDefault: CrumbType = {
         label: "Admin VTCControl /",
-        url: "/"
+        url: "dashboard"
     }
 
     return (
@@ -25,7 +26,9 @@ export const Crumb: React.FC<React.HTMLAttributes<HTMLDivElement> & { items: Cru
         >
             {
                 [crumbItemsDefault, ...items].map((item, index) => (
-                    <div key={index}>{item.label}</div>
+                    <Link href={`/app/${item.url}`} key={index}>
+                        <div>{item.label}</div>
+                    </Link>
                 ))
             }
         </div>
