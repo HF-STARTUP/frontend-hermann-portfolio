@@ -1,3 +1,5 @@
+"use client"
+
 import React from "react";
 import FormGroup from "@/components/box/FormGroup";
 import TextField from "@/components/form/TextField";

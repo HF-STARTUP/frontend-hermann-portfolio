@@ -45,6 +45,11 @@ const nextConfig = {
                 destination: '/app/settings/profile',
                 permanent: true,
             },
+            {
+                source: '/app',
+                destination: '/app/dashboard',
+                permanent: true,
+            },
         ]
     }
 }

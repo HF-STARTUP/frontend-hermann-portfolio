@@ -10,6 +10,8 @@ const TOKEN_KEYS = {
     enabled_fleet_type: 'enabled_fleet_type',
 }
 
+const COOKIES_CONFIG = {}
+
 class AuthManagerGuard {
 
     private static instance: AuthManagerGuard
@@ -25,8 +27,8 @@ class AuthManagerGuard {
     }
 
     static loginToApp(token: string, refreshToken: string, profile_id?: string, park_id?: string) {
-        Cookies.set(TOKEN_KEYS.token, token)
-        Cookies.set(TOKEN_KEYS.refresh_token, refreshToken)
+        Cookies.set(TOKEN_KEYS.token, token, COOKIES_CONFIG)
+        Cookies.set(TOKEN_KEYS.refresh_token, refreshToken, COOKIES_CONFIG)
         profile_id && AuthManagerGuard.setProfileID(profile_id)
         park_id && AuthManagerGuard.setParkID(park_id)
     }
@@ -37,7 +39,7 @@ class AuthManagerGuard {
         } catch (err) {
         }
 
-        Cookies.set(TOKEN_KEYS.profile_id, profile_id)
+        Cookies.set(TOKEN_KEYS.profile_id, profile_id, {})
     }
 
     static setParkID(park_id: string) {
@@ -114,9 +116,9 @@ class AuthManagerGuard {
         }
     }
 
-    static isLoggedIn() {
+    static isLoggedIn(token: string = AuthManagerGuard.getToken as string) {
 
-        const token = AuthManagerGuard.getToken
+        console.log(token)
 
         if (!token) {
             return false;
