@@ -156,3 +156,46 @@ export const useGetEntretienEvolution = () => {
     return {isLoading, data}
 }
 
+export const useGetParkStats = () => {
+    const cityID = AuthManagerGuard.getEnabledCity
+    const type = AuthManagerGuard.getEnabledFleetType as string
+
+    const {isLoading, data} = useQueryProvider({
+        queryKey: [FleetApiPath.ParkStats, cityID],
+        queryFn: () => FleetService.getParkStats({cityID: cityID as string, type: type}),
+        enabled: !!cityID
+    });
+
+    return {isLoading, data}
+}
+
+export const useGetBestAndLestOnCity = () => {
+    const cityID = AuthManagerGuard.getEnabledCity
+    const type = AuthManagerGuard.getEnabledFleetType as string
+
+    const {isLoading, data} = useQueryProvider({
+        queryKey: [FleetApiPath.BestAndLeastOnCity, cityID, type],
+        queryFn: () => FleetService.getBestAndLestOnCity({city_id: cityID as string, type: type}),
+        enabled: !!cityID
+    })
+
+    return {isLoading, data}
+}
+
+export const useGetDashboardActivities = (start_date: Date, end_date: Date) => {
+    const cityID = AuthManagerGuard.getEnabledCity as string
+    const type = AuthManagerGuard.getEnabledFleetType as string
+
+    const {isLoading, data} = useQueryProvider({
+        queryKey: [FleetApiPath.DashboardActivities, cityID, type, start_date, end_date],
+        queryFn: () => FleetService.getDashboardActivities({
+            city_id: AuthManagerGuard.getEnabledCity as string,
+            type: AuthManagerGuard.getEnabledFleetType as string,
+            start_date: start_date,
+            end_date: end_date
+        }),
+        enabled: !!cityID
+    })
+
+    return {isLoading, data}
+}

@@ -71,5 +71,41 @@
 
 html, body {
     background: #f8f8f8;
-    font-family: 'Inter', 'DM Sans' , sans-serif;
+    font-family: 'Inter', 'DM Sans', sans-serif;
+}
+
+.custom-scrollbar {
+}
+
+/* Personnaliser la scrollbar uniquement pour .custom-scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 12px; /* Largeur de la scrollbar */
+    height: 12px; /* Hauteur de la scrollbar horizontale */
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f0f0f0; /* Couleur de la piste de la scrollbar */
+    border-radius: 10px; /* Coins arrondis de la piste */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #ede7e7; /* Couleur du thumb */
+    border-radius: 10px; /* Coins arrondis du thumb */
+    border: 12px solid #f0f0f0; /* Bordure autour du thumb pour créer un effet d'espace */
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background-color: transparent; /* Couleur du thumb lors du survol */
+}
+
+/* Pour Firefox */
+.custom-scrollbar {
+    scrollbar-width: thin; /* Taille fine de la scrollbar */
+    scrollbar-color: transparent transparent; /* Couleur du thumb et de la piste */
+}
+
+.custom-scrollbar:hover {
+    scrollbar-width: thin; /* Taille fine de la scrollbar */
+    scrollbar-color: #e1dede transparent; /* Couleur du thumb et de la piste */
+    border-radius: 20px;
 }

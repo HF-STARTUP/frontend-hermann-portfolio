@@ -121,3 +121,30 @@ export type Vehicle = {
     image: string;
 }
 
+
+export type ParkDetailsResponseType = {
+    flotte: CaTotal;
+    vehicle: CaTotal;
+    driver: CaTotal;
+    ca_total: CaTotal;
+    flux: CaTotal;
+}
+
+export type CaTotal = {
+    total: number;
+    indicateur: string;
+    indicateur_value: string;
+}
+
+export type DashboardBestAndLeastProfilableResponseType = {
+    most_profitable:  StProfitable;
+    least_profitable: StProfitable;
+}
+
+export type StProfitable = {
+    id:            string;
+    name:          string;
+    ca_total:      number;
+    total_vehicle: number;
+    flux:          number;
+}

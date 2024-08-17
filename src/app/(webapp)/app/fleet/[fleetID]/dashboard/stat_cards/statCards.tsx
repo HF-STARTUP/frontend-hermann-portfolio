@@ -181,7 +181,7 @@ const StatCardLarge: React.FC<React.HTMLAttributes<HTMLDivElement> & {
 }
 
 
-const resolveIndicator = (indicator: string): AverageType => {
+export const resolveIndicator = (indicator: string): AverageType => {
     if (indicator === "up") return AverageType.POSITIVE
     if (indicator === "down") return AverageType.NEGATIVE
     if (indicator === "neutral") return AverageType.NEUTRAL

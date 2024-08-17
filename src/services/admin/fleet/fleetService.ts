@@ -1,12 +1,13 @@
 import Service from "@/services/Service";
 import {
     AdminOnFleetResponseType,
-    BestDiverAndVehicleResponseType,
+    BestDiverAndVehicleResponseType, DashboardBestAndLeastProfilableResponseType,
     FleetListResponseType,
-    FleetResponseType
+    FleetResponseType, ParkDetailsResponseType
 } from "@/types/admin/fleet";
 import {AbonResponseModel, AdminOnFleetModel, FleetModel, ParkStatResponseType} from "@/model/ADMIN/fleet";
 import {ResponseWithPagination} from "@/types/generic";
+import {format, startOfDay, endOfDay} from "date-fns";
 
 export enum FleetApiPath {
     GetFleetByCityID = '/park/by',
@@ -16,10 +17,13 @@ export enum FleetApiPath {
     FleetDetails = "/dashboard/city/park/best-and-least-profitable",
     FleetVehiclesAndProfiles = "/dashboard/park/best-vehicle-and-profile",
     FleetStats = "/dashboard/city/details",
+    ParkStats = "/dashboard/city/details",
     SpecificFleetStat = "/dashboard/park/details",
     CourseEvolution = "/dashboard/park/course/evolution",
     RevenusEvolution = "/dashboard/park/revenue/evolution",
     EntretienEvolution = "/dashboard/park/entretien/evolution",
+    BestAndLeastOnCity = "/dashboard/city/park/best-and-least-profitable",
+    DashboardActivities = "/dashboard/city/activity"
 }
 
 class FleetService extends Service {
@@ -122,6 +126,20 @@ class FleetService extends Service {
         return AdminOnFleetModel.fromArray(data)
     }
 
+    public static async getParkStats({cityID, type}: {
+        cityID: string,
+        type: string
+    }): Promise<ParkDetailsResponseType> {
+        const uri = FleetApiPath.ParkStats + "?city_id=" + cityID + "&type=" + type
+        const data = await FleetService.makeRequest<ParkDetailsResponseType>(
+            uri,
+            'GET',
+            undefined,
+            true
+        )
+        return data
+    }
+
     public static async getFleetVehiclesAndProfilesDetails({fleetID}: {
         fleetID: string
     }): Promise<BestDiverAndVehicleResponseType> {
@@ -181,6 +199,46 @@ class FleetService extends Service {
         const uri = FleetApiPath.RevenusEvolution + "?park_id=" + fleetID + "&graph=" + graphType
 
         return await FleetService.makeRequest(
+            uri,
+            'GET',
+            undefined,
+            true
+        )
+    }
+
+    public static async getBestAndLestOnCity({city_id, type}: {
+        city_id: string,
+        type: string
+    }): Promise<DashboardBestAndLeastProfilableResponseType> {
+
+        const uri = FleetApiPath.BestAndLeastOnCity + "?city_id=" + city_id + "&type=" + type
+
+        return await FleetService.makeRequest<DashboardBestAndLeastProfilableResponseType>(
+            uri,
+            'GET',
+            undefined,
+            true
+        )
+    }
+
+    public static async getDashboardActivities({
+                                                   start_date,
+                                                   end_date,
+                                                   city_id,
+                                                   type
+                                               }: {
+        start_date: Date,
+        end_date: Date,
+        city_id: string,
+        type: string,
+    }): Promise<DashboardBestAndLeastProfilableResponseType> {
+
+        const formattedStartDate = format(startOfDay(new Date(start_date)), "yyyy-MM-dd'T'HH:mm:ss");
+        const formattedEndDate = format(endOfDay(new Date(end_date)), "yyyy-MM-dd'T'HH:mm:ss");
+
+        const uri = `${FleetApiPath.DashboardActivities}?start_date=${formattedStartDate}&end_date=${formattedEndDate}&city_id=${city_id}&type=${type}`;
+
+        return await FleetService.makeRequest<DashboardBestAndLeastProfilableResponseType>(
             uri,
             'GET',
             undefined,
