@@ -108,3 +108,38 @@ html, body {
     scrollbar-width: thin; /* Taille fine de la scrollbar */
     scrollbar-color: #e1dede transparent; /* Couleur du thumb et de la piste */
 }
+
+
+/* styles/nprogress.css */
+#nprogress {
+    pointer-events: none;
+}
+
+#nprogress .bar {
+    background: #dd8c22;
+
+    position: fixed;
+    z-index: 1031;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 2px;
+}
+
+#nprogress .peg {
+    display: block;
+    position: absolute;
+    right: 0px;
+    width: 100px;
+    height: 100%;
+    box-shadow: 0 0 10px #dd8c22, 0 0 5px #dd8c22;
+    opacity: 1.0;
+    -webkit-transform: rotate(3deg) translate(0px, -4px);
+    -ms-transform: rotate(3deg) translate(0px, -4px);
+    transform: rotate(3deg) translate(0px, -4px);
+}
+
+#nprogress .spinner {
+    display: none; /* Vous pouvez également activer un spinner */
+}

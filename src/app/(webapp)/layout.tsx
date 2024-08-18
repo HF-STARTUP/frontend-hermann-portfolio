@@ -4,6 +4,9 @@ import "../globals.css";
 import {Navbar} from "@/app/(webapp)/app/layout/header/Navbar";
 import {Sidebar} from "@/app/(webapp)/app/layout/sidebar/Sidebar";
 import GlobalLayoutProvider from "@/app/GlobalLayoutProvider";
+import 'nprogress/nprogress.css';
+import NavigationLoaderWrapper from "@/app/(webapp)/app/layout/ux/NavigationLoaderWrapper";
+
 
 const inter = Inter({subsets: ["latin"]});
 
@@ -24,6 +27,7 @@ export default function RootLayout({
             <div>
                 <Navbar/>
                 <Sidebar/>
+                <NavigationLoaderWrapper/>
                 <div className={"ml-[320px] pt-[110px] mr-[100px]"}>
                     <main>
                         {children}

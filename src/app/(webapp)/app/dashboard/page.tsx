@@ -1,8 +1,10 @@
+"use client"
 import {Crumb} from "@/components/ui/custom/crumb";
 import {PageTitle} from "@/components/ui/custom/PageTitle";
 import {HeadSection} from "@/app/(webapp)/app/dashboard/_components/head/headSection";
 import {Activities} from "@/app/(webapp)/app/dashboard/_components/activities/acctivities";
 import {AbonnEvolution} from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
+import React from "react";
 
 export default function DahboardPage() {
 

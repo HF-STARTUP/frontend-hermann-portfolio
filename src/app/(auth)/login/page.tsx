@@ -54,7 +54,7 @@ export default function LoginPage() {
                 return
             }
 
-            notify('Connexion ruusis !', 'success');
+            notify('Bienvenus sur VTC ADMIN!', 'success');
             console.log($login.data)
             if ($login.data.admin_on_city) AuthManagerGuard.setEnabledCityID($login.data.admin_on_city[0].id)
             AuthManagerGuard.loginToApp(loginData.token, loginData.refresh_token, loginData.id)
