@@ -16,7 +16,7 @@ export default function DashboardPage() {
     return (
         <div>
             <StatCards/>
-            <div className={"mt-[24px] grid grid-cols-12 gap-[24px]"}><
+            <div className={"mt-[24px] grid grid-cols-12 gap-[24px]"}>
                 <div className={"col-span-12 md:col-span-6 2xl:col-span-4"}>
                     <CashEvolution/>
                 </div>
