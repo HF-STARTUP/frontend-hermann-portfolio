@@ -16,7 +16,7 @@ import {SETTINGS_PAGE_NAVIGATION} from "@/utils/protectedNavigation";
 
 const SettingSidebar: React.FC = () => {
     return (
-        <div className={`w-[375px] bg-[#FAFBFF] px-[32px] py-[34px] `}>
+        <div className={`lg:w-[375px] bg-[#FAFBFF] lg:px-[32px] py-[34px] `}>
             <SettingSidebarItems/>
         </div>
     )
@@ -26,7 +26,7 @@ const SettingSidebar: React.FC = () => {
 const SettingSidebarItems: React.FC = () => {
 
     return (
-        <ul className={`flex flex-col gap-[33px] px`}>
+        <ul className={`flex flex-col gap-[33px]`}>
             {SETTINGS_PAGE_NAVIGATION.map(navItem => (
                 <li key={navItem.url}>
                     <SettingSidebarItem icon={navItem.icon}
@@ -61,11 +61,11 @@ const SettingSidebarItem: React.FC<{
         <div className={classes} {...props}>
             {to && <VLinkProvider to={to} className={classes}>
                 <div>{icon}</div>
-                <div>{children}</div>
+                <div className={"hidden lg:block"}>{children}</div>
             </VLinkProvider>}
             {!to && <button className={classes}>
                 <div>{icon}</div>
-                <div>{children}</div>
+                <div className={"hidden lg:block"}>{children}</div>
             </button>}
         </div>
     )

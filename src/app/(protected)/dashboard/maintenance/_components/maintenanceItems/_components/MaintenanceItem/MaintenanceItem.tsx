@@ -64,13 +64,15 @@ const MaintenanceItem: React.FC<{ entretien: Entretien }> = ({entretien}) => {
             <ItemContainer>
                 <div className={"flex items-start gap-[23px] group"}>
                     <div className={"size-[94px] rounded-[14.69px] overflow-hidden"}>
-                        <Image
-                            src={entretien.vehicle.getCover}
-                            alt={""}
-                            width={110}
-                            height={110}
-                            className={"h-[94px] w-[94px] object-cover group-hover:scale-105 transition"}
-                        />
+                        <div>
+                            <Image
+                                src={entretien.vehicle.getCover}
+                                alt={""}
+                                width={110}
+                                height={110}
+                                className={"h-[94px] w-[94px] object-cover group-hover:scale-105 transition"}
+                            />
+                        </div>
                     </div>
                     <div className={"flex flex-col gap-[6px]"}>
                         <TitleItem>{entretien.vehicle.getFullName} -{entretien.vehicle.getRegistration}</TitleItem>

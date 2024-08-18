@@ -30,14 +30,15 @@ const Template: React.FC<{ children: React.ReactNode }> = ({children}) => {
 
                 ]}
             />
-            <div className={"flex items-center justify-between"}>
+            <div className={"flex flex-col lg:flex-row items-start lg:items-center justify-between"}>
                 <PageTitle withSelect={false} isSecondFleet={true} page_title={"Flottes"}/>
-                {activeSubscription && <div className={"p-[11px] bg-white flex items-center gap-[13px]"}>
-                    <AbonnTag label={activeSubscription.subscription.subscriptionType}/>
-                    <div className="text-center text-[#506d82] text-sm font-normal tracking-tight">
-                        Expire le {activeSubscription.endDate}
-                    </div>
-                </div>}
+                {activeSubscription &&
+                    <div className={"p-[11px] w-full md:w-fit  bg-white flex items-center justify-between md:justify-start gap-[13px]"}>
+                        <AbonnTag label={activeSubscription.subscription.name}/>
+                        <div className="text-center text-[#506d82] text-sm font-normal tracking-tight">
+                            Expire le {activeSubscription.endDate}
+                        </div>
+                    </div>}
                 {isLoading &&
                     <div className={"h-[40px] w-[250px] rounded-md bg-slate-200 animate-pulse"}></div>
                 }

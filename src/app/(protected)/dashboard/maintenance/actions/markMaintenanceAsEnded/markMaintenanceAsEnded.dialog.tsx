@@ -146,7 +146,7 @@ export const CancelEntretienDialog: React.FC<React.HTMLAttributes<HTMLDivElement
                 <DialogContentText>
                     Etes vous sure de vouloir annuler cet entretien ?
                 </DialogContentText>
-                <DialogActions className={`mt-[50px]`}>
+                <DialogActions className={``}>
 
                     <BtnBase loading={loading} disabled={loading} onClick={(onCancelEntretien)} shape={'square'} to={''}
                              variant={'contained'} color={'red'}

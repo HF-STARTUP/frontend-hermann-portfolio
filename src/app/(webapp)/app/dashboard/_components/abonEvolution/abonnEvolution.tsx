@@ -52,7 +52,7 @@ export const AbonnEvolution = () => {
     };
 
     return (
-        <div className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[77px] rounded-[20px]"}>
+        <div className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[20px] lg:gap-[77px] rounded-[20px]"}>
             <div className={"flex items-center justify-between"}>
                 <ABlockTitle>Evolution abonnements</ABlockTitle>
                 {/*<div>*/}
@@ -91,7 +91,7 @@ export const CourseEvolution = () => {
     const {data: courseEvolution, isLoading} = useGetCourseEvolution(graphType)
 
     return (
-        <div className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[77px] rounded-[20px]"}>
+        <div className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px]  gap-[20px] lg:gap-[77px] rounded-[20px]"}>
             <div className={"flex items-center justify-between"}>
                 <ABlockTitle>Evolution courses</ABlockTitle>
                 <div>
@@ -130,7 +130,7 @@ export const CashEvolution = () => {
 
     return (
         <div
-            className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[77px] rounded-[20px]"}>
+            className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px]  gap-[20px] lg:gap-[77px] rounded-[20px]"}>
             <div className={"flex items-center justify-between"}>
                 <ABlockTitle>Evolution chiffre d’affaires</ABlockTitle>
                 <div>
@@ -166,7 +166,7 @@ export const EntretienEvolution = () => {
 
     let t: { t: string } = {t: ""}
     return (
-        <div className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[77px] rounded-[20px]"}>
+        <div className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px]  gap-[20px] lg:gap-[77px] rounded-[20px]"}>
             <div className={"flex items-center justify-between"}>
                 <ABlockTitle>Evolution entretiens</ABlockTitle>
                 <div>
@@ -213,6 +213,6 @@ export const EntretienEvolution = () => {
 export const ABlockTitle: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({children}) => {
 
     return (
-        <h4 className="text-black text-2xl font-semibold block">{children}</h4>
+        <h4 className="text-black text-lg lg:text-2xl font-semibold block">{children}</h4>
     )
 }

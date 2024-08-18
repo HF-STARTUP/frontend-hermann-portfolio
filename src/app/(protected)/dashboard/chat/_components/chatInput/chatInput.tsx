@@ -9,6 +9,7 @@ import Image from "next/image";
 import {useUploadFile} from "@/hooks/__globlal/useMedia";
 import {imageBaseUrl} from "@/model/Model";
 import {useSendMessageTicket} from "@/hooks/admin/useTicketHook";
+import {BiSend} from "react-icons/bi";
 
 
 export const ChatInputPrompt = () => {
@@ -77,7 +78,8 @@ const SendMessageBtn: React.FC<React.HTMLAttributes<HTMLButtonElement>> = ({chil
 
     return (
         <SendBtnCore onClick={onSendTextMessage}>
-            Envoyer
+            <span className={"hidden lg:block"}>Envoyer</span>
+            <BiSend className={"lg:hidden"} />
         </SendBtnCore>
     )
 }

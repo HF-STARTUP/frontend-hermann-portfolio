@@ -43,11 +43,11 @@ class Course extends Model {
     }
 
     get startAt() {
-        return this.toDate(this._instance.start_date)
+        return this.formatDate(this._instance.start_date)
     }
 
     get startHour() {
-        return this.toDate(this._instance.start_date, 'H : m')
+        return this.formatDate(this._instance.start_date, 'H : m')
     }
 
     get currentDriver() {

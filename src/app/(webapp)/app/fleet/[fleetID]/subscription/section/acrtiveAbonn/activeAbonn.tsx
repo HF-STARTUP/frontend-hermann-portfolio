@@ -24,7 +24,7 @@ export const ActiveAbonnSection = () => {
         return (
             <div className={"flex flex-col gap-[18px]  p-4 bg-white rounded-[20px]"}>
                 <ABlockTitle>Abonnement en cours</ABlockTitle>
-                <div className={"flex gap-[46px]"}>
+                <div className={"flex flex-col lg:flex-row gap-[46px]"}>
                     <AbonnTypeCard
                         title={abon.name}
                         subtitle={activeSubscription.abonResume}

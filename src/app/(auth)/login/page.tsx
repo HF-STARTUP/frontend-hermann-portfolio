@@ -74,7 +74,7 @@ export default function LoginPage() {
 
     return (
         <React.Suspense fallback={<LoadingLoader/>}>
-            <form className="w-[500px] m-auto mt-[100px]" onSubmit={handleSubmit(onSubmit)}>
+            <form className="sm:w-[500px] m-auto mt-[100px] px-[20px]" onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-[40px]">
                     <AppLogo/>
                 </div>
@@ -113,15 +113,17 @@ export default function LoginPage() {
                 </AuthFormContainer>
                 <div className={`mt-[24px] lg:mt-[36.2px]`}>
                     <BtnBase
-                        responsiveW={true}
+                        responsiveW={false}
                         fit={false}
                         fullwidth={true}
+                        size={"sm"}
                         to={''}
                         disabled={$login.isLoading || $login.isSuccess}
                         loading={$login.isLoading || $login.isSuccess}
                         color={'blue'} variant={'contained'}>
                         Se connecter
                     </BtnBase>
+                    <div className={"text-[10px] opacity-25 mt-[20px] text-center"}>VTC ADMIN V1.0.1</div>
                 </div>
             </form>
         </React.Suspense>

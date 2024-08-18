@@ -141,5 +141,5 @@ html, body {
 }
 
 #nprogress .spinner {
-    display: none; /* Vous pouvez également activer un spinner */
+    display: none;
 }

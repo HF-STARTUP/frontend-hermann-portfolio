@@ -28,9 +28,11 @@ export const AABonnHistory = () => {
     return (
         <div className={"flex flex-col gap-[18px]  p-4 bg-white rounded-[20px]"}>
             <div className={"mb-[23px]"}>
-                <ABlockTitle>Historique d’abonnementss</ABlockTitle>
+                <ABlockTitle>Historique d’abonnements</ABlockTitle>
             </div>
-            <TabsNav/>
+            <div className={"overflow-hidden"}>
+                <TabsNav/>
+            </div>
         </div>
     )
 }
@@ -128,15 +130,16 @@ const HistoryTable = () => {
 }
 
 export const AbonnTag: React.FC<{ label: string }> = ({label}) => {
-    const isAbon = label === "ESSENTIEL" || label === "PREMIUM" || label == "tryfree"
+    const isAbon = label === "ESSENTIEL" || label === "PREMIUM" || label == "Essaie gratuit"
     const isEssential = label === "ESSENTIEL"
-    const isPremium = label === "PREMIUM" || label == "tryfree"
+    const isPremium = label === "PREMIUM" || label == "Essaie gratuit"
 
     return (
         <div className={cn(
-            "font-bold uppercase",
-            isEssential && "text-[#e51d13] bg-[#FFEBEA] flex items-center justify-center gap-[8.8px] h-[30px] px-[2px] py-[0.88px] rounded-sm",
-            isPremium && "text-[#E89900] bg-[#FFF8DE] flex items-center justify-center gap-[8.8px] h-[30px] px-[15px] py-[0.88px] rounded-sm",
+            "font-bold uppercase flex items-center justify-center gap-[8.8px] h-[30px] px-[5px] lg:px-[10px] py-[0.88px] rounded-sm",
+            isEssential && "text-[#e51d13] bg-[#FFEBEA]",
+            isPremium && "text-[#E89900] bg-[#FFF8DE]",
+            "text-[0.5rem] lg:text-xs"
         )}>
             {isAbon && <CrownIcon/>}
             {label}

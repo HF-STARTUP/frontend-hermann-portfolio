@@ -49,11 +49,11 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
 
 
     return (
-        <div className={"flex items-center gap-[16px] mb-[26px]"}>
+        <div className={"flex items-center lg:justify-start justify-between  md:gap-[16px] mb-[26px] w-full lg:w-fit"}>
             <div
-                className="text-vaTextPrimary text-[34px] font-bold font-['DM Sans'] leading-[42px] flex items-center gap-1">
+                className="text-vaTextPrimary text-[1.5rem] md:text-[34px] font-bold font-['DM Sans'] leading-[42px] flex items-center gap-1">
                 {isSecondFleet && <button onClick={() => $router.replace("/app/fleet/")}>
-                    <ChevronBackIcon/>
+                    <ChevronBackIcon className={"text-xs"}/>
                 </button>}
                 <div>{page_title}</div>
             </div>

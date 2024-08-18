@@ -25,83 +25,91 @@ export const StatCards = () => {
         <div className={"grid grid-cols-12 gap-[24px]"}>
             <div className={"col-span-12 2xl:col-span-8"}>
                 {data && (
-                    <div className={"flex items-center gap-[24px]"}>
+                    <div className={"grid grid-cols-12 lg:grid-cols-5 gap-[24px]"}>
+                        <div className={"col-span-6 xl:col-span-1"}>
+                            <ActionCard
+                                icon={{
+                                    color: "bg-[#E5E4FF] text-[#2554AE]",
+                                    value: <CarCrashIcon/>
+                                }}
+                                average={{
+                                    type: resolveIndicator(data.vehicle.indicateur),
+                                    label: `${data.vehicle.indicateur_value} ce mois`
+                                }}
+                                cardValue={{
+                                    label: "Total véhicules",
+                                    value: "" + data.vehicle.total
+                                }}
+                            />
+                        </div>
 
-                        <ActionCard
-                            icon={{
-                                color: "bg-[#E5E4FF] text-[#2554AE]",
-                                value: <CarCrashIcon/>
-                            }}
-                            average={{
-                                type: resolveIndicator(data.vehicle.indicateur),
-                                label: `${data.vehicle.indicateur_value} ce mois`
-                            }}
-                            cardValue={{
-                                label: "Total véhicules",
-                                value: "" + data.vehicle.total
-                            }}
-                        />
+                        <div className={"col-span-6 xl:col-span-1"}>
+                            <ActionCard
+                                icon={{
+                                    color: "bg-[#d7ffec] text-[#00a656]",
+                                    value: <UserIcon/>
+                                }}
+                                average={{
+                                    type: resolveIndicator(data.vehicle.indicateur),
+                                    label: `${data.driver.indicateur_value} ce mois`
+                                }}
+                                cardValue={{
+                                    label: "Total chauffeurs",
+                                    value: "" + data.vehicle.total
+                                }}
+                            />
+                        </div>
 
-                        <ActionCard
-                            icon={{
-                                color: "bg-[#d7ffec] text-[#00a656]",
-                                value: <UserIcon/>
-                            }}
-                            average={{
-                                type: resolveIndicator(data.vehicle.indicateur),
-                                label: `${data.driver.indicateur_value} ce mois`
-                            }}
-                            cardValue={{
-                                label: "Total chauffeurs",
-                                value: "" + data.vehicle.total
-                            }}
-                        />
+                        <div className={"col-span-12 xl:col-span-1"}>
+                            <ActionCard
+                                icon={{
+                                    color: "bg-[#ffe7e7] text-[#E51D13]",
+                                    value: <CashAltIcon/>
+                                }}
+                                average={{
+                                    type: resolveIndicator(data.ca_total.indicateur),
+                                    label: `${data.ca_total.indicateur_value} ce mois`
+                                }}
+                                cardValue={{
+                                    label: "Chiffre d’affaires",
+                                    value: `${data.ca_total.total}XAF`
+                                }}
+                            />
+                        </div>
 
-                        <ActionCard
-                            icon={{
-                                color: "bg-[#ffe7e7] text-[#E51D13]",
-                                value: <CashAltIcon/>
-                            }}
-                            average={{
-                                type: resolveIndicator(data.ca_total.indicateur),
-                                label: `${data.ca_total.indicateur_value} ce mois`
-                            }}
-                            cardValue={{
-                                label: "Chiffre d’affaires",
-                                value: `${data.ca_total.total}XAF`
-                            }}
-                        />
+                        <div className={"col-span-6 xl:col-span-1"}>
+                            <ActionCard
+                                icon={{
+                                    color: "bg-[#ffe7e7] text-[#E51D13]",
+                                    value: <ToolIcon/>
+                                }}
+                                average={{
+                                    type: resolveIndicator(data.entretien.indicateur),
+                                    label: `${data.entretien.indicateur_value} ce mois`
+                                }}
+                                cardValue={{
+                                    label: "Total entretiens",
+                                    value: `${data.entretien.total}`
+                                }}
+                            />
+                        </div>
 
-                        <ActionCard
-                            icon={{
-                                color: "bg-[#ffe7e7] text-[#E51D13]",
-                                value: <ToolIcon/>
-                            }}
-                            average={{
-                                type: resolveIndicator(data.entretien.indicateur),
-                                label: `${data.entretien.indicateur_value} ce mois`
-                            }}
-                            cardValue={{
-                                label: "Total entretiens",
-                                value: `${data.entretien.total}`
-                            }}
-                        />
-
-                        <ActionCard
-                            icon={{
-                                color: "bg-[#fff1e4] text-[#ff9900]",
-                                value: <CarAltIcon/>
-                            }}
-                            average={{
-                                type: resolveIndicator(data.course.indicateur),
-                                label: `${data.course.indicateur_value} ce mois`
-                            }}
-                            cardValue={{
-                                label: "Total courses",
-                                value: `${data.course.total}`
-                            }}
-                        />
-
+                        <div className={"col-span-6 xl:col-span-1"}>
+                            <ActionCard
+                                icon={{
+                                    color: "bg-[#fff1e4] text-[#ff9900]",
+                                    value: <CarAltIcon/>
+                                }}
+                                average={{
+                                    type: resolveIndicator(data.course.indicateur),
+                                    label: `${data.course.indicateur_value} ce mois`
+                                }}
+                                cardValue={{
+                                    label: "Total courses",
+                                    value: `${data.course.total}`
+                                }}
+                            />
+                        </div>
                     </div>
                 )
                 }

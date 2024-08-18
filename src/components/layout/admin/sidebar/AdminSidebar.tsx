@@ -34,7 +34,7 @@ const AdminSidebar: React.FC = () => {
             <div className={`relative`}>
                 <div className={cn(
                     `rounded-br-3xl bg-white pt-[80px]`,
-                    getIfAbonAlertIsOpen() && "mt-[50px]"
+                    getIfAbonAlertIsOpen() && ""
                 )}>
                     <SideBarNavItems/>
                 </div>

@@ -54,8 +54,8 @@ const AdminTab = () => {
                         {admins.map((admin) => {
 
 
-                            const isActive = admin.status === "Active"
-                            const isInactive = admin.status === "inactive"
+                            const isActive = admin.status === "inactive"
+                            const isInactive = admin.status === "desactivated"
 
                             return (
                                 <TableRow key={admin.id}>
@@ -66,18 +66,18 @@ const AdminTab = () => {
                                                 <Image className={"size-[40px] rounded-full border-2 border-blue-400"}
                                                        src={admin.imageUrl}
                                                        alt={"Admin avatar"} width={50} height={50}/>}
-                                            <p>{admin.username}</p>
+                                            <p className={"text-nowrap"}>{admin.username}</p>
                                         </div>
                                     </TableCell>
                                     <TableCell>{admin.role}</TableCell>
                                     <TableCell>{admin.createdAt}</TableCell>
                                     <TableCell>
                                         <div className={cn(
-                                            "font-bold",
-                                            isActive && "text-[#82be6d] bg-[#eafae5] flex items-center justify-center gap-[8.8px] h-[30px] px-[2px] py-[0.88px] rounded-sm",
-                                            isInactive && "text-[#ff0000] bg-[#fae5e5] flex items-center justify-center gap-[8.8px] h-[30px] px-[15px] py-[0.88px] rounded-sm",
+                                            "font-bold w-fit text-nowrap px-5",
+                                            isActive && "text-[#82be6d] bg-[#eafae5] flex items-center justify-center gap-[8.8px] h-[30px]  py-[0.88px] rounded-sm",
+                                            isInactive && "text-[#ff0000] bg-[#fae5e5] flex items-center justify-center gap-[8.8px] h-[30px] py-[0.88px] rounded-sm",
                                         )}>
-                                            {admin.status}
+                                            {isActive ? "Actif" : "Inactif"}
                                         </div>
                                     </TableCell>
                                 </TableRow>

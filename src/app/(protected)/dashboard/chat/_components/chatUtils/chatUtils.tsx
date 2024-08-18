@@ -4,6 +4,24 @@ import usePromptStore from "@/app/(protected)/dashboard/chat/_store/usePrompStor
 import usePrompStore from "@/app/(protected)/dashboard/chat/_store/usePrompStore";
 import {TicketModel} from "@/model/ADMIN/ticket";
 import {TicketStatus} from "@/types/admin/ticket";
+import {ChevronBackAltIcon} from "@/components/ui/__icons";
+import {GrContactInfo} from "react-icons/gr";
+import {
+    Drawer, DrawerClose,
+    DrawerContent,
+    DrawerDescription, DrawerFooter,
+    DrawerHeader,
+    DrawerTitle,
+    DrawerTrigger
+} from "@/components/ui/drawer";
+import {Button} from "@/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent, DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 const AVATAR_COLORS = [
     {
@@ -74,15 +92,26 @@ export const ChatContainer: React.FC<React.HTMLAttributes<HTMLDivElement> & { na
                                                                                                              children
                                                                                                          }) => {
 
+    const {activeDiscussion} = usePrompStore()
+
+
     return (
         <div className={"p-3 bg-white rounded-lg"}>
-            <div className={"grid grid-cols-12 gap-[12px]"}>
-                <div className="col-span-4 2xl:col-span-3">
+            <div className={"hidden lg:grid grid-cols-12 gap-[12px]"}>
+                <div className="col-span-12 lg:col-span-4 2xl:col-span-3">
                     {nav}
                 </div>
-                <div className="col-span-8 2xl:col-span-9">
+                <div className="col-span-12 lg:col-span-8 2xl:col-span-9">
                     {children}
                 </div>
+            </div>
+            <div className={"grid lg:hidden grid-cols-12 gap-[12px]"}>
+                {!activeDiscussion && <div className="col-span-12 lg:col-span-4 2xl:col-span-3">
+                    {nav}
+                </div>}
+                {activeDiscussion && <div className="col-span-12 lg:col-span-8 2xl:col-span-9">
+                    {children}
+                </div>}
             </div>
         </div>
     )
@@ -193,7 +222,7 @@ export const ChatUser: React.FC<React.HTMLAttributes<HTMLDivElement> & { ticket:
 
 export const ChatSectionHead = () => {
 
-    const {activeDiscussion} = usePrompStore()
+    const {activeDiscussion, setActiveDiscussion} = usePrompStore()
 
     if (!activeDiscussion) {
         return (
@@ -203,19 +232,39 @@ export const ChatSectionHead = () => {
 
     if (activeDiscussion) {
         return (
-            <div className={"p-6 bg-[#ecf3ff] rounded-tl-xl rounded-tr-xl flex items-center justify-between"}>
-                <div className={"flex items-center gap-[14.11px]"}>
-                    <UserAvatar avatarLabel={activeDiscussion.profile.username}/>
+            <div className={"p-3 lg:p-6 bg-[#ecf3ff] rounded-tl-xl rounded-tr-xl flex items-center justify-between"}>
+                <div className={"flex items-center gap-3 lg:gap-[14.11px]"}>
+                    <div className={"flex items-center gap-3"}>
+                        <button className={"text-vaYellow lg:hidden"} onClick={() => {
+                            setActiveDiscussion(undefined)
+                        }}>
+                            <ChevronBackAltIcon/>
+                        </button>
+                        <UserAvatar avatarLabel={activeDiscussion.profile.username}/>
+                    </div>
                     <div>
                         <div
-                            className="text-black text-2xl font-semibold font-vInter leading-[37.77px]">{activeDiscussion.profile.username}</div>
+                            className="text-black text-sm lg:text-2xl font-semibold font-vInter leading-[22px] lg:leading-[37.77px]">{activeDiscussion.profile.username}</div>
                         <div
-                            className="text-[#2554ae] text-xl font-light leading-[37.77px]">
+                            className="text-[#2554ae] text-xs lg:text-xl font-light lg:leading-[37.77px]">
                             {activeDiscussion.title}
                         </div>
                     </div>
                 </div>
-                <div>
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button className={"text-slate-700 text-xl lg:hidden"}>
+                            <GrContactInfo/>
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent>
+                        <DropdownMenuLabel>Contacts</DropdownMenuLabel>
+                        <DropdownMenuSeparator/>
+                        <DropdownMenuItem>{activeDiscussion.profile.user.phone}</DropdownMenuItem>
+                        <DropdownMenuItem>{activeDiscussion.profile.user.email}</DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+                <div className={"hidden md:block"}>
                     <UserInfoItem label="Tel" value={activeDiscussion.profile.user.phone}/>
                     <UserInfoItem label="Email" value={activeDiscussion.profile.user.email}/>
                 </div>
@@ -228,7 +277,7 @@ export const ChatSectionHead = () => {
 const UserInfoItem: React.FC<{ label: string, value: string }> = ({label, value}) => {
 
     return (
-        <div className={"text-black text-sm font-normal flex items-center gap-2"}>
+        <div className={"text-black text-xs lg:text-sm font-normal flex items-center gap-2"}>
             <div>{label} :</div>
             <div className="font-bold"> {value}</div>
         </div>
@@ -237,7 +286,7 @@ const UserInfoItem: React.FC<{ label: string, value: string }> = ({label, value}
 
 export const ChatSectionBody: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({children}) => {
     return (
-        <div className={"p-6 bg-white rounded-bl-xl rounded-br-xl border border-zinc-100 "}>
+        <div className={"p-1 lg:p-6 bg-white rounded-bl-xl rounded-br-xl border border-zinc-100 "}>
             <div>
                 {children}
             </div>

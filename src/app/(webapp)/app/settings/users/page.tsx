@@ -79,10 +79,10 @@ const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
                 "bg-[#eeeeff] transition hover:bg-[#e4e4ff] border p-[10px] rounded-xl flex flex-col gap-[10px]",
                 isDeactivated && "bg-red-200 hover:bg-red-100"
             )}>
-            <div className={"flex justify-between items-center"}>
-                <div className={"flex gap-[9px] items-center"}>
-                    <div className="text-black text-xl font-medium leading-[30.12px]">{username}</div>
-                    <div className={"text-black text-sm font-medium leading-[21.08px] flex gap-[9px] items-center"}>
+            <div className={"flex justify-between lg:items-center"}>
+                <div className={"flex flex-col lg:flex-row gap-[9px] lg:items-center"}>
+                    <div className="text-black text-xs lg:text-md font-bold lg:font-medium lg:leading-[30.12px]">{username}</div>
+                    <div className={"text-black text-sm font-medium leading-[21.08px] flex flex-col lg:flex-row gap-[9px] lg:items-center"}>
                         <div className="">{user._instance.user.email}</div>
                         <div>{user._instance.user.phone}</div>
                         {isDeactivated && <div className={"text-red-800"}>Désactivé</div>}
@@ -115,14 +115,14 @@ const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
             </div>
             <div className={"bg-[#fdfdfd] px-[20px] py-[10px] rounded-md flex flex-col gap-[10px] overflow-hidden"}>
 
-                <div className={"flex gap-[12px]"}>
+                <div className={"flex flex-col lg:flex-row gap-[12px]"}>
                     <RoleTitle>Lecture:</RoleTitle>
                     <div className={"flex flex-wrap items-center gap-[10px]"}>
                         {readRoles.map((r, i) => <RoleTag key={i}>{r.onglet.name}</RoleTag>)}
                     </div>
                 </div>
 
-                <div className={"flex gap-[12px]"}>
+                <div className={"flex flex-col lg:flex-row gap-[12px]"}>
                     <RoleTitle>Ecriture:</RoleTitle>
                     <div className={"flex flex-wrap items-center gap-[10px]"}>
                         {writeRoles.map((r, i) => <RoleTag key={i} tagType={"write"}>{r.onglet.name}</RoleTag>)}

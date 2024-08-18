@@ -32,9 +32,9 @@ import {useParams, useRouter} from "next/navigation";
 export const Navbar = () => {
     return (
         <div
-            className={"bg-vaPrimary py-[16px] h-[94px] fixed w-full flex items-center justify-between px-[30px] z-50"}>
+            className={"bg-vaPrimary py-[10px] lg:py-[30px] h-[70px] lg:h-[94px] fixed w-full flex items-center justify-between px-[10px] lg:px-[40px] z-50"}>
             <div>
-                <Image width={169} height={23} src={logo_icon} alt={""}/>
+                <Image className={"h-[15px] w-auto lg:h-[23px]"} width={169} height={23} src={logo_icon} alt={""}/>
             </div>
             <div>
                 <UserOption/>
@@ -59,9 +59,10 @@ const UserOption: React.FC = () => {
 
     if (data) {
         return (
-            <div className={`flex justify-between gap-[30px] items-start cursor-default finter`}>
-                <div className={`flex justify-end items-end gap-[4px] flex-col`}>
-                    <div className="text-[#f2f2f2] text-[24px] font-bold  leading-[23px]">{data.username}</div>
+            <div className={`flex justify-between gap-[10px] lg:gap-[30px] items-start cursor-default finter`}>
+                <div className={`flex justify-end items-end lg:gap-[4px] flex-col`}>
+                    <div
+                        className="text-[#f2f2f2] text-[16px] lg:text-[24px] font-bold  leading-[23px]">{data.username}</div>
                     <Select onValueChange={(new_city_id) => {
                         AuthManagerGuard.setEnabledCityID(+new_city_id)
                         queryClient.invalidateQueries().then((() => {
@@ -73,7 +74,7 @@ const UserOption: React.FC = () => {
                             defaultValue={AuthManagerGuard.getEnabledCity ?? String(data.listPark[0].id)}
                     >
                         <SelectTrigger
-                            className="w-fit bg-transparent border-transparent text-[#f2f2f2] text-base font-medium">
+                            className="h-[20px] md:h-fit w-fit bg-transparent border-transparent text-[#f2f2f2] text-[14px] lg:text-base font-medium">
                             <SelectValue placeholder="Selectionner"/>
                         </SelectTrigger>
                         <SelectContent>

@@ -17,11 +17,15 @@ import {CreditCardIcon} from "lucide-react";
 export const Sidebar = () => {
 
     return (
-        <div className={"w-[290px] bg-vaPrimary text-white h-[100vh] pt-[100px] flex flex-col gap-[20px] fixed z-40"}>
+        <div
+            className={cn(
+                "lg:w-[290px] bg-vaPrimary text-white lg:h-[100vh] lg:pt-[100px] lg:px-0 lg:flex lg:flex-col lg:gap-[20px] fixed z-40 lg:justify-start lg:items-start",
+                "w-full h-[60px] bottom-0 flex items-center justify-around px-[10px] gap-1"
+            )}>
             <SidebarItem
                 label={`Dashboard`}
                 icon={<DashboardIcon/>}
-                to={`/app/dashboard `}
+                to={`/app/dashboard`}
             />
             <SidebarItem
                 label={"Flottes"}
@@ -64,13 +68,14 @@ const SidebarItem: React.FC<React.HTMLAttributes<HTMLDivElement> & {
 
 
     return (
-        <Link href={to ?? ""}>
+        <Link href={to ?? ""} className={"w-full"}>
             <div className={cn(
-                "flex gap-[11px] text-[16px] pl-[33px] border-r-vaYellow rounded-[1px] py-[10px] cursor-pointer hover:opacity-80",
-                isActive && "border-r-4"
+                "flex gap-[11px] text-[16px] lg:pl-[33px] border-r-vaYellow rounded-[1px] py-[10px] cursor-pointer hover:opacity-80 w-full",
+                isActive && "lg:border-r-4 bg-vaYellow/10 rounded-md text-vaYellow lg:bg-transparent lg:text-white lg:rounded-none",
+                "flex items-center justify-center lg:justify-start"
             )}>
                 <div>{icon}</div>
-                <div>{label}</div>
+                <div className={"hidden lg:flex"}>{label}</div>
             </div>
         </Link>
     )

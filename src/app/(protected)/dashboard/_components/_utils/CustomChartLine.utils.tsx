@@ -275,7 +275,7 @@ export const CustomChartLineUtils3:React.FC<{isWeekly?: boolean, idata: number[]
 
 
     return (
-        <div className={`w-full grow h-[275px]`}>
+        <div className={`w-full grow h-[180px] lg:h-[275px]`}>
             <Line data={isWeekly ? driverDataWeekly : driverData} options={options} width={100} height={100}/>
         </div>
     )

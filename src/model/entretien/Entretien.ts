@@ -23,31 +23,31 @@ class Entretien extends Model {
         return datas.map(data => new Entretien(data)).reverse();
     }
 
-    get id(){
+    get id() {
         return this._instance.id
     }
 
-    get description(){
+    get description() {
         return this._instance.description
     }
 
-    get amount(){
+    get amount() {
         return this._instance.amount
     }
 
-    get status(){
+    get status() {
         return this._instance.status
     }
 
-    get startAt(){
-        return this.toDate(this._instance.start_date)
+    get startAt() {
+        return this.formatDate(this._instance.start_date)
     }
 
-    get startHour(){
-        return this.toDate(this._instance.start_date, "H : m")
+    get startHour() {
+        return this.formatDate(this._instance.start_date, "H : m")
     }
 
-    get vehicle(): Vehicle{
+    get vehicle(): Vehicle {
         return new Vehicle(this._instance.vehicle)
     }
 
@@ -57,7 +57,7 @@ class Entretien extends Model {
 
     get entretienContent() {
         const maintenanceTitle = this._instance.maintenances.length ? this._instance.maintenances[0].repair_type : this._instance.description
-        const maintenanceContent = this._instance.maintenances.length ? this._instance.maintenances[0].car_component.map(v=>v.name).join(', ') : ''
+        const maintenanceContent = this._instance.maintenances.length ? this._instance.maintenances[0].car_component.map(v => v.name).join(', ') : ''
 
         return `${maintenanceTitle} (${maintenanceContent})`
     }
@@ -76,15 +76,15 @@ export class RepairType extends Model {
     }
 
     public static toArrays(datas: RepaitTypeResponse[] | undefined): RepairType[] {
-        if(!datas) return  []
+        if (!datas) return []
         return datas.map(data => new RepairType(data)).reverse();
     }
 
-    get id(): ENTRETIEN_REPAIR_TYPE{
+    get id(): ENTRETIEN_REPAIR_TYPE {
         return this._instance.id as ENTRETIEN_REPAIR_TYPE
     }
 
-    get name(){
+    get name() {
         return this.capitalizeFirstLetter(this._instance.name ?? '')
     }
 
@@ -100,15 +100,15 @@ export class CarComponent extends Model {
     }
 
     public static toArrays(datas: CarComponentResponse[] | undefined): CarComponent[] {
-        if(!datas) return  []
+        if (!datas) return []
         return datas.map(data => new CarComponent(data)).reverse();
     }
 
-    get name(){
+    get name() {
         return this.capitalizeFirstLetter(this._instance.name ?? 'inedexed')
     }
 
-    get id(){
+    get id() {
         return this._instance.id
     }
 

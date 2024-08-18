@@ -9,7 +9,7 @@ type AppStore = {
     setPromptValue: (v: string) => void
 
     activeDiscussion?: TicketModel
-    setActiveDiscussion: (discussion: TicketModel) => void
+    setActiveDiscussion: (discussion?: TicketModel) => void
 
     activeMessages?: MessageModel[]
     initMessages: (messages: MessageModel[]) => void

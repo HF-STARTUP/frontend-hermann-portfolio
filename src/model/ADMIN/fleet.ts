@@ -138,7 +138,7 @@ export class AdminOnFleetModel extends Model {
     }
 
     get createdAt() {
-        return formatDistanceToNow(this._instance.created_at);
+        return this.formatDate(this._instance.created_at);
     }
 
     get role() {

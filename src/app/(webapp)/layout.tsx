@@ -28,7 +28,7 @@ export default function RootLayout({
                 <Navbar/>
                 <Sidebar/>
                 <NavigationLoaderWrapper/>
-                <div className={"ml-[320px] pt-[110px] mr-[100px]"}>
+                <div className={"px-[12px] lg:ml-[320px] pt-[110px] lg:mr-[70px] pb-[50px]"}>
                     <main>
                         {children}
                     </main>

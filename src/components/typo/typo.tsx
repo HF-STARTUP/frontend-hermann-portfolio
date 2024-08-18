@@ -13,7 +13,7 @@ export const AdminPageTitle: React.FC<{ children: React.ReactNode, subElement?: 
     return (
         <div className={`flex justify-between items-center ${withMb && 'mb-[15px]'}`}>
             <div className={`flex gap-[10px] items-center justify-center`}>
-                <div className={`text-admin-primary text-[27.57px] font-semibold finter leading-[41.36px] tracking-tight`}>{ children }</div>
+                <div className={`text-admin-primary text-lg lg:text-[27.57px] font-semibold finter leading-[41.36px] tracking-tight`}>{ children }</div>
                 {handleAdd && <button className={`text-admin-primary hover:text-primary transition duration-200`}
                          onClick={handleAdd}>
                     <MoreIcon/>

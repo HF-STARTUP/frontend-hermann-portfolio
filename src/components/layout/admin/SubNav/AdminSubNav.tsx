@@ -80,7 +80,7 @@ const AdminSubNav: React.FC<AdminSuNavProps> = ({
 
     return (
         <div className={cn(
-            getIfAbonAlertIsOpen() && "mt-[50px]"
+            getIfAbonAlertIsOpen() && ""
         )}>
             <div>
                 <BreadCrumb
