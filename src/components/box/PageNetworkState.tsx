@@ -29,8 +29,6 @@ export const EmptyData: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                 initial={{y: 0, opacity: 0}}
                 animate="visible"
                 variants={bounceInVariants}
-                whileTap={{cursor: 'grabbing'}}
-                drag
                 dragConstraints={{left: 0, right: 0, top: 0, bottom: 0}}
                 dragElastic={0.5}
                 style={dragStyle}

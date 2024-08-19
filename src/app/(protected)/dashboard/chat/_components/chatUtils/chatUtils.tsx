@@ -177,7 +177,7 @@ export const ChatUser: React.FC<React.HTMLAttributes<HTMLDivElement> & { ticket:
                 className
             )}>
             <UserAvatar avatarLabel={ticket.profile.username}/>
-            <div className="flex flex-col items-start justify-start gap-2 overflow-hidden w-full">
+            <div className="flex flex-col items-start justify-start lg:gap-2 overflow-hidden w-full">
                 <div className="flex items-center justify-between w-full">
                     <div
                         className={cn(

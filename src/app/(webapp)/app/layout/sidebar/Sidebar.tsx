@@ -19,8 +19,8 @@ export const Sidebar = () => {
     return (
         <div
             className={cn(
-                "lg:w-[290px] bg-vaPrimary text-white lg:h-[100vh] lg:pt-[100px] lg:px-0 lg:flex lg:flex-col lg:gap-[20px] fixed z-40 lg:justify-start lg:items-start",
-                "w-full h-[60px] bottom-0 flex items-center justify-around px-[10px] gap-1"
+                "lg:w-[290px] bg-vaPrimary/95 md:bg-vaPrimary backdrop-blur-md border-t border-white text-white lg:h-[100vh] lg:pt-[100px] lg:px-0 lg:flex lg:flex-col lg:gap-[20px] fixed z-40 lg:justify-start lg:items-start",
+                "w-[98%] lg:ml-0 ml-[1%] lg-[1%] mb-[5px] lg:mb-0 rounded-lg lg:rounded-none h-[60px] bottom-0 flex items-center justify-around px-[7px] gap-1"
             )}>
             <SidebarItem
                 label={`Dashboard`}
@@ -74,8 +74,11 @@ const SidebarItem: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                 isActive && "lg:border-r-4 bg-vaYellow/10 rounded-md text-vaYellow lg:bg-transparent lg:text-white lg:rounded-none",
                 "flex items-center justify-center lg:justify-start"
             )}>
-                <div>{icon}</div>
-                <div className={"hidden lg:flex"}>{label}</div>
+                <div className={cn(
+                )}>{icon}</div>
+                <div className={cn(
+                    "hidden lg:flex",
+                )}>{label}</div>
             </div>
         </Link>
     )

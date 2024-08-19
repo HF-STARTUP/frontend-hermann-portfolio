@@ -34,4 +34,23 @@ abstract class Model {
     }
 }
 
+
+type DataItem = {
+    [key: string]: any;
+};
+
+export function searchAndFilter<T extends DataItem>(data: T[], searchTerm: string, keys: (keyof T)[]): T[] {
+    const lowercasedSearchTerm = searchTerm.toLowerCase();
+
+    return data.filter(item =>
+        keys.some(key => {
+            const value = item[key];
+            if (typeof value === 'string') {
+                return value.toLowerCase().includes(lowercasedSearchTerm);
+            }
+            return false;
+        })
+    );
+}
+
 export default Model

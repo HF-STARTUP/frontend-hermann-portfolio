@@ -32,7 +32,9 @@ import {useParams, useRouter} from "next/navigation";
 export const Navbar = () => {
     return (
         <div
-            className={"bg-vaPrimary py-[10px] lg:py-[30px] h-[70px] lg:h-[94px] fixed w-full flex items-center justify-between px-[10px] lg:px-[40px] z-50"}>
+            className={cn(
+                "bg-vaPrimary py-[10px] lg:py-[30px] h-[70px] lg:h-[94px] fixed w-full flex items-center justify-between px-[10px] lg:px-[40px] z-50"
+            )}>
             <div>
                 <Image className={"h-[15px] w-auto lg:h-[23px]"} width={169} height={23} src={logo_icon} alt={""}/>
             </div>

@@ -10,7 +10,7 @@ import {formatDistanceToNow} from "date-fns";
 
 
 export class FleetModel extends Model {
-    private _instance: FleetListResponseType
+    public _instance: FleetListResponseType
 
 
     constructor(datas: FleetListResponseType) {
@@ -55,7 +55,7 @@ export class FleetModel extends Model {
     }
 
     get ca_total() {
-        return this._instance.ca_total + this._instance.currency
+        return this._instance.ca_total + " " + this._instance.currency
     }
 
     get suscription_name() {

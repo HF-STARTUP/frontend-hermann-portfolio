@@ -45,7 +45,7 @@ export const Activities = () => {
         <div className={"px-[13px] py-[15px] bg-white rounded-[20px]"}>
 
             <div className={"flex justify-between items-center mb-[22px]"}>
-                <h4 className="text-black text-2xl font-semibold">Activités</h4>
+                <h4 className="text-black text-lg lg:text-2xl font-semibold">Activités</h4>
                 <div className={"flex items-center gap-2"}>
                     <DateSelect type="month" currentMonth={month} handleSelect={handleSelectMonth}/>
                     <DateSelect type="year" handleSelect={handleSelectYear}/>

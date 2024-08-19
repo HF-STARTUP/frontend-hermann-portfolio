@@ -26,16 +26,19 @@ export const ItemContentBefore: React.FC<ItemContentBeforeProps> = ({
     const badgeIsError = badgeStatus === 'error'
 
     return (
-        <div className={`flex flex-col gap-[2.5px]`}>
-            <div className="text-admin-primary text-xl font-bold leading-7 flex items-center gap-[7px]">
+        <div className={`flex flex-col  lg:gap-[2.5px]`}>
+            <div className="text-admin-primary text-md lg:text-xl font-bold leading-7 flex items-center gap-[7px]">
                 <div>{title[0]}</div>
-                {vehicle&&< VehicleStatusBadge variant={vehicle.status} />}
+                {vehicle && <div>
+                    <VehicleStatusBadge variant={vehicle.status}/>
+                </div>}
             </div>
-            {title[1] && (<div className="text-admin-primary text-xl font-medium leading-7">{title[1]}</div>)}
+            {title[1] && (
+                <div className="text-admin-primary text-md lg:text-xl font-medium leading-7">{title[1]}</div>)}
             {title[2] && title[2].length && (
-                <div className="text-admin-primary text-xl font-medium leading-7">{title[2]}</div>)}
+                <div className="text-admin-primary text-md lg:text-xl font-medium leading-7">{title[2]}</div>)}
             {title[3] && (<div
-                className={`${isEndError ? 'text-vred' : 'text-[#80878C]'} text-xl font-medium leading-7`}>{title[3]}</div>)}
+                className={`${isEndError ? 'text-vred' : 'text-[#80878C]'} text-md lg:text-xl font-medium leading-7`}>{title[3]}</div>)}
         </div>
     )
 }

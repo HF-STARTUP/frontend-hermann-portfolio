@@ -13,6 +13,8 @@ export default function DashboardPage() {
     const {} = useGetFleetDetails()
     const {} = useGetFleetStats()
 
+
+
     return (
         <div>
             <StatCards/>

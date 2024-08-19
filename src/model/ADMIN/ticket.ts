@@ -9,7 +9,7 @@ export class TicketModel {
     }
 
     static fromArrays(datas: TicketType[]): TicketModel[] {
-        return datas.map(data => new TicketModel(data)).reverse();
+        return datas.map(data => new TicketModel(data));
     }
 
     get isPending() {

@@ -71,11 +71,27 @@ export default function FleetListAccount({fleets}: { fleets: FleetModel[] }) {
     })
 
 
+    const vehicleNumber = `${fleets.reduce((acc, fleet) => acc + fleet.number_vehicle, 0)}`
+    const driverNumber = `${fleets.reduce((acc, fleet) => acc + fleet.driver_number, 0)}`
+    const totalCA = `${fleets.reduce((acc, fleet) => acc + fleet._instance.ca_total, 0)}`
+
+
     const config: AdminDataTableDisplayProps = {
         variant: 'v2',
         head: headers,
         body: body,
-        footer: [],
+        footer: [
+            "-",
+            "-",
+            "-",
+            vehicleNumber,
+            driverNumber,
+            "-",
+            totalCA,
+            "-",
+            "-",
+            "-"
+        ],
         callback: function (index) {
             //if(index)
             //$router.push(`/app/fleet/${this.body[index]}/dashboard`)

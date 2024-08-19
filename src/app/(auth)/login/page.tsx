@@ -123,7 +123,7 @@ export default function LoginPage() {
                         color={'blue'} variant={'contained'}>
                         Se connecter
                     </BtnBase>
-                    <div className={"text-[10px] opacity-25 mt-[20px] text-center"}>VTC ADMIN V1.0.1</div>
+                    <div className={"text-[10px] opacity-25 mt-[20px] text-center"}>VTC ADMIN V1.0.2 (19/8/2024, 4:51PM)</div>
                 </div>
             </form>
         </React.Suspense>

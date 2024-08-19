@@ -34,15 +34,7 @@ export default function ADahboardPage() {
                     }}
                 />
             </div>
-            <div className={"flex justify-between items-center"}>
-                <div className={"mt-[24px] flex items-center  justify-start gap-[26px]"}>
-                    <ABlockTitle>Sélectionnez une flotte</ABlockTitle>
-                    {/*<ABtnAction>Ajouter une flotte</ABtnAction>*/}
-                </div>
-                {/*<UserAccountSection/>*/}
-            </div>
-
-            <div className={"mt-[32px]"}>
+            <div className={""}>
                 <FleetList/>
             </div>
         </div>
