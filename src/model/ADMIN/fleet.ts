@@ -59,7 +59,7 @@ export class FleetModel extends Model {
     }
 
     get subscription_amount() {
-        return this._instance.subscription_amount + " " + this._instance.currency
+        return this._instance.subscription_amount ? this._instance.subscription_amount + " " + this._instance.currency : 0
     }
 
     get suscription_name() {
