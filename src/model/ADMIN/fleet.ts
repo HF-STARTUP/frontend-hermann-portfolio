@@ -58,6 +58,10 @@ export class FleetModel extends Model {
         return this._instance.ca_total + " " + this._instance.currency
     }
 
+    get subscription_amount() {
+        return this._instance.subscription_amount + " " + this._instance.currency
+    }
+
     get suscription_name() {
         return this._instance.subscription
     }

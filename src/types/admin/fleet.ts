@@ -10,6 +10,7 @@ export type FleetListResponseType = {
     city: string;
     currency: string;
     number_vehicle: number;
+    subscription_amount: number;
     driver_number: number;
     created_at: Date;
 }

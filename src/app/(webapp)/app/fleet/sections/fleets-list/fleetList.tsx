@@ -24,7 +24,10 @@ import {CgPlayListSearch} from "react-icons/cg";
 
 enum FleetAbonType {
     free = "Essaie gratuit",
-    premium = "Premium"
+    premiumParticulier = "premiumParticulier",
+    starterParticulier = "starterParticulier",
+    premiumProfessionnel = "PremiumProfessionnel",
+    starterProfessionnel = "starterProfessionnel",
 }
 
 export const FleetList = () => {
@@ -85,7 +88,8 @@ export const FleetList = () => {
                 const filteredFleet2 = filteredFleet.filter(d => d.suscription_name == finalType)
                 setFleetList(filteredFleet2 || []);
             } else {
-                setFleetList([])
+                const filtered = data && data.filter(d => d.suscription_name == finalType)
+                setFleetList(filtered || []);
             }
         } else {
             if (data) {
@@ -139,7 +143,14 @@ export const FleetList = () => {
                                 <SelectContent>
                                     <SelectItem value="all">Tout</SelectItem>
                                     <SelectItem value={`${FleetAbonType.free}`}>Essaie gratuit</SelectItem>
-                                    <SelectItem value={`${FleetAbonType.premium}`}>Premium</SelectItem>
+                                    <SelectItem value={`${FleetAbonType.premiumParticulier}`}>Premium
+                                        particulier</SelectItem>
+                                    <SelectItem value={`${FleetAbonType.starterParticulier}`}>Starter
+                                        particulier</SelectItem>
+                                    <SelectItem value={`${FleetAbonType.premiumProfessionnel}`}>Premium
+                                        professionnel</SelectItem>
+                                    <SelectItem value={`${FleetAbonType.starterProfessionnel}`}>Starter
+                                        professionnel</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>
