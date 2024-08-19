@@ -76,7 +76,7 @@ export default function FleetListAccount({fleets}: { fleets: FleetModel[] }) {
     const vehicleNumber = `${fleets.reduce((acc, fleet) => acc + fleet.number_vehicle, 0)}`
     const driverNumber = `${fleets.reduce((acc, fleet) => acc + fleet.driver_number, 0)}`
     const totalCA = `${fleets.reduce((acc, fleet) => acc + fleet._instance.ca_total, 0)}`
-    const totalSubscriptionAmount = `${fleets.reduce((acc, fleet) => acc + fleet._instance.subscription_amount, 0)}`
+    const totalSubscriptionAmount = `${fleets.reduce((acc, fleet) => acc + fleet._instance.subscription_amount ?? 0, 0)}`
 
 
     const config: AdminDataTableDisplayProps = {
