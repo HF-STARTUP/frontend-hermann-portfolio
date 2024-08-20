@@ -65,7 +65,7 @@ export default function FleetListAccount({fleets}: { fleets: FleetModel[] }) {
             fleet.driver_number,
             fleet.start_date,
             fleet.ca_total,
-            fleet.subscription_amount ?? 0,
+            (fleet.subscription_amount ?? 0) + ' ' + fleet._instance.currency,
             fleet.suscription_name,
             fleet.end_date,
             fleet.abon_status
