@@ -1,19 +1,12 @@
 "use client"
 
 import React, {useEffect, useState} from "react";
-import {
-    DashboardIcon,
-    GeolocationIcon,
-    InfoIcon,
-    LayoutListIcon,
-    ReclamsIcon,
-    SettingIcon
-} from "@/components/ui/__icons";
+import {DashboardIcon, InfoIcon, LayoutListIcon, SettingIcon} from "@/components/ui/__icons";
 import {cn} from "@/lib/utils";
 import Link from "next/link";
-import {useRouter, usePathname} from "next/navigation";
+import {usePathname} from "next/navigation";
 import {CreditCardIcon} from "lucide-react";
-import { motion } from 'framer-motion';
+import {motion} from 'framer-motion';
 
 export const Sidebar = () => {
 
@@ -42,16 +35,15 @@ export const Sidebar = () => {
     }, [lastScrollY]);
 
 
-
     return (
         <motion.div
             className={cn(
                 "lg:w-[290px] bg-vaPrimary/95 md:bg-vaPrimary backdrop-blur-md border-t border-white text-white lg:h-[100vh] lg:pt-[100px] lg:px-0 lg:flex lg:flex-col lg:gap-[20px] fixed z-40 lg:justify-start lg:items-start",
                 "w-[100%] lg:ml-0 lg:mb-0 lg:rounded-none h-[60px] bottom-0 flex items-center justify-around px-[7px] gap-1"
             )}
-            initial={{ y: 0 }} // Position initiale
-            animate={{ y: isVisible ? 0 : 60 }} // 60px vers le bas pour masquer, 0 pour montrer
-            transition={{ type: "spring", stiffness: 300, damping: 30 }} // Animation fluide avec effet ressort
+            // initial={{y: 0}} // Position initiale
+            // animate={{y: isVisible ? 0 : 60}} // 60px vers le bas pour masquer, 0 pour montrer
+            // transition={{type: "spring", stiffness: 300, damping: 30}} // Animation fluide avec effet ressort
         >
             <SidebarItem
                 label={`Dashboard`}
