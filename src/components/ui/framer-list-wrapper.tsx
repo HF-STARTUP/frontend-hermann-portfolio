@@ -27,20 +27,20 @@ const MotionListWrapper: React.FC<MotionListWrapperProps> = ({children, shouldAn
     if (shouldAnimate) {
         return (
             <motion.div
-                initial="hidden"
-                animate="visible"
-                variants={upToDownVariants}
-                transition={{duration: 0.5, ease: "easeOut"}}
+                // initial="hidden"
+                //animate="visible"
+                //variants={upToDownVariants}
+                //transition={{duration: 0.5, ease: "easeOut"}}
                 // whileTap={{ cursor: 'grabbing' }}
                 // drag={"y"}
-                dragConstraints={{
-                    left: 0,
-                    right: 0,
-                    top: 0,
-                    bottom: 0
-                }} // Contraint le glissement à l'intérieur de sa position initiale
-                dragElastic={0.5} // Elasticité du glissement, 0.5 pour un effet "springy" modéré
-                style={dragStyle} // Applique le style de base pour le glissement
+                // dragConstraints={{
+                //     left: 0,
+                //     right: 0,
+                //     top: 0,
+                //     bottom: 0
+                // }} // Contraint le glissement à l'intérieur de sa position initiale
+                // dragElastic={0.5} // Elasticité du glissement, 0.5 pour un effet "springy" modéré
+                //style={dragStyle} // Applique le style de base pour le glissement
             >
                 {children}
             </motion.div>
@@ -49,20 +49,20 @@ const MotionListWrapper: React.FC<MotionListWrapperProps> = ({children, shouldAn
 
     return (
         <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={fadeInVariants}
-            transition={{duration: 0.5, ease: "easeOut", delay}}
-            whileTap={{cursor: 'grabbing'}}
-            drag // Active le glissement dans toutes les directions
-            dragConstraints={{
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0
-            }} // Contraint le glissement à l'intérieur de sa position initiale
-            dragElastic={0.5} // Elasticité du glissement, 0.5 pour un effet "springy" modéré
-            style={dragStyle} // Applique le style de base pour le glissement
+            // initial="hidden"
+            // animate="visible"
+            // variants={fadeInVariants}
+            // transition={{duration: 0.5, ease: "easeOut", delay}}
+            // whileTap={{cursor: 'grabbing'}}
+            // drag // Active le glissement dans toutes les directions
+            // dragConstraints={{
+            //     left: 0,
+            //     right: 0,
+            //     top: 0,
+            //     bottom: 0
+            // }} // Contraint le glissement à l'intérieur de sa position initiale
+            // dragElastic={0.5} // Elasticité du glissement, 0.5 pour un effet "springy" modéré
+            // style={dragStyle} // Applique le style de base pour le glissement
         >
             {children}
         </motion.div>
