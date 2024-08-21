@@ -32,6 +32,10 @@ export const ChatUsersNav = () => {
 
 const Users = () => {
 
+    const {data: discussionsMembers, isLoading} = useGetTicketList()
+
+    const membersList = discussionsMembers?.length ? discussionsMembers.filter((msg) => msg.isPending) : []
+
     return (
         <div className={""}>
             <Tabs defaultValue="account" className={"p-2"}>
@@ -43,9 +47,13 @@ const Users = () => {
                         </div>
                     </TabsTrigger>
                     <TabsTrigger value="password" className={"mt-[-3px]"}>
-                        <div className={"flex items-center gap-2"}>
+                        <div className={"flex items-center gap-2 relative"}>
                             <TbPlaylistX fontSize={"24"}/>
                             <div>Non lus</div>
+                            {membersList.length && <div
+                                className={"absolute -top-2 -right-3 bg-[#FF0000] text-[#f2f2f2] rounded-full size-[18px] flex items-center justify-center"}>
+                                {membersList.length ?? '-'}
+                            </div>}
                         </div>
                     </TabsTrigger>
                 </TabsList>

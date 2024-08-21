@@ -194,10 +194,10 @@ export const ChatUser: React.FC<React.HTMLAttributes<HTMLDivElement> & { ticket:
                         <div
                             className={
                                 cn(
-                                    "w-2 h-2 relative bg-neutral-200 rounded-[20px]",
-                                    ticket.status === TicketStatus.Pending && "bg-red-400",
-                                    ticket.status === TicketStatus.Processed && "bg-yellow-400",
-                                    ticket.status === TicketStatus.Success && "bg-green-400",
+                                    "w-2 h-2 relative rounded-[20px]",
+                                    ticket.status === TicketStatus.Pending && "bg-yellow-400",
+                                    ticket.status === TicketStatus.Processing && "bg-green-400",
+                                    ticket.status === TicketStatus.Success && "bg-neutral-200",
                                 )
                             }
                         />

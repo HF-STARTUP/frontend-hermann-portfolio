@@ -1,7 +1,13 @@
 export enum TicketStatus {
-    Pending = "Pending",
-    Processed = "processed",
-    Success = "success",
+    Pending = "submitted",
+    Processing = "processed",
+    Success = "resolved",
+}
+
+export enum TICKET_STATUS {
+    RESOLVED = "resolved",
+    PROCESSED = "processed",
+    SUBMITTED = "submitted"
 }
 
 export type TicketType = {

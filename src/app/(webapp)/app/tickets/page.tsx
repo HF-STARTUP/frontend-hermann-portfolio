@@ -1,8 +1,6 @@
 "use client"
 
 import usePrompStore from "@/app/(protected)/dashboard/chat/_store/usePrompStore";
-import AdminSubNav from "@/components/layout/admin/SubNav/AdminSubNav";
-import {ChatAfterTitle} from "@/app/(protected)/dashboard/status-accounts/_components/_UtilsComponents/UtilsComponent";
 import {
     ChatContainer,
     ChatSectionBody,
@@ -15,7 +13,6 @@ import {ChatInputPrompt} from "@/app/(protected)/dashboard/chat/_components/chat
 import {Crumb} from "@/components/ui/custom/crumb";
 import React from "react";
 import {PageTitle} from "@/components/ui/custom/PageTitle";
-import {useGetTicketList} from "@/hooks/admin/useTicketHook";
 
 export default function TicketPage() {
 
