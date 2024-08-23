@@ -13,7 +13,12 @@ abstract class Model {
     }
 
     protected formatDate(date: Date, dateFormat: string = 'dd/MM/yyyy'): string {
-        return format(date, dateFormat);
+
+        try {
+            return format(date, dateFormat);
+        } catch (e) {
+            return ""
+        }
     }
 
     public getDifferenceInDays(dateLeft: Date, dateRight: Date): number {

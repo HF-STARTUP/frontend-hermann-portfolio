@@ -63,11 +63,11 @@ export default function FleetListAccount({fleets}: { fleets: FleetModel[] }) {
             fleet.city,
             fleet.number_vehicle,
             fleet.driver_number,
-            fleet.start_date,
+            fleet.start_date ?? "-",
             fleet.ca_total,
             (fleet.subscription_amount ?? 0) + ' ' + fleet._instance.currency,
             fleet.suscription_name,
-            fleet.end_date,
+            fleet.end_date ?? "-",
             fleet.abon_status
         ]
     })
@@ -76,7 +76,7 @@ export default function FleetListAccount({fleets}: { fleets: FleetModel[] }) {
     const vehicleNumber = `${fleets.reduce((acc, fleet) => acc + fleet.number_vehicle, 0)}`
     const driverNumber = `${fleets.reduce((acc, fleet) => acc + fleet.driver_number, 0)}`
     const totalCA = `${fleets.reduce((acc, fleet) => acc + fleet._instance.ca_total, 0)}`
-    const totalSubscriptionAmount = `${fleets.reduce((acc, fleet) => acc + fleet._instance.subscription_amount ?? 0, 0)}`
+    const totalSubscriptionAmount = `${fleets.reduce((acc, fleet) => (acc ?? 0) + (fleet._instance.subscription_amount ?? 0), 0) ?? 0} `
 
 
     const config: AdminDataTableDisplayProps = {

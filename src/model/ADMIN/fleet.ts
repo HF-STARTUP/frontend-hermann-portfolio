@@ -63,7 +63,7 @@ export class FleetModel extends Model {
     }
 
     get suscription_name() {
-        return this._instance.subscription
+        return this._instance.subscription ?? "Aucun abonnement actif"
     }
 
     get abon_status() {
