@@ -1,6 +1,6 @@
 export type FleetListResponseType = {
     id: string;
-    name: string;
+    name?: string;
     owner: Owner;
     ca_total: number;
     subscription: string;
@@ -52,7 +52,7 @@ export type FleetResponseType = {
     offer: string;
     renew: boolean;
     amount: null;
-    subscription: Subscription;
+    subscription?: Subscription;
     info: Info;
 }
 
@@ -70,7 +70,7 @@ export type Subscription = {
     subscription_type: string;
     period: string;
     code: null;
-    name: string;
+    name?: string;
     remise: null;
     amount: null;
     crossed_out_amount: null;

@@ -9,7 +9,7 @@ abstract class Model {
     }
 
     protected toDate(date: Date, dateFormat: string = 'dd/MM/yyyy ') {
-        return formatDistanceToNow(date)
+        return typeof date === "object" ? formatDistanceToNow(date) : "-"
     }
 
     protected formatDate(date: Date, dateFormat: string = 'dd/MM/yyyy'): string {

@@ -168,7 +168,7 @@ export class AdminOnFleetModel extends Model {
 
 
 export class AbonResponseModel extends Model {
-    private _instance: FleetResponseType;
+    public _instance: FleetResponseType;
 
     constructor(datas: FleetResponseType) {
         super()
@@ -230,82 +230,82 @@ export class AbonResponseModel extends Model {
 }
 
 export class SubscriptionModel {
-    private _instance: Subscription;
+    private _instance?: Subscription;
 
-    constructor(datas: Subscription) {
+    constructor(datas?: Subscription) {
         this._instance = datas;
     }
 
     get id() {
-        return this._instance.id;
+        return this._instance?.id ?? "";
     }
 
     get accountType() {
-        return this._instance.account_type;
+        return this._instance?.account_type ?? '';
     }
 
     get subscriptionType() {
-        return this._instance.subscription_type;
+        return this._instance?.subscription_type ?? "";
     }
 
     get period() {
-        return this._instance.period;
+        return this._instance?.period ?? "";
     }
 
     get code() {
-        return this._instance.code;
+        return this._instance?.code ?? '';
     }
 
-    get name() {
-        return this._instance.name;
+    get name(): string {
+        return this._instance?.name ?? "";
     }
 
     get remise() {
-        return this._instance.remise;
+        return this._instance?.remise ?? '';
     }
 
     get amount() {
-        return this._instance.amount;
+        return this._instance?.amount ?? 0;
     }
 
     get crossedOutAmount() {
-        return this._instance.crossed_out_amount;
+        return this._instance?.crossed_out_amount ?? 0;
     }
 
     get description() {
-        return this._instance.description;
+        return this._instance?.description ?? '';
     }
 
     get vehicleNumber() {
-        return this._instance.vehicle_number;
+        return this._instance?.vehicle_number ?? '';
     }
 
     get driverNumber() {
-        return this._instance.driver_number;
+        return this._instance?.driver_number ?? 0;
     }
 
     get gps() {
-        return this._instance.gps;
+        return this._instance?.gps ?? '';
     }
 
     get textRemise() {
-        return this._instance.text_remise;
+        return this._instance?.text_remise ?? '';
     }
 
     get textLimitation() {
-        return this._instance.text_limitation;
+        return this._instance?.text_limitation ?? '';
     }
 
     get createdAt() {
-        return this.toDate(this._instance.created_at);
+        return this.toDate(this._instance?.created_at ?? new Date());
     }
 
     get updatedAt() {
-        return this.toDate(this._instance.updated_at);
+        return this.toDate(this._instance?.updated_at ?? new Date());
     }
 
     get enable() {
-        return this._instance.enable;
+        return this._instance?.enable ?? false;
     }
 
     // Helper methods

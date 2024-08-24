@@ -16,7 +16,7 @@ export default function AdminsPage() {
         <div className={"px-[23.70px] py-[22.57px] bg-white rounded-[22.57px] max-w-[974px]"}>
             <div className={"mt-[24px] flex items-center  justify-between gap-[26px]"}>
                 <div className={"mb-[43px]"}>
-                    <ABlockTitle>Administrateurs de la flotte ({admins?.length ?? 0})</ABlockTitle>
+                    <ABlockTitle>Administrateurs de la flotte ({admins?.length ?? "-"})</ABlockTitle>
                 </div>
                 {/*<ABtnAction>Ajouter un administrateur</ABtnAction>*/}
             </div>

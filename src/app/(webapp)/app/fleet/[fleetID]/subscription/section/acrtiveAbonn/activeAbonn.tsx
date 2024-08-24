@@ -20,20 +20,24 @@ export const ActiveAbonnSection = () => {
     if (activeSubscription) {
 
         const abon = activeSubscription.subscription
+        const hasAbonnement = !!activeSubscription._instance.subscription
 
         return (
             <div className={"flex flex-col gap-[18px]  p-4 bg-white rounded-[20px]"}>
                 <ABlockTitle>Abonnement en cours</ABlockTitle>
                 <div className={"flex flex-col lg:flex-row gap-[46px]"}>
-                    <AbonnTypeCard
+                    {hasAbonnement ? <AbonnTypeCard
                         title={abon.name}
                         subtitle={activeSubscription.abonResume}
                         action={<div className="text-black text-xs font-semibold">Expire
                             le {activeSubscription.endDate}</div>}
                         logoColor={"text-[#e89900]"}
                         className={"bg-gradient-to-r from-[#FF9900] via-[#ffcd6f] to-[#E89900]"}
-                    />
-                    <ActiveAbonnDetails subs={activeSubscription}/>
+                    /> : (<div
+                        className={"h-[200px] w-full flex items-center justify-center"}>
+                        <p className={"text-xl text-center text-vaTextPrimary font-medium"}>Aucun abonnement actif.</p>
+                    </div>)}
+                    {hasAbonnement && <ActiveAbonnDetails subs={activeSubscription}/>}
                 </div>
             </div>
         )
