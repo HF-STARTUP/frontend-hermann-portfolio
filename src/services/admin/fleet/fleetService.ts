@@ -29,7 +29,8 @@ export enum FleetApiPath {
     BestAndLeastOnCity = "/dashboard/city/park/best-and-least-profitable",
     DashboardActivities = "/dashboard/city/activity",
     DashboardSubscriptionEvolution = "/dashboard/city/subscription/evolution",
-    ActivateSubscription = "/subscription/activate-subscription"
+    ActivateSubscription = "/subscription/activate-subscription",
+    CancelSubscription = "/subscription/cancel-active-subscription",
 }
 
 class FleetService extends Service {
@@ -316,7 +317,27 @@ class FleetService extends Service {
     }
 
 
-    protected static async makeRequest<T>(url: string, method: 'GET' | 'POST' | 'PUT', body?: any, secure: boolean = true): Promise<T> {
+    public static async cancelSubscription({parkID}: {
+        parkID: string,
+    }) {
+
+
+        const uri = FleetApiPath.CancelSubscription + "/" + parkID
+
+        const data = await FleetService.makeRequest(
+            uri,
+            'DELETE',
+            {
+                park_id: parkID
+            },
+            false
+        )
+
+        return data
+    }
+
+
+    protected static async makeRequest<T>(url: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', body?: any, secure: boolean = true): Promise<T> {
         return this.getInstance().execHttpRequest<T>({url, method, body, secure});
     }
 

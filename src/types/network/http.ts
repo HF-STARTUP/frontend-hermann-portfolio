@@ -19,14 +19,14 @@ export type SystemHttpCodeGeneric = 5000 | 5001 | 5003 | 5004 | 5005 | 5006 | 50
 
 export type GlobalResponseType<T> = {
     message: string
-    code:    SystemHttpCodeGeneric
+    code: SystemHttpCodeGeneric
     data: T
 }
 
 
 export type ExecHttpRequestOptionType = {
     url: string,
-    method: 'GET' | 'POST' | 'PUT',
+    method: 'GET' | 'POST' | 'PUT' | "DELETE",
     headers?: AxiosRequestHeaders
     body?: any,
     toFormdata?: boolean,

@@ -3,9 +3,23 @@ import {CrownIcon} from "@/components/ui/__icons";
 import * as React from "react";
 import {ABlockTitle} from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
 import {cn} from "@/lib/utils";
-import {useActiveSubscription, useGetActiveSubscriptionOnFleet} from "@/hooks/admin/useFleetHook";
+import {
+    useActiveSubscription,
+    useGetActiveSubscriptionOnFleet,
+    useSuspendSubscription
+} from "@/hooks/admin/useFleetHook";
 import Loading from "@/components/ui/Loader";
 import {AbonResponseModel} from "@/model/ADMIN/fleet";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from "@/components/ui/dialog";
+import BtnBase from "@/components/elements/BtnBase";
 
 export const ActiveAbonnSection = () => {
 
@@ -46,6 +60,9 @@ export const ActiveAbonnSection = () => {
 
 const ActiveAbonnDetails: React.FC<{ subs: AbonResponseModel }> = ({subs}) => {
 
+    const [isOpen, setIsOpen] = React.useState(false)
+    const {data, isSuccess, loading, onSuspendSubscription} = useSuspendSubscription()
+
     return (
         <div className={"flex flex-col gap-[16px] w-full"}>
             {[
@@ -63,14 +80,61 @@ const ActiveAbonnDetails: React.FC<{ subs: AbonResponseModel }> = ({subs}) => {
                     </div>
                 </div>
             ))}
-            <button
-                disabled={true}
-                className={cn(
-                    "text-center text-[#e51d13] text-sm font-bold font-['DM Sans'] leading-3 px-5 py-[12px] bg-[#ffeae9] rounded-md w-fit hover:opacity-80 transition",
-                    "opacity-60 hover:opacity-60 cursor-auto"
-                )}>
-                Résilier l’abonnement
-            </button>
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                <DialogTrigger asChild>
+                    {<button
+                        className={cn(
+                            "text-center text-[#e51d13] text-sm font-bold font-['DM Sans'] leading-3 px-5 py-[12px] bg-[#ffeae9] rounded-md w-fit hover:opacity-80 transition",
+                            "cursor-pointer"
+                        )}>
+                        Résilier l’abonnement
+                    </button>}
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Confirmer la suspension de l'abonnement</DialogTitle>
+                        <DialogDescription className={"pt-4"}>
+                            Êtes-vous sûr de vouloir suspendre l'abonnement pour cette flotte de véhicules ?
+                            Une fois suspendue, cette flotte sera inaccessible pour les réservations jusqu'à ce qu'un
+                            nouvel abonnement soit souscrit ou que l'abonnement soit réactivé manuellement.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <div className={`mt-[20px] w-full flex flex-col gap-2`}>
+
+                            <BtnBase
+                                onClick={() => setIsOpen(false)}
+                                shape={'square'}
+                                to={''}
+                                variant={'contained'}
+                                color={'blue'}
+                                fullwidth={true}
+                                className={"w-full"}
+                                disabled={loading}
+                            >
+                                Annuler
+                            </BtnBase>
+                            <BtnBase
+                                shape={'square'}
+                                to={''}
+                                variant={'contained'}
+                                fontWeight={'bold'}
+                                color={'yellow'}
+                                fullwidth={true}
+                                className={"w-full"}
+                                disabled={loading}
+                                onClick={onSuspendSubscription}
+                                loading={loading}
+                            >
+                                Suspendre l'abonnement
+                            </BtnBase>
+
+                        </div>
+                    </DialogFooter>
+                </DialogContent>
+
+            </Dialog>
+
         </div>
     )
 }

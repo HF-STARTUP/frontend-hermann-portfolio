@@ -274,3 +274,46 @@ export const useActiveSubscription = () => {
     }
 
 }
+
+export const useSuspendSubscription = () => {
+
+    const $router = useRouter()
+
+    const {
+        data,
+        loading,
+        isSuccess,
+        isError,
+        handleMutation,
+    } = useMutationProvider({
+        mutationFn: FleetService.cancelSubscription,
+        successMessage: "Souscription supendus",
+        updateMessage: "Souscription suspendus",
+    });
+
+    const parkID = useGetParkID()
+
+
+    const onSuspendSubscription = () => {
+
+        console.log(parkID.parkID)
+
+        handleMutation({
+            parkID: parkID.parkID
+        })
+    }
+
+    React.useEffect(() => {
+        if (data && isSuccess) {
+            void FleetService.invalidActiveSubscription()
+        }
+    }, [data, isSuccess])
+
+    return {
+        data,
+        loading,
+        isSuccess,
+        onSuspendSubscription,
+    }
+
+}
