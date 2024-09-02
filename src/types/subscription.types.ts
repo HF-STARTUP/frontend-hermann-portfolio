@@ -10,6 +10,8 @@ export type SubscriptionPackResponseType = {
     advantages: Advantage[];
     amount: number;
     currency: string;
+    period: string;
+    crossed_out_amount: string;
 }
 
 export type Advantage = {

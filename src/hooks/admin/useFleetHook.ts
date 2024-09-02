@@ -1,8 +1,10 @@
 import {useQuery} from "@tanstack/react-query";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import FleetService, {FleetApiPath} from "@/services/admin/fleet/fleetService";
-import {useQueryProvider} from "@/hooks/hooksProvider";
+import {useMutationProvider, useQueryProvider} from "@/hooks/hooksProvider";
 import {useGetParkID} from "@/hooks/__globlal/useGlobalHook";
+import {useRouter} from "next/navigation";
+import React from "react";
 
 export const useGetFleetsList = () => {
 
@@ -230,4 +232,45 @@ export const useGetDashboardSubscriptionEvolution = (graphType: string) => {
     })
 
     return {isLoading, data}
+}
+
+export const useActiveSubscription = () => {
+
+    const $router = useRouter()
+
+    const {
+        data,
+        loading,
+        isSuccess,
+        isError,
+        handleMutation,
+    } = useMutationProvider({
+        mutationFn: FleetService.activeSubscription,
+        successMessage: "Souscription activée",
+        updateMessage: "Souscription activée",
+    });
+
+    const parkID = useGetParkID()
+
+
+    const onActiveSubscription = (subscriptionID: string) => {
+        handleMutation({
+            subscriptionID: subscriptionID,
+            parkID: parkID.parkID
+        })
+    }
+
+    React.useEffect(() => {
+        if (data && isSuccess) {
+            void FleetService.invalidActiveSubscription()
+        }
+    }, [data, isSuccess])
+
+    return {
+        data,
+        loading,
+        isSuccess,
+        onActiveSubscription,
+    }
+
 }

@@ -3,7 +3,7 @@ import {CrownIcon} from "@/components/ui/__icons";
 import * as React from "react";
 import {ABlockTitle} from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
 import {cn} from "@/lib/utils";
-import {useGetActiveSubscriptionOnFleet} from "@/hooks/admin/useFleetHook";
+import {useActiveSubscription, useGetActiveSubscriptionOnFleet} from "@/hooks/admin/useFleetHook";
 import Loading from "@/components/ui/Loader";
 import {AbonResponseModel} from "@/model/ADMIN/fleet";
 
@@ -49,7 +49,7 @@ const ActiveAbonnDetails: React.FC<{ subs: AbonResponseModel }> = ({subs}) => {
     return (
         <div className={"flex flex-col gap-[16px] w-full"}>
             {[
-                ["Type d’abonnement :", subs.subscription.subscriptionType],
+                ["Type d’abonnement :", subs.subscription.name],
                 ["Date de souscription :", subs.startDate]
             ].map((item, index) => (
                 <div key={index} className={"flex justify-between items-center"}>
@@ -77,6 +77,7 @@ const ActiveAbonnDetails: React.FC<{ subs: AbonResponseModel }> = ({subs}) => {
 
 
 type AbonnTypeCardProps = {
+    id?: string,
     title: string,
     subtitle: string,
     action?: React.ReactNode,
@@ -84,12 +85,19 @@ type AbonnTypeCardProps = {
 }
 
 export const AbonnTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & AbonnTypeCardProps> = ({
+                                                                                                       id,
                                                                                                        title,
                                                                                                        subtitle,
                                                                                                        action,
                                                                                                        logoColor,
                                                                                                        className
                                                                                                    }) => {
+
+    const {data, onActiveSubscription, loading} = useActiveSubscription()
+
+    const handleActiveSubscription = () => {
+        id && onActiveSubscription(id)
+    }
 
     return (
         <div
@@ -108,7 +116,12 @@ export const AbonnTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & Abon
                             logoColor
                         )} width={25} height={25}/>
                     </div>
-                    {action}
+                    {!loading && <div onClick={handleActiveSubscription}>
+                        {action}
+                    </div>}
+                    {loading &&
+                        <span className={"text-white font-medium text-[12px]"}>Activation...</span>
+                    }
                 </div>
                 <div>
                     <div className="text-white text-lg font-bold  tracking-wider">{title}</div>

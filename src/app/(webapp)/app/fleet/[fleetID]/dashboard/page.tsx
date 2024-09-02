@@ -13,8 +13,6 @@ export default function DashboardPage() {
     const {} = useGetFleetDetails()
     const {} = useGetFleetStats()
 
-
-
     return (
         <div>
             <StatCards/>
@@ -22,10 +20,10 @@ export default function DashboardPage() {
                 <div className={"col-span-12 md:col-span-6 2xl:col-span-4"}>
                     <CashEvolution/>
                 </div>
-                <div className={"col-span-12 2xl:col-span-4"}>
+                <div className={"col-span-12 md:col-span-6 2xl:col-span-4"}>
                     <EntretienEvolution/>
                 </div>
-                <div className={"col-span-12 md:col-span-6 2xl:col-span-4"}>
+                <div className={"col-span-12 2xl:col-span-4"}>
                     <CourseEvolution/>
                 </div>
             </div>
