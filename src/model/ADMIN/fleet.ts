@@ -47,7 +47,7 @@ export class FleetModel extends Model {
     }
 
     get start_date() {
-        return this.formatDate(this._instance.end_date)
+        return this.formatDate(this._instance.start_date)
     }
 
     get end_date() {
