@@ -85,7 +85,7 @@ class SettingsService extends Service {
     }
 
     public static async removeAdminOnCity(formData: RemoveAdminOnCityInput) {
-        return await SettingsService.makeRequest(SettingsApiPath.AddAdminOnCity, 'POST', formData);
+        return await SettingsService.makeRequest(SettingsApiPath.RemoveAdminOnCity, 'POST', formData);
     }
 
 
