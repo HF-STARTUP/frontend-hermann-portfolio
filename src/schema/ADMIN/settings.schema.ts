@@ -83,7 +83,7 @@ export const AddAdminInputSchema = Joi.object<AddAdminInput>({
     phone: _JoiConfig.phoneRequired,
     first_name: _JoiConfig.strRequired,
     last_name: _JoiConfig.strRequired,
-    city_id: _JoiConfig.strRequired,
+    city_id: _JoiConfig.strOptionnal,
 })
 
 

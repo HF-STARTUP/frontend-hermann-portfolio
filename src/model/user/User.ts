@@ -16,6 +16,10 @@ class UserProfile extends Model {
     }
 
     get userID() {
+        return this._instance.id;
+    }
+
+    get profileUserID() {
         return this._instance.user.id;
     }
 

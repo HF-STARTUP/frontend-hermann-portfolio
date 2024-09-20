@@ -221,7 +221,7 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                             loading={loading}
                             onClick={handleSubmit(onSubmit)}
                         >
-                            {(loading || loadingProfile) ? (isEdit ? "Mettre à jour" : "Ajout en cour...") : "Confirmer"}
+                            {(loading || loadingProfile) ? (isEdit ? "Mise à jour en cour" : "Ajout en cour...") : "Confirmer"}
                         </BtnBase>
                     </DialogActions>
                 </DialogBase>

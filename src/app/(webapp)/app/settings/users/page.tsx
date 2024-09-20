@@ -161,7 +161,7 @@ const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
                         <CityItem
                             citySize={user.cities.length}
                             cityID={"" + c.id}
-                            userID={"" + user.userID}
+                            userID={"" + user.profileUserID}
                             id={"" + c.id}
                             key={c.id}
                         >{c.name}</CityItem>

@@ -56,7 +56,7 @@ export const SetCityToAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement>
 
         onAddAdminOnCity(
             {
-                user_id: profile.userID,
+                user_id: profile.profileUserID,
                 city_id: selectedCity,
                 access: AccessPermissions,
             }
