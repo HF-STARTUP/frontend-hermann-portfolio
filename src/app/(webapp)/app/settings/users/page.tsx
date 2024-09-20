@@ -159,6 +159,7 @@ const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
                 <div className={"flex gap-2 items-center"}>
                     {user.cities.map(c => (
                         <CityItem
+                            citySize={user.cities.length}
                             cityID={"" + c.id}
                             userID={"" + user.userID}
                             id={"" + c.id}
@@ -181,11 +182,16 @@ const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
     )
 }
 
-const CityItem: React.FC<React.HTMLAttributes<HTMLDivElement> & { cityID: string, userID: string }> = ({
-                                                                                                           cityID,
-                                                                                                           userID,
-                                                                                                           children
-                                                                                                       }) => {
+const CityItem: React.FC<React.HTMLAttributes<HTMLDivElement> & {
+    cityID: string,
+    userID: string,
+    citySize: number
+}> = ({
+          citySize,
+          cityID,
+          userID,
+          children
+      }) => {
 
     const {onRemoveAdmonOnCity, loading} = useRemoveAdminOnCity()
 
@@ -199,9 +205,10 @@ const CityItem: React.FC<React.HTMLAttributes<HTMLDivElement> & { cityID: string
     }
 
     return (
-        <div className={"bg-white/40 border rounded-md p-2 flex items-center justify-between gap-2 group"}>
+        <div
+            className={cn("bg-white/40 border rounded-md p-2 flex items-center justify-between gap-2 group", citySize < 2 && "opacity-70")}>
             <div>{children}</div>
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            {citySize > 1 && (<Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
                     {<button disabled={loading} className={"hidden group-hover:block transition"}>
                         {loading ? <LoaderCircle/> : <AiFillDelete/>}
@@ -249,7 +256,7 @@ const CityItem: React.FC<React.HTMLAttributes<HTMLDivElement> & { cityID: string
                     </DialogFooter>
                 </DialogContent>
 
-            </Dialog>
+            </Dialog>)}
         </div>
     )
 }
