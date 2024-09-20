@@ -16,7 +16,7 @@ import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVal
 import Loading from "@/components/ui/Loader";
 import Country from "@/model/location/Country";
 import City from "@/model/location/City";
-import {useCountries} from "@/hooks/location/useCountry/useCountry";
+import {useCountries, useFleetCity} from "@/hooks/location/useCountry/useCountry";
 import {useCity} from "@/hooks/location/useCity/useCity";
 import UserProfile from "@/model/user/User";
 
@@ -41,9 +41,8 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     const [selectedCountry, setSelectedCountry] = React.useState('AF')
     const [selectedCity, setSelectedCity] = React.useState('1')
 
-    const {data: countriesData, error: fetchCountriesError, isLoading: fetchingCountries} = useCountries()
-    const {data: citiesData, error: fetchCitiesError, isLoading: fetchingCities} = useCity(selectedCountry)
     const {onUpdateProfile, loading: loadingProfile} = useUpdateProfile()
+    const {data: fleetCities, error: fleetCitiesError, isLoading: fetchingFleetCities} = useFleetCity()
 
 
     const isEdit = !!profile
@@ -171,24 +170,15 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                                 errors={errors}
                             />
 
-                            <Stack>
-                                <SelectField
-                                    mode={"search"}
-                                    label={'Pays*'}
-                                    loading={fetchingCountries}
-                                    items={Country.toVSelect(countriesData)}
-                                    handleSelect={(v) => setSelectedCountry('' + v)}
-                                />
+                            {!isEdit && (
                                 <SelectField
                                     mode={"search"}
                                     label={'Ville*'}
-                                    loading={fetchingCities}
-                                    items={City.toVSelect(citiesData)}
+                                    loading={fetchingFleetCities}
+                                    items={City.toVSelect(fleetCities)}
                                     handleSelect={(v) => setSelectedCity('' + v)}
-                                    register={register("city_id")}
-                                    errors={errors}
                                 />
-                            </Stack>
+                            )}
 
                             {!isEdit && <div
                                 className="text-[#506D82] text-sm font-bold font-['DM Sans'] leading-normal mb-[5px] mt-[20px]">
@@ -220,8 +210,6 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                                 {isLoading && <Loading/>}
                             </div>}
                         </FormGroup>
-
-
                     </DefaultDialogMainBody>
                     <DialogActions className={`pt-[30px]`}>
                         <BtnBase

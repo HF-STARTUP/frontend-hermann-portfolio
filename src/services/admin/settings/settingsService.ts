@@ -1,6 +1,11 @@
 import Service from "@/services/Service";
 import {CourseResponseType} from "@/types/course.types";
-import {AddAdminInput, UpdatePasswordInput, UpdateProfileInput} from "@/schema/ADMIN/settings.schema";
+import {
+    AddAdminInput,
+    AddAdminOnCityInput, RemoveAdminOnCityInput,
+    UpdatePasswordInput,
+    UpdateProfileInput
+} from "@/schema/ADMIN/settings.schema";
 import UserProfile from "@/model/user/User";
 import {AdminProfileResponseType} from "@/types/__form/profile.type";
 
@@ -10,7 +15,9 @@ export enum SettingsApiPath {
     UpdatePassword = '/admin-reset-password',
     AdminAccess = '/access-root',
     createAdmin = '/root/create-admin-on-city',
-    DeactivateActiveAdmin = "/root/deactivate-activate"
+    AddAdminOnCity = '/root/add-admin-on-city',
+    DeactivateActiveAdmin = "/root/deactivate-activate",
+    RemoveAdminOnCity = "/root/remove-admin-on-city",
 }
 
 export type RoleType = {
@@ -68,10 +75,19 @@ class SettingsService extends Service {
         return UserProfile.fromArray(list)
     }
 
-
     static refreshAdmins() {
         return SettingsService.getInstance().queryClient.invalidateQueries({queryKey: [SettingsApiPath.AdminList]})
     }
+
+
+    public static async addAdminOnCity(formData: AddAdminOnCityInput) {
+        return await SettingsService.makeRequest(SettingsApiPath.AddAdminOnCity, 'POST', formData);
+    }
+
+    public static async removeAdminOnCity(formData: RemoveAdminOnCityInput) {
+        return await SettingsService.makeRequest(SettingsApiPath.AddAdminOnCity, 'POST', formData);
+    }
+
 
     protected static async makeRequest<T>(url: string, method: 'GET' | 'POST' | 'PUT', body?: any): Promise<T> {
         return this.getInstance().execHttpRequest<T>({url, method, body});

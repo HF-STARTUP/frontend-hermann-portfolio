@@ -1,6 +1,8 @@
-import {CountryType, GetCountryResponseType} from "@/types/location/location.type";
+import {CityType, CountryType, GetCountryResponseType} from "@/types/location/location.type";
 import {EnvVars} from "@/utils/const/envVars";
 import Country from "@/model/location/Country";
+
+export const FleetCityPath = `${EnvVars.NP_API_ENDPOINT}/location/cities/park?itemPerPage=20&page=1`
 
 export class CountryService {
 
@@ -10,7 +12,7 @@ export class CountryService {
         this.fetchCountries = this.fetchCountries.bind(this);
     }
 
-    private get getFullCountryApiPath(){
+    private get getFullCountryApiPath() {
         return `${EnvVars.NP_API_ENDPOINT}/${this.countryApiPath}`
     }
 
@@ -24,5 +26,18 @@ export class CountryService {
         const countriesParsed: CountryType[] = getCountriesData.data;
 
         return Country.toCountries(countriesParsed);
+    }
+
+    async fetchFleetCities(): Promise<CityType[]> {
+        const response: Response = await fetch(FleetCityPath);
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const getCountriesData = await response.json();
+        const citiesParsed: { data: CityType[] } = getCountriesData.data;
+
+        return citiesParsed.data;
     }
 }

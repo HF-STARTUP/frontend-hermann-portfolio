@@ -1,7 +1,12 @@
 import TicketService from "@/services/admin/ticket/ticketService";
 import React from "react";
 import {useRouter} from "next/navigation";
-import {AddAdminInput, UpdatePasswordInput, UpdateProfileInput} from "@/schema/ADMIN/settings.schema";
+import {
+    AddAdminInput,
+    AddAdminOnCityInput, RemoveAdminOnCityInput,
+    UpdatePasswordInput,
+    UpdateProfileInput
+} from "@/schema/ADMIN/settings.schema";
 import SettingsService, {SettingsApiPath} from "@/services/admin/settings/settingsService";
 import LoginService from "@/services/__form/auth/LoginService";
 import {useMutationProvider, useQueryProvider} from "@/hooks/hooksProvider";
@@ -36,6 +41,7 @@ export const useUpdateProfile = () => {
             void LoginService.refreshProfile()
         }
     }, [data, isSuccess])
+
 
     return {
         data,
@@ -126,6 +132,68 @@ export const useCreateAdmin = () => {
         loading,
         isSuccess,
         onCreateAdmin,
+    }
+
+}
+
+export const useAddAdminOnCity = () => {
+
+    const {
+        data,
+        loading,
+        isSuccess,
+        isError,
+        handleMutation,
+    } = useMutationProvider({
+        mutationFn: SettingsService.addAdminOnCity,
+        successMessage: "Ville associer à l'admin.",
+    });
+
+    const onAddAdminOnCity = (data: AddAdminOnCityInput) => {
+        handleMutation(data)
+    }
+
+    React.useEffect(() => {
+        void SettingsService.refreshAdmins()
+        void LoginService.refreshProfile()
+    }, [isSuccess, data])
+
+    return {
+        data,
+        loading,
+        isSuccess,
+        onAddAdminOnCity,
+    }
+
+}
+
+export const useRemoveAdminOnCity = () => {
+
+    const {
+        data,
+        loading,
+        isSuccess,
+        isError,
+        handleMutation,
+    } = useMutationProvider({
+        mutationFn: SettingsService.removeAdminOnCity,
+        successMessage: "Ville dissocier de l'admin.",
+    });
+
+    const onRemoveAdmonOnCity = (data: RemoveAdminOnCityInput) => {
+        handleMutation(data)
+    }
+
+    React.useEffect(() => {
+        void SettingsService.refreshAdmins()
+        void LoginService.refreshProfile()
+    }, [isSuccess, data])
+
+    return {
+        data,
+        loading,
+        isSuccess,
+        onRemoveAdmonOnCity,
     }
 
 }
