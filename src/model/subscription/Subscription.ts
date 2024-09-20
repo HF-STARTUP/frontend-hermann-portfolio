@@ -7,7 +7,7 @@ import {
 import Model from "@/model/Model";
 
 export class SubscriptionModel extends Model {
-    private _instance: SubscriptionPackResponseType
+    public _instance: SubscriptionPackResponseType
 
     constructor(data: SubscriptionPackResponseType) {
         super()
