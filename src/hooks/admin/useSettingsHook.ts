@@ -52,7 +52,6 @@ export const useUpdateProfile = () => {
 
 }
 
-
 export const useUpdatePassword = () => {
 
     const {

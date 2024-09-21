@@ -31,7 +31,6 @@ export enum ACCESS_TYPE {
     WRITE = "write"
 }
 
-
 class SettingsService extends Service {
     private static instance: SettingsService = new SettingsService();
 
@@ -78,7 +77,6 @@ class SettingsService extends Service {
     static refreshAdmins() {
         return SettingsService.getInstance().queryClient.invalidateQueries({queryKey: [SettingsApiPath.AdminList]})
     }
-
 
     public static async addAdminOnCity(formData: AddAdminOnCityInput) {
         return await SettingsService.makeRequest(SettingsApiPath.AddAdminOnCity, 'POST', formData);
