@@ -61,12 +61,12 @@ abstract class Service {
         const notIsLoggedIn = !AuthManagerGuard.isLoggedIn()
 
         if (notIsLoggedIn && secure) {
-            AuthManagerGuard.signOut()
-            if (window?.location) {
-                window.location = `${window.location.origin}/auth/login` as unknown as Location
-            }
-            console.log("Session expiré")
-            throw new CustomQueryError("Session expiré, veuillez vous reconnecter")
+            await this.refreshToken()
+            // if (window?.location) {
+            //     window.location = `${window.location.origin}/auth/login` as unknown as Location
+            // }
+            // console.log("Session expiré")
+            // throw new CustomQueryError("Session expiré, veuillez vous reconnecter")
         }
 
 
