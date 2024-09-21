@@ -62,7 +62,7 @@ export function PackCaroussel() {
                                 <AbonnTypeCard
                                     id={d.id}
                                     title={`${d.name}`}
-                                    subtitle={`${d._instance.crossed_out_amount}${d._instance.currency}/véhicule/${d._instance.period}`}
+                                    subtitle={`${d._instance.amount}${d._instance.currency}/véhicule/${d._instance.period}`}
                                     action={
                                         <ChangePackBtn/>
                                     }
