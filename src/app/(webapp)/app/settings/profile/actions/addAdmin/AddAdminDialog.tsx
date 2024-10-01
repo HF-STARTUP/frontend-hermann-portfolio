@@ -74,7 +74,11 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
         if (isEdit) {
             onUpdateProfile({...adminInfos, id: profile?.getID})
         } else {
-            onCreateAdmin({...adminInfos, access: JSON.stringify(access) as unknown as AdminAccessType[]})
+            onCreateAdmin({
+                ...adminInfos,
+                access: JSON.stringify(access) as unknown as AdminAccessType[],
+                city_id: selectedCity
+            })
         }
 
     }
@@ -176,7 +180,10 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                                     label={'Ville*'}
                                     loading={fetchingFleetCities}
                                     items={City.toVSelect(fleetCities)}
-                                    handleSelect={(v) => setSelectedCity('' + v)}
+                                    handleSelect={(v) => {
+                                        console.log(v)
+                                        setSelectedCity('' + v)
+                                    }}
                                 />
                             )}
 

@@ -30,125 +30,132 @@ const AddGroupTRecipsPage: React.FC = () => {
 
     return (
         <div>
-            <AdminPageTitle withMb={true}>Encaissements</AdminPageTitle>
-            <div className={`flex flex-col gap-5`}>
-                <div className={`flex flex-col gap-4`}>
-                    <GroupTitle title={`Fréquence d’encaissement chauffeurs`}/>
-                    <RadioField
-                        onChange={(checked) => {
-                            checked && updateRotationGroupConfig({
-                                collectConfig: {
-                                    ...collectConfig,
-                                    frequency: CollectFrequency.everyDay
-                                }
-                            })
-                        }}
-                        variant={'text'}
-                        label={`Tous les jours ouvrés (sélectionnez les jours ouvrés)`}
-                        name={`attribute4`}
-                        defaultChecked={true}
-                    />
-                    <div className={`flex flex-wrap gap-[20px] mb-5`}>
-                        {days.map((d, k) => (
-                            <TogglableDay label={d} key={k}/>
-                        ))}
-                    </div>
-                    <GroupOptionItemContainer>
+            <div>
+                <AdminPageTitle withMb={true}>Recettes</AdminPageTitle>
+                <GroupTitle title={`Gérer les recettes sur VTC Control`}/>
+
+            </div>
+            <div>
+                <AdminPageTitle withMb={true}>Encaissements</AdminPageTitle>
+                <div className={`flex flex-col gap-5`}>
+                    <div className={`flex flex-col gap-4`}>
+                        <GroupTitle title={`Fréquence d’encaissement chauffeurs`}/>
                         <RadioField
+                            onChange={(checked) => {
+                                checked && updateRotationGroupConfig({
+                                    collectConfig: {
+                                        ...collectConfig,
+                                        frequency: CollectFrequency.everyDay
+                                    }
+                                })
+                            }}
                             variant={'text'}
-                            label={`Uniquement le`}
+                            label={`Tous les jours ouvrés (sélectionnez les jours ouvrés)`}
                             name={`attribute4`}
-                            onChange={(checked) => {
-                                checked && updateRotationGroupConfig({
-                                    collectConfig: {
-                                        ...collectConfig,
-                                        frequency: CollectFrequency.oneDay
-                                    }
-                                })
-                            }}
-                        />
-                        <GroupOptionField
-                            items={[{label: 'Lundi', value: '01'}, {label: 'Mardi', value: '02'}]}
-                            onSelectItem={(day_id) => {
-                                updateRotationGroupConfig({collectConfig: {...collectConfig, day_id: +day_id}})
-                            }}
-                        />
-                    </GroupOptionItemContainer>
-                </div>
-            </div>
-            <div className={`my-5`}>
-                <Divider/>
-            </div>
-            <div className={`flex flex-col gap-5`}>
-                <div className={`flex flex-col gap-4`}>
-                    <GroupTitle title={`Lieu d’encaissement des recettes`}/>
-                    <GroupOptionItemContainer>
-                        <RadioField
                             defaultChecked={true}
-                            variant={'text'}
-                            label={`Chez l’agent`}
-                            name={`attribute5`}
-                            onChange={(checked) => {
-                                checked && updateRotationGroupConfig({
-                                    collectConfig: {
-                                        ...collectConfig,
-                                        locationCollecting: LocationCollecting.atAgent
-                                    }
-                                })
-                            }}
                         />
-                        <GroupOptionField
-                            onSelectItem={(item) => {
-                                updateRotationGroupConfig({
-                                    collectConfig: {
-                                        ...collectConfig,
-                                        collectingTime: item as CollectingTime
-                                    }
-                                })
-                            }}
-                            items={[
-                                {label: 'Pendant le checking', value: CollectingTime.inChecking},
-                                {label: 'À la passation', value: CollectingTime.onPassation},
-                                {label: 'Les deux', value: CollectingTime.both}]
-                            }
-                        />
-                    </GroupOptionItemContainer>
-                    <GroupOptionItemContainer>
-                        <RadioField
-                            variant={'text'}
-                            label={`À la caisse`}
-                            name={`attribute5`}
-                            onChange={(checked) => {
-                                checked && updateRotationGroupConfig({
-                                    collectConfig: {
-                                        ...collectConfig,
-                                        locationCollecting: LocationCollecting.inbox
-                                    }
-                                })
-                            }}
-                        />
-                        <GroupOptionField
-                            onSelectItem={(item) => {
-                                console.log(`item===>${item}`)
-                                updateRotationGroupConfig({
-                                    collectConfig: {
-                                        ...collectConfig,
-                                        collectingTime: item as CollectingTime
-                                    }
-                                })
-                            }}
-                            items={[
-                                {label: 'Pendant le checking', value: CollectingTime.inChecking},
-                                {label: 'À la passation', value: CollectingTime.onPassation},
-                                {label: 'Les deux', value: CollectingTime.both}
-                            ]}
-                        />
-                    </GroupOptionItemContainer>
+                        <div className={`flex flex-wrap gap-[20px] mb-5`}>
+                            {days.map((d, k) => (
+                                <TogglableDay label={d} key={k}/>
+                            ))}
+                        </div>
+                        <GroupOptionItemContainer>
+                            <RadioField
+                                variant={'text'}
+                                label={`Uniquement le`}
+                                name={`attribute4`}
+                                onChange={(checked) => {
+                                    checked && updateRotationGroupConfig({
+                                        collectConfig: {
+                                            ...collectConfig,
+                                            frequency: CollectFrequency.oneDay
+                                        }
+                                    })
+                                }}
+                            />
+                            <GroupOptionField
+                                items={[{label: 'Lundi', value: '01'}, {label: 'Mardi', value: '02'}]}
+                                onSelectItem={(day_id) => {
+                                    updateRotationGroupConfig({collectConfig: {...collectConfig, day_id: +day_id}})
+                                }}
+                            />
+                        </GroupOptionItemContainer>
+                    </div>
                 </div>
+                <div className={`my-5`}>
+                    <Divider/>
+                </div>
+                <div className={`flex flex-col gap-5`}>
+                    <div className={`flex flex-col gap-4`}>
+                        <GroupTitle title={`Lieu d’encaissement des recettes`}/>
+                        <GroupOptionItemContainer>
+                            <RadioField
+                                defaultChecked={true}
+                                variant={'text'}
+                                label={`Chez l’agent`}
+                                name={`attribute5`}
+                                onChange={(checked) => {
+                                    checked && updateRotationGroupConfig({
+                                        collectConfig: {
+                                            ...collectConfig,
+                                            locationCollecting: LocationCollecting.atAgent
+                                        }
+                                    })
+                                }}
+                            />
+                            <GroupOptionField
+                                onSelectItem={(item) => {
+                                    updateRotationGroupConfig({
+                                        collectConfig: {
+                                            ...collectConfig,
+                                            collectingTime: item as CollectingTime
+                                        }
+                                    })
+                                }}
+                                items={[
+                                    {label: 'Pendant le checking', value: CollectingTime.inChecking},
+                                    {label: 'À la passation', value: CollectingTime.onPassation},
+                                    {label: 'Les deux', value: CollectingTime.both}]
+                                }
+                            />
+                        </GroupOptionItemContainer>
+                        <GroupOptionItemContainer>
+                            <RadioField
+                                variant={'text'}
+                                label={`À la caisse`}
+                                name={`attribute5`}
+                                onChange={(checked) => {
+                                    checked && updateRotationGroupConfig({
+                                        collectConfig: {
+                                            ...collectConfig,
+                                            locationCollecting: LocationCollecting.inbox
+                                        }
+                                    })
+                                }}
+                            />
+                            <GroupOptionField
+                                onSelectItem={(item) => {
+                                    console.log(`item===>${item}`)
+                                    updateRotationGroupConfig({
+                                        collectConfig: {
+                                            ...collectConfig,
+                                            collectingTime: item as CollectingTime
+                                        }
+                                    })
+                                }}
+                                items={[
+                                    {label: 'Pendant le checking', value: CollectingTime.inChecking},
+                                    {label: 'À la passation', value: CollectingTime.onPassation},
+                                    {label: 'Les deux', value: CollectingTime.both}
+                                ]}
+                            />
+                        </GroupOptionItemContainer>
+                    </div>
+                </div>
+                <div className={`mb-5`}></div>
+                <Divider/>
+                <SaveConfiguration/>
             </div>
-            <div className={`mb-5`}></div>
-            <Divider/>
-            <SaveConfiguration/>
         </div>
     )
 }
@@ -173,16 +180,16 @@ const SaveConfiguration = () => {
     const {parkID} = useGetParkID()
     const $router = useRouter()
 
-    React.useEffect(()=>{
-        if(isError && error){
+    React.useEffect(() => {
+        if (isError && error) {
             logger.log(error)
             notify(error.message, 'error')
         }
     }, [isError, error])
 
-    React.useEffect(()=>{
-        if(isSuccess && !isError){
-            invalidRotationsGroup().then(()=>{
+    React.useEffect(() => {
+        if (isSuccess && !isError) {
+            invalidRotationsGroup().then(() => {
                 notify('Groupe de rotation creer avec success')
                 $router.push('/dashboard/schedule/schedule-settings')
                 updateRotationGroupConfig({name: 'Saisir le nom du groupe de rotation'})
@@ -190,7 +197,7 @@ const SaveConfiguration = () => {
         }
     }, [isSuccess])
 
-    const handleSaveConfigurationGroup = ()=> {
+    const handleSaveConfigurationGroup = () => {
         const inputs = prepareRotationGroupInputs()
         mutate({...inputs, region_id: parkID})
     }
