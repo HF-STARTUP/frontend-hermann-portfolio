@@ -7,13 +7,16 @@ import * as React from "react";
 import {useGetFleetAdmin} from "@/hooks/admin/useFleetHook";
 import Loading from "@/components/ui/Loader";
 import Image from "next/image";
+import {Button} from "@/components/ui/button";
+import {SettingIcon} from "@/components/ui/__icons";
+import {AdminOptionsDialog} from "@/app/(webapp)/app/fleet/[fleetID]/admin/actions/adminActionDialog";
 
 export default function AdminsPage() {
 
     const {data: admins, isLoading} = useGetFleetAdmin()
 
     return (
-        <div className={"px-[23.70px] py-[22.57px] bg-white rounded-[22.57px] max-w-[974px]"}>
+        <div className={"px-[23.70px] py-[22.57px] bg-white rounded-[22.57px]"}>
             <div className={"mt-[24px] flex items-center  justify-between gap-[26px]"}>
                 <div className={"mb-[43px]"}>
                     <ABlockTitle>Administrateurs de la flotte ({admins?.length ?? "-"})</ABlockTitle>
@@ -29,6 +32,7 @@ export default function AdminsPage() {
 
 const AdminTab = () => {
 
+    const [optionOpen, setOptionOpen] = React.useState<boolean>(false);
     const {data: admins, isLoading} = useGetFleetAdmin()
 
     if (isLoading) {
@@ -46,8 +50,11 @@ const AdminTab = () => {
                             <TableHead>ID</TableHead>
                             <TableHead>Nom</TableHead>
                             <TableHead>Rôle</TableHead>
+                            <TableHead>Email</TableHead>
+                            <TableHead>N° Téléphone</TableHead>
                             <TableHead>Date d'ajout</TableHead>
                             <TableHead>Status</TableHead>
+                            <TableHead>Option</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -70,6 +77,8 @@ const AdminTab = () => {
                                         </div>
                                     </TableCell>
                                     <TableCell>{admin.role}</TableCell>
+                                    <TableCell>{admin.email}</TableCell>
+                                    <TableCell>{admin.phone}</TableCell>
                                     <TableCell>{admin.createdAt}</TableCell>
                                     <TableCell>
                                         <div className={cn(
@@ -80,11 +89,19 @@ const AdminTab = () => {
                                             {isActive ? "Actif" : "Inactif"}
                                         </div>
                                     </TableCell>
+                                    <TableCell>
+                                        <Button variant={"ghost"} onClick={() => {
+                                            setOptionOpen(true)
+                                        }}>
+                                            <SettingIcon/>
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
                             )
                         })}
                     </TableBody>
                 </Table>
+                <AdminOptionsDialog isOpen={optionOpen} onClose={() => setOptionOpen(false)}/>
             </div>
         )
     }

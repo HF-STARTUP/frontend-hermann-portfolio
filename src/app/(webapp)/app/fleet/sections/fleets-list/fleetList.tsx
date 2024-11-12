@@ -205,8 +205,12 @@ export const FleetList = () => {
 
                     </div>}
                 </div>
-                <div className={"custom-scrollbar overflow-y-scroll rounded-lg"}>
-                    <FleetListAccount fleets={fleetList}/>
+                <div className={"grid grid-cols-12"}>
+                    <div className={"col-span-12"}>
+                        <div className={"custom-scrollbar overflow-y-scroll rounded-lg"}>
+                            <FleetListAccount fleets={fleetList}/>
+                        </div>
+                    </div>
                 </div>
             </div>
         )
