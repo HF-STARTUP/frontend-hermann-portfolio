@@ -53,7 +53,14 @@ export const FleetList = () => {
         setActiveAbonType(abonType)
 
         const timer = setTimeout(() => {
-            const finalType = abonType === "all" ? FleetAbonType.free : abonType
+            const finalType = abonType
+
+            const isAll = abonType === "all"
+
+            if (isAll) {
+                data && setFleetList(data)
+                return
+            }
 
             if (data) {
                 const filteredFleet = data.filter(d => d.suscription_name == finalType)
@@ -66,8 +73,16 @@ export const FleetList = () => {
     const onFilterFleetWithSearchTerm = () => {
         if (data) {
             const filteredFleet = searchAndFilter(data, filterFleetToken, ['name'])
-            const finalType = activeBonnType === "all" ? FleetAbonType.free : activeBonnType
-            const filteredFleet2 = filteredFleet.filter(d => d.suscription_name.toLowerCase() == finalType.toLowerCase())
+            const finalType = activeBonnType
+
+            const isAll = activeBonnType === "all"
+
+            if (isAll) {
+                setFleetList(data)
+                return
+            }
+
+            const filteredFleet2 = filteredFleet.filter(d => isAll ? true : d.suscription_name.toLowerCase() == finalType.toLowerCase())
 
 
             setFleetList(filteredFleet2)
