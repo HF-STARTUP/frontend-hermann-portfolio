@@ -22,10 +22,10 @@ import {CgPlayListSearch} from "react-icons/cg";
 
 enum FleetAbonType {
     free = "Essaie gratuit",
-    premiumParticulier = "premiumParticulier",
-    starterParticulier = "starterParticulier",
-    premiumProfessionnel = "PremiumProfessionnel",
-    starterProfessionnel = "starterProfessionnel",
+    premiumParticulier = "premium particulier",
+    starterParticulier = "starter particulier",
+    premiumProfessionnel = "premium entreprise\n",
+    starterProfessionnel = "starter entreprise",
 }
 
 export const FleetList = () => {
@@ -67,7 +67,7 @@ export const FleetList = () => {
         if (data) {
             const filteredFleet = searchAndFilter(data, filterFleetToken, ['name'])
             const finalType = activeBonnType === "all" ? FleetAbonType.free : activeBonnType
-            const filteredFleet2 = filteredFleet.filter(d => d.suscription_name == finalType)
+            const filteredFleet2 = filteredFleet.filter(d => d.suscription_name.toLowerCase() == finalType.toLowerCase())
 
 
             setFleetList(filteredFleet2)
