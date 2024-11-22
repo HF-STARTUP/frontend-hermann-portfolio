@@ -1,24 +1,40 @@
 "use client"
 
 import axios, {AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig} from "axios";
-import {MutationFunction, QueryClient, useMutation, UseMutationOptions} from "@tanstack/react-query";
+import {QueryClient} from "@tanstack/react-query";
 import {EnvVars} from "@/utils/const/envVars";
 import {ExecHttpRequestOptionType, GlobalResponseType, SystemHttpCodeGeneric} from "@/types/network/http";
 import SYSTEM_HTTP_CODE from "@/utils/const/systemHttpCode";
 import CustomQueryError from "@/services/CustomQueryError";
-import AuthManagerGuard from "@/guard/AuthManagerGuard";
+import AuthManagerGuard, {TOKEN_KEYS} from "@/guard/AuthManagerGuard";
 import {queryClient} from "@/app/_utils/network/reactQuery";
+import Cookies from "js-cookie";
 
+enum ConnexionMode {
+    Staging = "staging",
+    Production = "production",
+}
 abstract class Service {
 
     protected axiosInstance: AxiosInstance;
+
     protected queryClient: QueryClient = queryClient
-    protected baseApiPath = EnvVars.NP_API_ENDPOINT
+
+    protected baseApiPath = Cookies.get("connexion_mode") === ConnexionMode.Staging
+        ? EnvVars.NP_API_ENDPOINT_STAGING
+        : EnvVars.NP_API_ENDPOINT
+
     private resourcePath: string | undefined = undefined
 
 
     protected constructor(ressourcePath: string | undefined = undefined) {
-        this.baseApiPath = EnvVars.NP_API_ENDPOINT;
+
+        const connexionMode =  (Cookies.get("connexion_mode") ?? ConnexionMode.Production) as ConnexionMode;
+
+        this.baseApiPath = Cookies.get("connexion_mode") === ConnexionMode.Staging
+            ? EnvVars.NP_API_ENDPOINT_STAGING
+            : EnvVars.NP_API_ENDPOINT;
+
         this.resourcePath = ressourcePath
 
         this.axiosInstance = axios.create({

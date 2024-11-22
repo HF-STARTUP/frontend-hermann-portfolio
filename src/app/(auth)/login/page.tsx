@@ -13,6 +13,7 @@ import notify from "@/utils/func/notification";
 import AppLogo from "@/components/app/AppLogo";
 import BtnBase from "@/components/elements/BtnBase";
 import {AdminAccountStatus} from "@/types/__form/profile.type";
+import {ConnexionMode} from "@/hooks/__globlal/useGlobalHook";
 
 
 export default function LoginPage() {
@@ -98,6 +99,24 @@ export default function LoginPage() {
                             error={errors.password}
                             {...register("password")}
                         />
+                        <Input
+                            as={"select"}
+                            label={'Mode de connexion'}
+                            onChange={(e)=>{
+                                AuthManagerGuard.setConnexionMode(e.currentTarget.value as ConnexionMode)
+                            }}
+                            options={[
+                                {
+                                    label: "Production",
+                                    value: ConnexionMode.Production
+                                },
+                                {
+                                    label: "Staging",
+                                    value: ConnexionMode.Staging
+                                }
+                            ]}
+                        />
+
                         {/*<div className={`flex justify-between mt-[34.78px]`}>*/}
                         {/*    <CheckBox label={'Se souvenir de moi'}/>*/}
                         {/*    <VLinkProvider*/}

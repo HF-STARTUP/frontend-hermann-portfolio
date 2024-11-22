@@ -225,3 +225,32 @@ export const useDeactivateOrActivateAdmin = () => {
     }
 
 }
+
+
+export const useDeleteFleet = () => {
+
+    const {
+        data,
+        isSuccess,
+        ...options
+    } = useMutationProvider({
+        mutationFn: SettingsService.deleteFleet,
+        successMessage: "Flotte suprimé.",
+    })
+
+    const $router= useRouter()
+
+    React.useEffect(() => {
+        if(isSuccess && data){
+            $router.replace("/app/fleet")
+            $router.refresh()
+        }
+    }, [isSuccess, data])
+
+    return {
+        data,
+        isSuccess,
+        ...options
+    }
+
+}

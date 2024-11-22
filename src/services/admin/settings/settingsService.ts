@@ -13,6 +13,7 @@ export enum SettingsApiPath {
     UpdateProfile = '/profile',
     AdminList = '/root',
     UpdatePassword = '/admin-reset-password',
+    DeleteFleet = '/root/delete-park',
     AdminAccess = '/access-root',
     createAdmin = '/root/create-admin-on-city',
     AddAdminOnCity = '/root/add-admin-on-city',
@@ -86,8 +87,12 @@ class SettingsService extends Service {
         return await SettingsService.makeRequest(SettingsApiPath.RemoveAdminOnCity, 'POST', formData);
     }
 
+    public static async deleteFleet({id}: DeleteFleetProps) {
+        return await SettingsService.makeRequest<CourseResponseType>(SettingsApiPath.DeleteFleet + "/" + id, 'DELETE')
+    }
 
-    protected static async makeRequest<T>(url: string, method: 'GET' | 'POST' | 'PUT', body?: any): Promise<T> {
+
+    protected static async makeRequest<T>(url: string, method: 'GET' | 'POST' | 'PUT' | "DELETE", body?: any): Promise<T> {
         return this.getInstance().execHttpRequest<T>({url, method, body});
     }
 
@@ -95,3 +100,8 @@ class SettingsService extends Service {
 }
 
 export default SettingsService;
+
+export type DeleteFleetProps = {
+    id: string
+}
+

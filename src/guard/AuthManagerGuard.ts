@@ -1,6 +1,7 @@
 import Cookies from "js-cookie";
+import {ConnexionMode} from "@/hooks/__globlal/useGlobalHook";
 
-const TOKEN_KEYS = {
+export const TOKEN_KEYS = {
     token: 'token',
     refresh_token: 'refresh_token',
     profile_id: 'profile_id',
@@ -8,6 +9,7 @@ const TOKEN_KEYS = {
     transaction_id: 'transaction_id',
     enabled_city_id: 'enable_city_id',
     enabled_fleet_type: 'enabled_fleet_type',
+    connexion_mode: 'connexion_mode'
 }
 
 const COOKIES_CONFIG = {}
@@ -52,16 +54,22 @@ class AuthManagerGuard {
 
     static storeTransactionID(id: string) {
         Cookies.set(TOKEN_KEYS.transaction_id, id)
-
     }
 
     static setEnabledCityID(id: number) {
         Cookies.set(TOKEN_KEYS.enabled_city_id, String(id))
     }
 
-
     static setEnabledFleetType(fleetType: string) {
         Cookies.set(TOKEN_KEYS.enabled_fleet_type, fleetType)
+    }
+
+    static get getConnexionMode(): ConnexionMode {
+        return Cookies.get(TOKEN_KEYS.connexion_mode) as ConnexionMode ?? ConnexionMode.Production
+    }
+
+    static setConnexionMode(mode: ConnexionMode) {
+        Cookies.set(TOKEN_KEYS.connexion_mode, mode)
     }
 
     static get getEnabledFleetType() {
@@ -87,7 +95,6 @@ class AuthManagerGuard {
     static removeParkID() {
         Cookies.remove(TOKEN_KEYS.park_id)
     }
-
 
     static logoutToApp() {
         Cookies.remove(TOKEN_KEYS.token)

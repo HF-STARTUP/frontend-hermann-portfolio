@@ -28,7 +28,9 @@ class LoginService extends Service {
 
     static async login(formData: LoginInputs) {
 
-        return await LoginService.getInstance().execHttpRequest<AdminLoginResponseType>({
+        const logS = new LoginService()
+
+        return await logS.execHttpRequest<AdminLoginResponseType>({
             url: LoginService.loginPath,
             method: 'POST',
             secure: false,

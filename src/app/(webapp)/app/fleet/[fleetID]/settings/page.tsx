@@ -3,8 +3,21 @@
 import {ABlockTitle} from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
 import * as React from "react";
 import BtnBase from "@/components/elements/BtnBase";
+import ConfirmationDialog from "@/components/dialog/confirmation-dialog";
+import {useDeleteFleet} from "@/hooks/admin/useSettingsHook";
+import {useGetParkID} from "@/hooks/__globlal/useGlobalHook";
 
 export default function AdminsPage() {
+
+    const [open, setOpen] = React.useState(false);
+
+    const {handleMutation, loading} = useDeleteFleet()
+
+    const {parkID: id} = useGetParkID()
+
+    const handleDeleteFleet = ()=> {
+        handleMutation({id})
+    }
 
     return (
         <div className={"px-[23.70px] py-[22.57px] bg-white rounded-[22.57px]"}>
@@ -29,7 +42,21 @@ export default function AdminsPage() {
                     variant={'contained'}
                     shape={'square'}
                     type={"submit"}
-                >Suprimer la flotte</BtnBase>
+                    onClick={()=>setOpen(true)}
+                    loading={loading}
+                >
+                    Suprimer la flotte
+                </BtnBase>
+
+                <ConfirmationDialog
+                    onConfirm={handleDeleteFleet}
+                    title="Confirmer la suppression"
+                    subtitle="Êtes-vous sûr de vouloir supprimer cette flotte ? Cette action est irréversible."
+                    triggerText="Continuer et suprimer"
+                    open={open}
+                    setOpen={setOpen}
+                />
+
             </div>
         </div>
     )
