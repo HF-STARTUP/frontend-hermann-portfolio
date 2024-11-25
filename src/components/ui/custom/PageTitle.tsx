@@ -17,6 +17,7 @@ import {useGetParkID} from "@/hooks/__globlal/useGlobalHook";
 import {Input} from "@/components/ui/input";
 import {FleetModel} from "@/model/ADMIN/fleet";
 import {searchAndFilter} from "@/model/Model";
+import AuthManagerGuard from "@/guard/AuthManagerGuard";
 
 type SelectType = { key: string; value: string }
 
@@ -117,13 +118,13 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
             </div>
             }
             {withSelect &&
-                <Select onValueChange={onValueChange} defaultValue={items[0]?.key ?? undefined}>
+                <Select onValueChange={onValueChange} defaultValue={AuthManagerGuard.getEnabledFleetType ?? items[0]?.key}>
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Selectionner"/>
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectLabel>Selectionner</SelectLabel>
+                            <SelectLabel>Selectionner le type de flotte</SelectLabel>
                             {
                                 items?.map((item, index) => (
                                     <SelectItem key={item.key}

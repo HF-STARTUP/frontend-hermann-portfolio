@@ -67,7 +67,7 @@ export class FleetModel extends Model {
     }
 
     get abon_status() {
-        return this.getDifferenceInDays(new Date(), this._instance.end_date) > 0
+        return this.getDifferenceInDays(this._instance.end_date, new Date()) > 0
             ? "Active"
             : "Désactivé"
     }
