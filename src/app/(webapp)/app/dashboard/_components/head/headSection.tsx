@@ -18,7 +18,12 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import {useGetBestAndLestOnCity, useGetParkStats} from "@/hooks/admin/useFleetHook";
+import {
+    useGetActiveFleet,
+    useGetBestAndLestOnCity,
+    useGetParkStats,
+    useGetSpecificFleetStats
+} from "@/hooks/admin/useFleetHook";
 import Loading from "@/components/ui/Loader";
 import {resolveIndicator} from "@/app/(webapp)/app/fleet/[fleetID]/dashboard/stat_cards/statCards";
 import {StProfitable} from "@/types/admin/fleet";
@@ -31,6 +36,7 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select";
+import {useGetCurrency} from "@/hooks/__globlal/useGlobalHook";
 
 export const HeadSection = () => {
 
@@ -38,6 +44,9 @@ export const HeadSection = () => {
 
     const {data, isLoading} = useGetParkStats()
     const {data: profilable, isLoading: loadingProfilable} = useGetBestAndLestOnCity()
+    const {isLoading: loadingFleet, activeFleetCurrency} = useGetActiveFleet()
+
+
 
     React.useEffect(() => {
         if (!loadingProfilable && profilable) {
@@ -123,7 +132,7 @@ export const HeadSection = () => {
                                 }}
                                 cardValue={{
                                     label: "Chiffre d’affaires",
-                                    value: `${data.ca_total.total}XAF`
+                                    value: `${data.ca_total.total}${activeFleetCurrency??"-"}`
                                 }}
                             />
                         </div>

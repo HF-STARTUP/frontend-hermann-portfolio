@@ -19,7 +19,7 @@ import {
 import * as React from "react";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import {queryClient} from "@/app/_utils/network/reactQuery";
-import {useParams, useRouter} from "next/navigation";
+import {useParams, usePathname, useRouter} from "next/navigation";
 import {Badge} from "@/components/ui/badge";
 import {ConnexionMode} from "@/hooks/__globlal/useGlobalHook";
 
@@ -44,6 +44,7 @@ const UserOption: React.FC = () => {
     const {data, isLoading} = useUserProfile()
     const $router = useRouter()
     const $params = useParams()
+    const $pathName = usePathname()
 
     if (isLoading) {
 
@@ -70,6 +71,10 @@ const UserOption: React.FC = () => {
                                 }))
                                 if ($params.hasOwnProperty("fleetID")) {
                                     $router.push("/app/fleet")
+                                }
+
+                                if($pathName == "/app/tickets"){
+                                    window.location.reload()
                                 }
                             }}
                                     defaultValue={AuthManagerGuard.getEnabledCity ?? String(data.listPark[0].id)}

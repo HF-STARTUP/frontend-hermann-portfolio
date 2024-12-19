@@ -9,6 +9,7 @@ import CustomQueryError from "@/services/CustomQueryError";
 import AuthManagerGuard, {TOKEN_KEYS} from "@/guard/AuthManagerGuard";
 import {queryClient} from "@/app/_utils/network/reactQuery";
 import Cookies from "js-cookie";
+import { format } from "date-fns";
 
 enum ConnexionMode {
     Staging = "staging",
@@ -251,5 +252,9 @@ abstract class Service {
 
 type Convertible = { [key: string]: any };
 
+export const toIsoDate = (date: Date | string | undefined | null) => {
+    if (!date) return ""
+    return format(date, "yyyy-MM-dd'T'HH:mm:ss")
+}
 
 export default Service
