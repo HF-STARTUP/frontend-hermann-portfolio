@@ -32,6 +32,7 @@ export enum ACCESS_TYPE {
     WRITE = "write"
 }
 
+
 class SettingsService extends Service {
     private static instance: SettingsService = new SettingsService();
 

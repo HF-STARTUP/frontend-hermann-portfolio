@@ -1,5 +1,3 @@
-"use client"
-
 import axios, {AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig} from "axios";
 import {QueryClient} from "@tanstack/react-query";
 import {EnvVars} from "@/utils/const/envVars";
