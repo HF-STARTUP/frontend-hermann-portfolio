@@ -1,17 +1,18 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // experimental: {
-    //     serverActions: {
-    //         allowedOrigins: ['*'],
-    //     },
-    // },
-    /** @type {import('next').NextConfig} */
-
+    experimental: {
+        disableOptimizedLoading: true, // Désactive les optimisations du chargement
+    },
+    webpack(config) {
+        // Ignore tous les warnings (y compris les erreurs)
+        config.ignoreWarnings = [/./]; // Ignore absolument tous les avertissements
+        return config;
+    },
     eslint: {
-        ignoreDuringBuilds: true,
+        ignoreDuringBuilds: true,  // Ignore les erreurs ESLint pendant le build
     },
     typescript: {
-        ignoreBuildErrors: true,
+        ignoreBuildErrors: true, // Ignore les erreurs TypeScript pendant le build
     },
     images: {
         remotePatterns: [
@@ -38,7 +39,6 @@ const nextConfig = {
                 destination: '/dashboard/schedule/schedule-settings/add-group/planing',
                 permanent: true,
             },
-
             //ADMIN
             {
                 source: '/app/settings',
@@ -51,7 +51,8 @@ const nextConfig = {
                 permanent: true,
             },
         ]
-    }
-}
+    },
+    // Ajoutez ici d'autres configurations si nécessaire
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;
