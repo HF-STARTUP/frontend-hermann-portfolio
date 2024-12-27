@@ -6,6 +6,7 @@ import {Sidebar} from "@/app/(webapp)/app/layout/sidebar/Sidebar";
 import GlobalLayoutProvider from "@/app/GlobalLayoutProvider";
 import 'nprogress/nprogress.css';
 import NavigationLoaderWrapper from "@/app/(webapp)/app/layout/ux/NavigationLoaderWrapper";
+import dynamic from "next/dynamic";
 
 
 const inter = Inter({subsets: ["latin"]});
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
     themeColor: "#000B20"
 };
 
-export default function RootLayout({
+function RootLayout({
                                        children,
                                    }: Readonly<{
     children: React.ReactNode;
@@ -40,3 +41,5 @@ export default function RootLayout({
         </html>
     );
 }
+
+export default dynamic(() => Promise.resolve(RootLayout), { ssr: false })
