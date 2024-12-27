@@ -28,3 +28,4 @@ function RootLayout({
 }
 
 export default dynamic(() => Promise.resolve(RootLayout), { ssr: false })
+
