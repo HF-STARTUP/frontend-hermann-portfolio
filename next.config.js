@@ -7,6 +7,15 @@ const nextConfig = {
     // },
     /** @type {import('next').NextConfig} */
 
+    experimental: {
+        disableOptimizedLoading: true, // Désactive les optimisations du chargement
+    },
+    webpack(config) {
+        // Ignore tous les warnings (y compris les erreurs)
+        config.ignoreWarnings = [/./]; // Ignore absolument tous les avertissements
+        return config;
+    },
+
     eslint: {
         ignoreDuringBuilds: true,
     },
