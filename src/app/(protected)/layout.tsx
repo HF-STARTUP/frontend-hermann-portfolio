@@ -1,3 +1,4 @@
+import dynamic from "next/dynamic"
 import * as React from "react";
 import {DM_Sans} from 'next/font/google'
 import '@/assets/ui/globals.scss'
@@ -7,7 +8,7 @@ import GlobalLayoutProvider from "@/components/layout/globalLayout/GlobalLayoutP
 const dmSans = DM_Sans({subsets: ['latin']})
 
 
-export default function RootLayout({
+function RootLayout({
                                        children,
                                    }: {
     children: React.ReactNode
@@ -27,3 +28,6 @@ export default function RootLayout({
         </html>
     )
 }
+
+export default dynamic(() => Promise.resolve(RootLayout), { ssr: false })
+
