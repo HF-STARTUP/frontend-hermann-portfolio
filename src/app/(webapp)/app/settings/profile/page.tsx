@@ -17,6 +17,7 @@ import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import {useUserProfile} from "@/hooks/__form/auth/useUserProfile";
 import Loading from "@/components/ui/Loader";
 import {useGetProfileID} from "@/hooks/__globlal/useGlobalHook";
+import dynamic from "next/dynamic";
 
 const ProfilePage: React.FC = () => {
     return (
@@ -171,5 +172,4 @@ const AvatarUpdate: React.FC = () => {
     )
 }
 
-
-export default ProfilePage
+export default dynamic(() => Promise.resolve(ProfilePage), { ssr: false })
