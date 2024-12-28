@@ -1,8 +1,9 @@
+"use client"
+
 import React from "react";
 import SettingSidebar from "@/app/(protected)/dashboard/settings/_components/SettingSidebar";
 import AdminSubNav from "@/components/layout/admin/SubNav/AdminSubNav";
-import {Crumb} from "@/components/ui/custom/crumb";
-import {PageTitle} from "@/components/ui/custom/PageTitle";
+import dynamic from "next/dynamic";
 
 const Template: React.FC<{ children: React.ReactNode }> = ({children}) => {
 
@@ -19,4 +20,5 @@ const Template: React.FC<{ children: React.ReactNode }> = ({children}) => {
 }
 
 
-export default Template
+export default dynamic(() => Promise.resolve(Template), { ssr: false })
+
