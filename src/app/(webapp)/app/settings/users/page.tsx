@@ -29,6 +29,7 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog";
 import BtnBase from "@/components/elements/BtnBase";
+import dynamic from "next/dynamic";
 
 const UsersPage: React.FC = () => {
 
@@ -286,4 +287,5 @@ const RoleTag: React.FC<React.HTMLAttributes<HTMLDivElement> & { tagType?: "read
     )
 }
 
-export default UsersPage
+export default dynamic(() => Promise.resolve(UsersPage), { ssr: false })
+
