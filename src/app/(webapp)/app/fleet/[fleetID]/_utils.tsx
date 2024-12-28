@@ -50,7 +50,7 @@ export const PageNavigation = () => {
             url: "/entretien",
         },
         {
-            label: "Patametres",
+            label: "Parametres",
             url: "/settings",
             last: true
         },

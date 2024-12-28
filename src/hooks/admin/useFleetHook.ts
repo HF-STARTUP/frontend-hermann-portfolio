@@ -4,7 +4,8 @@ import FleetService, {FleetApiPath} from "@/services/admin/fleet/fleetService";
 import {useMutationProvider, useQueryProvider} from "@/hooks/hooksProvider";
 import {useGetParkID} from "@/hooks/__globlal/useGlobalHook";
 import {useRouter} from "next/navigation";
-import React from "react";
+import React, {useMemo} from "react";
+import {toIsoDate} from "@/services/Service";
 
 export const useGetFleetsList = () => {
 
@@ -137,6 +138,24 @@ export const useGetCourseEvolution = (graphType: string) => {
     return {isLoading, data}
 }
 
+export const useGetActiveFleet = ()=> {
+    const {parkID} = useGetParkID()
+
+
+    const {data: fleets, isLoading} = useGetFleetsList()
+
+    const activeFleet = useMemo(()=> {
+        const activeFleet = fleets?.find(f=>f.id == parkID)
+        return activeFleet
+    }, [fleets, parkID])
+
+    return {
+        isLoading,
+        activeFleet,
+        activeFleetCurrency: activeFleet?.currency
+    }
+}
+
 export const useGetRevenusEvolution = (graphType: string) => {
     const {parkID} = useGetParkID()
 
@@ -157,7 +176,7 @@ export const useGetEntretienEvolution = (graphType: string) => {
         queryFn: () => FleetService.getEntretienEvolution({
             fleetID: parkID as string,
             graphType: graphType,
-            date: new Date()
+            date: toIsoDate(new Date()) as unknown as Date
         }),
         enabled: !!parkID
     });

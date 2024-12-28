@@ -17,7 +17,7 @@ export function useUserProfile() {
         if (data && !error) {
             setUser(data)
             if (!AuthManagerGuard.getEnabledCity) AuthManagerGuard.setEnabledCityID(data.defaultPark.id)
-            AuthManagerGuard.setEnabledFleetType("particulier")
+            if(!AuthManagerGuard.getEnabledFleetType) AuthManagerGuard.setEnabledFleetType("particulier")
         }
     }, [data, isLoading])
 

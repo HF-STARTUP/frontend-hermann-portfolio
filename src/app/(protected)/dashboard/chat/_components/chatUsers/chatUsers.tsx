@@ -21,6 +21,8 @@ import {useGetTicketList} from "@/hooks/admin/useTicketHook";
 import {TbPlaylistX} from "react-icons/tb";
 import {PiPlaylist} from "react-icons/pi";
 import {ListIcon} from "@/components/ui/__icons";
+import {useGetParkID} from "@/hooks/__globlal/useGlobalHook";
+import {useRouter} from "next/navigation";
 
 export const ChatUsersNav = () => {
     return (
@@ -77,10 +79,22 @@ const MembersList: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     discussionType?: "general" | "not-replied"
 }> = ({discussionType}) => {
 
+    const {parkID} = useGetParkID()
+    const $router = useRouter()
+    const [countID, setCountID] = React.useState(1)
+
     const {data: discussionsMembers, isLoading} = useGetTicketList()
 
     const isGeneral = discussionType === "general"
     const {setActiveDiscussion} = usePrompStore()
+
+    React.useEffect(()=>{
+        setCountID(2)
+        if(countID == 2){
+            window.location.reload()
+        }
+    }, [parkID])
+
 
     if (isLoading) {
         return (

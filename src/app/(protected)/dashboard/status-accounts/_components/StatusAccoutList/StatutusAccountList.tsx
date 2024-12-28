@@ -1,7 +1,6 @@
 "use client"
 
 import React from "react";
-import {RECEIPTS_DATA_MOCK} from "@/app/(protected)/dashboard/receipts/_mocks/receipsData.mock";
 import {AdminDataTableDisplayProps} from "@/types/dataDisplayTable";
 import AdminTableDisplayData from "@/components/display/AdminTableDisplayData";
 import {useRequestAccounting} from "@/hooks/acounting/useAcounting";

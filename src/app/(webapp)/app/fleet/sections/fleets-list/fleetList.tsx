@@ -84,7 +84,6 @@ export const FleetList = () => {
 
             const filteredFleet2 = filteredFleet.filter(d => isAll ? true : d.suscription_name.toLowerCase() == finalType.toLowerCase())
 
-
             setFleetList(filteredFleet2)
         }
     }

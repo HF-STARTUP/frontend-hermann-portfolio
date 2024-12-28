@@ -122,3 +122,8 @@ export const useGetMyPosition = () => {
 
     }
 }
+
+export enum ConnexionMode {
+    Staging = "staging",
+    Production = "production",
+}

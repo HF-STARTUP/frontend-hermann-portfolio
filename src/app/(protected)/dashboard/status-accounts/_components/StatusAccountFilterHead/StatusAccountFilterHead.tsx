@@ -12,16 +12,16 @@ const StatusAccountFilterHead = () => {
         <div></div>
     )
 
-  return(
-      <div className={`flex gap-[29px] mb-[26px]`}>
-        <FieldDate label={'Période'}  />
-        <SelectField label={'Marque véhicule'} items={carBrandsFilter} />
-        <SelectField label={'Modèle véhicule'} items={carModelsFilter} />
-        <SelectField label={'Immatriculation véhicule'} items={carImatriculationFilter} />
-        <SelectField label={'Classe véhicule'} items={carClassFilter} />
-        <SelectField label={'Nom du chauffeur'} items={driverNameFilter} />
-      </div>
-  )
+  // return(
+  //     <div className={`flex gap-[29px] mb-[26px]`}>
+  //       <FieldDate label={'Période'}  />
+  //       <SelectField label={'Marque véhicule'} items={carBrandsFilter} />
+  //       <SelectField label={'Modèle véhicule'} items={carModelsFilter} />
+  //       <SelectField label={'Immatriculation véhicule'} items={carImatriculationFilter} />
+  //       <SelectField label={'Classe véhicule'} items={carClassFilter} />
+  //       <SelectField label={'Nom du chauffeur'} items={driverNameFilter} />
+  //     </div>
+  // )
 }
 
 export default StatusAccountFilterHead

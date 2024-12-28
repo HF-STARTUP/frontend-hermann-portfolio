@@ -20,7 +20,7 @@ function RootLayout({
         <GlobalLayoutProvider>
             <AdminLayout>
                 <main>
-                    {children}
+                    {/*{children}*/}
                 </main>
             </AdminLayout>
         </GlobalLayoutProvider>

@@ -58,6 +58,10 @@ export class FleetModel extends Model {
         return this._instance.ca_total + " " + this._instance.currency
     }
 
+    get currency() {
+        return this._instance.currency
+    }
+
     get subscription_amount() {
         return (this._instance.subscription_amount ? this._instance.subscription_amount + " " : 0) + this._instance.currency
     }
@@ -67,7 +71,7 @@ export class FleetModel extends Model {
     }
 
     get abon_status() {
-        return this.getDifferenceInDays(new Date(), this._instance.end_date) > 0
+        return this.getDifferenceInDays(this._instance.end_date, new Date()) > 0
             ? "Active"
             : "Désactivé"
     }
