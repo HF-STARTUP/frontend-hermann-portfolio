@@ -6,7 +6,7 @@ import {EnvVars} from "@/utils/const/envVars";
 import {ExecHttpRequestOptionType, GlobalResponseType, SystemHttpCodeGeneric} from "@/types/network/http";
 import SYSTEM_HTTP_CODE from "@/utils/const/systemHttpCode";
 import CustomQueryError from "@/services/CustomQueryError";
-import AuthManagerGuard, {TOKEN_KEYS} from "@/guard/AuthManagerGuard";
+import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import {queryClient} from "@/app/_utils/network/reactQuery";
 import Cookies from "js-cookie";
 

@@ -13,7 +13,12 @@ export const TOKEN_KEYS = {
     currency: 'connexion_mode'
 }
 
-const COOKIES_CONFIG = {}
+export const COOKIES_CONFIG = {
+    path: '/',
+    sameSite: 'lax',
+    expires: 365 * 10 //10 ans
+    //secure: true
+} as Cookies.CookieAttributes
 
 class AuthManagerGuard {
 
