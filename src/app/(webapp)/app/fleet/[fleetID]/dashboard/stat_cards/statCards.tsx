@@ -2,7 +2,7 @@
 
 import {ActionCard, AverageType} from "@/app/(webapp)/app/dashboard/_components/head/_components/actionCard";
 import {CarAltIcon, CarCrashIcon, CashAltIcon, ToolIcon, UserIcon} from "@/components/ui/__icons";
-import {cn} from "@/lib/utils";
+import {cn, formatNumber} from "@/lib/utils";
 import * as React from "react";
 import {useGetFleetProfilesVehiclesDetails, useGetSpecificFleetStats} from "@/hooks/admin/useFleetHook";
 import Loading from "@/components/ui/Loader";
@@ -72,11 +72,11 @@ export const StatCards = () => {
                                 }}
                                 average={{
                                     type: resolveIndicator(data.ca_total.indicateur),
-                                    label: `${data.ca_total.indicateur_value} ce mois`
+                                    label: `${formatNumber(data.ca_total.indicateur_value)} ce mois`
                                 }}
                                 cardValue={{
                                     label: "Chiffre d’affaires",
-                                    value: `${data.ca_total.total} ${currency}`
+                                    value: `${formatNumber(data.ca_total.total)} ${currency}`
                                 }}
                             />
                         </div>

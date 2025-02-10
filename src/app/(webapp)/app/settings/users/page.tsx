@@ -23,12 +23,14 @@ import {AiFillDelete} from "react-icons/ai";
 import {
     Dialog,
     DialogContent,
-    DialogDescription, DialogFooter,
+    DialogDescription,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog";
 import BtnBase from "@/components/elements/BtnBase";
+import {ExpandableRoles} from "@/app/(webapp)/app/settings/users/_components/expandable-roles";
 
 const UsersPage: React.FC = () => {
 
@@ -66,9 +68,27 @@ const AdminUsers: React.FC = () => {
     if (admins && admins.length) {
         return (
             <div className={`flex gap-[9px] flex-col w-full`}>
-                {admins.map(admin => (
-                    <OneAdminUser user={admin} key={admin.getID}/>
-                ))
+                {
+                    admins
+                        .sort((a, b) => {
+                            const statusA = a._instance.status;
+                            const statusB = b._instance.status;
+
+                            if (statusA === statusB) return 0;
+
+                            if (statusA === AdminAccountStatus.Deactivated && statusB !== AdminAccountStatus.Deactivated) {
+                                return 1;
+                            }
+
+                            if (statusB === AdminAccountStatus.Deactivated && statusA !== AdminAccountStatus.Deactivated) {
+                                return -1;
+                            }
+
+                            return 0;
+                        })
+                        .map((admin) => (
+                            <OneAdminUser user={admin} key={admin.getID}/>
+                        ))
                 }
             </div>
         )
@@ -137,24 +157,11 @@ const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
                     </DropdownMenu>
                 </div>
             </div>
-            <div className={"bg-[#fdfdfd] px-[20px] py-[10px] rounded-md flex flex-col gap-[10px] overflow-hidden"}>
-
-                <div className={"flex flex-col lg:flex-row gap-[12px]"}>
-                    <RoleTitle>Lecture:</RoleTitle>
-                    <div className={"flex flex-wrap items-center gap-[10px]"}>
-                        {readRoles.map((r, i) => <RoleTag key={i}>{r.onglet.name}</RoleTag>)}
-                    </div>
-                </div>
-
-                <div className={"flex flex-col lg:flex-row gap-[12px]"}>
-                    <RoleTitle>Ecriture:</RoleTitle>
-                    <div className={"flex flex-wrap items-center gap-[10px]"}>
-                        {writeRoles.map((r, i) => <RoleTag key={i} tagType={"write"}>{r.onglet.name}</RoleTag>)}
-                    </div>
-                </div>
-
-            </div>
-            <div className={"flex flex-col lg:flex-row gap-[12px] text-xs"}>
+            <ExpandableRoles
+                readRoles={readRoles}
+                writeRoles={writeRoles}
+            />
+            <div className={"flex items-center flex-col lg:flex-row gap-[12px] text-xs"}>
                 <div>Ville:</div>
                 <div className={"flex gap-2 items-center"}>
                     {user.cities.map(c => (

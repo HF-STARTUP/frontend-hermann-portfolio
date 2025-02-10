@@ -172,3 +172,20 @@ export function getDayDate(): string {
 const formatString = 'yyyy-MM-dd';
 
 export const parsedDate = (dateString: string | undefined) => dateString ? parse(dateString, formatString, new Date()) : new Date();
+
+export function formatNumber(input: string | number | undefined): string {
+
+
+    if (!input) return input as string
+    // Convertir l'entrée en chaîne de caractères
+    const numStr = input.toString();
+
+    // Séparer la partie entière et la partie décimale (s'il y en a une)
+    const [integerPart, decimalPart] = numStr.split('.');
+
+    // Formater la partie entière avec des séparateurs de milliers
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    // Reconstruire le nombre avec la partie décimale si elle existe
+    return decimalPart ? `${formattedInteger}.${decimalPart}` : formattedInteger;
+}
