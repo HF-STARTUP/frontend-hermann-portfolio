@@ -19,7 +19,7 @@ import {
 import * as React from "react";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import {queryClient} from "@/app/_utils/network/reactQuery";
-import {useParams, useRouter} from "next/navigation";
+import {useParams, usePathname, useRouter} from "next/navigation";
 import {Badge} from "@/components/ui/badge";
 import {ConnexionMode} from "@/hooks/__globlal/useGlobalHook";
 
@@ -44,6 +44,7 @@ const UserOption: React.FC = () => {
     const {data, isLoading} = useUserProfile()
     const $router = useRouter()
     const $params = useParams()
+    const $path = usePathname()
 
     if (isLoading) {
 
@@ -68,6 +69,12 @@ const UserOption: React.FC = () => {
                                 const selected = data?.listPark.find(lp => lp.id == +new_city_id)
                                 AuthManagerGuard.setEnabledCityID(+new_city_id)
                                 AuthManagerGuard.setCurrency(selected?.currency)
+
+                                console.log($path)
+                                if ($path.includes("tickets")) {
+                                    window.location.reload()
+                                }
+
                                 queryClient.invalidateQueries().then((() => {
                                 }))
                                 if ($params.hasOwnProperty("fleetID")) {
@@ -85,8 +92,12 @@ const UserOption: React.FC = () => {
                                         <SelectLabel>Selectionner</SelectLabel>
                                         {
                                             data.listPark?.map((item, index) => (
-                                                <SelectItem key={item.id}
-                                                            value={String(item.id)}>{item.name} </SelectItem>
+                                                <SelectItem
+                                                    key={item.id}
+                                                    value={String(item.id)}
+                                                >
+                                                    {item.name}
+                                                </SelectItem>
                                             ))
                                         }
                                     </SelectGroup>
