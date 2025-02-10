@@ -67,7 +67,6 @@ class LoginService extends Service {
             secure: false,
         })
 
-
         return new UserProfile(response)
     }
 

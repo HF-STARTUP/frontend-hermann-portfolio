@@ -123,6 +123,13 @@ export const useGetMyPosition = () => {
     }
 }
 
+export const useGetActiveCurrency = () => {
+
+    return {
+        currency: AuthManagerGuard.getCurrency
+    }
+}
+
 export enum ConnexionMode {
     Staging = "staging",
     Production = "production",

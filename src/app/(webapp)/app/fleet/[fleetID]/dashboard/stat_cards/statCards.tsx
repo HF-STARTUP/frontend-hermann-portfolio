@@ -8,11 +8,15 @@ import {useGetFleetProfilesVehiclesDetails, useGetSpecificFleetStats} from "@/ho
 import Loading from "@/components/ui/Loader";
 import Image from "next/image";
 import {imageBaseUrl} from "@/model/Model";
+import {useGetActiveCurrency} from "@/hooks/__globlal/useGlobalHook";
 
 export const StatCards = () => {
 
     const {data, isLoading} = useGetSpecificFleetStats()
     const {data: profileAndVehicle, isLoading: loadingProfileAndVehicle} = useGetFleetProfilesVehiclesDetails()
+    const {currency} = useGetActiveCurrency()
+
+
 
     if (isLoading || loadingProfileAndVehicle) {
 
@@ -72,7 +76,7 @@ export const StatCards = () => {
                                 }}
                                 cardValue={{
                                     label: "Chiffre d’affaires",
-                                    value: `${data.ca_total.total}XAF`
+                                    value: `${data.ca_total.total} ${currency}`
                                 }}
                             />
                         </div>
@@ -119,7 +123,7 @@ export const StatCards = () => {
                     <div className={"col-span-6 h-full"}>
                         <StatCardLarge
                             title={`${profileAndVehicle?.best_vehicle?.vehicle?.brand ?? "-"} ${profileAndVehicle?.best_vehicle?.vehicle?.model ?? "-"} - ${profileAndVehicle?.best_vehicle?.vehicle?.registration_number ?? "-"}`}
-                            subtitle={`${profileAndVehicle?.best_vehicle?.value ?? "-"}XAF`}
+                            subtitle={`${profileAndVehicle?.best_vehicle?.value ?? "-"} ${currency}`}
                             icon={profileAndVehicle?.best_vehicle?.vehicle?.image
                                 ? <Image
                                     width={90}
@@ -133,7 +137,7 @@ export const StatCards = () => {
                     <div className={"col-span-6 h-full"}>
                         <StatCardLarge
                             title={`${profileAndVehicle?.best_driver?.profile?.last_name ?? "-"} ${profileAndVehicle?.best_driver?.profile?.first_name ?? "-"}`}
-                            subtitle={`${profileAndVehicle?.best_driver?.value ?? "-"}XAF`}
+                            subtitle={`${profileAndVehicle?.best_driver?.value ?? "-"} ${currency}`}
                             icon={profileAndVehicle?.best_driver?.profile?.image
                                 ? <Image
                                     width={90}

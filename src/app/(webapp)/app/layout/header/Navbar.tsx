@@ -65,7 +65,9 @@ const UserOption: React.FC = () => {
                             <div
                                 className="text-[#f2f2f2] text-[16px] lg:text-[24px] font-bold  leading-[23px]">{data.username}</div>
                             <Select onValueChange={(new_city_id) => {
+                                const selected = data?.listPark.find(lp => lp.id == +new_city_id)
                                 AuthManagerGuard.setEnabledCityID(+new_city_id)
+                                AuthManagerGuard.setCurrency(selected?.currency)
                                 queryClient.invalidateQueries().then((() => {
                                 }))
                                 if ($params.hasOwnProperty("fleetID")) {
@@ -84,7 +86,7 @@ const UserOption: React.FC = () => {
                                         {
                                             data.listPark?.map((item, index) => (
                                                 <SelectItem key={item.id}
-                                                            value={String(item.id)}>{item.name}</SelectItem>
+                                                            value={String(item.id)}>{item.name} </SelectItem>
                                             ))
                                         }
                                     </SelectGroup>

@@ -9,7 +9,8 @@ export const TOKEN_KEYS = {
     transaction_id: 'transaction_id',
     enabled_city_id: 'enable_city_id',
     enabled_fleet_type: 'enabled_fleet_type',
-    connexion_mode: 'connexion_mode'
+    connexion_mode: 'connexion_mode',
+    currency: 'connexion_mode'
 }
 
 const COOKIES_CONFIG = {}
@@ -69,11 +70,23 @@ class AuthManagerGuard {
     }
 
     static setConnexionMode(mode: ConnexionMode) {
-        Cookies.set(TOKEN_KEYS.connexion_mode, mode)
+        Cookies.set(TOKEN_KEYS.connexion_mode, mode.toString())
     }
+
+    static setCurrency(currency?: string) {
+        if (currency != null) {
+            Cookies.set(TOKEN_KEYS.currency, currency)
+        }
+    }
+
 
     static get getEnabledFleetType() {
         return Cookies.get(TOKEN_KEYS.enabled_fleet_type)
+    }
+
+
+    static get getCurrency() {
+        return Cookies.get(TOKEN_KEYS.currency)
     }
 
     static get getEnabledCity() {
