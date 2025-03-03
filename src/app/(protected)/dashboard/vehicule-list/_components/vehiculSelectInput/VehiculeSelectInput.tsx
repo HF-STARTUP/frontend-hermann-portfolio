@@ -1,3 +1,5 @@
+"use client";
+
 import {cn} from "@/utils/ui/cn";
 import {ChevronBackIcon, CloseIcon} from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
 import React from "react";

@@ -1,3 +1,5 @@
+"use client";
+
 import {Bounce, TypeOptions} from "react-toastify";
 import React from "react";
 import {cn} from "@/utils/ui/cn";

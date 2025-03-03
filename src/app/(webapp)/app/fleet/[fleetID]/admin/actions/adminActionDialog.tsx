@@ -1,3 +1,5 @@
+"use client";
+
 import React, {MouseEventHandler} from "react";
 import DialogBase, {AdminDialogHead, DefaultDialogMainBody} from "@/components/dialog/Dialog";
 import BtnBase from "@/components/elements/BtnBase";

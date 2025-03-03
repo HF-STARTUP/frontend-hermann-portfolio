@@ -1,3 +1,5 @@
+"use client";
+
 import FormGroup from "@/components/box/FormGroup";
 import TextField, {SelectField, TextArea} from "@/components/form/TextField";
 import BtnBase from "@/components/elements/BtnBase";

@@ -1,3 +1,5 @@
+"use client";
+
 import Container from "@/components/box/Container";
 import Image from "next/image";
 import gestionPerson from '@/assets/img/illustrations/gestion-person.png'

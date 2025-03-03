@@ -1,3 +1,5 @@
+"use client";
+
 import Container from "@/components/box/Container";
 import BtnBase from "@/components/elements/BtnBase";
 import React from "react";

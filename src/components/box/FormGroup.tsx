@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {SelectField, VSelectProp} from "@/components/form/TextField";
 

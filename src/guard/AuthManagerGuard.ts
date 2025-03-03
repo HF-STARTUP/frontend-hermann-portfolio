@@ -10,7 +10,7 @@ export const TOKEN_KEYS = {
     enabled_city_id: 'enable_city_id',
     enabled_fleet_type: 'enabled_fleet_type',
     connexion_mode: 'connexion_mode',
-    currency: 'connexion_mode'
+    currency: 'currency'
 }
 
 export const COOKIES_CONFIG = {

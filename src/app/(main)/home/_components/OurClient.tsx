@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Container from "@/components/box/Container";
 import clients from '@/assets/img/illustrations/clients.png'

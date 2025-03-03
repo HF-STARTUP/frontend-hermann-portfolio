@@ -1,5 +1,3 @@
-"use client"
-
 import axios, {AxiosError, AxiosInstance, AxiosResponse, InternalAxiosRequestConfig} from "axios";
 import {QueryClient} from "@tanstack/react-query";
 import {EnvVars} from "@/utils/const/envVars";
@@ -119,9 +117,9 @@ abstract class Service {
             
             if(isTokenExpired){
                 AuthManagerGuard.signOut()
-                if (window?.location) {
-                    window.location = `${window.location.origin}/login` as unknown as Location
-                }
+                // if (window?.location) {
+                //     window.location = `${window.location.origin}/login` as unknown as Location
+                // }
             }
             throw new CustomQueryError(error.message)
         })

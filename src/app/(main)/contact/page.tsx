@@ -1,3 +1,5 @@
+"use client";
+
 import {PrimaryBgCardWithImageContainer} from "@/components/box/PrimaryBgCardContainer";
 import Container from "@/components/box/Container";
 import {ContactForm, ContactInfo} from "@/app/(main)/contact/_components/ContactComponents";

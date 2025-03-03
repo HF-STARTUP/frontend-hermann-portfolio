@@ -1,3 +1,5 @@
+"use client";
+
 import Container from "@/components/box/Container";
 import VLinkProvider from "@/components/helpers/VLinkProvider";
 import NavArrow from "@/components/app/NavArrow";

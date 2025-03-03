@@ -1,3 +1,4 @@
+"use client"
 import {useParams} from "next/navigation";
 import useAppStore from "@/stores/global/useAppStore";
 import React from "react";

@@ -174,18 +174,43 @@ const formatString = 'yyyy-MM-dd';
 export const parsedDate = (dateString: string | undefined) => dateString ? parse(dateString, formatString, new Date()) : new Date();
 
 export function formatNumber(input: string | number | undefined): string {
+    // Si `input` est falsy (undefined, null, chaîne vide...), on renvoie "0"
+    if (!input) {
+        return "0";
+    }
 
+    let numericValue: number;
 
-    if (!input) return input as string
-    // Convertir l'entrée en chaîne de caractères
-    const numStr = input.toString();
+    // Si c'est déjà un nombre, on l'assigne directement
+    if (typeof input === "number") {
+        numericValue = input;
+    } else {
+        // Sinon, on essaie de parser la chaîne de caractères
+        const parsed = parseFloat(input.trim());
+        // Si la valeur n'est pas un nombre, on renvoie "0"
+        if (isNaN(parsed)) {
+            return "0";
+        }
+        numericValue = parsed;
+    }
 
-    // Séparer la partie entière et la partie décimale (s'il y en a une)
-    const [integerPart, decimalPart] = numStr.split('.');
+    // On vérifie le nombre de décimales présent dans la chaîne d'origine
+    // (par exemple "12.3456" => decimalPart.length === 4)
+    const decimalPart = numericValue.toString().split(".")[1];
+    // Si la partie décimale a plus de 2 chiffres, on garde 2 décimales,
+    // sinon on arrondit à 0 décimale
+    const decimals = decimalPart && decimalPart.length > 2 ? 2 : 0;
 
-    // Formater la partie entière avec des séparateurs de milliers
-    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    // On arrondit le nombre au format désiré
+    const fixedStr = numericValue.toFixed(decimals);
 
-    // Reconstruire le nombre avec la partie décimale si elle existe
-    return decimalPart ? `${formattedInteger}.${decimalPart}` : formattedInteger;
+    // Séparation partie entière et partie décimale
+    const [intPart, decPart] = fixedStr.split(".");
+
+    // Ajout de la virgule de séparation tous les trois chiffres
+    const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+    // Si on a une partie décimale, on la réassemble
+    // Sinon on renvoie juste la partie entière formatée
+    return decPart ? `${formattedInt}.${decPart}` : formattedInt;
 }

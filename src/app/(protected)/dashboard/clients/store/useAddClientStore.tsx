@@ -1,3 +1,5 @@
+"use client";
+
 import {create} from 'zustand';
 import {CourseAddress} from "@/schema/course.schema";
 

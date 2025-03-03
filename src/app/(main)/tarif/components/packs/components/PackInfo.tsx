@@ -1,3 +1,5 @@
+"use client";
+
 import BtnBase from "@/components/elements/BtnBase";
 import NAVIGATIONS_URL from "@/utils/navigation";
 

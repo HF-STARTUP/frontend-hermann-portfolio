@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Hero from "@/app/(main)/home/_components/Hero";
 import FlotManagement from "@/app/(main)/home/_components/FlotManagement";

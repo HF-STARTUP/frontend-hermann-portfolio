@@ -7,9 +7,8 @@ import NAVIGATIONS_URL from "@/utils/navigation";
 import {usePathname} from "next/navigation";
 import Container from "@/components/box/Container";
 import Navlink from "@/components/layout/main/navbar/components/Navlink";
-import {MenuIcon} from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
+import {CloseIcon, MenuIcon} from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
 import VLinkProvider from "@/components/helpers/VLinkProvider";
-import {CloseIcon} from "next/dist/client/components/react-dev-overlay/internal/icons/CloseIcon";
 import {useUserProfile} from "@/hooks/__form/auth/useUserProfile";
 
 

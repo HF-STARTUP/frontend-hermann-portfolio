@@ -1,3 +1,5 @@
+"use client";
+
 import React, {MutableRefObject} from "react";
 import CardDefault, {Divider} from "@/components/box/Card";
 import FormGroup from "@/components/box/FormGroup";

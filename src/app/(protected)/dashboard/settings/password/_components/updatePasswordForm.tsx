@@ -1,3 +1,5 @@
+"use client";
+
 import {AdminPageTitle} from "@/components/typo/typo";
 import FormGroup from "@/components/box/FormGroup";
 import TextField from "@/components/form/TextField";

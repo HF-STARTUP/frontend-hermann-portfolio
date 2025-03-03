@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {MoreIcon} from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
 

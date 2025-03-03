@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import DriverItem from "./_components/driverItem/DriverItem";
 import {useGetDrivers} from "@/hooks/driver/useDriver";

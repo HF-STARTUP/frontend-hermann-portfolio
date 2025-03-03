@@ -1,3 +1,5 @@
+"use client";
+
 import TextField, {SelectField, VSelectProp} from "@/components/form/TextField";
 import CardDefault from "@/components/box/Card";
 import FormGroup from "@/components/box/FormGroup";
