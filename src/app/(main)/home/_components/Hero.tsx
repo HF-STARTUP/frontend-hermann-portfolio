@@ -1,3 +1,5 @@
+"use client";
+
 import PrimaryBgCardContainer from "@/components/box/PrimaryBgCardContainer";
 import React from "react";
 import Image from "next/image";

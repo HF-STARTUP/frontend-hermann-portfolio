@@ -1,42 +1,15 @@
 "use client"
 
-import {ActionCard, AverageType} from "@/app/(webapp)/app/dashboard/_components/head/_components/actionCard";
-import {
-    ArrowDoubleIcon,
-    ArrowDropDownIcon,
-    CarCrashIcon,
-    CashAltIcon,
-    DashboardIcon,
-    UserIcon
-} from "@/components/ui/__icons";
+import {ActionCard} from "@/app/(webapp)/app/dashboard/_components/head/_components/actionCard";
+import {ArrowDoubleIcon, CarCrashIcon, CashAltIcon, DashboardIcon, UserIcon} from "@/components/ui/__icons";
 import React from "react";
-import {cn} from "@/lib/utils";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {
-    useGetActiveFleet,
-    useGetBestAndLestOnCity,
-    useGetParkStats,
-    useGetSpecificFleetStats
-} from "@/hooks/admin/useFleetHook";
+import {cn, formatNumber} from "@/lib/utils";
+import {useGetBestAndLestOnCity, useGetParkStats} from "@/hooks/admin/useFleetHook";
 import Loading from "@/components/ui/Loader";
 import {resolveIndicator} from "@/app/(webapp)/app/fleet/[fleetID]/dashboard/stat_cards/statCards";
 import {StProfitable} from "@/types/admin/fleet";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue
-} from "@/components/ui/select";
-import {useGetCurrency} from "@/hooks/__globlal/useGlobalHook";
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {useGetActiveCurrency} from "@/hooks/__globlal/useGlobalHook";
 
 export const HeadSection = () => {
 
@@ -44,9 +17,7 @@ export const HeadSection = () => {
 
     const {data, isLoading} = useGetParkStats()
     const {data: profilable, isLoading: loadingProfilable} = useGetBestAndLestOnCity()
-    const {isLoading: loadingFleet, activeFleetCurrency} = useGetActiveFleet()
-
-
+    const {currency} = useGetActiveCurrency()
 
     React.useEffect(() => {
         if (!loadingProfilable && profilable) {
@@ -128,11 +99,11 @@ export const HeadSection = () => {
                                 }}
                                 average={{
                                     type: resolveIndicator(data.ca_total.indicateur),
-                                    label: `${data.ca_total.indicateur_value} ce mois`
+                                    label: `${formatNumber(data.ca_total.indicateur_value)} ce mois`
                                 }}
                                 cardValue={{
                                     label: "Chiffre d’affaires",
-                                    value: `${data.ca_total.total}${activeFleetCurrency??"-"}`
+                                    value: `${formatNumber(data.ca_total.total)} ${currency}`
                                 }}
                             />
                         </div>
@@ -188,7 +159,7 @@ export const HeadSection = () => {
                                         </div>
                                         <div>
                                             <div
-                                                className="text-[#000b20] text-2xl font-semibold">{activeProfilable.flux} XAF
+                                                className="text-[#000b20] text-2xl font-semibold">{formatNumber(activeProfilable.flux)} {currency}
                                             </div>
                                             <div className="text-[#7f878c] text-sm font-semibold">Flux financier</div>
                                         </div>

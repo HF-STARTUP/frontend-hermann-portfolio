@@ -1,3 +1,4 @@
+"use client"
 import {useParams} from "next/navigation";
 import useAppStore from "@/stores/global/useAppStore";
 import React from "react";
@@ -120,6 +121,13 @@ export const useGetMyPosition = () => {
         data,
         isSuccess
 
+    }
+}
+
+export const useGetActiveCurrency = () => {
+
+    return {
+        currency: AuthManagerGuard.getCurrency
     }
 }
 

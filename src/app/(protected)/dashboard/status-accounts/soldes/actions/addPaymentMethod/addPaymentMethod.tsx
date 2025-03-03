@@ -1,3 +1,5 @@
+"use client";
+
 import React, {useId} from "react";
 import DialogBase, {AdminDialogHead, DialogActions} from "@/components/dialog/Dialog";
 import BtnBase from "@/components/elements/BtnBase";

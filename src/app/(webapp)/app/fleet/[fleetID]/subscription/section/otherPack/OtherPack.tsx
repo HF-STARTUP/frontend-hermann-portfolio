@@ -1,3 +1,5 @@
+"use client";
+
 import {ABlockTitle} from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
 import {AbonnTypeCard} from "@/app/(webapp)/app/fleet/[fleetID]/subscription/section/acrtiveAbonn/activeAbonn";
 import * as React from "react"

@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import VLinkProvider from "@/components/helpers/VLinkProvider";
 import React from "react";

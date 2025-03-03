@@ -1,3 +1,5 @@
+"use client";
+
 import {CountryService, FleetCityPath} from "@/services/location/CountryService";
 import {useQuery} from "@tanstack/react-query";
 import {QUERY_KEYS} from "@/utils/const/queryKeys";

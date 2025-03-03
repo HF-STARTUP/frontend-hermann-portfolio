@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {GoogleMap, Marker, OverlayView, useJsApiLoader} from '@react-google-maps/api';
 import {EnvVars} from "@/utils/const/envVars";

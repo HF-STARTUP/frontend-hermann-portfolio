@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {ArrowDownIcon} from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
 import {

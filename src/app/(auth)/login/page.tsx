@@ -57,7 +57,11 @@ export default function LoginPage() {
 
             notify('Bienvenus sur VTC ADMIN!', 'success');
             console.log($login.data)
-            if ($login.data.admin_on_city) AuthManagerGuard.setEnabledCityID($login.data.admin_on_city[0].id)
+            if ($login.data.admin_on_city) {
+                const firstCity = $login.data.admin_on_city[0]
+                AuthManagerGuard.setEnabledCityID(firstCity.id)
+                AuthManagerGuard.setCurrency(firstCity.currency)
+            }
             AuthManagerGuard.loginToApp(loginData.token, loginData.refresh_token, loginData.id)
             $router.push(`/app/dashboard`)
             console.log("Redirect to Admin !")

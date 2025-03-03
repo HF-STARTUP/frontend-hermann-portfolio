@@ -1,3 +1,5 @@
+"use client";
+
 import {FieldDate, SelectField} from "@/components/form/TextField";
 
 const StatusAccountFilterHead = () => {

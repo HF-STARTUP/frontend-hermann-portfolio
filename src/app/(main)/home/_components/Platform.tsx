@@ -1,3 +1,5 @@
+"use client";
+
 import PrimaryBgCardContainer from "@/components/box/PrimaryBgCardContainer";
 import Container from "@/components/box/Container";
 import vtcpc from '@/assets/img/illustrations/vtc-pc.png'

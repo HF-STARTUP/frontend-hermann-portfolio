@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 const CardDefault:React.FC<{children:React.ReactNode} & React.AnchorHTMLAttributes<HTMLAnchorElement>> = ({children,...props})=>{

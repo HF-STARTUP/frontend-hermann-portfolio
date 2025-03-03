@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {MessageModel} from "@/model/message/Message";
 import {LiaCheckDoubleSolid} from "react-icons/lia";

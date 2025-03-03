@@ -4,7 +4,7 @@ import {EnvVars} from "@/utils/const/envVars";
 import {ExecHttpRequestOptionType, GlobalResponseType, SystemHttpCodeGeneric} from "@/types/network/http";
 import SYSTEM_HTTP_CODE from "@/utils/const/systemHttpCode";
 import CustomQueryError from "@/services/CustomQueryError";
-import AuthManagerGuard, {TOKEN_KEYS} from "@/guard/AuthManagerGuard";
+import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import {queryClient} from "@/app/_utils/network/reactQuery";
 import Cookies from "js-cookie";
 import { format } from "date-fns";
@@ -118,9 +118,9 @@ abstract class Service {
             
             if(isTokenExpired){
                 AuthManagerGuard.signOut()
-                if (window?.location) {
-                    window.location = `${window.location.origin}/login` as unknown as Location
-                }
+                // if (window?.location) {
+                //     window.location = `${window.location.origin}/login` as unknown as Location
+                // }
             }
             throw new CustomQueryError(error.message)
         })

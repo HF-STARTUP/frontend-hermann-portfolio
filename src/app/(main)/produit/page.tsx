@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {ProductHead, ProductsListContainer} from "@/app/(main)/produit/_components/produitComponents";
 

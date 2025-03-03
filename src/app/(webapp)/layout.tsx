@@ -14,7 +14,6 @@ const inter = Inter({subsets: ["latin"]});
 export const metadata: Metadata = {
     title: "VTC ADMIN",
     description: "Gestion des flottes",
-    themeColor: "#000B20"
 };
 
 function RootLayout({

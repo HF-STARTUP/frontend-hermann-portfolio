@@ -44,7 +44,7 @@ const UserOption: React.FC = () => {
     const {data, isLoading} = useUserProfile()
     const $router = useRouter()
     const $params = useParams()
-    const $pathName = usePathname()
+    const $path = usePathname()
 
     if (isLoading) {
 
@@ -66,15 +66,19 @@ const UserOption: React.FC = () => {
                             <div
                                 className="text-[#f2f2f2] text-[16px] lg:text-[24px] font-bold  leading-[23px]">{data.username}</div>
                             <Select onValueChange={(new_city_id) => {
+                                const selected = data?.listPark.find(lp => lp.id == +new_city_id)
                                 AuthManagerGuard.setEnabledCityID(+new_city_id)
+                                AuthManagerGuard.setCurrency(selected?.currency)
+
+                                console.log($path)
+                                if ($path.includes("tickets")) {
+                                    window.location.reload()
+                                }
+
                                 queryClient.invalidateQueries().then((() => {
                                 }))
                                 if ($params.hasOwnProperty("fleetID")) {
                                     $router.push("/app/fleet")
-                                }
-
-                                if($pathName == "/app/tickets"){
-                                    window.location.reload()
                                 }
                             }}
                                     defaultValue={AuthManagerGuard.getEnabledCity ?? String(data.listPark[0].id)}
@@ -88,8 +92,12 @@ const UserOption: React.FC = () => {
                                         <SelectLabel>Selectionner</SelectLabel>
                                         {
                                             data.listPark?.map((item, index) => (
-                                                <SelectItem key={item.id}
-                                                            value={String(item.id)}>{item.name}</SelectItem>
+                                                <SelectItem
+                                                    key={item.id}
+                                                    value={String(item.id)}
+                                                >
+                                                    {item.name}
+                                                </SelectItem>
                                             ))
                                         }
                                     </SelectGroup>

@@ -1,3 +1,5 @@
+"use client";
+
 import {AddButtonIcon, AddIconCircle} from "@/components/ui/__icons";
 import React from "react";
 

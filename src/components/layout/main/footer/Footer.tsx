@@ -1,3 +1,5 @@
+"use client";
+
 import PSALogoSVG from "@/components/app/PSALogoSVG";
 import VLinkProvider from "@/components/helpers/VLinkProvider";
 import React from "react";

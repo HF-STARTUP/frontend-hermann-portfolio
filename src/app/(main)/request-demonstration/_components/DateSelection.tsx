@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import CardDefault from "@/components/box/Card";
 import {logger} from "@/utils/func/devmode/debug";

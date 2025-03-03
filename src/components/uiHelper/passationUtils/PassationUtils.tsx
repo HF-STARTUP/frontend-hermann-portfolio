@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 import Chip from "@/components/box/Chip";
 import React from "react";

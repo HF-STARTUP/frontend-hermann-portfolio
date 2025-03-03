@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Image, {StaticImageData} from "next/image";
 import {cn} from "@/utils/ui/cn";

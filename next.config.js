@@ -7,15 +7,7 @@ const nextConfig = {
     // },
     /** @type {import('next').NextConfig} */
 
-    experimental: {
-        disableOptimizedLoading: true, // Désactive les optimisations du chargement
-    },
-    webpack(config) {
-        // Ignore tous les warnings (y compris les erreurs)
-        config.ignoreWarnings = [/./]; // Ignore absolument tous les avertissements
-        return config;
-    },
-
+    output: "standalone",
     eslint: {
         ignoreDuringBuilds: true,
     },
@@ -35,32 +27,32 @@ const nextConfig = {
         ],
         minimumCacheTTL: 15000000,
     },
-    async redirects() {
-        return [
-            {
-                source: '/',
-                destination: '/app/dashboard',
-                permanent: true,
-            },
-            {
-                source: '/dashboard/schedule/schedule-settings/add-group',
-                destination: '/dashboard/schedule/schedule-settings/add-group/planing',
-                permanent: true,
-            },
-
-            //ADMIN
-            {
-                source: '/app/settings',
-                destination: '/app/settings/profile',
-                permanent: true,
-            },
-            {
-                source: '/app',
-                destination: '/app/dashboard',
-                permanent: true,
-            },
-        ]
-    }
+    // async redirects() {
+    //     return [
+    //         {
+    //             source: '/',
+    //             destination: '/app/dashboard',
+    //             permanent: true,
+    //         },
+    //         {
+    //             source: '/dashboard/schedule/schedule-settings/add-group',
+    //             destination: '/dashboard/schedule/schedule-settings/add-group/planing',
+    //             permanent: true,
+    //         },
+    //
+    //         //ADMIN
+    //         {
+    //             source: '/app/settings',
+    //             destination: '/app/settings/profile',
+    //             permanent: true,
+    //         },
+    //         {
+    //             source: '/app',
+    //             destination: '/app/dashboard',
+    //             permanent: true,
+    //         },
+    //     ]
+    // }
 }
 
 module.exports = nextConfig

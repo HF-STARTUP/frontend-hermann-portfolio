@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import DialogBase, {AdminDialogHead, DialogActions} from "@/components/dialog/Dialog";
 import {DialogCoverImage, DialogSuccessContent} from "@/components/dialog/DialogContentUtils";

@@ -1,3 +1,5 @@
+"use client";
+
 import {EmojiIcon, FileAddIcon, WarningIcon} from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
 import React, {LegacyRef, useEffect, useRef, useState} from "react";
 import {cn} from "@/lib/utils";
