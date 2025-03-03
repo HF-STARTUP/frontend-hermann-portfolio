@@ -36,8 +36,8 @@ export const ChatMdgContent: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                         {message.description}
                     </div>
                     <div
-                        className="text-right text-neutral-400 text-sm italic font-normal font-vInter mt-1 flex gap-2 justify-end">
-                        <div >{message.createdAt}</div>
+                        className="text-right text-neutral-500 text-base font-normal font-vInter mt-1 flex gap-2 justify-end">
+                        <div>{message.createdAt}</div>
                         {/*<div>*/}
                         {/*    {message.isSended && <LiaCheckDoubleSolid className={"text-green-500"}/>}*/}
                         {/*    {!message.isSended && <CiClock1 className={"text-gray-600"}/>}*/}
@@ -61,7 +61,7 @@ export const ChatMdgContent: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                     className={"max-w-[566px] text-right text-black text-base font-normal cursor-default font-vInter p-2 bg-blue-50 rounded-tl-xl rounded-bl-xl rounded-br-xl border border-sky-100 hover:bg-slate-50 transition"}>
                     <div className="text-blue-800 text-base font-normal font-vInter">{message.description}</div>
                     <div
-                        className="text-right text-black/45 font-normal font-vInter mt-1  text-sm italic">{message.createdAt}</div>
+                        className="text-right text-black text-base font-normal font-vInter mt-1">{message.createdAt}</div>
                 </div>}
                 {message.isImage && <Image
                     src={message.getImage}

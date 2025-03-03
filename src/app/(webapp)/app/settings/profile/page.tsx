@@ -3,21 +3,25 @@
 import React, {useId} from "react";
 import FormGroup from "@/components/box/FormGroup";
 import {Stack} from "@/components/box/Grid";
-import TextField, {FieldDate} from "@/components/form/TextField";
+import TextField, {FieldDate, SelectField} from "@/components/form/TextField";
 import {AdminPageTitle} from "@/components/typo/typo";
 import BtnBase from "@/components/elements/BtnBase";
 import Avatar from "@/components/box/Avatar";
 import {EditIcon} from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
+import {useCountries} from "@/hooks/location/useCountry/useCountry";
+import {useCity} from "@/hooks/location/useCity/useCity";
+import Country from "@/model/location/Country";
+import City from "@/model/location/City";
 import {UpdatePasswordForm} from "@/app/(protected)/dashboard/settings/password/_components/updatePasswordForm";
 import {useUpdateProfile} from "@/hooks/admin/useSettingsHook";
 import {SubmitHandler, useForm} from "react-hook-form";
+import {AddClientInputs, addClientSchema} from "@/schema/supplier.schema";
 import {joiResolver} from "@hookform/resolvers/joi";
 import {UpdateProfileInput, updateProfileInputSchema} from "@/schema/ADMIN/settings.schema";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import {useUserProfile} from "@/hooks/__form/auth/useUserProfile";
 import Loading from "@/components/ui/Loader";
 import {useGetProfileID} from "@/hooks/__globlal/useGlobalHook";
-import dynamic from "next/dynamic";
 
 const ProfilePage: React.FC = () => {
     return (
@@ -172,4 +176,5 @@ const AvatarUpdate: React.FC = () => {
     )
 }
 
-export default dynamic(() => Promise.resolve(ProfilePage), { ssr: false })
+
+export default ProfilePage

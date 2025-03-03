@@ -95,6 +95,12 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
         setAccess([...access, {access_id: id, type: ACCESS_TYPE.READ}])
     }
 
+    React.useEffect(() => {
+        if (data && isSuccess) {
+            resetForm()
+            setIsOpen(false)
+        }
+    }, [data, isSuccess])
 
     const handleChangeAccessRole = ({id, atype}: { id: number, atype: ACCESS_TYPE }) => {
         if (access.find(a => a.access_id === id)) {
@@ -108,12 +114,6 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     }
 
 
-    React.useEffect(() => {
-        if (data && isSuccess) {
-            resetForm()
-            setIsOpen(false)
-        }
-    }, [data, isSuccess])
     return (
         <div {...props}>
             <form onSubmit={() => {

@@ -180,7 +180,7 @@ export const EntretienEvolution = () => {
                         <SelectContent>
                             <SelectGroup>
                                 <SelectItem value="month">Mensuel</SelectItem>
-                                <SelectItem value="day">Journalier</SelectItem>
+                                <SelectItem value="year">Annuel</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>

@@ -12,6 +12,7 @@ import GlobalLayoutProvider from "@/components/layout/globalLayout/GlobalLayoutP
 const dmSans = DM_Sans({subsets: ['latin']})
 const poppins = Poppins({weight: '400', subsets: ['latin']})
 
+
 export default function RootLayout({
                                        children,
                                    }: {
@@ -35,5 +36,3 @@ export default function RootLayout({
         </html>
     )
 }
-
-
