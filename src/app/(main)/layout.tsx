@@ -8,12 +8,11 @@ import '@/assets/ui/globals.scss'
 import MainLayout from "@/components/layout/main/MainLayout";
 import NavigationProgress from "@/utils/func/navigationPrefetch";
 import GlobalLayoutProvider from "@/components/layout/globalLayout/GlobalLayoutProvider";
-import dynamic from "next/dynamic";
 
 const dmSans = DM_Sans({subsets: ['latin']})
 const poppins = Poppins({weight: '400', subsets: ['latin']})
 
-function RootLayout({
+export default function RootLayout({
                                        children,
                                    }: {
     children: React.ReactNode
@@ -37,5 +36,4 @@ function RootLayout({
     )
 }
 
-export default dynamic(() => Promise.resolve(RootLayout), { ssr: false })
 
