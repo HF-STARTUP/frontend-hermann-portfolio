@@ -24,8 +24,9 @@ enum FleetAbonType {
     free = "Essaie gratuit",
     premiumParticulier = "premium particulier",
     starterParticulier = "starter particulier",
-    premiumProfessionnel = "premium entreprise\n",
+    premiumProfessionnel = "premium entreprise",
     starterProfessionnel = "starter entreprise",
+    None = "None",
 }
 
 export const FleetList = () => {
@@ -56,10 +57,18 @@ export const FleetList = () => {
             const finalType = abonType
 
             const isAll = abonType === "all"
+            const isNone = abonType === "None"
 
             if (isAll) {
                 data && setFleetList(data)
                 return
+            }
+
+            if (isNone) {
+                const _data = data?.filter(f => !f._instance.subscription)
+                setFleetList(_data || [])
+                console.log(data)
+                return;
             }
 
             if (data) {
@@ -163,6 +172,8 @@ export const FleetList = () => {
                                         professionnel</SelectItem>
                                     <SelectItem value={`${FleetAbonType.starterProfessionnel}`}>Starter
                                         professionnel</SelectItem>
+                                    <SelectItem value={`${FleetAbonType.None}`}>Aucun
+                                        abonnement</SelectItem>
                                 </SelectContent>
                             </Select>
                         </div>

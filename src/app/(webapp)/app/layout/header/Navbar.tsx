@@ -17,11 +17,14 @@ import {
     SelectValue
 } from "@/components/ui/select";
 import * as React from "react";
+import {useMemo} from "react";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import {queryClient} from "@/app/_utils/network/reactQuery";
 import {useParams, usePathname, useRouter} from "next/navigation";
 import {Badge} from "@/components/ui/badge";
 import {ConnexionMode} from "@/hooks/__globlal/useGlobalHook";
+import {Input} from "@/components/ui/input";
+import {searchAndFilter} from "@/model/Model";
 
 export const Navbar = () => {
     return (
@@ -45,6 +48,24 @@ const UserOption: React.FC = () => {
     const $router = useRouter()
     const $params = useParams()
     const $path = usePathname()
+    const [filterCityToken, setFilterCityToken] = React.useState<string>()
+
+    const cityFiltered = useMemo(() => {
+        if (!filterCityToken) return data?.listPark
+        if (data) {
+            const filteredCities = searchAndFilter(data.listPark, filterCityToken, ['name'])
+            const activeCity = AuthManagerGuard.getEnabledCity ?? String(data.listPark[0].id)
+
+            const cityEnabled = data.listPark.find(d => String(d.id) === activeCity) ?? data.listPark[0]
+            const filteredDataContainActiveElement = filteredCities.find(d => String(d.id) === activeCity)
+
+            if (!filteredDataContainActiveElement) {
+                return ([cityEnabled, ...filteredCities])
+            }
+
+            return filteredCities
+        }
+    }, [filterCityToken, data])
 
     if (isLoading) {
 
@@ -89,9 +110,21 @@ const UserOption: React.FC = () => {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectLabel>Selectionner</SelectLabel>
+                                        <SelectLabel>Selectionner une ville</SelectLabel>
+                                        <div className={"px-2 mb-2 mt-2"}>
+                                            <Input
+                                                placeholder={"Rechercher..."}
+                                                value={filterCityToken}
+                                                onChange={(e) => {
+                                                    e.preventDefault()
+                                                    e.stopPropagation()
+                                                    setFilterCityToken(e.currentTarget.value)
+                                                    setFilterCityToken(undefined)
+                                                }}
+                                            />
+                                        </div>
                                         {
-                                            data.listPark?.map((item, index) => (
+                                            cityFiltered?.map((item, index) => (
                                                 <SelectItem
                                                     key={item.id}
                                                     value={String(item.id)}

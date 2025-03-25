@@ -50,7 +50,7 @@ const nextConfig = {
                 source: '/app',
                 destination: '/app/dashboard',
                 permanent: true,
-            },
+            }
         ]
     }
 }

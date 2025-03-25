@@ -108,8 +108,12 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                             </div>
                             {
                                 fleetListState.map((item, index) => (
-                                    <SelectItem key={item.id}
-                                                value={item.id}>{item.name}</SelectItem>
+                                    <SelectItem
+                                        key={item.id}
+                                        value={item.id}
+                                    >
+                                        {item.name}
+                                    </SelectItem>
                                 ))
                             }
                         </SelectGroup>
