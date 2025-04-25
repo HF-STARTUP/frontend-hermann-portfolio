@@ -66,6 +66,7 @@ export const FleetList = () => {
 
             if (isNone) {
                 const _data = data?.filter(f => !f._instance.subscription)
+
                 setFleetList(_data || [])
                 console.log(data)
                 return;
