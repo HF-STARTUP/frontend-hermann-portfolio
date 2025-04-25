@@ -2,7 +2,7 @@ import {CityType, CountryType, GetCountryResponseType} from "@/types/location/lo
 import {EnvVars} from "@/utils/const/envVars";
 import Country from "@/model/location/Country";
 
-export const FleetCityPath = `${EnvVars.NP_API_ENDPOINT}/location/cities/park?itemPerPage=20&page=1`
+export const FleetCityPath = `${EnvVars.NP_API_ENDPOINT}/location/cities/park?itemPerPage=5000&page=1`
 
 export class CountryService {
 
