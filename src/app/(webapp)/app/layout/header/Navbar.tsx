@@ -2,11 +2,9 @@
 
 import Image from "next/image";
 import {cn} from "@/lib/utils";
-import {SignOutIcon} from "@/components/ui/__icons";
 import logo_icon from "./logo.png"
 import {Button} from "@/components/ui/button";
 import {useUserProfile} from "@/hooks/__form/auth/useUserProfile";
-import SignOutAction from "@/components/actions/Signout.action";
 import {
     Select,
     SelectContent,
@@ -25,6 +23,8 @@ import {Badge} from "@/components/ui/badge";
 import {ConnexionMode} from "@/hooks/__globlal/useGlobalHook";
 import {Input} from "@/components/ui/input";
 import {searchAndFilter} from "@/model/Model";
+import SignOutAction from "@/components/actions/Signout.action";
+import {SignOutIcon} from "@/components/ui/__icons";
 
 export const Navbar = () => {
     return (
@@ -42,25 +42,27 @@ export const Navbar = () => {
     )
 }
 
-const UserOption: React.FC = () => {
+// Assuming SignOutAction and SignOutIcon components exist
 
+const UserOption: React.FC = () => {
     const {data, isLoading} = useUserProfile()
     const $router = useRouter()
     const $params = useParams()
     const $path = usePathname()
-    const [filterCityToken, setFilterCityToken] = React.useState<string>()
+    const [filterCityToken, setFilterCityToken] = React.useState<string>("")
+    const [selectOpen, setSelectOpen] = React.useState(false)
 
     const cityFiltered = useMemo(() => {
-        if (!filterCityToken) return data?.listPark
+        if (!filterCityToken || filterCityToken.trim() === "") return data?.listPark
         if (data) {
-            const filteredCities = searchAndFilter(data.listPark, filterCityToken, ['name'])
+            const filteredCities = searchAndFilter(data.listPark, filterCityToken, ["name"])
             const activeCity = AuthManagerGuard.getEnabledCity ?? String(data.listPark[0].id)
 
-            const cityEnabled = data.listPark.find(d => String(d.id) === activeCity) ?? data.listPark[0]
-            const filteredDataContainActiveElement = filteredCities.find(d => String(d.id) === activeCity)
+            const cityEnabled = data.listPark.find((d) => String(d.id) === activeCity) ?? data.listPark[0]
+            const filteredDataContainActiveElement = filteredCities.find((d) => String(d.id) === activeCity)
 
             if (!filteredDataContainActiveElement) {
-                return ([cityEnabled, ...filteredCities])
+                return [cityEnabled, ...filteredCities]
             }
 
             return filteredCities
@@ -68,12 +70,8 @@ const UserOption: React.FC = () => {
     }, [filterCityToken, data])
 
     if (isLoading) {
-
-        return (
-            <div></div>
-        )
+        return <div></div>
     }
-
 
     if (data) {
         return (
@@ -85,24 +83,26 @@ const UserOption: React.FC = () => {
                     <div className={`flex justify-end items-end lg:gap-[4px] flex-col`}>
                         <div className={""}>
                             <div
-                                className="text-[#f2f2f2] text-[16px] lg:text-[24px] font-bold  leading-[23px]">{data.username}</div>
-                            <Select onValueChange={(new_city_id) => {
-                                const selected = data?.listPark.find(lp => lp.id == +new_city_id)
-                                AuthManagerGuard.setEnabledCityID(+new_city_id)
-                                AuthManagerGuard.setCurrency(selected?.currency)
+                                className="text-[#f2f2f2] text-[16px] lg:text-[24px] font-bold leading-[23px]">{data.username}</div>
+                            <Select
+                                onValueChange={(new_city_id) => {
+                                    const selected = data?.listPark.find((lp) => lp.id == +new_city_id)
+                                    AuthManagerGuard.setEnabledCityID(+new_city_id)
+                                    AuthManagerGuard.setCurrency(selected?.currency)
 
-                                console.log($path)
-                                if ($path.includes("tickets")) {
-                                    window.location.reload()
-                                }
+                                    if ($path.includes("tickets")) {
+                                        window.location.reload()
+                                    }
 
-                                queryClient.invalidateQueries().then((() => {
-                                }))
-                                if ($params.hasOwnProperty("fleetID")) {
-                                    $router.push("/app/fleet")
-                                }
-                            }}
-                                    defaultValue={AuthManagerGuard.getEnabledCity ?? String(data.listPark[0].id)}
+                                    queryClient.invalidateQueries().then(() => {
+                                    })
+                                    if ($params.hasOwnProperty("fleetID")) {
+                                        $router.push("/app/fleet")
+                                    }
+                                }}
+                                defaultValue={AuthManagerGuard.getEnabledCity ?? String(data.listPark[0].id)}
+                                onOpenChange={(open) => setSelectOpen(open)}
+                                open={selectOpen}
                             >
                                 <SelectTrigger
                                     className="h-[20px] md:h-fit w-fit bg-transparent border-transparent text-[#f2f2f2] text-[14px] lg:text-base font-medium">
@@ -116,23 +116,31 @@ const UserOption: React.FC = () => {
                                                 placeholder={"Rechercher..."}
                                                 value={filterCityToken}
                                                 onChange={(e) => {
+                                                    // Prevent default behavior but don't reset the value
                                                     e.preventDefault()
                                                     e.stopPropagation()
-                                                    setFilterCityToken(e.currentTarget.value)
-                                                    setFilterCityToken(undefined)
+                                                    setFilterCityToken(e.target.value)
                                                 }}
+                                                // Prevent the select from closing when clicking in the input
+                                                onClick={(e) => {
+                                                    e.stopPropagation()
+                                                }}
+                                                // Prevent keyboard events from bubbling up to the Select component
+                                                onKeyDown={(e) => {
+                                                    if (e.key === "Escape") {
+                                                        // Allow Escape to close the select
+                                                        return
+                                                    }
+                                                    e.stopPropagation()
+                                                }}
+                                                autoComplete="off"
                                             />
                                         </div>
-                                        {
-                                            cityFiltered?.map((item, index) => (
-                                                <SelectItem
-                                                    key={item.id}
-                                                    value={String(item.id)}
-                                                >
-                                                    {item.name}
-                                                </SelectItem>
-                                            ))
-                                        }
+                                        {cityFiltered?.map((item) => (
+                                            <SelectItem key={item.id} value={String(item.id)}>
+                                                {item.name}
+                                            </SelectItem>
+                                        ))}
                                     </SelectGroup>
                                 </SelectContent>
                             </Select>
@@ -150,3 +158,4 @@ const UserOption: React.FC = () => {
         )
     }
 }
+
