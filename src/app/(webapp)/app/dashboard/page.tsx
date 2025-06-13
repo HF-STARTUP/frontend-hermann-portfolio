@@ -2,11 +2,20 @@
 import {Crumb} from "@/components/ui/custom/crumb";
 import {PageTitle} from "@/components/ui/custom/PageTitle";
 import {HeadSection} from "@/app/(webapp)/app/dashboard/_components/head/headSection";
-import {Activities} from "@/app/(webapp)/app/dashboard/_components/activities/acctivities";
 import {AbonnEvolution} from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
 import React from "react";
+import FleetMap from "@/app/(webapp)/app/dashboard/_components/news/fleet-map";
 
-export default function DahboardPage() {
+export default function DashboardPage() {
+
+    const fleetData = [
+        {city: "Abidjan", value: "72K", coordinates: [4.0351, 5.3295]},
+        {city: "New York", value: "72K", coordinates: [-74.006, 40.7128]},
+        {city: "Chicago", value: "72K", coordinates: [-87.6298, 41.8781]},
+        {city: "Sydney", value: "72K", coordinates: [151.2093, -33.8688]},
+        {city: "Tokyo", value: "72K", coordinates: [139.6917, 35.6895]},
+    ]
+
 
     return (
         <div>
@@ -25,7 +34,10 @@ export default function DahboardPage() {
                     <AbonnEvolution/>
                 </div>
                 <div className={"col-span-12 2xl:col-span-7"}>
-                    <Activities/>
+                    <div className="p-8">
+                        <FleetMap fleets={fleetData}/>
+                    </div>
+                    {/*<Activities/>*/}
                 </div>
             </div>
         </div>

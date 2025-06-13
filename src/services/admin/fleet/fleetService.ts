@@ -12,6 +12,7 @@ import {
 import {AbonResponseModel, AdminOnFleetModel, FleetModel, ParkStatResponseType} from "@/model/ADMIN/fleet";
 import {ResponseWithPagination} from "@/types/generic";
 import {endOfDay, format, startOfDay} from "date-fns";
+import {CurencyResponseType} from "@/types/vehicule.type";
 
 export enum FleetApiPath {
     GetFleetByCityID = '/park/by',
@@ -31,6 +32,7 @@ export enum FleetApiPath {
     DashboardSubscriptionEvolution = "/dashboard/city/subscription/evolution",
     ActivateSubscription = "/subscription/activate-subscription",
     CancelSubscription = "/subscription/cancel-active-subscription",
+    Currency = "currency"
 }
 
 class FleetService extends Service {
@@ -42,6 +44,14 @@ class FleetService extends Service {
 
     public static getInstance(): FleetService {
         return FleetService.instance;
+    }
+
+    public static async getCurrencies() {
+        const [data] = await Promise.all([FleetService.makeRequest<CurencyResponseType[]>(
+            FleetApiPath.Currency,
+            'GET',
+        )])
+        return data
     }
 
     static invalidFleets() {

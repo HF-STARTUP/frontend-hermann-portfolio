@@ -12,7 +12,7 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select";
-import {useGetFleetsList} from "@/hooks/admin/useFleetHook";
+import {useGetCurrenciesList, useGetFleetsList} from "@/hooks/admin/useFleetHook";
 import {useGetParkID} from "@/hooks/__globlal/useGlobalHook";
 import {Input} from "@/components/ui/input";
 import {FleetModel} from "@/model/ADMIN/fleet";
@@ -42,7 +42,9 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     const pathname = usePathname()
     const [filterFleetToken, setFilterFleetToken] = React.useState("")
     const [fleetListState, setFleetListState] = React.useState<FleetModel[]>([])
+    const {data: currencies, isLoading: loadingCurrency} = useGetCurrenciesList()
 
+    const [selectedCurrency, setSelectedCurrency] = React.useState<string>()
 
     React.useEffect(() => {
         if (activeFleet) {
@@ -89,7 +91,10 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                 <div>{page_title}</div>
             </div>
             {isSecondFleet && <div>
-                <Select defaultValue={activeFleet} onValueChange={v => setActiveFleet(v)}>
+                <Select
+                    defaultValue={activeFleet}
+                    onValueChange={v => setActiveFleet(v)}
+                >
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Selectionner"/>
                     </SelectTrigger>
@@ -122,22 +127,50 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
             </div>
             }
             {withSelect &&
-                <Select onValueChange={onValueChange} defaultValue={AuthManagerGuard.getEnabledFleetType ?? items[0]?.key}>
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Selectionner"/>
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectLabel>Selectionner le type de flotte</SelectLabel>
-                            {
-                                items?.map((item, index) => (
-                                    <SelectItem key={item.key}
-                                                value={item.key}>{item.value}</SelectItem>
-                                ))
-                            }
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>}
+                <div className={"flex items-center gap-2"}>
+                    <Select onValueChange={onValueChange}
+                            defaultValue={AuthManagerGuard.getEnabledFleetType ?? items[0]?.key}>
+                        <SelectTrigger
+                            className=" w-fit bg-[#D9E5FF]  text-center justify-center text-blue-800 text-lg font-medium font-['DM Sans'] leading-normal">
+                            <SelectValue placeholder="Selectionner"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Selectionner le type de flotte</SelectLabel>
+                                {
+                                    items?.map((item, index) => (
+                                        <SelectItem key={item.key}
+                                                    value={item.key}>{item.value}</SelectItem>
+                                    ))
+                                }
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    <Select
+                        onValueChange={setSelectedCurrency}
+                    >
+                        <SelectTrigger
+                            className=" w-fit bg-[#D9E5FF]  text-center justify-center text-blue-800 text-lg font-medium font-['DM Sans'] leading-normal">
+                            <SelectValue placeholder="Dévise"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Selectionner la dévise</SelectLabel>
+                                {
+                                    currencies?.map((item, index) => (
+                                        <SelectItem
+                                            key={item.id}
+                                            value={`${item.id}`}
+                                        >
+                                            {item.name}
+                                        </SelectItem>
+                                    ))
+                                }
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                </div>
+            }
 
 
         </div>

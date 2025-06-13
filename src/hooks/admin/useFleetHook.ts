@@ -7,6 +7,14 @@ import {useRouter} from "next/navigation";
 import React, {useMemo} from "react";
 import {toIsoDate} from "@/services/Service";
 
+export const useGetCurrenciesList = () => {
+    const {isLoading, data} = useQueryProvider({
+        queryKey: [FleetApiPath.Currency],
+        queryFn: () => FleetService.getCurrencies(),
+    })
+    return {isLoading, data}
+}
+
 export const useGetFleetsList = () => {
 
     const enable_city_id = AuthManagerGuard.getEnabledCity
