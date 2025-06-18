@@ -7,12 +7,14 @@ import {
     FleetListResponseType,
     FleetResponseType,
     ParkDetailsResponseType,
+    ProfitableListResponseType,
     RevenusEvolution
 } from "@/types/admin/fleet";
 import {AbonResponseModel, AdminOnFleetModel, FleetModel, ParkStatResponseType} from "@/model/ADMIN/fleet";
 import {ResponseWithPagination} from "@/types/generic";
 import {endOfDay, format, startOfDay} from "date-fns";
 import {CurencyResponseType} from "@/types/vehicule.type";
+import {FleetByCityResponseType, RevenusRepartitionResponseType} from "@/types/dashboard.schedule.type";
 
 export enum FleetApiPath {
     GetFleetByCityID = '/park/by',
@@ -32,18 +34,87 @@ export enum FleetApiPath {
     DashboardSubscriptionEvolution = "/dashboard/city/subscription/evolution",
     ActivateSubscription = "/subscription/activate-subscription",
     CancelSubscription = "/subscription/cancel-active-subscription",
-    Currency = "currency"
+    Currency = "currency",
+    OperatorRevenus = "/dashboard/operator-revenue",
+    FleetByCity = "/dashboard/fleet-by-city",
+    SubscriptionPlanRevenus = "/dashboard/subscription-plan-revenue",
+    ProfitableList = "/dashboard/city/park/profitable-list"
 }
+
+export type OperatorRevenusInputs = {
+    start_date: string
+    end_date: string
+    currency_id?: string
+}
+
+export type FleetByCityInputs = {
+    country_id?: string
+}
+
+
+export type SubscriptionPlanRevenusInputs = {
+    start_date: string
+    end_date: string
+    currency_id?: string
+}
+
+export type ProfitableListInputs = {
+    type: string
+    city_id: string
+    currency_id?: string
+}
+
+export interface OperatorRevenueResponse {
+    operator_id: string;
+    operator_name: string;
+    country_name: string;
+    total_amount: number;
+    currency: string;
+    path?: string
+}
+
 
 class FleetService extends Service {
     private static instance: FleetService = new FleetService();
 
     private constructor() {
-        super();
+        super()
     }
 
     public static getInstance(): FleetService {
         return FleetService.instance;
+    }
+
+    public static async getProfitableList(inputs: ProfitableListInputs) {
+        const [data] = await Promise.all([FleetService.makeRequest<ProfitableListResponseType[]>(
+            FleetService.instance.toQueryString(inputs, FleetApiPath.ProfitableList),
+            'GET'
+        )])
+        return data
+    }
+
+    public static async getSubscriptionPlanRevenus(inputs: SubscriptionPlanRevenusInputs) {
+        const [data] = await Promise.all([FleetService.makeRequest<RevenusRepartitionResponseType>(
+            FleetService.instance.toQueryString(inputs, FleetApiPath.SubscriptionPlanRevenus),
+            'GET'
+        )])
+        return data
+    }
+
+    public static async getFleetByCity(inputs: FleetByCityInputs) {
+        const [data] = await Promise.all([FleetService.makeRequest<FleetByCityResponseType[]>(
+            FleetService.instance.toQueryString(inputs, FleetApiPath.FleetByCity),
+            'GET'
+        )])
+        return data
+    }
+
+    public static async getOratorsRevenus(inputs: OperatorRevenusInputs) {
+        const [data] = await Promise.all([FleetService.makeRequest<OperatorRevenueResponse[]>(
+            FleetService.instance.toQueryString(inputs, FleetApiPath.OperatorRevenus),
+            'GET'
+        )])
+        return data
     }
 
     public static async getCurrencies() {
@@ -184,11 +255,12 @@ class FleetService extends Service {
     }
 
 
-    public static async getParkStats({cityID, type}: {
+    public static async getParkStats({cityID, type, currency}: {
         cityID: string,
-        type: string
+        type: string,
+        currency?: string
     }): Promise<ParkDetailsResponseType> {
-        const uri = FleetApiPath.ParkStats + "?city_id=" + cityID + "&type=" + type
+        const uri = FleetApiPath.ParkStats + "?city_id=" + cityID + "&type=" + type + (currency ? ("&currency=" + currency) : "")
         const data = await FleetService.makeRequest<ParkDetailsResponseType>(
             uri,
             'GET',

@@ -1,5 +1,6 @@
 import Cookies from "js-cookie";
-import {ConnexionMode} from "@/hooks/__globlal/useGlobalHook";
+import {ConnexionMode} from "@/lib/utils";
+
 
 export const TOKEN_KEYS = {
     token: 'token',
@@ -10,7 +11,7 @@ export const TOKEN_KEYS = {
     enabled_city_id: 'enable_city_id',
     enabled_fleet_type: 'enabled_fleet_type',
     connexion_mode: 'connexion_mode',
-    currency: 'currency'
+    currency: 'currency',
 }
 
 export const COOKIES_CONFIG = {
@@ -78,17 +79,20 @@ class AuthManagerGuard {
         Cookies.set(TOKEN_KEYS.connexion_mode, mode.toString(), COOKIES_CONFIG)
     }
 
+
     static setCurrency(currency?: string) {
         if (currency != null) {
             Cookies.set(TOKEN_KEYS.currency, currency, COOKIES_CONFIG)
         }
     }
 
-
     static get getEnabledFleetType() {
         return Cookies.get(TOKEN_KEYS.enabled_fleet_type)
     }
 
+    static get isAllCities() {
+        return Cookies.get(TOKEN_KEYS.enabled_city_id) === "999999"
+    }
 
     static get getCurrency() {
         return Cookies.get(TOKEN_KEYS.currency)
@@ -97,6 +101,7 @@ class AuthManagerGuard {
     static get getEnabledCity() {
         return Cookies.get(TOKEN_KEYS.enabled_city_id)
     }
+
 
     static removeTransactionID() {
         Cookies.remove(TOKEN_KEYS.transaction_id)
@@ -112,6 +117,10 @@ class AuthManagerGuard {
 
     static removeParkID() {
         Cookies.remove(TOKEN_KEYS.park_id)
+    }
+
+    static removeCurrency() {
+        Cookies.remove(TOKEN_KEYS.currency)
     }
 
     static logoutToApp() {

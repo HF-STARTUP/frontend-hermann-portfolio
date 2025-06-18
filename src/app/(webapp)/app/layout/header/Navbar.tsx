@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image";
-import {cn} from "@/lib/utils";
+import {cn, ConnexionMode} from "@/lib/utils";
 import logo_icon from "./logo.png"
 import {Button} from "@/components/ui/button";
 import {useUserProfile} from "@/hooks/__form/auth/useUserProfile";
@@ -20,11 +20,11 @@ import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import {queryClient} from "@/app/_utils/network/reactQuery";
 import {useParams, usePathname, useRouter} from "next/navigation";
 import {Badge} from "@/components/ui/badge";
-import {ConnexionMode} from "@/hooks/__globlal/useGlobalHook";
 import {Input} from "@/components/ui/input";
 import {searchAndFilter} from "@/model/Model";
 import SignOutAction from "@/components/actions/Signout.action";
 import {SignOutIcon} from "@/components/ui/__icons";
+import {useGetCurrenciesList} from "@/hooks/admin/useFleetHook";
 
 export const Navbar = () => {
     return (
@@ -51,6 +51,7 @@ const UserOption: React.FC = () => {
     const $path = usePathname()
     const [filterCityToken, setFilterCityToken] = React.useState<string>("")
     const [selectOpen, setSelectOpen] = React.useState(false)
+    const {data: currencies, isLoading: loadingCurrency} = useGetCurrenciesList()
 
     const cityFiltered = useMemo(() => {
         if (!filterCityToken || filterCityToken.trim() === "") return data?.listPark
@@ -89,6 +90,17 @@ const UserOption: React.FC = () => {
                                     const selected = data?.listPark.find((lp) => lp.id == +new_city_id)
                                     AuthManagerGuard.setEnabledCityID(+new_city_id)
                                     AuthManagerGuard.setCurrency(selected?.currency)
+                                    const isAll = new_city_id === "999999"
+
+                                    if (currencies?.length)
+                                        AuthManagerGuard.setCurrency(String(currencies[0].id))
+
+                                    if (!isAll) {
+                                        //AuthManagerGuard.removeCurrency()
+                                    } else {
+
+                                    }
+                                    console.log(`<<<<<<<<<<<<<<<<<<<<${new_city_id} ${isAll}`)
 
                                     if ($path.includes("tickets")) {
                                         window.location.reload()
@@ -110,7 +122,7 @@ const UserOption: React.FC = () => {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectGroup>
-                                        <SelectLabel>Selectionner une ville</SelectLabel>
+                                        <SelectLabel>Sélectionner une ville</SelectLabel>
                                         <div className={"px-2 mb-2 mt-2"}>
                                             <Input
                                                 placeholder={"Rechercher..."}
@@ -136,6 +148,9 @@ const UserOption: React.FC = () => {
                                                 autoComplete="off"
                                             />
                                         </div>
+                                        <SelectItem value={String(999999)}>
+                                            Tous
+                                        </SelectItem>
                                         {cityFiltered?.map((item) => (
                                             <SelectItem key={item.id} value={String(item.id)}>
                                                 {item.name}

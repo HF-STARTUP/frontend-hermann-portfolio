@@ -18,6 +18,7 @@ import {Input} from "@/components/ui/input";
 import {FleetModel} from "@/model/ADMIN/fleet";
 import {searchAndFilter} from "@/model/Model";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
+import FleetService from "@/services/admin/fleet/fleetService";
 
 type SelectType = { key: string; value: string }
 
@@ -44,7 +45,6 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     const [fleetListState, setFleetListState] = React.useState<FleetModel[]>([])
     const {data: currencies, isLoading: loadingCurrency} = useGetCurrenciesList()
 
-    const [selectedCurrency, setSelectedCurrency] = React.useState<string>()
 
     React.useEffect(() => {
         if (activeFleet) {
@@ -128,8 +128,14 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
             }
             {withSelect &&
                 <div className={"flex items-center gap-2"}>
-                    <Select onValueChange={onValueChange}
-                            defaultValue={AuthManagerGuard.getEnabledFleetType ?? items[0]?.key}>
+                    <Select
+                        onValueChange={async (v) => {
+                            AuthManagerGuard.setEnabledFleetType(v)
+                            console.log(AuthManagerGuard.getEnabledFleetType, ": New value setted")
+                            await FleetService.invalidFleets()
+                        }}
+                        defaultValue={AuthManagerGuard.getEnabledFleetType ?? items[0]?.key}
+                    >
                         <SelectTrigger
                             className=" w-fit bg-[#D9E5FF]  text-center justify-center text-blue-800 text-lg font-medium font-['DM Sans'] leading-normal">
                             <SelectValue placeholder="Selectionner"/>
@@ -137,6 +143,11 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                         <SelectContent>
                             <SelectGroup>
                                 <SelectLabel>Selectionner le type de flotte</SelectLabel>
+                                <SelectItem
+                                    value={"999999"}
+                                >
+                                    Tous
+                                </SelectItem>
                                 {
                                     items?.map((item, index) => (
                                         <SelectItem key={item.key}
@@ -146,8 +157,9 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                             </SelectGroup>
                         </SelectContent>
                     </Select>
-                    <Select
-                        onValueChange={setSelectedCurrency}
+                    {AuthManagerGuard.isAllCities && <Select
+                        onValueChange={cur => AuthManagerGuard.setCurrency(cur)}
+                        defaultValue={AuthManagerGuard.getCurrency ?? items[0]?.key}
                     >
                         <SelectTrigger
                             className=" w-fit bg-[#D9E5FF]  text-center justify-center text-blue-800 text-lg font-medium font-['DM Sans'] leading-normal">
@@ -168,7 +180,7 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                                 }
                             </SelectGroup>
                         </SelectContent>
-                    </Select>
+                    </Select>}
                 </div>
             }
 

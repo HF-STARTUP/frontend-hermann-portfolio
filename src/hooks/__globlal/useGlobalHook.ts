@@ -1,4 +1,3 @@
-"use client"
 import {useParams} from "next/navigation";
 import useAppStore from "@/stores/global/useAppStore";
 import React from "react";
@@ -8,6 +7,7 @@ import {RegionID} from "@/types/generic";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import {useQueryProvider} from "@/hooks/hooksProvider";
 import {GeolocalizationService} from "@/services/location/Geolocalization";
+import {useGetCurrenciesList} from "@/hooks/admin/useFleetHook";
 
 export const useGetRegion = () => {
 
@@ -125,13 +125,11 @@ export const useGetMyPosition = () => {
 }
 
 export const useGetActiveCurrency = () => {
+    const {data: currencies, isLoading: loadingCurrency} = useGetCurrenciesList()
+
+    const curId = AuthManagerGuard.getCurrency
 
     return {
-        currency: AuthManagerGuard.getCurrency
+        currency: currencies?.find(c => String(c.id) === String(curId))?.name
     }
-}
-
-export enum ConnexionMode {
-    Staging = "staging",
-    Production = "production",
 }

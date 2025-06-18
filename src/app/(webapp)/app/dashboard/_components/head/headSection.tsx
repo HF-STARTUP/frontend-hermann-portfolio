@@ -1,6 +1,6 @@
 "use client"
 
-import {ActionCard} from "@/app/(webapp)/app/dashboard/_components/head/_components/actionCard";
+import {ActionCard, AverageType} from "@/app/(webapp)/app/dashboard/_components/head/_components/actionCard";
 import {ArrowDoubleIcon, CarCrashIcon, CashAltIcon, DashboardIcon, UserIcon} from "@/components/ui/__icons";
 import React from "react";
 import {formatNumber} from "@/lib/utils";
@@ -40,7 +40,7 @@ export const HeadSection = () => {
                 <div className={"col-span-12 2xl:col-span-12"}>
                     <div className={"grid grid-cols-12 gap-[24px]"}>
 
-                        <div className={"col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2"}>
+                        <div className={"col-span-6 lg:col-span-4 2xl:col-span-2"}>
                             <ActionCard
                                 icon={{
                                     color: "bg-[#ffe7e7] text-[#E51D13]",
@@ -57,7 +57,7 @@ export const HeadSection = () => {
                             />
                         </div>
 
-                        <div className={"col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2"}>
+                        <div className={"col-span-6 lg:col-span-4  2xl:col-span-2"}>
                             <ActionCard
                                 icon={{
                                     color: "text-[#2554AE] bg-[#E5E4FF]",
@@ -74,7 +74,7 @@ export const HeadSection = () => {
                             />
                         </div>
 
-                        <div className={"col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2"}>
+                        <div className={"col-span-6 lg:col-span-4  2xl:col-span-2"}>
                             <ActionCard
                                 icon={{
                                     color: "bg-[#d7ffec] text-[#00a656]",
@@ -91,7 +91,7 @@ export const HeadSection = () => {
                             />
                         </div>
 
-                        <div className={"col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2"}>
+                        <div className={"col-span-6 lg:col-span-4  2xl:col-span-3"}>
                             <ActionCard
                                 icon={{
                                     color: "bg-[#ffe7e7] text-[#E51D13]",
@@ -108,37 +108,37 @@ export const HeadSection = () => {
                             />
                         </div>
 
-                        <div className={"col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2"}>
-                            <ActionCard
-                                icon={{
-                                    color: "text-[#00A757] bg-[#088B3A1A]",
-                                    value: <ArrowDoubleIcon/>
-                                }}
-                                average={{
-                                    type: resolveIndicator(data.ca_total.indicateur),
-                                    label: `${formatNumber(data.ca_total.indicateur_value)} ce mois`
-                                }}
-                                cardValue={{
-                                    label: "Abonnements encaissés",
-                                    value: `${formatNumber(data.ca_total.total)} ${currency}`
-                                }}
-                            />
-                        </div>
+                        {/*<div className={"col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2"}>*/}
+                        {/*    <ActionCard*/}
+                        {/*        icon={{*/}
+                        {/*            color: "text-[#00A757] bg-[#088B3A1A]",*/}
+                        {/*            value: <ArrowDoubleIcon/>*/}
+                        {/*        }}*/}
+                        {/*        average={{*/}
+                        {/*            type: resolveIndicator(data.ca_total.indicateur),*/}
+                        {/*            label: `${formatNumber(data.ca_total.indicateur_value)} ce mois`*/}
+                        {/*        }}*/}
+                        {/*        cardValue={{*/}
+                        {/*            label: "Abonnements encaissés",*/}
+                        {/*            value: `${formatNumber(data.ca_total.total)} ${currency}`*/}
+                        {/*        }}*/}
+                        {/*    />*/}
+                        {/*</div>*/}
 
 
-                        <div className={"col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-2"}>
+                        <div className={"col-span-6 lg:col-span-4 xl:col-span-3 2xl:col-span-3"}>
                             <ActionCard
                                 icon={{
                                     color: "text-[#FFB800] bg-[#FFE4AE]",
                                     value: <ArrowDoubleIcon/>
                                 }}
                                 average={{
-                                    type: resolveIndicator(data.ca_total.indicateur),
-                                    label: `${formatNumber(data.ca_total.indicateur_value)} ce mois`
+                                    type: AverageType.NEUTRAL,
+                                    label: `${formatNumber(data.subscription_prevision.indicateur_value)} ce mois`
                                 }}
                                 cardValue={{
                                     label: "Abonnements attendus",
-                                    value: `${formatNumber(data.ca_total.total)} ${currency}`
+                                    value: `${formatNumber(data.subscription_prevision.total)} ${currency}`
                                 }}
                             />
                         </div>

@@ -7,12 +7,9 @@ import CustomQueryError from "@/services/CustomQueryError";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import {queryClient} from "@/app/_utils/network/reactQuery";
 import Cookies from "js-cookie";
-import { format } from "date-fns";
+import {format} from "date-fns";
+import {ConnexionMode} from "@/lib/utils";
 
-enum ConnexionMode {
-    Staging = "staging",
-    Production = "production",
-}
 abstract class Service {
 
     protected axiosInstance: AxiosInstance;
@@ -73,6 +70,13 @@ abstract class Service {
                                            secure = true,
                                        }: ExecHttpRequestOptionType): Promise<T> {
 
+
+        // Remove all data with value "999999"
+        if (body && typeof body === "object" && Object.values(body).includes("999999")) {
+            body = Object.fromEntries(Object.entries(body).filter(([key, value]) => value !== "999999"))
+        }
+
+
         const notIsLoggedIn = !AuthManagerGuard.isLoggedIn()
 
         if (notIsLoggedIn && secure) {
@@ -101,7 +105,7 @@ abstract class Service {
 
         return this.axiosInstance({
             method: method,
-            url: url,
+            url: removeInvalidParams(this.baseApiPath + "/" + url),
             headers: {
                 ...headers
             },
@@ -244,7 +248,18 @@ abstract class Service {
     protected isEmail(email: string) {
         const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
         return emailRegex.test(email);
-    };
+    }
+
+    // Utility methods
+    protected toQueryString(params: DynamicObject, uri?: string): string {
+        const q = Object.entries(params)
+            .filter(([, value]) => value !== undefined)
+            .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
+            .join('&');
+
+        if (!uri) return q
+        return `${uri}?${q}`
+    }
 
 }
 
@@ -254,5 +269,40 @@ export const toIsoDate = (date: Date | string | undefined | null) => {
     if (!date) return ""
     return format(date, "yyyy-MM-dd'T'HH:mm:ss")
 }
+
+/**
+ * Supprime tous les paramètres de requête ayant la valeur "999999" d'une URL
+ * @param url - L'URL à nettoyer
+ * @returns L'URL nettoyée sans les paramètres ayant la valeur "999999"
+ */
+function removeInvalidParams(url: string): string {
+    console.log(`Entry url === ${url}`)
+    try {
+        const urlObj = new URL(url)
+        const searchParams = urlObj.searchParams
+
+        const paramsToDelete: string[] = []
+        searchParams.forEach((value, key) => {
+            if (value === "999999") {
+                paramsToDelete.push(key)
+            }
+        })
+
+        // Supprimer ces paramètres
+        paramsToDelete.forEach((param) => {
+            searchParams.delete(param)
+        })
+
+        const sUrl = urlObj.toString()
+
+        console.log("Sort url === ", sUrl)
+        return sUrl
+    } catch (error) {
+        console.error("Erreur lors du nettoyage de l'URL:", error)
+        return url
+    }
+}
+
+type DynamicObject = Record<string, any>;
 
 export default Service

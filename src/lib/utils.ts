@@ -214,3 +214,8 @@ export function formatNumber(input: string | number | undefined): string {
     // Sinon on renvoie juste la partie entière formatée
     return decPart ? `${formattedInt}.${decPart}` : formattedInt;
 }
+
+export enum ConnexionMode {
+    Staging = "staging",
+    Production = "production",
+}

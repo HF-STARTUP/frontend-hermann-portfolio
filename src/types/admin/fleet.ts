@@ -124,46 +124,64 @@ export type Vehicle = {
 
 
 export type ParkDetailsResponseType = {
-    flotte: CaTotal;
-    vehicle: CaTotal;
-    driver: CaTotal;
-    ca_total: CaTotal;
-    flux: CaTotal;
+    flotte: CaTotal
+    vehicle: CaTotal
+    driver: CaTotal
+    ca_total: CaTotal
+    flux: CaTotal
+    subscription_prevision: SubscriptionPrevision
+}
+
+export interface SubscriptionPrevision {
+    total: number
+    vehicle_number: number
+    driver_number: number
+    indicateur: number
+    indicateur_value: number
 }
 
 export type CaTotal = {
-    total: number;
-    indicateur: string;
-    indicateur_value: string;
+    total: number
+    indicateur: string
+    indicateur_value: string
 }
 
 export type DashboardBestAndLeastProfilableResponseType = {
-    most_profitable: StProfitable;
-    least_profitable: StProfitable;
+    most_profitable: StProfitable
+    least_profitable: StProfitable
 }
 
 export type StProfitable = {
-    id: string;
-    name: string;
-    ca_total: number;
-    total_vehicle: number;
-    flux: number;
+    id: string
+    name: string
+    ca_total: number
+    total_vehicle: number
+    flux: number
 }
 
 
 export type RevenusEvolution = {
-    item: string;
-    revenue: number;
+    item: string
+    revenue: number
 }
 
 
 export type CarburantEvolution = {
-    item: string;
-    data: Carburant;
+    item: string
+    data: Carburant
 }
 
 export type Carburant = {
-    carburant: number;
-    breakdown: number;
-    change: number;
+    carburant: number
+    breakdown: number
+    change: number
+}
+
+export interface ProfitableListResponseType {
+    id: string;
+    park_name: string;
+    type: string;
+    vehicle_number: number;
+    flux: number;
+    currency: string;
 }

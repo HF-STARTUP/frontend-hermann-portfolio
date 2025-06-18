@@ -1,7 +1,7 @@
 "use client"
 
 import React, {useEffect} from "react";
-import {cn} from "@/lib/utils";
+import {cn, ConnexionMode} from "@/lib/utils";
 import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import {useLogin} from "@/hooks/__form/auth/useLogin";
@@ -13,7 +13,7 @@ import notify from "@/utils/func/notification";
 import AppLogo from "@/components/app/AppLogo";
 import BtnBase from "@/components/elements/BtnBase";
 import {AdminAccountStatus} from "@/types/__form/profile.type";
-import {ConnexionMode} from "@/hooks/__globlal/useGlobalHook";
+import {useGetCurrenciesList} from "@/hooks/admin/useFleetHook";
 
 
 export default function LoginPage() {
@@ -22,6 +22,7 @@ export default function LoginPage() {
     const $router = useRouter()
     const [isPhone, setIsPhone] = React.useState(false)
     const [phoneCode, setPhoneCode] = React.useState<number>(237)
+    const {data: currencies, isLoading: loadingCurrency} = useGetCurrenciesList()
 
 
     const $login = useLogin()
@@ -60,7 +61,11 @@ export default function LoginPage() {
             if ($login.data.admin_on_city) {
                 const firstCity = $login.data.admin_on_city[0]
                 AuthManagerGuard.setEnabledCityID(firstCity.id)
-                AuthManagerGuard.setCurrency(firstCity.currency)
+                if (currencies && currencies.length) {
+                    if (!AuthManagerGuard.getCurrency) {
+                        AuthManagerGuard.setCurrency(String(currencies[0].id))
+                    }
+                }
             }
             AuthManagerGuard.loginToApp(loginData.token, loginData.refresh_token, loginData.id)
             $router.push(`/app/dashboard`)

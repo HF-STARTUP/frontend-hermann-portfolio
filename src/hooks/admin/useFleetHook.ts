@@ -1,11 +1,52 @@
 import {useQuery} from "@tanstack/react-query";
-import AuthManagerGuard from "@/guard/AuthManagerGuard";
-import FleetService, {FleetApiPath} from "@/services/admin/fleet/fleetService";
 import {useMutationProvider, useQueryProvider} from "@/hooks/hooksProvider";
 import {useGetParkID} from "@/hooks/__globlal/useGlobalHook";
 import {useRouter} from "next/navigation";
 import React, {useMemo} from "react";
 import {toIsoDate} from "@/services/Service";
+import AuthManagerGuard from "@/guard/AuthManagerGuard";
+import FleetService, {
+    FleetApiPath,
+    FleetByCityInputs,
+    OperatorRevenusInputs,
+    ProfitableListInputs,
+    SubscriptionPlanRevenusInputs
+} from "@/services/admin/fleet/fleetService";
+
+export const useGetSubscriptionPlanRevenus = (inputs: SubscriptionPlanRevenusInputs) => {
+    const {isLoading, data} = useQueryProvider({
+        queryKey: [FleetApiPath.SubscriptionPlanRevenus, inputs],
+        queryFn: () => FleetService.getSubscriptionPlanRevenus(inputs),
+    })
+    return {
+        isLoading,
+        data
+    }
+}
+
+export const useGetProfitableList = (inputs: ProfitableListInputs) => {
+    const {isLoading, data} = useQueryProvider({
+        queryKey: [inputs, FleetApiPath.ProfitableList],
+        queryFn: () => FleetService.getProfitableList(inputs),
+    })
+    return {isLoading, data}
+}
+
+export const useGetFleetByCity = (inputs: FleetByCityInputs) => {
+    const {isLoading, data} = useQueryProvider({
+        queryKey: [inputs, FleetApiPath.FleetByCity],
+        queryFn: () => FleetService.getFleetByCity(inputs),
+    })
+    return {isLoading, data}
+}
+
+export const useGetOperatorsRevenus = (inputs: OperatorRevenusInputs) => {
+    const {isLoading, data} = useQueryProvider({
+        queryKey: [FleetApiPath.OperatorRevenus],
+        queryFn: () => FleetService.getOratorsRevenus(inputs),
+    })
+    return {isLoading, data}
+}
 
 export const useGetCurrenciesList = () => {
     const {isLoading, data} = useQueryProvider({
@@ -197,12 +238,14 @@ export const useGetEntretienEvolution = (graphType: string) => {
 export const useGetParkStats = () => {
     const cityID = AuthManagerGuard.getEnabledCity
     const type = AuthManagerGuard.getEnabledFleetType as string
+    const currency = AuthManagerGuard.getCurrency
 
     const {isLoading, data} = useQueryProvider({
-        queryKey: [FleetApiPath.ParkStats, cityID],
+        queryKey: [FleetApiPath.ParkStats, cityID, currency, type],
         queryFn: () => FleetService.getParkStats({
             cityID: AuthManagerGuard.getEnabledCity as string,
-            type: AuthManagerGuard.getEnabledFleetType as string
+            type: AuthManagerGuard.getEnabledFleetType as string,
+            currency: AuthManagerGuard.getCurrency
         }),
         enabled: !!AuthManagerGuard.getEnabledCity
     });
