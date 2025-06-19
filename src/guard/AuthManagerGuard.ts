@@ -1,6 +1,9 @@
 import Cookies from "js-cookie";
-import {ConnexionMode} from "@/lib/utils";
 
+export enum ConnexionMode {
+    Staging = "staging",
+    Production = "production",
+}
 
 export const TOKEN_KEYS = {
     token: 'token',
