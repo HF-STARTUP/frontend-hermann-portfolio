@@ -128,3 +128,4 @@ const PaymentMethod: React.FC<{ method: PaymentMethod }> = ({method}) => {
         </div>
     )
 }
+
