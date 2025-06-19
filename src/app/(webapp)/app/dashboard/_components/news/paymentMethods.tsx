@@ -10,6 +10,7 @@ import Loading from "@/components/ui/Loader";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import Image from "next/image";
+import {imageBaseUrl} from "@/model/Model";
 
 type PaymentMethod = {
     name: string,
@@ -72,7 +73,7 @@ export default function PaymentMethods() {
                 </div>}
 
                 {/* Payment Methods List */}
-                <ScrollArea className={"h-[500px]"}>
+                {paymentMethods && paymentMethods.length ? <ScrollArea className={"h-[500px]"}>
                     <div className="space-y-6 ">
                         {paymentMethods.map((method, index) => (
                             <PaymentMethod
@@ -81,7 +82,7 @@ export default function PaymentMethods() {
                             />
                         ))}
                     </div>
-                </ScrollArea>
+                </ScrollArea> : <span></span>}
             </CardContent>
         </Card>
     )
@@ -94,7 +95,7 @@ const PaymentMethod: React.FC<{ method: PaymentMethod }> = ({method}) => {
             {method.path && <div
                 className="size-16 overflow-hidden bg-[#2d99fe] rounded-full flex items-center justify-center flex-shrink-0">
                 <Image
-                    src={`${method.path}`}
+                    src={`${imageBaseUrl}/${method.path}`}
                     alt={method.path ?? ""}
                     width={50}
                     height={50}

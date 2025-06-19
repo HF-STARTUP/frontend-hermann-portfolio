@@ -22,6 +22,7 @@ import {type ChartOptions} from "chart.js"
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import {Car, TrendingUp} from "lucide-react";
 import {ScrollArea} from "@/components/ui/scroll-area";
+import {EmptyData} from "@/components/box/PageNetworkState";
 
 export const AbonnEvolution = () => {
 
@@ -68,6 +69,7 @@ export const AbonnEvolution = () => {
                 </Select>
             </div>
             {isLoading && <Loading className={"h-[150px]"}/>}
+            <EmptyData message={"Aucune donnée ici pour l'instant"}/>
             {/*{data && <CustomChartLineUtils3*/}
             {/*    idata={data.map(d => d.revenue)}*/}
             {/*    ilabels={data.map(d => d.item)}*/}
@@ -399,7 +401,12 @@ export const BestFleet = () => {
                             {/*</div>*/}
 
                             {/* Fleet Items */}
-                            <div className="divide-y divide-slate-100 w-full">
+                            {!isLoading && fleetData && fleetData.length == 0 && (
+                                <div>
+                                    <EmptyData message={"Aucune donnée pour le moment"}/>
+                                </div>
+                            )}
+                            {fleetData && fleetData.length ? <div className="divide-y divide-slate-100 w-full">
                                 <ScrollArea className={"h-[500px]"}>
                                     {fleetData.map((fleet) => (
                                         <div
@@ -452,7 +459,7 @@ export const BestFleet = () => {
                                         </div>
                                     ))}
                                 </ScrollArea>
-                            </div>
+                            </div> : <span></span>}
                         </div>
                     </div>}
                 </div>
