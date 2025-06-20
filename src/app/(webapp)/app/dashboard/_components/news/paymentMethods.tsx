@@ -11,6 +11,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {ScrollArea} from "@/components/ui/scroll-area";
 import Image from "next/image";
 import {imageBaseUrl} from "@/model/Model";
+import {EmptyData} from "@/components/box/PageNetworkState";
 
 type PaymentMethod = {
     name: string,
@@ -72,6 +73,14 @@ export default function PaymentMethods() {
                     <Loading/>
                 </div>}
 
+                {
+                    !paymentMethods.length && !isLoading && (
+                        <EmptyData
+                            message={"Aucune donnée pour le moment"}
+                        />
+                    )
+                }
+
                 {/* Payment Methods List */}
                 {paymentMethods && paymentMethods.length ? <ScrollArea className={"h-[500px]"}>
                     <div className="space-y-6 ">
@@ -93,7 +102,7 @@ const PaymentMethod: React.FC<{ method: PaymentMethod }> = ({method}) => {
         <div className="flex items-center gap-6 group">
             {/* Wave Logo */}
             {method.path && <div
-                className="size-16 overflow-hidden bg-[#2d99fe] rounded-full flex items-center justify-center flex-shrink-0">
+                className="size-8 overflow-hidden bg-white rounded-full flex items-center justify-center flex-shrink-0">
                 <Image
                     src={`${imageBaseUrl}/${method.path}`}
                     alt={method.path ?? ""}

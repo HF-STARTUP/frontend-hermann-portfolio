@@ -16,8 +16,8 @@ export class CountryService {
         return `${EnvVars.NP_API_ENDPOINT}/${this.countryApiPath}`
     }
 
-    async fetchCountries(): Promise<Country[]> {
-        const response: Response = await fetch(this.getFullCountryApiPath);
+    async fetchCountries(inputs?: { fleet?: boolean }): Promise<Country[]> {
+        const response: Response = await fetch(`${this.getFullCountryApiPath}${inputs?.fleet ? "?fleet=true" : ""}`);
 
         if (!response.ok) {
             throw new Error('Network response was not ok');

@@ -29,7 +29,7 @@ export default function FleetMap({fleets}: FleetMapProps) {
     const [selectedCountrie, setSelectedCountrie] = useState<string>()
     const {data: nbFleets, isLoading} = useGetFleetByCity({country_id: selectedCountrie})
     const [filter, setFilter] = useState<string>("all")
-    const {data: countries, isLoading: loadingCountries} = useCountries()
+    const {data: countries, isLoading: loadingCountries} = useCountries({fleet: true})
 
     const [dimensions, setDimensions] = useState({width: 800, height: 359})
 
@@ -211,7 +211,7 @@ export default function FleetMap({fleets}: FleetMapProps) {
                 </div>
             </div>
 
-            <ScrollArea className={"h-[200px]"}>
+            <ScrollArea className={"h-[200px] mb-4"}>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                     {nbFleets && nbFleets.map((fleet, index) => (
                         <div key={`${fleet.city_info.name}`} className="border-t border-gray-200 pt-2">

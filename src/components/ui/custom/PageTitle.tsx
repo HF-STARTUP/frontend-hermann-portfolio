@@ -19,6 +19,7 @@ import {FleetModel} from "@/model/ADMIN/fleet";
 import {searchAndFilter} from "@/model/Model";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import FleetService from "@/services/admin/fleet/fleetService";
+import {queryClient} from "@/app/_utils/network/reactQuery";
 
 type SelectType = { key: string; value: string }
 
@@ -133,6 +134,8 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                             AuthManagerGuard.setEnabledFleetType(v)
                             console.log(AuthManagerGuard.getEnabledFleetType, ": New value setted")
                             await FleetService.invalidFleets()
+                            queryClient.invalidateQueries().then(() => {
+                            })
                         }}
                         defaultValue={AuthManagerGuard.getEnabledFleetType ?? items[0]?.key}
                     >
@@ -143,11 +146,11 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                         <SelectContent>
                             <SelectGroup>
                                 <SelectLabel>Selectionner le type de flotte</SelectLabel>
-                                <SelectItem
-                                    value={"999999"}
-                                >
-                                    Tous
-                                </SelectItem>
+                                {/*<SelectItem*/}
+                                {/*    value={"999999"}*/}
+                                {/*>*/}
+                                {/*    Tous*/}
+                                {/*</SelectItem>*/}
                                 {
                                     items?.map((item, index) => (
                                         <SelectItem key={item.key}
@@ -158,7 +161,11 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                         </SelectContent>
                     </Select>
                     {AuthManagerGuard.isAllCities && <Select
-                        onValueChange={cur => AuthManagerGuard.setCurrency(cur)}
+                        onValueChange={cur => {
+                            AuthManagerGuard.setCurrency(cur)
+                            queryClient.invalidateQueries().then(() => {
+                            })
+                        }}
                         defaultValue={AuthManagerGuard.getCurrency ?? items[0]?.key}
                     >
                         <SelectTrigger

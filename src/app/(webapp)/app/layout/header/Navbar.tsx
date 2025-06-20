@@ -92,8 +92,12 @@ const UserOption: React.FC = () => {
                                     AuthManagerGuard.setCurrency(selected?.currency)
                                     const isAll = new_city_id === "999999"
 
-                                    if (currencies?.length)
-                                        AuthManagerGuard.setCurrency(String(currencies[0].id))
+                                    if (currencies?.length) {
+                                        const found = currencies.find(c => c.name.toLowerCase() === selected?.currency.toLowerCase())
+                                        if (found) {
+                                            AuthManagerGuard.setCurrency(String(found.id))
+                                        }
+                                    }
 
                                     if (!isAll) {
                                         //AuthManagerGuard.removeCurrency()

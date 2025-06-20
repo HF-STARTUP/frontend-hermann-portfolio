@@ -14,8 +14,9 @@ import FleetService, {
 } from "@/services/admin/fleet/fleetService";
 
 export const useGetSubscriptionPlanRevenus = (inputs: SubscriptionPlanRevenusInputs) => {
+    const currency_id = AuthManagerGuard.getCurrency
     const {isLoading, data} = useQueryProvider({
-        queryKey: [FleetApiPath.SubscriptionPlanRevenus, inputs],
+        queryKey: [FleetApiPath.SubscriptionPlanRevenus, inputs, currency_id],
         queryFn: () => FleetService.getSubscriptionPlanRevenus(inputs),
     })
     return {
@@ -25,8 +26,13 @@ export const useGetSubscriptionPlanRevenus = (inputs: SubscriptionPlanRevenusInp
 }
 
 export const useGetProfitableList = (inputs: ProfitableListInputs) => {
+
+    const enable_city_id = AuthManagerGuard.getEnabledCity
+    const fleetType = AuthManagerGuard.getEnabledFleetType
+    const currency = AuthManagerGuard.getCurrency
+
     const {isLoading, data} = useQueryProvider({
-        queryKey: [inputs, FleetApiPath.ProfitableList],
+        queryKey: [FleetApiPath.ProfitableList, inputs, enable_city_id, fleetType, currency],
         queryFn: () => FleetService.getProfitableList(inputs),
     })
     return {isLoading, data}
@@ -41,9 +47,17 @@ export const useGetFleetByCity = (inputs: FleetByCityInputs) => {
 }
 
 export const useGetOperatorsRevenus = (inputs: OperatorRevenusInputs) => {
+    const enable_city_id = AuthManagerGuard.getEnabledCity
+    const fleetType = AuthManagerGuard.getEnabledFleetType
+    const currency = AuthManagerGuard.getCurrency
+
     const {isLoading, data} = useQueryProvider({
-        queryKey: [FleetApiPath.OperatorRevenus],
-        queryFn: () => FleetService.getOratorsRevenus(inputs),
+        queryKey: [FleetApiPath.OperatorRevenus, enable_city_id, fleetType, currency],
+        queryFn: () => FleetService.getOratorsRevenus({
+            currency_id: currency,
+            city_id: enable_city_id,
+            ...inputs
+        }),
     })
     return {isLoading, data}
 }

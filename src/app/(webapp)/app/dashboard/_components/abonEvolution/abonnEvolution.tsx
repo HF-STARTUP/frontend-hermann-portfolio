@@ -10,7 +10,7 @@ import {
     useGetRevenusEvolution,
     useGetSubscriptionPlanRevenus
 } from "@/hooks/admin/useFleetHook";
-import {endOfMonth, getMonth, getYear, startOfMonth} from "date-fns";
+import {endOfMonth, startOfMonth} from "date-fns";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import Loading from "@/components/ui/Loader";
 import StackBarChart from "@/lib/react-chart-2/stackBarDiagram";
@@ -23,25 +23,27 @@ import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import {Car, TrendingUp} from "lucide-react";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import {EmptyData} from "@/components/box/PageNetworkState";
+import {CartesianGrid, Line, LineChart, XAxis, YAxis} from "recharts"
+import {ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
+
+interface DataPoint {
+    label: string
+    value: number
+}
+
+interface RevenueChartProps {
+    data: DataPoint[]
+    title?: string
+    subtitle?: string
+}
+
 
 export const AbonnEvolution = () => {
 
-    const [graphType, setGraphType] = React.useState("year")
-    const currentYear = getYear(new Date());
-    const currentMonth = getMonth(new Date());
-
-    const [month, setMonth] = React.useState<number>(currentMonth)
-    const [year, setYear] = React.useState<number>(currentYear)
+    const [graphType, setGraphType] = React.useState("month")
 
     const {data, isLoading} = useGetDashboardSubscriptionEvolution(graphType)
 
-    const handleSelectMonth = (value: string) => {
-        setMonth(+value)
-    };
-
-    const handleSelectYear = (value: string) => {
-        setYear(+value)
-    };
 
     return (
         <div className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[20px] lg:gap-[77px] rounded-[20px]"}>
@@ -54,7 +56,7 @@ export const AbonnEvolution = () => {
                 {/*    </div>*/}
                 {/*</div>*/}
                 <Select
-                    defaultValue={"year"}
+                    defaultValue={"month"}
                     onValueChange={v => setGraphType(v)}
                 >
                     <SelectTrigger className="w-fit">
@@ -69,11 +71,17 @@ export const AbonnEvolution = () => {
                 </Select>
             </div>
             {isLoading && <Loading className={"h-[150px]"}/>}
-            <EmptyData message={"Aucune donnée ici pour l'instant"}/>
+            {!data || !data?.data && !isLoading && <EmptyData message={"Aucune donnée ici pour l'instant"}/>}
+            {data && data?.data && (
+                <ModernLineChart
+                    data={data.data.map(d => ({label: d.item, value: d.amount}))}
+                />
+            )}
             {/*{data && <CustomChartLineUtils3*/}
             {/*    idata={data.map(d => d.revenue)}*/}
             {/*    ilabels={data.map(d => d.item)}*/}
             {/*/>}*/}
+            {/*{data && JSON.stringify(data.data.map(d => ({label: d.item, value: d.amount})))}*/}
         </div>
     )
 }
@@ -233,7 +241,7 @@ export const SouscriptionPartition = () => {
     const {data: revenusDatas, isLoading} = useGetSubscriptionPlanRevenus({
         start_date: toIsoDate(startOfMonth(curDate)),
         end_date: toIsoDate(endOfMonth(curDate)),
-        currency_id: currency ? currency : undefined,
+        currency_id: AuthManagerGuard.getCurrency,
     })
 
     const data = useMemo(() => {
@@ -315,7 +323,10 @@ export const SouscriptionPartition = () => {
             {/* Chart Container */}
             {!isLoading && <div className="flex flex-col items-center">
                 <div className="relative h-80 w-80">
-                    {<Doughnut data={chartData} options={options}/>}
+                    {<Doughnut
+                        data={chartData}
+                        options={options}
+                    />}
 
                     {/* Center Text */}
                     <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
@@ -378,7 +389,8 @@ export const BestFleet = () => {
 
     const {data: fleetData, isLoading} = useGetProfitableList({
         type: AuthManagerGuard.getEnabledFleetType as string,
-        city_id: String(AuthManagerGuard.getEnabledCity)
+        city_id: String(AuthManagerGuard.getEnabledCity),
+        currency_id: AuthManagerGuard.getCurrency
     })
 
     return (
@@ -468,3 +480,77 @@ export const BestFleet = () => {
         </div>
     )
 }
+
+
+interface DataPoint {
+    label: string
+    value: number
+}
+
+interface ModernLineChartProps {
+    data: DataPoint[]
+    title?: string
+    description?: string
+    color?: string
+    height?: number
+}
+
+export function ModernLineChart({
+                                    data,
+                                    title = "Diagramme en ligne",
+                                    description = "Évolution des données dans le temps",
+                                    color = "hsl(var(--chart-1))",
+                                    height = 400,
+                                }: ModernLineChartProps) {
+    const chartConfig = {
+        value: {
+            label: "Valeur",
+            color: color,
+        },
+    }
+
+    return (
+        <div>
+            <ChartContainer config={chartConfig} className={`w-full h-[${height}px]`}>
+                <LineChart
+                    data={data}
+                    margin={{
+                        top: 20,
+                        right: 30,
+                        left: 20,
+                        bottom: 20,
+                    }}
+                >
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" vertical={false}/>
+                    <XAxis dataKey="label" tickLine={false} axisLine={false} className="text-muted-foreground"
+                           fontSize={12}/>
+                    <YAxis tickLine={false} axisLine={false} className="text-muted-foreground" fontSize={12}/>
+                    <ChartTooltip
+                        content={<ChartTooltipContent/>}
+                        cursor={{stroke: color, strokeWidth: 1, strokeDasharray: "5 5"}}
+                    />
+                    <Line
+                        type="monotone"
+                        dataKey="value"
+                        stroke={color}
+                        strokeWidth={3}
+                        dot={{
+                            fill: color,
+                            strokeWidth: 2,
+                            r: 4,
+                            stroke: "hsl(var(--background))",
+                        }}
+                        activeDot={{
+                            r: 6,
+                            fill: color,
+                            stroke: "hsl(var(--background))",
+                            strokeWidth: 2,
+                        }}
+                    />
+                </LineChart>
+            </ChartContainer>
+        </div>
+    )
+}
+
+

@@ -160,10 +160,17 @@ export type StProfitable = {
 }
 
 
-export type RevenusEvolution = {
-    item: string
-    revenue: number
+export interface RevenusEvolution {
+    currency: string;
+    data: Datum[];
 }
+
+export interface Datum {
+    item: string;
+    subscription: number;
+    amount: number;
+}
+
 
 
 export type CarburantEvolution = {

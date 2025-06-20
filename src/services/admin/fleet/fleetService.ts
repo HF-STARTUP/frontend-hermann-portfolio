@@ -45,6 +45,8 @@ export type OperatorRevenusInputs = {
     start_date: string
     end_date: string
     currency_id?: string
+    type?: string
+    city_id?: string
 }
 
 export type FleetByCityInputs = {
@@ -386,11 +388,11 @@ class FleetService extends Service {
         cityID: string,
         graphType: string,
         type: string
-    }): Promise<RevenusEvolution[]> {
+    }) {
 
         const uri = FleetApiPath.DashboardSubscriptionEvolution + "?city_id=" + cityID + "&graph=" + graphType + "&type=" + type
 
-        return await FleetService.makeRequest<RevenusEvolution[]>(
+        return await FleetService.makeRequest<RevenusEvolution>(
             uri,
             'GET',
             undefined,
@@ -423,7 +425,5 @@ class FleetService extends Service {
         return this.getInstance().execHttpRequest<T>({url, method, body, secure});
     }
 
-
 }
-
 export default FleetService;
