@@ -60,10 +60,14 @@ export default function LoginPage() {
             console.log($login.data)
             if ($login.data.admin_on_city) {
                 const firstCity = $login.data.admin_on_city[0]
-                AuthManagerGuard.setEnabledCityID(firstCity.id)
+                const defaultCity = $login.data.admin_on_city.find(c => c.name.toLowerCase().includes("abidjan")) ?? firstCity;
+
+                AuthManagerGuard.setEnabledCityID(defaultCity.id)
+
                 if (currencies && currencies.length) {
-                    if (!AuthManagerGuard.getCurrency) {
-                        AuthManagerGuard.setCurrency(String(currencies[0].id))
+                    const foundCurrency = currencies.find(cur => cur.name.toLowerCase() == defaultCity.currency.toLowerCase())
+                    if (foundCurrency) {
+                        AuthManagerGuard.setCurrency(String(foundCurrency.id))
                     }
                 }
             }
