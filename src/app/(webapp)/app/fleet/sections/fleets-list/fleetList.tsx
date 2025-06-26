@@ -10,7 +10,7 @@ import {Calendar} from "@/components/ui/calendar";
 import {Input} from "@/components/ui/input";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {FleetModel} from "@/model/ADMIN/fleet";
-import {format, isWithinInterval} from "date-fns";
+import {format, isWithinInterval, startOfDay, endOfDay} from "date-fns";
 import {IoMdClose} from "react-icons/io";
 import {CalendarMinus} from "lucide-react";
 import {ABlockTitle} from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
@@ -22,107 +22,108 @@ import {CgPlayListSearch} from "react-icons/cg";
 
 enum FleetAbonType {
     free = "Essaie gratuit",
-    premiumParticulier = "premium particulier",
-    starterParticulier = "starter particulier",
-    premiumProfessionnel = "premium entreprise",
-    starterProfessionnel = "starter entreprise",
+    starterEntrepreneur = "starter entrepreneur",
+    essentielEntrepreneur = "essentiel entrepreneur",
+    premiumEntrepreneur = "premium entrepreneur",
+    essentielEntreprise = "essentiel entreprise",
+    premiumEntreprise = "premium entreprise",
     None = "None",
 }
 
-export const FleetList = () => {
+interface FilterState {
+    searchTerm: string;
+    abonType: string;
+    dateRange: Date[] | undefined;
+}
 
-    const {data, isLoading} = useGetFleetsList()
-    const [date, setDate] = React.useState<Date[] | undefined>([])
+export const FleetList = () => {
+    const {data, isLoading, isFetching, isRefetching} = useGetFleetsList()
+    const [filterState, setFilterState] = React.useState<FilterState>({
+        searchTerm: "",
+        abonType: "all",
+        dateRange: undefined
+    })
     const [fleetList, setFleetList] = React.useState<FleetModel[]>([])
     const [calendarIsOpen, setCalendarIsOpen] = React.useState(false)
     const [filterIsActive, setFilterIsActive] = React.useState(false)
-    const [filterFleetToken, setFilterFleetToken] = React.useState("")
-    const [activeBonnType, setActiveAbonType] = React.useState("all")
 
-    React.useEffect(() => {
-        if (data) {
-            setFleetList(data)
+    // Fonction de filtrage optimisée qui combine tous les filtres
+    const applyFilters = React.useCallback((originalData: FleetModel[], filters: FilterState): FleetModel[] => {
+        let filteredData = [...originalData]
+
+        // Filtre par terme de recherche
+        if (filters.searchTerm.trim()) {
+            filteredData = searchAndFilter(filteredData, filters.searchTerm, ['name', 'ownerName'])
         }
-    }, [data, isLoading])
 
-    React.useEffect(() => {
-        onFilterFleetWithSearchTerm()
-    }, [filterFleetToken])
-
-    const onFilterFleet = (abonType: string) => {
-        setDate([])
-        setActiveAbonType(abonType)
-
-        const timer = setTimeout(() => {
-            const finalType = abonType
-
-            const isAll = abonType === "all"
-            const isNone = abonType === "None"
-
-            if (isAll) {
-                data && setFleetList(data)
-                return
-            }
-
-            if (isNone) {
-                const _data = data?.filter(f => !f._instance.subscription)
-
-                setFleetList(_data || [])
-                console.log(data)
-                return;
-            }
-
-            if (data) {
-                const filteredFleet = data.filter(d => d.suscription_name == finalType)
-                setFleetList(filteredFleet)
-            }
-            clearTimeout(timer)
-        }, 500)
-    }
-
-    const onFilterFleetWithSearchTerm = () => {
-        if (data) {
-            const filteredFleet = searchAndFilter(data, filterFleetToken, ['name'])
-            const finalType = activeBonnType
-
-            const isAll = activeBonnType === "all"
-
-            if (isAll) {
-                setFleetList(data)
-                return
-            }
-
-            const filteredFleet2 = filteredFleet.filter(d => isAll ? true : d.suscription_name.toLowerCase() == finalType.toLowerCase())
-
-            setFleetList(filteredFleet2)
-        }
-    }
-
-    React.useEffect(() => {
-        if (date && date.length === 2) {
-            const [startDate, endDate] = date;
-            const filteredFleet = data?.filter(fleet => {
-                const fleetStartDate = new Date(fleet._instance.start_date);
-                return isWithinInterval(fleetStartDate, {start: startDate, end: endDate});
-            });
-            const finalType = activeBonnType === "all" ? FleetAbonType.free : activeBonnType
-            if (filteredFleet) {
-                const filteredFleet2 = filteredFleet.filter(d => d.suscription_name == finalType)
-                setFleetList(filteredFleet2 || []);
+        // Filtre par type d'abonnement
+        if (filters.abonType !== "all") {
+            if (filters.abonType === "None") {
+                filteredData = filteredData.filter(fleet => !fleet._instance.subscription || fleet._instance.subscription === "None")
             } else {
-                const filtered = data && data.filter(d => d.suscription_name == finalType)
-                setFleetList(filtered || []);
-            }
-        } else {
-            if (data) {
-                const filteredFleet2 = data.filter(d => d.suscription_name == activeBonnType)
-                setFleetList(filteredFleet2 || []);
+                filteredData = filteredData.filter(fleet => 
+                    fleet._instance.subscription === filters.abonType
+                )
             }
         }
-    }, [date]);
 
+        // Filtre par plage de dates
+        if (filters.dateRange && filters.dateRange.length === 2) {
+            const [startDate, endDate] = filters.dateRange
+            filteredData = filteredData.filter(fleet => {
+                const fleetStartDate = new Date(fleet._instance.start_date)
+                return isWithinInterval(fleetStartDate, {
+                    start: startOfDay(startDate),
+                    end: endOfDay(endDate)
+                })
+            })
+        }
 
-    if (isLoading) {
+        return filteredData
+    }, [])
+
+    // Appliquer les filtres quand les données ou les filtres changent
+    React.useEffect(() => {
+        if (data) {
+            const filtered = applyFilters(data, filterState)
+            setFleetList(filtered)
+        }
+    }, [data, filterState, applyFilters])
+
+    // Gestionnaire pour le filtre d'abonnement
+    const handleAbonTypeFilter = (abonType: string) => {
+        setFilterState(prev => ({
+            ...prev,
+            abonType
+        }))
+    }
+
+    // Gestionnaire pour la recherche
+    const handleSearchChange = (searchTerm: string) => {
+        setFilterState(prev => ({
+            ...prev,
+            searchTerm
+        }))
+    }
+
+    // Gestionnaire pour le filtre de dates
+    const handleDateRangeChange = (dateRange: Date[] | undefined) => {
+        setFilterState(prev => ({
+            ...prev,
+            dateRange
+        }))
+    }
+
+    // Réinitialiser tous les filtres
+    const resetFilters = () => {
+        setFilterState({
+            searchTerm: "",
+            abonType: "all",
+            dateRange: undefined
+        })
+    }
+
+    if (isLoading || isFetching || isRefetching) {
         return <Loading/>
     }
 
@@ -138,99 +139,132 @@ export const FleetList = () => {
         return (
             <div>
                 <div className={"flex justify-between items-center"}>
-                    <div className={"lg:mt-[24px] flex items-center  justify-between gap-[26px] w-full"}>
+                    <div className={"lg:mt-[24px] flex items-center justify-between gap-[26px] w-full"}>
                         <ABlockTitle>Sélectionnez une flotte</ABlockTitle>
-                        <Button
-                            className={cn(
-                                "flex items-center hover:text-white gap-1 bg-white text-vaTextPrimary border",
-                                filterIsActive && "bg-vaPrimary text-white"
+                        <div className="flex items-center gap-2">
+                            {(filterState.searchTerm || filterState.abonType !== "all" || filterState.dateRange) && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={resetFilters}
+                                    className="text-xs"
+                                >
+                                    Réinitialiser
+                                </Button>
                             )}
-                            onClick={() => setFilterIsActive(!filterIsActive)}
-                        >
-                            <div>Filtre</div>
-                            <LuListFilter/>
-                        </Button>
-                    </div>
-                    {/*<UserAccountSection/>*/}
-                </div>
-                <div className={"mb-[20px] mt-[10px] lg:mt-[22px]"}>
-                    {filterIsActive && <div className={"flex flex-col gap-2 lg:flex-row items-center justify-between"}>
-                        <div
-                            className={"flex flex-row  justify-between w-full md:justify-start items-center gap-2"}>
-                            <div className={"font-semibold text-sm text-vaTextPrimary"}>Type d'abonnement:</div>
-                            <Select defaultValue={"all"} onValueChange={onFilterFleet}>
-                                <SelectTrigger className="w-fit">
-                                    <SelectValue placeholder="Type"/>
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">Tout</SelectItem>
-                                    <SelectItem value={`${FleetAbonType.free}`}>Essaie gratuit</SelectItem>
-                                    <SelectItem value={`${FleetAbonType.premiumParticulier}`}>Premium
-                                        particulier</SelectItem>
-                                    <SelectItem value={`${FleetAbonType.starterParticulier}`}>Starter
-                                        particulier</SelectItem>
-                                    <SelectItem value={`${FleetAbonType.premiumProfessionnel}`}>Premium
-                                        professionnel</SelectItem>
-                                    <SelectItem value={`${FleetAbonType.starterProfessionnel}`}>Starter
-                                        professionnel</SelectItem>
-                                    <SelectItem value={`${FleetAbonType.None}`}>Aucun
-                                        abonnement</SelectItem>
-                                </SelectContent>
-                            </Select>
+                            <Button
+                                className={cn(
+                                    "flex items-center hover:text-white gap-1 bg-white text-vaTextPrimary border",
+                                    filterIsActive && "bg-vaPrimary text-white"
+                                )}
+                                onClick={() => setFilterIsActive(!filterIsActive)}
+                            >
+                                <div>Filtre</div>
+                                <LuListFilter/>
+                            </Button>
                         </div>
-                        <div
-                            className={"flex flex-row  justify-between w-full md:justify-end items-center gap-2"}>
-                            <div className={"font-semibold text-sm text-vaTextPrimary"}>Date d'ajout:</div>
-                            <div className={"flex items-center gap-2"}>
-                                <Popover open={calendarIsOpen} onOpenChange={setCalendarIsOpen}>
-                                    <PopoverTrigger>
-                                        <Input
-                                            rightIcon={<CalendarMinus className={"text-vaTextPrimary"}/>}
-                                            className={"w-fit max-w-[230px]"}
-                                            placeholder={"Choisir une intervalle"}
-                                            onClick={() => {
-                                                setCalendarIsOpen(true)
-                                                setDate([])
-                                            }}
-                                            value={date?.length ? `${format(date.length ? date[0] : new Date(), "dd/MM/yyyy")} - ${format(date.length > 1 ? date[1] : new Date(), "dd/MM/yyyy")}` : ""}
-                                        />
-                                    </PopoverTrigger>
-                                    <PopoverContent asChild className={"p-0"}>
-                                        <div>
-                                            <Calendar
-                                                mode="multiple"
-                                                selected={date}
-                                                min={2}
-                                                max={2}
-                                                onSelect={(day) => {
-                                                    console.log(day)
-                                                    setDate(day)
-                                                    if (date && date?.length >= 1) {
-                                                        setCalendarIsOpen(false)
-                                                    }
-                                                }}
-                                                className="rounded-md border"
+                    </div>
+                </div>
+                
+                <div className={"mb-[20px] mt-[10px] lg:mt-[22px]"}>
+                    {filterIsActive && (
+                        <div className={"flex flex-col gap-4 lg:flex-row items-start justify-between"}>
+                            {/* Filtre par type d'abonnement */}
+                            <div className={"flex flex-col gap-2 w-full lg:w-auto"}>
+                                <div className={"font-semibold text-sm text-vaTextPrimary"}>Type d'abonnement:</div>
+                                <Select 
+                                    value={filterState.abonType} 
+                                    onValueChange={handleAbonTypeFilter}
+                                >
+                                    <SelectTrigger className="w-fit min-w-[200px]">
+                                        <SelectValue placeholder="Type"/>
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="all">Tout</SelectItem>
+                                        <SelectItem value={FleetAbonType.free}>Essaie gratuit</SelectItem>
+                                        <SelectItem value={FleetAbonType.starterEntrepreneur}>Starter entrepreneur</SelectItem>
+                                        <SelectItem value={FleetAbonType.essentielEntrepreneur}>Essentiel entrepreneur</SelectItem>
+                                        <SelectItem value={FleetAbonType.premiumEntrepreneur}>Premium entrepreneur</SelectItem>
+                                        <SelectItem value={FleetAbonType.essentielEntreprise}>Essentiel entreprise</SelectItem>
+                                        <SelectItem value={FleetAbonType.premiumEntreprise}>Premium entreprise</SelectItem>
+                                        <SelectItem value={FleetAbonType.None}>Aucun abonnement</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+
+                            {/* Filtre par plage de dates */}
+                            <div className={"flex flex-col gap-2 w-full lg:w-auto"}>
+                                <div className={"font-semibold text-sm text-vaTextPrimary"}>Date d'ajout:</div>
+                                <div className={"flex items-center gap-2"}>
+                                    <Popover open={calendarIsOpen} onOpenChange={setCalendarIsOpen}>
+                                        <PopoverTrigger>
+                                            <Input
+                                                rightIcon={<CalendarMinus className={"text-vaTextPrimary"}/>}
+                                                className={"w-fit min-w-[230px]"}
+                                                placeholder={"Choisir une intervalle"}
+                                                onClick={() => setCalendarIsOpen(true)}
+                                                value={
+                                                    filterState.dateRange?.length === 2 
+                                                        ? `${format(filterState.dateRange[0], "dd/MM/yyyy")} - ${format(filterState.dateRange[1], "dd/MM/yyyy")}` 
+                                                        : ""
+                                                }
+                                                readOnly
                                             />
-                                        </div>
-                                    </PopoverContent>
-                                </Popover>
-                                {date?.length ? <button onClick={() => setDate([])}>
-                                    <IoMdClose/>
-                                </button> : <span></span>}
+                                        </PopoverTrigger>
+                                        <PopoverContent asChild className={"p-0"}>
+                                            <div>
+                                                <Calendar
+                                                    mode="multiple"
+                                                    selected={filterState.dateRange}
+                                                    min={2}
+                                                    max={2}
+                                                    onSelect={(dates) => {
+                                                        handleDateRangeChange(dates)
+                                                        if (dates && dates.length === 2) {
+                                                            setCalendarIsOpen(false)
+                                                        }
+                                                    }}
+                                                    className="rounded-md border"
+                                                />
+                                            </div>
+                                        </PopoverContent>
+                                    </Popover>
+                                    {filterState.dateRange?.length && (
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() => handleDateRangeChange(undefined)}
+                                            className="p-1 h-8 w-8"
+                                        >
+                                            <IoMdClose className="h-4 w-4"/>
+                                        </Button>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Barre de recherche */}
+                            <div className={"flex flex-col gap-2 w-full lg:w-auto"}>
+                                <div className={"font-semibold text-sm text-vaTextPrimary"}>Rechercher:</div>
+                                <Input
+                                    placeholder={"Rechercher une flotte..."}
+                                    rightIcon={<CgPlayListSearch className={"text-vaTextPrimary text-[20px]"}/>}
+                                    value={filterState.searchTerm}
+                                    onChange={(e) => handleSearchChange(e.target.value)}
+                                    className="min-w-[250px]"
+                                />
                             </div>
                         </div>
-                        <Input
-                            placeholder={"Rechercher..."}
-                            rightIcon={<CgPlayListSearch className={"text-vaTextPrimary text-[28px]"}/>}
-                            onChange={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                                setFilterFleetToken(e.currentTarget.value)
-                            }}
-                        />
-
-                    </div>}
+                    )}
                 </div>
+
+                {/* Affichage du nombre de résultats */}
+                {filterIsActive && (
+                    <div className="mb-4 text-sm text-vaTextPrimary">
+                        {fleetList.length} flotte{fleetList.length > 1 ? 's' : ''} trouvée{fleetList.length > 1 ? 's' : ''}
+                        {data && data.length !== fleetList.length && ` sur ${data.length} total`}
+                    </div>
+                )}
+
                 <div className={"grid grid-cols-12"}>
                     <div className={"col-span-12"}>
                         <div className={"custom-scrollbar overflow-y-scroll rounded-lg"}>

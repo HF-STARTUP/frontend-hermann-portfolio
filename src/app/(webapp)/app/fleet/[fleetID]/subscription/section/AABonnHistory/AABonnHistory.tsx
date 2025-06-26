@@ -9,6 +9,7 @@ import {CrownIcon} from "@/components/ui/__icons";
 import {useGetSubscriptionHistoryOnFleet} from "@/hooks/admin/useFleetHook";
 import Loading from "@/components/ui/Loader";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger} from "@/components/ui/tooltip";
+import {getSubscriptionColors, getSubscriptionType, shouldShowCrown} from "@/utils/subscriptionColors";
 
 export const AABonnHistory = () => {
 
@@ -85,12 +86,8 @@ const HistoryTable = () => {
                     </TableHeader>
                     <TableBody>
                         {abonList.map((abon) => {
-
-                            const abonType = abon.subscription.subscriptionType
-
-                            const isAbon = abonType === "ESSENTIEL" || abonType === "PREMIUM"
-                            const isEssential = abonType === "ESSENTIEL" || abonType == "tryfree"
-                            const isPremium = abonType === "PREMIUM"
+                            const colors = getSubscriptionColors(abon.subscription.name);
+                            const showCrown = shouldShowCrown(abon.subscription.name);
 
                             return (
                                 <TableRow key={abon.id}>
@@ -98,11 +95,11 @@ const HistoryTable = () => {
                                     <TableCell>{abon.endDate}</TableCell>
                                     <TableCell>
                                         <div className={cn(
-                                            "font-bold",
-                                            isEssential && "text-[#e51d13] bg-[#FFEBEA] flex items-center justify-center gap-[8.8px] h-[30px] px-[2px] py-[0.88px] rounded-sm",
-                                            isPremium && "text-[#E89900] bg-[#FFF8DE] flex items-center justify-center gap-[8.8px] h-[30px] px-[15px] py-[0.88px] rounded-sm",
+                                            "font-bold flex items-center justify-center gap-[8.8px] h-[30px] px-[5px] py-[0.88px] rounded-sm",
+                                            colors.textColor,
+                                            colors.tagBgColor,
                                         )}>
-                                            {isAbon && <CrownIcon/>}
+                                            {showCrown && <CrownIcon/>}
                                             {abon.subscription.name}
                                         </div>
                                     </TableCell>
@@ -117,20 +114,18 @@ const HistoryTable = () => {
 }
 
 export const AbonnTag: React.FC<{ label: string }> = ({label}) => {
-    const isAbon = label === "ESSENTIEL" || label === "PREMIUM"
-    const isEssential = label === "ESSENTIEL"
-    const isPremium = label === "PREMIUM"
-    const isFree = label === "Essaie gratuit"
+    const subscriptionType = getSubscriptionType(label);
+    const colors = getSubscriptionColors(label);
+    const showCrown = shouldShowCrown(label);
 
     return (
         <div className={cn(
             "font-bold uppercase flex items-center justify-center gap-[8.8px] h-[30px] px-[5px] lg:px-[10px] py-[0.88px] rounded-sm",
-            isEssential && "text-[#e51d13] bg-[#FFEBEA]",
-            isPremium && "text-[#E89900] bg-[#FFF8DE]",
-            isFree && "text-[#83BF6E] bg-[#EAFAE5]",
+            colors.textColor,
+            colors.tagBgColor,
             "text-[0.5rem] lg:text-xs"
         )}>
-            {isAbon && <CrownIcon/>}
+            {showCrown && <CrownIcon/>}
             {label}
         </div>
     )
