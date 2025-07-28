@@ -52,7 +52,7 @@ class Vehicle extends Model {
     }
 
     public get getCover() {
-        return this.resolveImage(this?._instance.image ?? this._instance.vehicle_image.path);
+        return this.resolveImage(this?._instance?.image ?? this._instance.vehicle_image?.path);
     }
 
     get images_presentation() {

@@ -75,7 +75,7 @@ export const useGetFleetsList = () => {
     const enable_city_id = AuthManagerGuard.getEnabledCity
     const fleetType = AuthManagerGuard.getEnabledFleetType
 
-    const {isLoading, data, isSuccess, isFetching} = useQuery({
+    const {isLoading, data, isSuccess, isFetching, isRefetching} = useQuery({
         queryKey: [FleetApiPath.GetFleetByCityID, enable_city_id, fleetType],
         queryFn: () => FleetService.GetFleetByCityID({
             city_id: AuthManagerGuard.getEnabledCity as string,
@@ -85,7 +85,7 @@ export const useGetFleetsList = () => {
     })
 
 
-    return {isLoading, data, isFetching}
+    return {isLoading, data, isFetching, isRefetching}
 }
 
 export const useGetFleetAdmin = () => {
