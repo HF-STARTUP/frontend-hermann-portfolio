@@ -59,7 +59,7 @@ export const StatCards = () => {
                                 }}
                                 cardValue={{
                                     label: "Total chauffeurs",
-                                    value: "" + data.vehicle.total
+                                    value: "" + data.driver.total
                                 }}
                             />
                         </div>
