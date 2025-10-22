@@ -38,7 +38,10 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
 
     const [activeFleet, setActiveFleet] = React.useState(parkID)
     const $router = useRouter();
-    const {data, isLoading} = useGetFleetsList()
+    const {data: data, isLoading} = useGetFleetsList({
+        page: 1,
+        itemPerPage: 100,
+    })
     const pathname = usePathname()
     const [filterFleetToken, setFilterFleetToken] = React.useState("")
     const [fleetListState, setFleetListState] = React.useState<FleetModel[]>([])
@@ -54,7 +57,7 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
 
     React.useEffect(() => {
         if (data) {
-            setFleetListState(data)
+            setFleetListState(data.fleets || [])
         }
     }, [data])
 
@@ -66,14 +69,14 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
 
     const onFilterFleet = () => {
         if (data) {
-            const filteredFleet = searchAndFilter(data, filterFleetToken, ['name'])
-            const fleetEnabled = data.find(d => d.id === activeFleet) ?? data[0]
-            const filteredDataContainActiveElement = filteredFleet.find(d => d.id === activeFleet)
+            const filteredFleet = searchAndFilter(data.fleets || [], filterFleetToken, ['name'])
+            const fleetEnabled = data.fleets?.find(d => d.id === activeFleet) ?? data.fleets?.[0]
+            const filteredDataContainActiveElement = filteredFleet?.find(d => d.id === activeFleet)
 
             if (!filteredDataContainActiveElement) {
-                setFleetListState([fleetEnabled, ...filteredFleet])
+                setFleetListState([fleetEnabled, ...filteredFleet || []])
             } else {
-                setFleetListState([...filteredFleet])
+                setFleetListState([...filteredFleet || []])
             }
         }
     }

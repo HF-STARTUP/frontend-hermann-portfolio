@@ -13,49 +13,51 @@ enum ConnexionMode {
     Staging = "staging",
     Production = "production",
 }
+
+// Fonction helper pour obtenir le baseApiPath dynamiquement
+function getBaseApiPath(): string {
+    return Cookies.get("connexion_mode") === ConnexionMode.Staging
+        ? EnvVars.NP_API_ENDPOINT_STAGING
+        : EnvVars.NP_API_ENDPOINT;
+}
+
+
 abstract class Service {
 
     protected axiosInstance: AxiosInstance;
 
     protected queryClient: QueryClient = queryClient
-
-    protected baseApiPath = Cookies.get("connexion_mode") === ConnexionMode.Staging
-        ? EnvVars.NP_API_ENDPOINT_STAGING
-        : EnvVars.NP_API_ENDPOINT
-
-    private resourcePath: string | undefined = undefined
-
+    private ressourcePath: string | undefined;
 
     protected constructor(ressourcePath: string | undefined = undefined) {
+        this.ressourcePath = ressourcePath;
 
-        const connexionMode =  (Cookies.get("connexion_mode") ?? ConnexionMode.Production) as ConnexionMode;
+        // Ne pas définir de baseURL fixe, elle sera calculée dynamiquement
+        this.axiosInstance = axios.create({});
 
-        this.baseApiPath = Cookies.get("connexion_mode") === ConnexionMode.Staging
-            ? EnvVars.NP_API_ENDPOINT_STAGING
-            : EnvVars.NP_API_ENDPOINT;
-
-        this.resourcePath = ressourcePath
-
-        this.axiosInstance = axios.create({
-            baseURL: ressourcePath ? `${this.baseApiPath}/${ressourcePath}` : this.baseApiPath,
-        });
-
+        // Intercepteur pour calculer dynamiquement le baseURL à chaque requête
         this.axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
             const token = AuthManagerGuard.getToken;
             const profileID = AuthManagerGuard.getProfileID;
+            
+            // Calculer le baseURL dynamiquement à chaque requête
+            const baseApiPath = getBaseApiPath();
+            const fullBaseUrl = this.ressourcePath ? `${baseApiPath}/${this.ressourcePath}` : baseApiPath;
+            
+            // Construire l'URL complète
+            config.url = config.url?.startsWith('http') 
+                ? config.url 
+                : `${fullBaseUrl}${config.url?.startsWith('/') ? config.url : '/' + config.url}`;
 
             config.headers = config.headers || {};
 
-            if (token) {
-                config.headers['Authorization'] = `${token}`;
-            }
-
-            if (profileID) config.headers['profile_id'] = `${profileID}`
+            if (token) config.headers['Authorization'] = `${token}`;
+            if (profileID) config.headers['profile_id'] = `${profileID}`;
 
             return config;
         }, (error: AxiosError) => {
             return Promise.reject(error);
-        });
+        })
     }
 
     protected httpMethods: { post: 'POST', get: 'GET', update: 'PUT' } = {
@@ -119,7 +121,7 @@ abstract class Service {
             if(isTokenExpired){
                 AuthManagerGuard.signOut()
                 if (window?.location) {
-                    window.location = `${window.location.origin}/login` as unknown as Location
+                    window.location.href = `${window.location.origin}/login`
                 }
             }
             throw new CustomQueryError(error.message)
@@ -127,7 +129,9 @@ abstract class Service {
     }
 
     async refreshToken() {
-        await axios.post(this.baseApiPath + "/refresh-token", {refresh_token: AuthManagerGuard.getRefreshToken})
+        const baseApiPath = getBaseApiPath();
+
+        await axios.post(baseApiPath + "/refresh-token", {refresh_token: AuthManagerGuard.getRefreshToken})
             .then((resp: AxiosResponse<{ token: string, refresh_token: string }>) => {
                 AuthManagerGuard.loginToApp(resp.data.token, resp.data.refresh_token)
             }).catch(err => {

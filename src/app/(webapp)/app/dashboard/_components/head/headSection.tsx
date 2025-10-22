@@ -44,7 +44,6 @@ export const HeadSection = () => {
 
     const {data, isLoading} = useGetParkStats()
     const {data: profilable, isLoading: loadingProfilable} = useGetBestAndLestOnCity()
-    const {isLoading: loadingFleet, activeFleetCurrency} = useGetActiveFleet()
 
 
 
@@ -132,7 +131,7 @@ export const HeadSection = () => {
                                 }}
                                 cardValue={{
                                     label: "Chiffre d’affaires",
-                                    value: `${data.ca_total.total}${activeFleetCurrency??"-"}`
+                                    value: `${data.ca_total.total}`
                                 }}
                             />
                         </div>

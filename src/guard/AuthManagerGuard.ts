@@ -99,6 +99,7 @@ class AuthManagerGuard {
     static logoutToApp() {
         Cookies.remove(TOKEN_KEYS.token)
         Cookies.remove(TOKEN_KEYS.refresh_token)
+        Cookies.remove(TOKEN_KEYS.profile_id)
     }
 
     static get getToken() {

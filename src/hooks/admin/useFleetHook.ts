@@ -1,26 +1,26 @@
 import {useQuery} from "@tanstack/react-query";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
-import FleetService, {FleetApiPath} from "@/services/admin/fleet/fleetService";
+import FleetService, {FleetApiPath, GetFleetByCityIDParams} from "@/services/admin/fleet/fleetService";
 import {useMutationProvider, useQueryProvider} from "@/hooks/hooksProvider";
 import {useGetParkID} from "@/hooks/__globlal/useGlobalHook";
 import {useRouter} from "next/navigation";
 import React, {useMemo} from "react";
 import {toIsoDate} from "@/services/Service";
 
-export const useGetFleetsList = () => {
+export const useGetFleetsList = (params: GetFleetByCityIDParams = {page: 1, itemPerPage: 1}) => {
 
     const enable_city_id = AuthManagerGuard.getEnabledCity
     const fleetType = AuthManagerGuard.getEnabledFleetType
 
     const {isLoading, data, isSuccess} = useQuery({
-        queryKey: [FleetApiPath.GetFleetByCityID, enable_city_id, fleetType],
+        queryKey: [FleetApiPath.GetFleetByCityID, enable_city_id, fleetType, params],
         queryFn: () => FleetService.GetFleetByCityID({
+            ...params,
             city_id: AuthManagerGuard.getEnabledCity as string,
-            fleet_type: AuthManagerGuard.getEnabledFleetType as string
+            type: AuthManagerGuard.getEnabledFleetType as string,
         }),
         enabled: !!enable_city_id && !!fleetType
     })
-
 
     return {isLoading, data}
 }
@@ -142,12 +142,15 @@ export const useGetActiveFleet = ()=> {
     const {parkID} = useGetParkID()
 
 
-    const {data: fleets, isLoading} = useGetFleetsList()
+    const {data: data, isLoading} = useGetFleetsList({
+        page: 1,
+        itemPerPage: 1,
+    })
 
     const activeFleet = useMemo(()=> {
-        const activeFleet = fleets?.find(f=>f.id == parkID)
+        const activeFleet = data?.fleets?.find(f=>f.id == parkID)
         return activeFleet
-    }, [fleets, parkID])
+    }, [data, parkID])
 
     return {
         isLoading,

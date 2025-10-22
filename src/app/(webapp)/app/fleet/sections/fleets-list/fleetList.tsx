@@ -1,11 +1,11 @@
 "use client"
 
-import FleetListAccount from "@/app/(webapp)/app/fleet/sections/fleets-list/config";
+import FleetListReactTable from "@/app/(webapp)/app/fleet/sections/fleets-list/fleetListWithReactTable";
 import {useGetFleetsList} from "@/hooks/admin/useFleetHook";
 import Loading from "@/components/ui/Loader";
 import {EmptyData} from "@/components/box/PageNetworkState";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import React from "react";
+import React, { useMemo } from "react";
 import {Calendar} from "@/components/ui/calendar";
 import {Input} from "@/components/ui/input";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
@@ -19,6 +19,7 @@ import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import {searchAndFilter} from "@/model/Model";
 import {CgPlayListSearch} from "react-icons/cg";
+import { Card, CardContent } from "@/components/ui/card";
 
 enum FleetAbonType {
     free = "Essaie gratuit",
@@ -30,93 +31,36 @@ enum FleetAbonType {
 
 export const FleetList = () => {
 
-    const {data, isLoading} = useGetFleetsList()
+    const [page, setPage] = React.useState(1)
+    const [itemPerPage, setItemPerPage] = React.useState(10)
+   
+    const {data: data, isLoading} = useGetFleetsList({
+        page,
+        itemPerPage
+    })
+
+    const fleets = useMemo(() => {
+        return data?.fleets || []
+    }, [data])
+
+    // Métadonnées de pagination provenant de l'API
+    const paginationMeta = useMemo(() => ({
+        totalRecords: data?.totalRecords || 0,
+        totalPages: data?.totalPages || 0,
+        currentPage: data?.currentPage || page,
+        itemPerPage: data?.itemPerPage || itemPerPage,
+    }), [data, page, itemPerPage])
+
     const [date, setDate] = React.useState<Date[] | undefined>([])
-    const [fleetList, setFleetList] = React.useState<FleetModel[]>([])
     const [calendarIsOpen, setCalendarIsOpen] = React.useState(false)
     const [filterIsActive, setFilterIsActive] = React.useState(false)
     const [filterFleetToken, setFilterFleetToken] = React.useState("")
     const [activeBonnType, setActiveAbonType] = React.useState("all")
 
-    React.useEffect(() => {
-        if (data) {
-            setFleetList(data)
-        }
-    }, [data, isLoading])
-
-    React.useEffect(() => {
-        onFilterFleetWithSearchTerm()
-    }, [filterFleetToken])
-
-    const onFilterFleet = (abonType: string) => {
-        setDate([])
-        setActiveAbonType(abonType)
-
-        const timer = setTimeout(() => {
-            const finalType = abonType
-
-            const isAll = abonType === "all"
-
-            if (isAll) {
-                data && setFleetList(data)
-                return
-            }
-
-            if (data) {
-                const filteredFleet = data.filter(d => d.suscription_name == finalType)
-                setFleetList(filteredFleet)
-            }
-            clearTimeout(timer)
-        }, 500)
-    }
-
-    const onFilterFleetWithSearchTerm = () => {
-        if (data) {
-            const filteredFleet = searchAndFilter(data, filterFleetToken, ['name'])
-            const finalType = activeBonnType
-
-            const isAll = activeBonnType === "all"
-
-            if (isAll) {
-                setFleetList(data)
-                return
-            }
-
-            const filteredFleet2 = filteredFleet.filter(d => isAll ? true : d.suscription_name.toLowerCase() == finalType.toLowerCase())
-
-            setFleetList(filteredFleet2)
-        }
-    }
-
-    React.useEffect(() => {
-        if (date && date.length === 2) {
-            const [startDate, endDate] = date;
-            const filteredFleet = data?.filter(fleet => {
-                const fleetStartDate = new Date(fleet._instance.start_date);
-                return isWithinInterval(fleetStartDate, {start: startDate, end: endDate});
-            });
-            const finalType = activeBonnType === "all" ? FleetAbonType.free : activeBonnType
-            if (filteredFleet) {
-                const filteredFleet2 = filteredFleet.filter(d => d.suscription_name == finalType)
-                setFleetList(filteredFleet2 || []);
-            } else {
-                const filtered = data && data.filter(d => d.suscription_name == finalType)
-                setFleetList(filtered || []);
-            }
-        } else {
-            if (data) {
-                const filteredFleet2 = data.filter(d => d.suscription_name == activeBonnType)
-                setFleetList(filteredFleet2 || []);
-            }
-        }
-    }, [date]);
 
 
-    if (isLoading) {
-        return <Loading/>
-    }
 
-    if (!isLoading && data && data.length === 0) {
+    if (!isLoading && fleets && fleets.length === 0) {
         return (
             <EmptyData
                 message={"Aucune flotte pour l'instant"}
@@ -124,7 +68,7 @@ export const FleetList = () => {
         )
     }
 
-    if (data && data.length > 0) {
+
         return (
             <div>
                 <div className={"flex justify-between items-center"}>
@@ -148,7 +92,7 @@ export const FleetList = () => {
                         <div
                             className={"flex flex-row  justify-between w-full md:justify-start items-center gap-2"}>
                             <div className={"font-semibold text-sm text-vaTextPrimary"}>Type d'abonnement:</div>
-                            <Select defaultValue={"all"} onValueChange={onFilterFleet}>
+                            <Select defaultValue={"all"} onValueChange={()=>{}}>
                                 <SelectTrigger className="w-fit">
                                     <SelectValue placeholder="Type"/>
                                 </SelectTrigger>
@@ -219,14 +163,23 @@ export const FleetList = () => {
 
                     </div>}
                 </div>
-                <div className={"grid grid-cols-12"}>
-                    <div className={"col-span-12"}>
-                        <div className={"custom-scrollbar overflow-y-scroll rounded-lg"}>
-                            <FleetListAccount fleets={fleetList}/>
+                <Card className={"rounded-lg py-5"}>
+                    <CardContent>
+                    <div className={" custom-scrollbar rounded-lg overflow-x-scroll"}>
+                            <FleetListReactTable 
+                                isLoading={isLoading} 
+                                fleets={fleets || []}
+                                // Pagination côté serveur
+                                pageIndex={page - 1} // DataTable utilise un index 0-based
+                                pageSize={itemPerPage}
+                                totalPages={paginationMeta.totalPages}
+                                totalRecords={paginationMeta.totalRecords}
+                                onPageChange={(newPage: number) => setPage(newPage + 1)} // Conversion vers 1-based pour l'API
+                                onPageSizeChange={setItemPerPage}
+                            />
                         </div>
-                    </div>
-                </div>
+                    </CardContent>
+                </Card>
             </div>
         )
     }
-}

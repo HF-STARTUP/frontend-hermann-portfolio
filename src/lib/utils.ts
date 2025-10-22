@@ -172,3 +172,15 @@ export function getDayDate(): string {
 const formatString = 'yyyy-MM-dd';
 
 export const parsedDate = (dateString: string | undefined) => dateString ? parse(dateString, formatString, new Date()) : new Date();
+
+export const toQueriesString = (baseUri: string, params: any) => {
+
+    const queryString = Object.entries(params)
+        .filter(([, value]) => value !== undefined)
+        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value as string)}`)
+        .join('&');
+
+    const url = `${baseUri}${queryString ? `?${queryString}` : ''}`;
+
+    return url
+}

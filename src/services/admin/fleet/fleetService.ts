@@ -12,6 +12,7 @@ import {
 import {AbonResponseModel, AdminOnFleetModel, FleetModel, ParkStatResponseType} from "@/model/ADMIN/fleet";
 import {ResponseWithPagination} from "@/types/generic";
 import {endOfDay, format, startOfDay} from "date-fns";
+import { toQueriesString } from "@/lib/utils";
 
 export enum FleetApiPath {
     GetFleetByCityID = '/park/by',
@@ -33,6 +34,14 @@ export enum FleetApiPath {
     CancelSubscription = "/subscription/cancel-active-subscription",
 }
 
+export type GetFleetByCityIDParams = {
+    city_id?: string;
+    type?: string;
+    page?: number;
+    itemPerPage?: number;
+    limit?: number;
+}
+
 class FleetService extends Service {
     private static instance: FleetService = new FleetService();
 
@@ -48,18 +57,21 @@ class FleetService extends Service {
         return FleetService.getInstance().queryClient.invalidateQueries({queryKey: [FleetApiPath.GetFleetByCityID]});
     }
 
-    public static async GetFleetByCityID({city_id, fleet_type}: { city_id: string, fleet_type: string }) {
-
-        const uri = FleetApiPath.GetFleetByCityID + "/" + city_id + `?type=${fleet_type}`
-
-        const data = await FleetService.makeRequest<FleetListResponseType[]>(
+    public static async GetFleetByCityID({city_id, ...params}: GetFleetByCityIDParams) {
+       
+        const uri = toQueriesString(FleetApiPath.GetFleetByCityID + "/" + city_id, params)
+      
+        const {data, ...meta} = await FleetService.makeRequest<ResponseWithPagination<FleetListResponseType[]>>(
             uri,
             'GET',
             undefined,
             true
         )
 
-        return FleetModel.fromArray(data)
+        return {
+            fleets: FleetModel.fromArray(data),
+            ...meta
+        }
     }
 
     public static async getAdminsOnFleet({park_id}: { park_id: string }): Promise<AdminOnFleetModel[]> {
@@ -304,16 +316,18 @@ class FleetService extends Service {
         cityID: string,
         graphType: string,
         type: string
-    }): Promise<RevenusEvolution[]> {
+    }) {
 
         const uri = FleetApiPath.DashboardSubscriptionEvolution + "?city_id=" + cityID + "&graph=" + graphType + "&type=" + type
 
-        return await FleetService.makeRequest<RevenusEvolution[]>(
+        const response = await FleetService.makeRequest<{data?: RevenusEvolution[]}>(
             uri,
             'GET',
             undefined,
             true
         )
+
+        return response?.data
     }
 
 

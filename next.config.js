@@ -10,9 +10,27 @@ const nextConfig = {
     experimental: {
         disableOptimizedLoading: true, // Désactive les optimisations du chargement
     },
-    webpack(config) {
-        // Ignore tous les warnings (y compris les erreurs)
-        config.ignoreWarnings = [/./]; // Ignore absolument tous les avertissements
+    logging: {
+        fetches: {
+            fullUrl: false,
+        },
+    },
+    onDemandEntries: {
+        maxInactiveAge: 25 * 1000,
+        pagesBufferLength: 2,
+    },
+    webpack(config, { isServer }) {
+        // Ignore tous les warnings
+        config.ignoreWarnings = [/./];
+        
+        // Configuration pour afficher uniquement les erreurs
+        config.stats = 'errors-only';
+        
+        // Minimiser les logs pendant le build
+        config.infrastructureLogging = {
+            level: 'error',
+        };
+        
         return config;
     },
 

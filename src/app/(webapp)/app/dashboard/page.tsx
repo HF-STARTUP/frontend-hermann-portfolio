@@ -18,7 +18,10 @@ export default function DahboardPage() {
                     }
                 ]}
             />
-            <PageTitle page_title={"Dashboard"}/>
+            <PageTitle 
+                page_title={"Dashboard"}
+                withSelect={false}
+            />
             <HeadSection/>
             <div className={"mt-[24px] grid grid-cols-12 gap-[24px] gap-x-[30px]"}>
                 <div className={"col-span-12 2xl:col-span-5 "}>
