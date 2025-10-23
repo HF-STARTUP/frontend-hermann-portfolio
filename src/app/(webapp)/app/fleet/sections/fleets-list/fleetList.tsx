@@ -21,11 +21,11 @@ import {CgPlayListSearch} from "react-icons/cg";
 import { Card, CardContent } from "@/components/ui/card";
 
 enum FleetAbonType {
-    essai_gratuit = "essai_gratuit",
-    starter_entreprise = "starter_entreprise",
+    premium_entreprise = "premium_entreprise",
     essentiel_entrepreneur = "essentiel_entrepreneur",
     premium_entrepreneur = "premium_entrepreneur",
-    premium_entreprise = "premium_entreprise",
+    starter_entrepreneur = "starter_entrepreneur",
+    essentiel_entreprise = "essentiel_entreprise",
     None = "None",
 }
 
@@ -48,7 +48,7 @@ interface FilterState {
 
 export const FleetList = () => {
     const [page, setPage] = React.useState(1)
-    const [itemPerPage, setItemPerPage] = React.useState(10)
+    const [itemPerPage, setItemPerPage] = React.useState(5)
    
     const [filterState, setFilterState] = React.useState<FilterState>({
         searchTerm: "",
@@ -75,7 +75,7 @@ export const FleetList = () => {
         if (filterState.searchTerm.trim()) {
             params.name = filterState.searchTerm.trim()
         }
-        if (filterState.abonType !== "all" && filterState.abonType !== "None") {
+        if (filterState.abonType !== "all") {
             params.subscription_name = filterState.abonType
         }
         if (filterState.createdFrom) {
@@ -288,12 +288,11 @@ export const FleetList = () => {
                                 </SelectTrigger>
                                 <SelectContent>
                                             <SelectItem value="all">Tous les types</SelectItem>
-                                            <SelectItem value={FleetAbonType.essai_gratuit}>Essai gratuit</SelectItem>
-                                            <SelectItem value={FleetAbonType.starter_entreprise}>Starter entreprise</SelectItem>
-                                            <SelectItem value={FleetAbonType.essentiel_entrepreneur}>Essentiel entrepreneur</SelectItem>
-                                            <SelectItem value={FleetAbonType.premium_entrepreneur}>Premium entrepreneur</SelectItem>
-                                            <SelectItem value={FleetAbonType.premium_entreprise}>Premium entreprise</SelectItem>
-                                            <SelectItem value={FleetAbonType.None}>Aucun abonnement</SelectItem>
+                                            {Object.entries(FleetAbonType).map(([key, value]) => (
+                                                <SelectItem key={value} value={value}>
+                                                    {value === "None" ? "Aucun abonnement" : value.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                                                </SelectItem>
+                                            ))}
                                 </SelectContent>
                             </Select>
                                 </div>
