@@ -6,7 +6,6 @@ const nextConfig = {
     //     },
     // },
     /** @type {import('next').NextConfig} */
-
     experimental: {
         disableOptimizedLoading: true, // Désactive les optimisations du chargement
     },
@@ -33,7 +32,7 @@ const nextConfig = {
         
         return config;
     },
-
+    output: "standalone",
     eslint: {
         ignoreDuringBuilds: true,
     },
@@ -76,7 +75,7 @@ const nextConfig = {
                 source: '/app',
                 destination: '/app/dashboard',
                 permanent: true,
-            },
+            }
         ]
     }
 }

@@ -3,7 +3,8 @@ import React from "react";
 import {useRouter} from "next/navigation";
 import {
     AddAdminInput,
-    AddAdminOnCityInput, RemoveAdminOnCityInput,
+    AddAdminOnCityInput,
+    RemoveAdminOnCityInput,
     UpdatePasswordInput,
     UpdateProfileInput
 } from "@/schema/ADMIN/settings.schema";
@@ -33,7 +34,9 @@ export const useUpdateProfile = () => {
     }
 
     React.useEffect(() => {
-        void TicketService.invalidMessages()
+        if (data && isSuccess) {
+            void TicketService.invalidMessages()
+        }
     }, [isSuccess, data])
 
     React.useEffect(() => {
@@ -71,7 +74,9 @@ export const useUpdatePassword = () => {
     }
 
     React.useEffect(() => {
-        void TicketService.invalidMessages()
+        if (data && isSuccess) {
+            void TicketService.invalidMessages()
+        }
     }, [isSuccess, data])
 
 
@@ -123,7 +128,9 @@ export const useCreateAdmin = () => {
     }
 
     React.useEffect(() => {
-        void SettingsService.refreshAdmins()
+        if (data && isSuccess) {
+            void SettingsService.refreshAdmins()
+        }
     }, [isSuccess, data])
 
     return {
@@ -153,8 +160,10 @@ export const useAddAdminOnCity = () => {
     }
 
     React.useEffect(() => {
-        void SettingsService.refreshAdmins()
-        void LoginService.refreshProfile()
+        if (isSuccess && data) {
+            void SettingsService.refreshAdmins()
+            void LoginService.refreshProfile()
+        }
     }, [isSuccess, data])
 
     return {
@@ -184,8 +193,10 @@ export const useRemoveAdminOnCity = () => {
     }
 
     React.useEffect(() => {
-        void SettingsService.refreshAdmins()
-        void LoginService.refreshProfile()
+        if (data && isSuccess) {
+            void SettingsService.refreshAdmins()
+            void LoginService.refreshProfile()
+        }
     }, [isSuccess, data])
 
     return {
@@ -214,7 +225,9 @@ export const useDeactivateOrActivateAdmin = () => {
     }
 
     React.useEffect(() => {
-        void SettingsService.refreshAdmins()
+        if (data && isSuccess) {
+            void SettingsService.refreshAdmins()
+        }
     }, [isSuccess, data])
 
     return {

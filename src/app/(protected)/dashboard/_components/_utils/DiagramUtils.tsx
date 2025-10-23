@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import {DropDownSelect} from "@/app/(protected)/dashboard/_components/_utils/DashboardSection.utils";
 import {cn} from "@/lib/utils";

@@ -26,6 +26,8 @@ import { ArrowSortIcon } from "@/components/layout/admin/sidebar/_navIcons/NavIc
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react";
+import Loading from "./Loader";
+import { EmptyData } from "../box/PageNetworkState";
 
 /**
  * DataTable - Un composant de tableau réutilisable et optimisé basé sur @tanstack/react-table
@@ -125,7 +127,21 @@ export const DataTable = React.memo(<TData, TValue>(props: DataTableProps<TData,
     });
 
     return (
-        <div className="space-y-4 w-full">
+        <div className="space-y-4 w-full relative">
+            {(isLoading || !data.length) && (
+                <div className="absolute top-0 rounded-lg left-0 w-full h-full flex items-center justify-center bg-white/80 backdrop-blur-sm z-10">
+                    {isLoading && (
+                        <div className="flex items-center flex-col justify-center gap-2">
+                            <Loading />
+                        </div>
+                    )}
+                    {!isLoading && !data.length && (
+                        <div className="flex items-center flex-col justify-center gap-2">
+                            <EmptyData message={emptyMessage} />
+                        </div>
+                    )}
+                </div>
+            )}
             <div className=" bg-white overflow-hidden">
                 <Table>
                     {/* En-tête du tableau */}
@@ -179,7 +195,9 @@ export const DataTable = React.memo(<TData, TValue>(props: DataTableProps<TData,
                                     colSpan={columns.length}
                                     className="h-24 text-center text-gray-500"
                                 >
-                                    Chargement...
+                                    <div className=" h-[425px]">
+                                       
+                                    </div>
                                 </TableCell>
                             </TableRow>
                         ) : table.getRowModel().rows?.length ? (
@@ -214,7 +232,9 @@ export const DataTable = React.memo(<TData, TValue>(props: DataTableProps<TData,
                                     colSpan={columns.length}
                                     className="h-24 text-center text-gray-500"
                                 >
-                                    {emptyMessage}
+                                    <div className=" h-[425px]">
+                                       
+                                       </div>
                                 </TableCell>
                             </TableRow>
                         )}

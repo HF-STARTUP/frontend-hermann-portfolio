@@ -2,7 +2,8 @@ import Service from "@/services/Service";
 import {CourseResponseType} from "@/types/course.types";
 import {
     AddAdminInput,
-    AddAdminOnCityInput, RemoveAdminOnCityInput,
+    AddAdminOnCityInput,
+    RemoveAdminOnCityInput,
     UpdatePasswordInput,
     UpdateProfileInput
 } from "@/schema/ADMIN/settings.schema";

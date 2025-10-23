@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {Navbar} from "@/app/(webapp)/app/layout/header/Navbar";
 import {Sidebar} from "@/app/(webapp)/app/layout/sidebar/Sidebar";

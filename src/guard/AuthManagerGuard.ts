@@ -1,5 +1,9 @@
 import Cookies from "js-cookie";
-import {ConnexionMode} from "@/hooks/__globlal/useGlobalHook";
+
+export enum ConnexionMode {
+    Staging = "staging",
+    Production = "production",
+}
 
 export const TOKEN_KEYS = {
     token: 'token',
@@ -9,10 +13,16 @@ export const TOKEN_KEYS = {
     transaction_id: 'transaction_id',
     enabled_city_id: 'enable_city_id',
     enabled_fleet_type: 'enabled_fleet_type',
-    connexion_mode: 'connexion_mode'
+    connexion_mode: 'connexion_mode',
+    currency: 'currency',
 }
 
-const COOKIES_CONFIG = {}
+export const COOKIES_CONFIG = {
+    path: '/',
+    sameSite: 'lax',
+    expires: 365 * 10 //10 ans
+    //secure: true
+} as Cookies.CookieAttributes
 
 class AuthManagerGuard {
 
@@ -41,11 +51,11 @@ class AuthManagerGuard {
         } catch (err) {
         }
 
-        Cookies.set(TOKEN_KEYS.profile_id, profile_id, {})
+        Cookies.set(TOKEN_KEYS.profile_id, profile_id, COOKIES_CONFIG)
     }
 
     static setParkID(park_id: string) {
-        Cookies.set(TOKEN_KEYS.park_id, park_id)
+        Cookies.set(TOKEN_KEYS.park_id, park_id, COOKIES_CONFIG)
     }
 
     static get getTransactionID() {
@@ -57,11 +67,11 @@ class AuthManagerGuard {
     }
 
     static setEnabledCityID(id: number) {
-        Cookies.set(TOKEN_KEYS.enabled_city_id, String(id))
+        Cookies.set(TOKEN_KEYS.enabled_city_id, String(id), COOKIES_CONFIG)
     }
 
     static setEnabledFleetType(fleetType: string) {
-        Cookies.set(TOKEN_KEYS.enabled_fleet_type, fleetType)
+        Cookies.set(TOKEN_KEYS.enabled_fleet_type, fleetType, COOKIES_CONFIG)
     }
 
     static get getConnexionMode(): ConnexionMode {
@@ -69,16 +79,32 @@ class AuthManagerGuard {
     }
 
     static setConnexionMode(mode: ConnexionMode) {
-        Cookies.set(TOKEN_KEYS.connexion_mode, mode)
+        Cookies.set(TOKEN_KEYS.connexion_mode, mode.toString(), COOKIES_CONFIG)
+    }
+
+
+    static setCurrency(currency?: string) {
+        if (currency != null) {
+            Cookies.set(TOKEN_KEYS.currency, currency, COOKIES_CONFIG)
+        }
     }
 
     static get getEnabledFleetType() {
         return Cookies.get(TOKEN_KEYS.enabled_fleet_type)
     }
 
+    static get isAllCities() {
+        return Cookies.get(TOKEN_KEYS.enabled_city_id) === "999999"
+    }
+
+    static get getCurrency() {
+        return Cookies.get(TOKEN_KEYS.currency)
+    }
+
     static get getEnabledCity() {
         return Cookies.get(TOKEN_KEYS.enabled_city_id)
     }
+
 
     static removeTransactionID() {
         Cookies.remove(TOKEN_KEYS.transaction_id)
@@ -94,6 +120,10 @@ class AuthManagerGuard {
 
     static removeParkID() {
         Cookies.remove(TOKEN_KEYS.park_id)
+    }
+
+    static removeCurrency() {
+        Cookies.remove(TOKEN_KEYS.currency)
     }
 
     static logoutToApp() {

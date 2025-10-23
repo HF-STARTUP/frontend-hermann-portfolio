@@ -1,3 +1,5 @@
+"use client";
+
 import {SearchTextField} from "@/components/form/TextField";
 import {FilterIcon} from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
 import React from "react";

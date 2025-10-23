@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import ImageWithAvatar from "@/components/box/ImageWithAvatar";
 import {
@@ -145,11 +147,11 @@ const DriveItem: React.FC<{ vehicule: Vehicule }> = ({vehicule}) => {
             </CardItemContainer>
             <>
 
-                <VehicleInfosDialog
-                    vehicule={vehicule}
-                    isOpen={seeInfoIsOpen}
-                    onClose={() => setSeeInfoIsOpen(false)}
-                />
+                {/*<VehicleInfosDialog*/}
+                {/*    vehicule={vehicule}*/}
+                {/*    isOpen={seeInfoIsOpen}*/}
+                {/*    onClose={() => setSeeInfoIsOpen(false)}*/}
+                {/*/>*/}
 
                 <ProceedToPassation
                     vehicule={vehicule}

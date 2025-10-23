@@ -1,55 +1,49 @@
 "use client"
 
 import {CustomChartLineUtils3} from "@/app/(protected)/dashboard/_components/_utils/CustomChartLine.utils";
-import {SectionTitle} from "@/app/(protected)/dashboard/status-accounts/soldes/components/_utils";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu";
-import {cn} from "@/lib/utils";
-import {ArrowDropDownIcon} from "@/components/ui/__icons";
-import React from "react";
+import React, {useMemo} from "react";
 import {
     useGetCourseEvolution,
-    useGetDashboardActivities, useGetDashboardSubscriptionEvolution,
+    useGetDashboardSubscriptionEvolution,
     useGetEntretienEvolution,
-    useGetRevenusEvolution
+    useGetProfitableList,
+    useGetRevenusEvolution,
+    useGetSubscriptionPlanRevenus
 } from "@/hooks/admin/useFleetHook";
-import {DateSelect} from "@/app/(webapp)/app/dashboard/_components/activities/acctivities";
-import {getDay, getMonth, getYear} from "date-fns";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue
-} from "@/components/ui/select";
+import {endOfMonth, startOfMonth} from "date-fns";
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import Loading from "@/components/ui/Loader";
 import StackBarChart from "@/lib/react-chart-2/stackBarDiagram";
+import {toIsoDate} from "@/services/Service";
+import {useGetActiveCurrency} from "@/hooks/__globlal/useGlobalHook";
+
+import {Doughnut} from "react-chartjs-2"
+import {type ChartOptions} from "chart.js"
+import AuthManagerGuard from "@/guard/AuthManagerGuard";
+import {Car, TrendingUp} from "lucide-react";
+import {ScrollArea} from "@/components/ui/scroll-area";
+import {EmptyData} from "@/components/box/PageNetworkState";
+import {CartesianGrid, Line, LineChart, XAxis, YAxis} from "recharts"
+import {ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
+
+interface DataPoint {
+    label: string
+    value: number
+}
+
+interface RevenueChartProps {
+    data: DataPoint[]
+    title?: string
+    subtitle?: string
+}
+
 
 export const AbonnEvolution = () => {
 
-    const [graphType, setGraphType] = React.useState("year")
-    const currentYear = getYear(new Date());
-    const currentMonth = getMonth(new Date());
-
-    const [month, setMonth] = React.useState<number>(currentMonth)
-    const [year, setYear] = React.useState<number>(currentYear)
+    const [graphType, setGraphType] = React.useState("month")
 
     const {data, isLoading} = useGetDashboardSubscriptionEvolution(graphType)
 
-    const handleSelectMonth = (value: string) => {
-        setMonth(+value)
-    };
-
-    const handleSelectYear = (value: string) => {
-        setYear(+value)
-    };
 
     return (
         <div className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[20px] lg:gap-[77px] rounded-[20px]"}>
@@ -62,7 +56,7 @@ export const AbonnEvolution = () => {
                 {/*    </div>*/}
                 {/*</div>*/}
                 <Select
-                    defaultValue={"year"}
+                    defaultValue={"month"}
                     onValueChange={v => setGraphType(v)}
                 >
                     <SelectTrigger className="w-fit">
@@ -77,10 +71,17 @@ export const AbonnEvolution = () => {
                 </Select>
             </div>
             {isLoading && <Loading className={"h-[150px]"}/>}
-            {data && <CustomChartLineUtils3
-                idata={data.map(d => d.revenue)}
-                ilabels={data.map(d => d.item)}
-            />}
+            {!data || !data?.data && !isLoading && <EmptyData message={"Aucune donnée ici pour l'instant"}/>}
+            {data && data?.data && (
+                <ModernLineChart
+                    data={data.data.map(d => ({label: d.item, value: d.amount}))}
+                />
+            )}
+            {/*{data && <CustomChartLineUtils3*/}
+            {/*    idata={data.map(d => d.revenue)}*/}
+            {/*    ilabels={data.map(d => d.item)}*/}
+            {/*/>}*/}
+            {/*{data && JSON.stringify(data.data.map(d => ({label: d.item, value: d.amount})))}*/}
         </div>
     )
 }
@@ -180,7 +181,7 @@ export const EntretienEvolution = () => {
                         <SelectContent>
                             <SelectGroup>
                                 <SelectItem value="month">Mensuel</SelectItem>
-                                <SelectItem value="day">Journalier</SelectItem>
+                                <SelectItem value="year">Annuel</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -216,3 +217,340 @@ export const ABlockTitle: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({chi
         <h4 className="text-black text-lg lg:text-2xl font-semibold block">{children}</h4>
     )
 }
+
+const colors = [
+    "#ea8f20",
+    "#b1e3ff",
+    "#baedbd",
+    "#000000",
+    "#ff6b6b",
+    "#4ecdc4",
+    "#45b7d1",
+    "#96ceb4"
+]
+
+export const SouscriptionPartition = () => {
+    // const [graphType, setGraphType] = React.useState("year")
+    // const currentYear = getYear(new Date())
+    // const currentMonth = getMonth(new Date())
+    const {currency} = useGetActiveCurrency()
+    const [method, setMethod] = React.useState<string>("Ce Mois")
+
+    const curDate = new Date();
+
+    const {data: revenusDatas, isLoading} = useGetSubscriptionPlanRevenus({
+        start_date: toIsoDate(startOfMonth(curDate)),
+        end_date: toIsoDate(endOfMonth(curDate)),
+        currency_id: AuthManagerGuard.getCurrency,
+    })
+
+    const data = useMemo(() => {
+        if (!revenusDatas) return []
+        return revenusDatas.plans.map(d => ({label: d.subscription_name, value: d.amount}))
+    }, [revenusDatas])
+
+
+    const total = useMemo(() => {
+        if (!data) return 0
+        return data.reduce((sum, item) => sum + item.value, 0)
+    }, [data])
+
+    const chartData = useMemo(() => {
+        if (!data) return
+        return {
+            labels: data.map((item) => item.label),
+            datasets: [
+                {
+                    data: data.map((item) => item.value),
+                    backgroundColor: colors.slice(0, data.length),
+                    borderColor: "#ffffff",
+                    borderWidth: 3,
+                    cutout: "60%",
+                },
+            ],
+        }
+    }, [data])
+
+    const options: ChartOptions<"doughnut"> = {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                display: false,
+            },
+            tooltip: {
+                callbacks: {
+                    label: (context) => {
+                        const percentage = ((context.parsed / total) * 100).toFixed(1)
+                        return `${context.label}: ${percentage}%`
+                    },
+                },
+            },
+        },
+        elements: {
+            arc: {
+                borderRadius: 8,
+            },
+        },
+    }
+
+    const formatNumber = (num: number) => {
+        return new Intl.NumberFormat("fr-FR").format(num)
+    }
+
+    return (
+        <div
+            className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[20px] lg:gap-[77px] rounded-[20px]"}>
+            <div className={"flex items-center justify-between"}>
+                <ABlockTitle>Sondage des abonnements</ABlockTitle>
+                <Select
+                    value={method}
+                    onValueChange={setMethod}
+                >
+                    <SelectTrigger className="w-fit bg-slate-50">
+                        <SelectValue placeholder="Selectionner"/>
+                    </SelectTrigger>
+                    <SelectContent>
+                        {["Ce Mois"].map((city) => (
+                            <SelectItem key={city} value={city}>
+                                {city}
+                            </SelectItem>
+                        ))}
+                    </SelectContent>
+                </Select>
+            </div>
+            {isLoading && <Loading className={"h-[150px]"}/>}
+            {/* Chart Container */}
+            {!isLoading && <div className="flex flex-col items-center">
+                <div className="relative h-80 w-80">
+                    {<Doughnut
+                        data={chartData}
+                        options={options}
+                    />}
+
+                    {/* Center Text */}
+                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                        <div
+                            className="text-[#1c1c1c] text-2xl font-bold">{formatNumber(total)} {revenusDatas?.currency}</div>
+                        <div className="text-[#878787] text-sm">Total</div>
+                    </div>
+                </div>
+
+                {/* Percentage Labels around the chart */}
+                <div className="relative pointer-events-none">
+                    {data.map((item, index) => {
+                        const percentage = ((item.value / total) * 100).toFixed(1)
+                        const angle = index * (360 / data.length) - 90 // Start from top
+                        const radius = 140
+                        const x = Math.cos((angle * Math.PI) / 180) * radius
+                        const y = Math.sin((angle * Math.PI) / 180) * radius
+
+                        return (
+                            <div
+                                key={index}
+                                className="absolute transform -translate-x-1/2 -translate-y-1/2"
+                                style={{
+                                    left: `calc(50% + ${x}px)`,
+                                    top: `calc(50% + ${y}px)`,
+                                }}
+                            >
+                                <div
+                                    className={`px-3 py-1 rounded-full shadow-sm border ${
+                                        colors[index] === "#000000"
+                                            ? "bg-[#1c1c1c] text-white"
+                                            : "bg-white border-[#eaedf2] text-[#1c1c1c]"
+                                    }`}
+                                >
+                                    <span className="text-sm font-medium">{percentage}%</span>
+                                </div>
+                            </div>
+                        )
+                    })}
+                </div>
+            </div>}
+
+            {/* Legend */}
+            <div className="flex flex-col gap-4 max-w-md">
+                {data.map((item, index) => (
+                    <div key={index} className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <div className="w-3 h-3 rounded-full" style={{backgroundColor: colors[index]}}></div>
+                            <span className="text-[#1c1c1c] text-base">{item.label}</span>
+                        </div>
+                        <span className="text-[#1c1c1c] font-medium">{formatNumber(item.value)} XOF</span>
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+}
+
+export const BestFleet = () => {
+
+    const {data: fleetData, isLoading} = useGetProfitableList({
+        type: AuthManagerGuard.getEnabledFleetType as string,
+        city_id: String(AuthManagerGuard.getEnabledCity),
+        currency_id: AuthManagerGuard.getCurrency
+    })
+
+    return (
+        <div
+            className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[20px] lg:gap-[77px] rounded-[20px]"}>
+            <div className={"flex flex-col items-start justify-between"}>
+                <ABlockTitle>Meilleurs flottes</ABlockTitle>
+
+                <div className="bg-[#ffffff] mt-4 w-full">
+                    {fleetData && <div className="space-y-6 pt-6 w-full">
+                        {/* Compact Fleet List */}
+                        <div className="rounded-lg shadow-sm border w-full">
+                            {/* Header */}
+                            {/*<div*/}
+                            {/*    className="grid grid-cols-12 gap-4 p-4 border-b bg-slate-50 text-sm font-medium text-slate-600">*/}
+                            {/*    <div className="col-span-5">Nom de la flotte</div>*/}
+                            {/*    /!*<div className="col-span-2">Type</div>*!/*/}
+                            {/*    <div className="col-span-4">Véhicules</div>*/}
+                            {/*    <div className="col-span-3">Flux financier</div>*/}
+                            {/*</div>*/}
+
+                            {/* Fleet Items */}
+                            {!isLoading && fleetData && fleetData.length == 0 && (
+                                <div>
+                                    <EmptyData message={"Aucune donnée pour le moment"}/>
+                                </div>
+                            )}
+                            {fleetData && fleetData.length ? <div className="divide-y divide-slate-100 w-full">
+                                <ScrollArea className={"h-[500px]"}>
+                                    {fleetData.map((fleet) => (
+                                        <div
+                                            key={fleet.id}
+                                            className="grid grid-cols-12 gap-4 p-4 hover:bg-slate-50 transition-colors cursor-pointer w-full"
+                                        >
+                                            <div className="col-span-12 flex items-center space-x-3">
+                                                <div className="p-2 bg-blue-100 rounded-lg">
+                                                    <Car className="h-4 w-4 text-blue-600"/>
+                                                </div>
+                                                <div>
+                                                    <p className="font-medium text-slate-900">{fleet.park_name}</p>
+                                                    <p className="text-xs text-slate-500">ID: {fleet.id}</p>
+                                                </div>
+                                            </div>
+
+                                            {/*<div className="col-span-2 flex items-center">*/}
+                                            {/*    <Badge*/}
+                                            {/*        variant={fleet.type === "Professionnel" ? "default" : "secondary"}*/}
+                                            {/*        className={`text-xs ${*/}
+                                            {/*            fleet.type === "Professionnel"*/}
+                                            {/*                ? "bg-blue-100 text-blue-800 hover:bg-blue-100"*/}
+                                            {/*                : "bg-purple-100 text-purple-800 hover:bg-purple-100"*/}
+                                            {/*        }`}*/}
+                                            {/*    >*/}
+                                            {/*        {fleet.type}*/}
+                                            {/*    </Badge>*/}
+                                            {/*</div>*/}
+
+                                            <div className={"col-span-1"}></div>
+
+                                            <div className="col-span-4 flex items-center">
+                                                <div className="flex items-center space-x-2">
+                                                    <Car className="h-4 w-4 text-slate-400"/>
+                                                    <span
+                                                        className="font-semibold text-slate-900">{fleet.vehicle_number}</span>
+                                                </div>
+                                            </div>
+
+                                            <div className="col-span-6 flex items-center">
+                                                <div className="flex items-center space-x-2">
+                                                    <TrendingUp className="h-4 w-4 text-green-500"/>
+                                                    <div>
+                                                  <span className="font-semibold text-slate-900">
+                                                    {fleet.flux.toLocaleString()} {fleet.currency}
+                                                  </span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </ScrollArea>
+                            </div> : <span></span>}
+                        </div>
+                    </div>}
+                </div>
+                {isLoading && <Loading className={"h-[150px]"}/>}
+            </div>
+        </div>
+    )
+}
+
+
+interface DataPoint {
+    label: string
+    value: number
+}
+
+interface ModernLineChartProps {
+    data: DataPoint[]
+    title?: string
+    description?: string
+    color?: string
+    height?: number
+}
+
+export function ModernLineChart({
+                                    data,
+                                    title = "Diagramme en ligne",
+                                    description = "Évolution des données dans le temps",
+                                    color = "hsl(var(--chart-1))",
+                                    height = 400,
+                                }: ModernLineChartProps) {
+    const chartConfig = {
+        value: {
+            label: "Valeur",
+            color: color,
+        },
+    }
+
+    return (
+        <div>
+            <ChartContainer config={chartConfig} className={`w-full h-[${height}px]`}>
+                <LineChart
+                    data={data}
+                    margin={{
+                        top: 20,
+                        right: 30,
+                        left: 20,
+                        bottom: 20,
+                    }}
+                >
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" vertical={false}/>
+                    <XAxis dataKey="label" tickLine={false} axisLine={false} className="text-muted-foreground"
+                           fontSize={12}/>
+                    <YAxis tickLine={false} axisLine={false} className="text-muted-foreground" fontSize={12}/>
+                    <ChartTooltip
+                        content={<ChartTooltipContent/>}
+                        cursor={{stroke: color, strokeWidth: 1, strokeDasharray: "5 5"}}
+                    />
+                    <Line
+                        type="monotone"
+                        dataKey="value"
+                        stroke={color}
+                        strokeWidth={3}
+                        dot={{
+                            fill: color,
+                            strokeWidth: 2,
+                            r: 4,
+                            stroke: "hsl(var(--background))",
+                        }}
+                        activeDot={{
+                            r: 6,
+                            fill: color,
+                            stroke: "hsl(var(--background))",
+                            strokeWidth: 2,
+                        }}
+                    />
+                </LineChart>
+            </ChartContainer>
+        </div>
+    )
+}
+
+

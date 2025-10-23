@@ -8,10 +8,9 @@ import dynamic from "next/dynamic";
 export const metadata: Metadata = {
     title: "VTC ADMIN",
     description: "Gestion des flottes",
-    themeColor: "#000B20"
 };
 
-function WebAppGroupLayout({
+export default function WebAppGroupLayout({
     children,
 }: Readonly<{
     children: React.ReactNode;
@@ -30,4 +29,4 @@ function WebAppGroupLayout({
     );
 }
 
-export default dynamic(() => Promise.resolve(WebAppGroupLayout), { ssr: false })
+

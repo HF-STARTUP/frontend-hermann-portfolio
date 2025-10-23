@@ -1,8 +1,8 @@
-import dynamic from "next/dynamic"
 import * as React from "react";
 import AdminLayout from "@/components/layout/admin/AdminLayout";
+import dynamic from "next/dynamic";
 
-function ProtectedGroupLayout({
+export default function ProtectedGroupLayout({
     children,
 }: {
     children: React.ReactNode
@@ -16,5 +16,4 @@ function ProtectedGroupLayout({
     )
 }
 
-export default dynamic(() => Promise.resolve(ProtectedGroupLayout), { ssr: false })
 

@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {Bars, Oval, RotatingLines} from "react-loader-spinner";
 import {cn} from "@/utils/ui/cn";

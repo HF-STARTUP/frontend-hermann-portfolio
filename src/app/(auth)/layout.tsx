@@ -1,14 +1,18 @@
 import type {Metadata} from "next";
-import dynamic from "next/dynamic";
+import {Inter} from "next/font/google";
+import "../globals.css";
+import GlobalLayoutProvider from "@/app/GlobalLayoutProvider";
+
+const inter = Inter({subsets: ["latin"]});
 
 export const metadata: Metadata = {
     title: "VTC ADMIN - Authentification",
     description: "Gestion des flottes",
 };
 
-function AuthGroupLayout({
-    children,
-}: Readonly<{
+export default function RootLayout({
+                                       children,
+                                   }: Readonly<{
     children: React.ReactNode;
 }>) {
     return (
@@ -17,5 +21,3 @@ function AuthGroupLayout({
         </>
     );
 }
-
-export default dynamic(() => Promise.resolve(AuthGroupLayout), { ssr: false })

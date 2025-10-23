@@ -20,6 +20,7 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog";
 import BtnBase from "@/components/elements/BtnBase";
+import {getSubscriptionColors} from "@/utils/subscriptionColors";
 
 export const ActiveAbonnSection = () => {
 
@@ -66,7 +67,7 @@ const ActiveAbonnDetails: React.FC<{ subs: AbonResponseModel }> = ({subs}) => {
     return (
         <div className={"flex flex-col gap-[16px] w-full"}>
             {[
-                ["Type d’abonnement :", subs.subscription.name],
+                ["Type d'abonnement :", subs.subscription.name],
                 ["Date de souscription :", subs.startDate]
             ].map((item, index) => (
                 <div key={index} className={"flex justify-between items-center"}>
@@ -87,7 +88,7 @@ const ActiveAbonnDetails: React.FC<{ subs: AbonResponseModel }> = ({subs}) => {
                             "text-center text-[#e51d13] text-sm font-bold font-['DM Sans'] leading-3 px-5 py-[12px] bg-[#ffeae9] rounded-md w-fit hover:opacity-80 transition",
                             "cursor-pointer"
                         )}>
-                        Résilier l’abonnement
+                        Résilier l'abonnement
                     </button>}
                 </DialogTrigger>
                 <DialogContent>
@@ -173,23 +174,10 @@ export const AbonnTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & Abon
         }
     }, [data, loading])
 
-    let textColor = "text-[#E51D13]"
-    let bgColor = "bg-gradient-to-r from-[#A70000] via-[#ff0000] to-[#A70000]"
-
-    switch (title.toLowerCase()) {
-        case "starter particulier":
-            textColor = "text-[#002978]"
-            bgColor = "bg-gradient-to-r from-[#002978] via-[#2746C9] to-[#002978]"
-            break
-        case "premium particulier":
-            textColor = "text-[#002978]"
-            bgColor = "bg-gradient-to-r from-[#2E003E] via-[#6B27C9] to-[#2E003E]"
-            break
-        case "premium entreprise":
-            textColor = "text-[#ffcd6f]"
-            bgColor = "bg-gradient-to-r from-[#FF9900] via-[#ffcd6f] to-[#E89900]"
-            break
-    }
+    // Utiliser le système de couleurs centralisé si aucune couleur n'est fournie
+    const colors = getSubscriptionColors(title);
+    const finalTextColor = logoColor || colors.textColor;
+    const finalBgColor = className || colors.bgColor;
 
     return (
 
@@ -197,8 +185,7 @@ export const AbonnTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & Abon
             className={
                 cn(
                     "px-[17px] py-[18px] bg-[#ffd37f] rounded-lg min-w-[302px]",
-                    className,
-                    bgColor,
+                    finalBgColor,
                 )}
         >
             <div className={"flex flex-col gap-[15px]"}>
@@ -207,7 +194,7 @@ export const AbonnTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & Abon
                         className={"size-[42px] bg-white flex justify-center items-center rounded-full text-[#E89900]"}>
                         <CrownIcon className={cn(
                             "self-center",
-                            textColor
+                            finalTextColor
                         )}
                                    width={25}
                                    height={25}

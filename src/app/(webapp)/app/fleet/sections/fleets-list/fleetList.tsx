@@ -10,34 +10,103 @@ import {Calendar} from "@/components/ui/calendar";
 import {Input} from "@/components/ui/input";
 import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {FleetModel} from "@/model/ADMIN/fleet";
-import {format, isWithinInterval} from "date-fns";
+import {format} from "date-fns";
 import {IoMdClose} from "react-icons/io";
 import {CalendarMinus} from "lucide-react";
 import {ABlockTitle} from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
 import {LuListFilter} from "react-icons/lu";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
-import {searchAndFilter} from "@/model/Model";
 import {CgPlayListSearch} from "react-icons/cg";
 import { Card, CardContent } from "@/components/ui/card";
 
 enum FleetAbonType {
-    free = "Essaie gratuit",
-    premiumParticulier = "premium particulier",
-    starterParticulier = "starter particulier",
-    premiumProfessionnel = "premium entreprise\n",
-    starterProfessionnel = "starter entreprise",
+    essai_gratuit = "essai_gratuit",
+    starter_entreprise = "starter_entreprise",
+    essentiel_entrepreneur = "essentiel_entrepreneur",
+    premium_entrepreneur = "premium_entrepreneur",
+    premium_entreprise = "premium_entreprise",
+    None = "None",
+}
+
+interface FilterState {
+    searchTerm: string;
+    abonType: string;
+    dateRange: Date[] | undefined;
+    // Filtres de dates de création
+    createdFrom?: Date;
+    createdTo?: Date;
+    // Filtres de dates de début/fin
+    startDate?: Date;
+    endDate?: Date;
+    // Filtres de compteurs
+    vehiclesCountMin?: number;
+    vehiclesCountMax?: number;
+    driversCountMin?: number;
+    driversCountMax?: number;
 }
 
 export const FleetList = () => {
-
     const [page, setPage] = React.useState(1)
     const [itemPerPage, setItemPerPage] = React.useState(10)
    
-    const {data: data, isLoading} = useGetFleetsList({
-        page,
-        itemPerPage
+    const [filterState, setFilterState] = React.useState<FilterState>({
+        searchTerm: "",
+        abonType: "all",
+        dateRange: undefined,
+        createdFrom: undefined,
+        createdTo: undefined,
+        startDate: undefined,
+        endDate: undefined,
+        vehiclesCountMin: undefined,
+        vehiclesCountMax: undefined,
+        driversCountMin: undefined,
+        driversCountMax: undefined,
     })
+
+    // Construire les paramètres de requête API avec les filtres
+    const apiParams = useMemo(() => {
+        const params: any = {
+            page,
+            itemPerPage,
+        }
+
+        // Ajouter les filtres actifs
+        if (filterState.searchTerm.trim()) {
+            params.name = filterState.searchTerm.trim()
+        }
+        if (filterState.abonType !== "all" && filterState.abonType !== "None") {
+            params.subscription_name = filterState.abonType
+        }
+        if (filterState.createdFrom) {
+            params.created_from = filterState.createdFrom.toISOString()
+        }
+        if (filterState.createdTo) {
+            params.created_to = filterState.createdTo.toISOString()
+        }
+        if (filterState.startDate) {
+            params.start_date = filterState.startDate.toISOString()
+        }
+        if (filterState.endDate) {
+            params.end_date = filterState.endDate.toISOString()
+        }
+        if (filterState.vehiclesCountMin !== undefined && filterState.vehiclesCountMin !== null) {
+            params.vehicles_count_min = filterState.vehiclesCountMin
+        }
+        if (filterState.vehiclesCountMax !== undefined && filterState.vehiclesCountMax !== null) {
+            params.vehicles_count_max = filterState.vehiclesCountMax
+        }
+        if (filterState.driversCountMin !== undefined && filterState.driversCountMin !== null) {
+            params.drivers_count_min = filterState.driversCountMin
+        }
+        if (filterState.driversCountMax !== undefined && filterState.driversCountMax !== null) {
+            params.drivers_count_max = filterState.driversCountMax
+        }
+
+        return params
+    }, [page, itemPerPage, filterState])
+   
+    const {data: data, isLoading, isFetching} = useGetFleetsList(apiParams)
 
     const fleets = useMemo(() => {
         return data?.fleets || []
@@ -51,29 +120,128 @@ export const FleetList = () => {
         itemPerPage: data?.itemPerPage || itemPerPage,
     }), [data, page, itemPerPage])
 
-    const [date, setDate] = React.useState<Date[] | undefined>([])
     const [calendarIsOpen, setCalendarIsOpen] = React.useState(false)
+    const [createdFromOpen, setCreatedFromOpen] = React.useState(false)
+    const [createdToOpen, setCreatedToOpen] = React.useState(false)
+    const [startDateOpen, setStartDateOpen] = React.useState(false)
+    const [endDateOpen, setEndDateOpen] = React.useState(false)
     const [filterIsActive, setFilterIsActive] = React.useState(false)
-    const [filterFleetToken, setFilterFleetToken] = React.useState("")
-    const [activeBonnType, setActiveAbonType] = React.useState("all")
 
+    // Gestionnaire pour la recherche
+    const handleSearchChange = (searchTerm: string) => {
+        setFilterState(prev => ({ ...prev, searchTerm }))
+        setPage(1) // Réinitialiser à la première page lors d'un nouveau filtre
+    }
 
+    // Gestionnaire pour le filtre d'abonnement
+    const handleAbonTypeFilter = (abonType: string) => {
+        setFilterState(prev => ({ ...prev, abonType }))
+        setPage(1)
+    }
 
+    // Gestionnaires pour les dates
+    const handleDateRangeChange = (dateRange: Date[] | undefined) => {
+        setFilterState(prev => ({ ...prev, dateRange }))
+        setPage(1)
+    }
 
-    if (!isLoading && fleets && fleets.length === 0) {
+    const handleCreatedFromChange = (date: Date | undefined) => {
+        setFilterState(prev => ({ ...prev, createdFrom: date }))
+        setPage(1)
+    }
+
+    const handleCreatedToChange = (date: Date | undefined) => {
+        setFilterState(prev => ({ ...prev, createdTo: date }))
+        setPage(1)
+    }
+
+    const handleStartDateChange = (date: Date | undefined) => {
+        setFilterState(prev => ({ ...prev, startDate: date }))
+        setPage(1)
+    }
+
+    const handleEndDateChange = (date: Date | undefined) => {
+        setFilterState(prev => ({ ...prev, endDate: date }))
+        setPage(1)
+    }
+
+    // Gestionnaires pour les compteurs
+    const handleVehiclesCountMinChange = (value: string) => {
+        const num = value === "" ? undefined : parseInt(value)
+        setFilterState(prev => ({ ...prev, vehiclesCountMin: num }))
+        setPage(1)
+    }
+
+    const handleVehiclesCountMaxChange = (value: string) => {
+        const num = value === "" ? undefined : parseInt(value)
+        setFilterState(prev => ({ ...prev, vehiclesCountMax: num }))
+        setPage(1)
+    }
+
+    const handleDriversCountMinChange = (value: string) => {
+        const num = value === "" ? undefined : parseInt(value)
+        setFilterState(prev => ({ ...prev, driversCountMin: num }))
+        setPage(1)
+    }
+
+    const handleDriversCountMaxChange = (value: string) => {
+        const num = value === "" ? undefined : parseInt(value)
+        setFilterState(prev => ({ ...prev, driversCountMax: num }))
+        setPage(1)
+    }
+
+    // Vérifier si des filtres sont actifs
+    const hasActiveFilters = useMemo(() => {
         return (
-            <EmptyData
-                message={"Aucune flotte pour l'instant"}
-            />
+            filterState.searchTerm ||
+            filterState.abonType !== "all" ||
+            filterState.dateRange ||
+            filterState.createdFrom ||
+            filterState.createdTo ||
+            filterState.startDate ||
+            filterState.endDate ||
+            filterState.vehiclesCountMin !== undefined ||
+            filterState.vehiclesCountMax !== undefined ||
+            filterState.driversCountMin !== undefined ||
+            filterState.driversCountMax !== undefined
         )
+    }, [filterState])
+
+    // Réinitialiser tous les filtres
+    const resetFilters = () => {
+        setFilterState({
+            searchTerm: "",
+            abonType: "all",
+            dateRange: undefined,
+            createdFrom: undefined,
+            createdTo: undefined,
+            startDate: undefined,
+            endDate: undefined,
+            vehiclesCountMin: undefined,
+            vehiclesCountMax: undefined,
+            driversCountMin: undefined,
+            driversCountMax: undefined,
+        })
+        setPage(1)
     }
 
 
         return (
             <div>
                 <div className={"flex justify-between items-center"}>
-                    <div className={"lg:mt-[24px] flex items-center  justify-between gap-[26px] w-full"}>
+                    <div className={"lg:mt-[24px] flex items-center justify-between gap-[26px] w-full"}>
                         <ABlockTitle>Sélectionnez une flotte</ABlockTitle>
+                        <div className="flex items-center gap-2">
+                            {hasActiveFilters && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={resetFilters}
+                                    className="text-xs"
+                                >
+                                    Réinitialiser tous les filtres
+                                </Button>
+                            )}
                         <Button
                             className={cn(
                                 "flex items-center hover:text-white gap-1 bg-white text-vaTextPrimary border",
@@ -85,84 +253,304 @@ export const FleetList = () => {
                             <LuListFilter/>
                         </Button>
                     </div>
-                    {/*<UserAccountSection/>*/}
+                    </div>
                 </div>
+                
                 <div className={"mb-[20px] mt-[10px] lg:mt-[22px]"}>
-                    {filterIsActive && <div className={"flex flex-col gap-2 lg:flex-row items-center justify-between"}>
-                        <div
-                            className={"flex flex-row  justify-between w-full md:justify-start items-center gap-2"}>
-                            <div className={"font-semibold text-sm text-vaTextPrimary"}>Type d'abonnement:</div>
-                            <Select defaultValue={"all"} onValueChange={()=>{}}>
-                                <SelectTrigger className="w-fit">
-                                    <SelectValue placeholder="Type"/>
+                    {filterIsActive && (
+                        <Card className="p-6">
+                            <CardContent className="space-y-6 p-0">
+                                {/* Barre de recherche - En premier pour plus de visibilité */}
+                                <div className="w-full">
+                                    <label className="font-semibold text-sm text-vaTextPrimary mb-2 block">
+                                        Rechercher par nom
+                                    </label>
+                                    <Input
+                                        placeholder={"Rechercher une flotte..."}
+                                        rightIcon={<CgPlayListSearch className={"text-vaTextPrimary text-[20px]"}/>}
+                                        value={filterState.searchTerm}
+                                        onChange={(e) => handleSearchChange(e.target.value)}
+                                        className="w-full"
+                                    />
+                                </div>
+
+                                {/* Filtre par type d'abonnement */}
+                                <div>
+                                    <label className="font-semibold text-sm text-vaTextPrimary mb-2 block">
+                                        Type d'abonnement
+                                    </label>
+                                    <Select 
+                                        value={filterState.abonType} 
+                                        onValueChange={handleAbonTypeFilter}
+                                    >
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder="Sélectionner un type"/>
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="all">Tout</SelectItem>
-                                    <SelectItem value={`${FleetAbonType.free}`}>Essaie gratuit</SelectItem>
-                                    <SelectItem value={`${FleetAbonType.premiumParticulier}`}>Premium
-                                        particulier</SelectItem>
-                                    <SelectItem value={`${FleetAbonType.starterParticulier}`}>Starter
-                                        particulier</SelectItem>
-                                    <SelectItem value={`${FleetAbonType.premiumProfessionnel}`}>Premium
-                                        professionnel</SelectItem>
-                                    <SelectItem value={`${FleetAbonType.starterProfessionnel}`}>Starter
-                                        professionnel</SelectItem>
+                                            <SelectItem value="all">Tous les types</SelectItem>
+                                            <SelectItem value={FleetAbonType.essai_gratuit}>Essai gratuit</SelectItem>
+                                            <SelectItem value={FleetAbonType.starter_entreprise}>Starter entreprise</SelectItem>
+                                            <SelectItem value={FleetAbonType.essentiel_entrepreneur}>Essentiel entrepreneur</SelectItem>
+                                            <SelectItem value={FleetAbonType.premium_entrepreneur}>Premium entrepreneur</SelectItem>
+                                            <SelectItem value={FleetAbonType.premium_entreprise}>Premium entreprise</SelectItem>
+                                            <SelectItem value={FleetAbonType.None}>Aucun abonnement</SelectItem>
                                 </SelectContent>
                             </Select>
+                                </div>
+
+                                {/* Filtres de dates - Grid 2 colonnes */}
+                                <div>
+                                    <h3 className="font-bold text-base text-vaTextPrimary mb-3">Filtres par dates</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {/* Date de création - De */}
+                                        <div className="space-y-2">
+                                            <label className="font-semibold text-sm text-vaTextPrimary">
+                                                Créé depuis le
+                                            </label>
+                                            <div className="flex items-center gap-2">
+                                                <Popover open={createdFromOpen} onOpenChange={setCreatedFromOpen}>
+                                                    <PopoverTrigger asChild>
+                                                        <Button
+                                                            variant="outline"
+                                                            className={cn(
+                                                                "w-full justify-start text-left font-normal",
+                                                                !filterState.createdFrom && "text-muted-foreground"
+                                                            )}
+                                                        >
+                                                            <CalendarMinus className="mr-2 h-4 w-4" />
+                                                            {filterState.createdFrom ? format(filterState.createdFrom, "dd/MM/yyyy") : "Sélectionner"}
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-auto p-0" align="start">
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={filterState.createdFrom}
+                                                            onSelect={(date) => {
+                                                                handleCreatedFromChange(date)
+                                                                setCreatedFromOpen(false)
+                                                            }}
+                                                            initialFocus
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                                {filterState.createdFrom && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => handleCreatedFromChange(undefined)}
+                                                        className="p-1 h-9 w-9"
+                                                    >
+                                                        <IoMdClose className="h-4 w-4"/>
+                                                    </Button>
+                                                )}
+                                            </div>
                         </div>
-                        <div
-                            className={"flex flex-row  justify-between w-full md:justify-end items-center gap-2"}>
-                            <div className={"font-semibold text-sm text-vaTextPrimary"}>Date d'ajout:</div>
-                            <div className={"flex items-center gap-2"}>
-                                <Popover open={calendarIsOpen} onOpenChange={setCalendarIsOpen}>
-                                    <PopoverTrigger>
-                                        <Input
-                                            rightIcon={<CalendarMinus className={"text-vaTextPrimary"}/>}
-                                            className={"w-fit max-w-[230px]"}
-                                            placeholder={"Choisir une intervalle"}
-                                            onClick={() => {
-                                                setCalendarIsOpen(true)
-                                                setDate([])
-                                            }}
-                                            value={date?.length ? `${format(date.length ? date[0] : new Date(), "dd/MM/yyyy")} - ${format(date.length > 1 ? date[1] : new Date(), "dd/MM/yyyy")}` : ""}
-                                        />
-                                    </PopoverTrigger>
-                                    <PopoverContent asChild className={"p-0"}>
-                                        <div>
-                                            <Calendar
-                                                mode="multiple"
-                                                selected={date}
-                                                min={2}
-                                                max={2}
-                                                onSelect={(day) => {
-                                                    console.log(day)
-                                                    setDate(day)
-                                                    if (date && date?.length >= 1) {
-                                                        setCalendarIsOpen(false)
-                                                    }
-                                                }}
-                                                className="rounded-md border"
-                                            />
+
+                                        {/* Date de création - Jusqu'à */}
+                                        <div className="space-y-2">
+                                            <label className="font-semibold text-sm text-vaTextPrimary">
+                                                 jusqu'au
+                                            </label>
+                                            <div className="flex items-center gap-2">
+                                                <Popover open={createdToOpen} onOpenChange={setCreatedToOpen}>
+                                                    <PopoverTrigger asChild>
+                                                        <Button
+                                                            variant="outline"
+                                                            className={cn(
+                                                                "w-full justify-start text-left font-normal",
+                                                                !filterState.createdTo && "text-muted-foreground"
+                                                            )}
+                                                        >
+                                                            <CalendarMinus className="mr-2 h-4 w-4" />
+                                                            {filterState.createdTo ? format(filterState.createdTo, "dd/MM/yyyy") : "Sélectionner"}
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-auto p-0" align="start">
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={filterState.createdTo}
+                                                            onSelect={(date) => {
+                                                                handleCreatedToChange(date)
+                                                                setCreatedToOpen(false)
+                                                            }}
+                                                            initialFocus
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                                {filterState.createdTo && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => handleCreatedToChange(undefined)}
+                                                        className="p-1 h-9 w-9"
+                                                    >
+                                                        <IoMdClose className="h-4 w-4"/>
+                                                    </Button>
+                                                )}
+                                            </div>
                                         </div>
+
+                                        {/* Date de début */}
+                                        <div className="space-y-2">
+                                            <label className="font-semibold text-sm text-vaTextPrimary">
+                                                Date de début l'abonnement
+                                            </label>
+                                            <div className="flex items-center gap-2">
+                                                <Popover open={startDateOpen} onOpenChange={setStartDateOpen}>
+                                                    <PopoverTrigger asChild>
+                                                        <Button
+                                                            variant="outline"
+                                                            className={cn(
+                                                                "w-full justify-start text-left font-normal",
+                                                                !filterState.startDate && "text-muted-foreground"
+                                                            )}
+                                                        >
+                                                            <CalendarMinus className="mr-2 h-4 w-4" />
+                                                            {filterState.startDate ? format(filterState.startDate, "dd/MM/yyyy") : "Sélectionner"}
+                                                        </Button>
+                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-auto p-0" align="start">
+                                            <Calendar
+                                                            mode="single"
+                                                            selected={filterState.startDate}
+                                                            onSelect={(date) => {
+                                                                handleStartDateChange(date)
+                                                                setStartDateOpen(false)
+                                                            }}
+                                                            initialFocus
+                                                        />
+                                                    </PopoverContent>
+                                                </Popover>
+                                                {filterState.startDate && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => handleStartDateChange(undefined)}
+                                                        className="p-1 h-9 w-9"
+                                                    >
+                                                        <IoMdClose className="h-4 w-4"/>
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        </div>
+
+                                        {/* Date de fin */}
+                                        <div className="space-y-2">
+                                            <label className="font-semibold text-sm text-vaTextPrimary">
+                                                Date de fin l'abonnement
+                                            </label>
+                                            <div className="flex items-center gap-2">
+                                                <Popover open={endDateOpen} onOpenChange={setEndDateOpen}>
+                                                    <PopoverTrigger asChild>
+                                                        <Button
+                                                            variant="outline"
+                                                            className={cn(
+                                                                "w-full justify-start text-left font-normal",
+                                                                !filterState.endDate && "text-muted-foreground"
+                                                            )}
+                                                        >
+                                                            <CalendarMinus className="mr-2 h-4 w-4" />
+                                                            {filterState.endDate ? format(filterState.endDate, "dd/MM/yyyy") : "Sélectionner"}
+                                                        </Button>
+                                                    </PopoverTrigger>
+                                                    <PopoverContent className="w-auto p-0" align="start">
+                                                        <Calendar
+                                                            mode="single"
+                                                            selected={filterState.endDate}
+                                                            onSelect={(date) => {
+                                                                handleEndDateChange(date)
+                                                                setEndDateOpen(false)
+                                                            }}
+                                                            initialFocus
+                                                        />
                                     </PopoverContent>
                                 </Popover>
-                                {date?.length ? <button onClick={() => setDate([])}>
-                                    <IoMdClose/>
-                                </button> : <span></span>}
+                                                {filterState.endDate && (
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => handleEndDateChange(undefined)}
+                                                        className="p-1 h-9 w-9"
+                                                    >
+                                                        <IoMdClose className="h-4 w-4"/>
+                                                    </Button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Filtres de compteurs */}
+                                <div>
+                                    <h3 className="font-bold text-base text-vaTextPrimary mb-3">Filtres par quantité</h3>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        {/* Nombre de véhicules */}
+                                        <div className="space-y-2">
+                                            <label className="font-semibold text-sm text-vaTextPrimary">
+                                                Nombre de véhicules
+                                            </label>
+                                            <div className="flex items-center gap-2">
+                                                <Input
+                                                    type="number"
+                                                    placeholder="Min"
+                                                    value={filterState.vehiclesCountMin ?? ""}
+                                                    onChange={(e) => handleVehiclesCountMinChange(e.target.value)}
+                                                    className="w-full"
+                                                    min={0}
+                                                />
+                                                <span className="text-gray-500">-</span>
+                                                <Input
+                                                    type="number"
+                                                    placeholder="Max"
+                                                    value={filterState.vehiclesCountMax ?? ""}
+                                                    onChange={(e) => handleVehiclesCountMaxChange(e.target.value)}
+                                                    className="w-full"
+                                                    min={0}
+                                                />
                             </div>
                         </div>
-                        <Input
-                            placeholder={"Rechercher..."}
-                            rightIcon={<CgPlayListSearch className={"text-vaTextPrimary text-[28px]"}/>}
-                            onChange={(e) => {
-                                e.preventDefault()
-                                e.stopPropagation()
-                                setFilterFleetToken(e.currentTarget.value)
-                            }}
-                        />
 
-                    </div>}
+                                        {/* Nombre de chauffeurs */}
+                                        <div className="space-y-2">
+                                            <label className="font-semibold text-sm text-vaTextPrimary">
+                                                Nombre de chauffeurs
+                                            </label>
+                                            <div className="flex items-center gap-2">
+                                                <Input
+                                                    type="number"
+                                                    placeholder="Min"
+                                                    value={filterState.driversCountMin ?? ""}
+                                                    onChange={(e) => handleDriversCountMinChange(e.target.value)}
+                                                    className="w-full"
+                                                    min={0}
+                                                />
+                                                <span className="text-gray-500">-</span>
+                        <Input
+                                                    type="number"
+                                                    placeholder="Max"
+                                                    value={filterState.driversCountMax ?? ""}
+                                                    onChange={(e) => handleDriversCountMaxChange(e.target.value)}
+                                                    className="w-full"
+                                                    min={0}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Nombre de résultats */}
+                                {paginationMeta.totalRecords > 0 && (
+                                    <div className="pt-2 border-t">
+                                        <p className="text-sm text-gray-600">
+                                            <span className="font-semibold">{paginationMeta.totalRecords}</span> résultat(s) trouvé(s)
+                                        </p>
+                                    </div>
+                                )}
+                            </CardContent>
+                        </Card>
+                    )}
                 </div>
+
                 <Card className={"rounded-lg py-5"}>
                     <CardContent>
                     <div className={" custom-scrollbar rounded-lg overflow-x-scroll"}>

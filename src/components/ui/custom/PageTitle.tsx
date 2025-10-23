@@ -12,12 +12,14 @@ import {
     SelectTrigger,
     SelectValue
 } from "@/components/ui/select";
-import {useGetFleetsList} from "@/hooks/admin/useFleetHook";
+import {useGetCurrenciesList, useGetFleetsList} from "@/hooks/admin/useFleetHook";
 import {useGetParkID} from "@/hooks/__globlal/useGlobalHook";
 import {Input} from "@/components/ui/input";
 import {FleetModel} from "@/model/ADMIN/fleet";
 import {searchAndFilter} from "@/model/Model";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
+import FleetService from "@/services/admin/fleet/fleetService";
+import {queryClient} from "@/app/_utils/network/reactQuery";
 
 type SelectType = { key: string; value: string }
 
@@ -45,6 +47,7 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     const pathname = usePathname()
     const [filterFleetToken, setFilterFleetToken] = React.useState("")
     const [fleetListState, setFleetListState] = React.useState<FleetModel[]>([])
+    const {data: currencies, isLoading: loadingCurrency} = useGetCurrenciesList()
 
 
     React.useEffect(() => {
@@ -92,7 +95,10 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                 <div>{page_title}</div>
             </div>
             {isSecondFleet && <div>
-                <Select defaultValue={activeFleet} onValueChange={v => setActiveFleet(v)}>
+                <Select
+                    defaultValue={activeFleet}
+                    onValueChange={v => setActiveFleet(v)}
+                >
                     <SelectTrigger className="w-[180px]">
                         <SelectValue placeholder="Selectionner"/>
                     </SelectTrigger>
@@ -111,8 +117,12 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                             </div>
                             {
                                 fleetListState.map((item, index) => (
-                                    <SelectItem key={item.id}
-                                                value={item.id}>{item.name}</SelectItem>
+                                    <SelectItem
+                                        key={item.id}
+                                        value={item.id}
+                                    >
+                                        {item.name}
+                                    </SelectItem>
                                 ))
                             }
                         </SelectGroup>
@@ -121,22 +131,68 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
             </div>
             }
             {withSelect &&
-                <Select onValueChange={onValueChange} defaultValue={AuthManagerGuard.getEnabledFleetType ?? items[0]?.key}>
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Selectionner"/>
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectLabel>Selectionner le type de flotte</SelectLabel>
-                            {
-                                items?.map((item, index) => (
-                                    <SelectItem key={item.key}
-                                                value={item.key}>{item.value}</SelectItem>
-                                ))
-                            }
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>}
+                <div className={"flex items-center gap-2"}>
+                    <Select
+                        onValueChange={async (v) => {
+                            AuthManagerGuard.setEnabledFleetType(v)
+                            console.log(AuthManagerGuard.getEnabledFleetType, ": New value setted")
+                            await FleetService.invalidFleets()
+                            queryClient.invalidateQueries().then(() => {
+                            })
+                        }}
+                        defaultValue={AuthManagerGuard.getEnabledFleetType ?? items[0]?.key}
+                    >
+                        <SelectTrigger
+                            className=" w-fit bg-[#D9E5FF]  text-center justify-center text-blue-800 text-lg font-medium font-['DM Sans'] leading-normal">
+                            <SelectValue placeholder="Selectionner"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Selectionner le type de flotte</SelectLabel>
+                                {/*<SelectItem*/}
+                                {/*    value={"999999"}*/}
+                                {/*>*/}
+                                {/*    Tous*/}
+                                {/*</SelectItem>*/}
+                                {
+                                    items?.map((item, index) => (
+                                        <SelectItem key={item.key}
+                                                    value={item.key}>{item.value}</SelectItem>
+                                    ))
+                                }
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>
+                    {AuthManagerGuard.isAllCities && <Select
+                        onValueChange={cur => {
+                            AuthManagerGuard.setCurrency(cur)
+                            queryClient.invalidateQueries().then(() => {
+                            })
+                        }}
+                        defaultValue={AuthManagerGuard.getCurrency ?? items[0]?.key}
+                    >
+                        <SelectTrigger
+                            className=" w-fit bg-[#D9E5FF]  text-center justify-center text-blue-800 text-lg font-medium font-['DM Sans'] leading-normal">
+                            <SelectValue placeholder="Dévise"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectGroup>
+                                <SelectLabel>Selectionner la dévise</SelectLabel>
+                                {
+                                    currencies?.map((item, index) => (
+                                        <SelectItem
+                                            key={item.id}
+                                            value={`${item.id}`}
+                                        >
+                                            {item.name}
+                                        </SelectItem>
+                                    ))
+                                }
+                            </SelectGroup>
+                        </SelectContent>
+                    </Select>}
+                </div>
+            }
 
 
         </div>

@@ -1,17 +1,22 @@
 import * as React from "react";
-import dynamic from "next/dynamic";
+import {DM_Sans} from 'next/font/google'
+import '@/assets/ui/globals.scss'
 
-function SecurityGroupLayout({
+const dmSans = DM_Sans({subsets: ['latin']})
+
+export default function RootLayout({
     children,
 }: {
     children: React.ReactNode
 }) {
     return (
-        <main>
-            {children}
-        </main>
-    )
+        <html lang="fr">
+            <body className={dmSans.className}>
+                <main>
+                    {children}
+                </main>
+            </body>
+        </html>
+    );
 }
-
-export default dynamic(() => Promise.resolve(SecurityGroupLayout), { ssr: false })
 

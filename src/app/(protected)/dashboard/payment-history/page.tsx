@@ -1,12 +1,13 @@
 "use client"
 
-import React from "react";
+import React, {Suspense} from "react";
 import AdminSubNav from "@/components/layout/admin/SubNav/AdminSubNav";
 import useGeolocationStore from "@/stores/protected/dashboard/geolocation/useGeolocationStore";
 import {FilterSection, FilterType} from "@/app/(protected)/dashboard/payment-history/components/tabs";
 import {
     Transaction
 } from "@/app/(protected)/dashboard/status-accounts/soldes/components/lastTransactions/lastTransactions";
+import Loading from "@/components/ui/Loader";
 
 const PaymentHistory: React.FC = () => {
 
@@ -24,7 +25,13 @@ const PaymentHistory: React.FC = () => {
                 isSubPage={true}
             />
             <div className={"flex flex-col gap-[25px] 2xl:w-[878px]"}>
-                <FilterSection activeFilter={FilterType.neutral}/>
+                <Suspense
+                    fallback={<Loading/>}
+                >
+                    <FilterSection
+                        activeFilter={FilterType.neutral}
+                    />
+                </Suspense>
                 <SectionDate>Aujourd’hui</SectionDate>
                 <div className={"flex flex-col gap-1"}>
                     <Transaction/>

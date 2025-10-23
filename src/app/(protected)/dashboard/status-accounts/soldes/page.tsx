@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {AccountStatus} from "@/app/(protected)/dashboard/status-accounts/soldes/components/accountStatus/accountStatus";
 import {PayMethods} from "@/app/(protected)/dashboard/status-accounts/soldes/components/payMethods/payMethods";

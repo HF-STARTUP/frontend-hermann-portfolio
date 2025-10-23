@@ -61,11 +61,13 @@ class LoginService extends Service {
     }
 
     static async getProfileInfo() {
-        return await LoginService.getInstance().execHttpRequest<AdminProfileResponseType>({
+        const response = await LoginService.getInstance().execHttpRequest<AdminProfileResponseType>({
             url: LoginService.profilePath,
             method: 'GET',
             secure: false,
-        }).then((response) => new UserProfile(response))
+        })
+
+        return new UserProfile(response)
     }
 
     static refreshProfile() {
