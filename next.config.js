@@ -6,7 +6,33 @@ const nextConfig = {
     //     },
     // },
     /** @type {import('next').NextConfig} */
-
+    experimental: {
+        disableOptimizedLoading: true, // Désactive les optimisations du chargement
+    },
+    logging: {
+        fetches: {
+            fullUrl: false,
+        },
+    },
+    onDemandEntries: {
+        maxInactiveAge: 25 * 1000,
+        pagesBufferLength: 2,
+    },
+    webpack(config, { isServer }) {
+        // Ignore tous les warnings
+        config.ignoreWarnings = [/./];
+        
+        // Configuration pour afficher uniquement les erreurs
+        config.stats = 'errors-only';
+        
+        // Minimiser les logs pendant le build
+        config.infrastructureLogging = {
+            level: 'error',
+        };
+        
+        return config;
+    },
+    output: "standalone",
     eslint: {
         ignoreDuringBuilds: true,
     },
@@ -49,7 +75,7 @@ const nextConfig = {
                 source: '/app',
                 destination: '/app/dashboard',
                 permanent: true,
-            },
+            }
         ]
     }
 }

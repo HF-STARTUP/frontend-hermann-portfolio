@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
     AlbumIcon,
@@ -15,6 +17,7 @@ import {
     GeolocationIcon,
     GraphIcon,
     ListIcon,
+    MegaphoneIcon,
     MesagesDotsIcon,
     Notification2Icon,
     PasswordIcon,
@@ -95,6 +98,11 @@ const _ADMIN_SIDEBAR_NAV_LINKS = [
         name: 'Etat des comptes',
         icon: <FundsIcon/>,
         url: '/status-accounts/soldes'
+    },
+    {
+        name: 'Marketing/communication',
+        icon: <MegaphoneIcon/>,
+        url: '/marketing'
     },
     {
         name: 'Paramètres',

@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react";
-import {usePathname, useParams} from "next/navigation";
+import {useParams, usePathname} from "next/navigation";
 import Link from "next/link";
 import {cn} from "@/lib/utils";
 
@@ -48,8 +48,13 @@ export const PageNavigation = () => {
         {
             label: "Entretiens",
             url: "/entretien",
+        },
+        {
+            label: "Parametres",
+            url: "/settings",
             last: true
         },
+
 
     ]
 

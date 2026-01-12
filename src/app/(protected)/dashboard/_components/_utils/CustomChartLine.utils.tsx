@@ -3,16 +3,16 @@
 import {Line} from "react-chartjs-2";
 import React from "react";
 import {
-    Chart as ChartJS,
+    ArcElement,
+    BarElement,
     CategoryScale,
+    Chart as ChartJS,
+    Legend,
     LinearScale,
-    PointElement,
     LineElement,
+    PointElement,
     Title,
     Tooltip,
-    Legend,
-    BarElement,
-    ArcElement,
 } from 'chart.js';
 
 
@@ -210,7 +210,7 @@ export const CustomChartLineUtils3:React.FC<{isWeekly?: boolean, idata: number[]
     const datasetConfBase = {
         backgroundColor: 'white',
         fill: true,
-        label: '2024',
+        label: '2025',
         tension: 0.3,
         borderWidth: 4,
         pointRadius: 0,

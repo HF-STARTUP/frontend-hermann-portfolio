@@ -4,7 +4,7 @@ import React from "react";
 import {AdminSettingBox} from "@/components/box/Card";
 import {AdminPageTitle} from "@/components/typo/typo";
 import {cn} from "@/lib/utils";
-import {MoreVertical} from "lucide-react";
+import {LoaderCircle, MoreVertical} from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -13,11 +13,24 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import {AddAdminDialog} from "@/app/(webapp)/app/settings/profile/actions/addAdmin/AddAdminDialog";
-import {useDeactivateOrActivateAdmin, useGetAdminList} from "@/hooks/admin/useSettingsHook";
+import {useDeactivateOrActivateAdmin, useGetAdminList, useRemoveAdminOnCity} from "@/hooks/admin/useSettingsHook";
 import UserProfile from "@/model/user/User";
 import Loading from "@/components/ui/Loader";
 import {AdminAccountStatus} from "@/types/__form/profile.type";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
+import {SetCityToAdminDialog} from "@/app/(webapp)/app/settings/profile/actions/addAdmin/AddCityOnAdmin";
+import {AiFillDelete} from "react-icons/ai";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger
+} from "@/components/ui/dialog";
+import BtnBase from "@/components/elements/BtnBase";
+import {ExpandableRoles} from "@/app/(webapp)/app/settings/users/_components/expandable-roles";
 
 const UsersPage: React.FC = () => {
 
@@ -55,9 +68,27 @@ const AdminUsers: React.FC = () => {
     if (admins && admins.length) {
         return (
             <div className={`flex gap-[9px] flex-col w-full`}>
-                {admins.map(admin => (
-                    <OneAdminUser user={admin} key={admin.getID}/>
-                ))
+                {
+                    admins
+                        .sort((a, b) => {
+                            const statusA = a._instance.status;
+                            const statusB = b._instance.status;
+
+                            if (statusA === statusB) return 0;
+
+                            if (statusA === AdminAccountStatus.Deactivated && statusB !== AdminAccountStatus.Deactivated) {
+                                return 1;
+                            }
+
+                            if (statusB === AdminAccountStatus.Deactivated && statusA !== AdminAccountStatus.Deactivated) {
+                                return -1;
+                            }
+
+                            return 0;
+                        })
+                        .map((admin) => (
+                            <OneAdminUser user={admin} key={admin.getID}/>
+                        ))
                 }
             </div>
         )
@@ -69,6 +100,7 @@ const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
     const {onToggleStatus, loading: loadingToggle} = useDeactivateOrActivateAdmin()
     const {username, readRoles, writeRoles} = user
     const [isOpen, setIsOpen] = React.useState(false)
+    const [modifyCityIsOpen, setModifyCityIsOpen] = React.useState(false)
 
     const isDeactivated = user._instance.status === AdminAccountStatus.Deactivated
     const isLoggedAdmin = AuthManagerGuard.getProfileID === user.getID
@@ -81,8 +113,10 @@ const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
             )}>
             <div className={"flex justify-between lg:items-center"}>
                 <div className={"flex flex-col lg:flex-row gap-[9px] lg:items-center"}>
-                    <div className="text-black text-xs lg:text-md font-bold lg:font-medium lg:leading-[30.12px]">{username}</div>
-                    <div className={"text-black text-sm font-medium leading-[21.08px] flex flex-col lg:flex-row gap-[9px] lg:items-center"}>
+                    <div
+                        className="text-black text-xs lg:text-md font-bold lg:font-medium lg:leading-[30.12px]">{username}</div>
+                    <div
+                        className={"text-black text-sm font-medium leading-[21.08px] flex flex-col lg:flex-row gap-[9px] lg:items-center"}>
                         <div className="">{user._instance.user.email}</div>
                         <div>{user._instance.user.phone}</div>
                         {isDeactivated && <div className={"text-red-800"}>Désactivé</div>}
@@ -97,9 +131,19 @@ const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
                             </button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent>
+
                             <DropdownMenuItem
                                 onClick={() => setIsOpen(true)}
-                            >Modifier l’administrateur</DropdownMenuItem>
+                            >
+                                Modifier l’administrateur
+                            </DropdownMenuItem>
+
+                            <DropdownMenuItem
+                                onClick={() => setModifyCityIsOpen(true)}
+                            >
+                                Attribuer une ville
+                            </DropdownMenuItem>
+
                             <DropdownMenuSeparator/>
                             {!isLoggedAdmin && <DropdownMenuItem
                                 onClick={() => {
@@ -113,28 +157,113 @@ const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
                     </DropdownMenu>
                 </div>
             </div>
-            <div className={"bg-[#fdfdfd] px-[20px] py-[10px] rounded-md flex flex-col gap-[10px] overflow-hidden"}>
-
-                <div className={"flex flex-col lg:flex-row gap-[12px]"}>
-                    <RoleTitle>Lecture:</RoleTitle>
-                    <div className={"flex flex-wrap items-center gap-[10px]"}>
-                        {readRoles.map((r, i) => <RoleTag key={i}>{r.onglet.name}</RoleTag>)}
-                    </div>
+            <ExpandableRoles
+                readRoles={readRoles}
+                writeRoles={writeRoles}
+            />
+            <div className={"flex items-center flex-col lg:flex-row gap-[12px] text-xs"}>
+                <div>Ville:</div>
+                <div className={"flex gap-2 items-center"}>
+                    {user.cities.map(c => (
+                        <CityItem
+                            citySize={user.cities.length}
+                            cityID={"" + c.id}
+                            userID={"" + user.profileUserID}
+                            id={"" + c.id}
+                            key={c.id}
+                        >{c.name}</CityItem>
+                    ))}
                 </div>
-
-                <div className={"flex flex-col lg:flex-row gap-[12px]"}>
-                    <RoleTitle>Ecriture:</RoleTitle>
-                    <div className={"flex flex-wrap items-center gap-[10px]"}>
-                        {writeRoles.map((r, i) => <RoleTag key={i} tagType={"write"}>{r.onglet.name}</RoleTag>)}
-                    </div>
-                </div>
-
             </div>
             <AddAdminDialog
                 profile={user}
                 isOpen={isOpen}
-                setIsOpen={v => setIsOpen(v)}
+                setIsOpen={setIsOpen}
             />
+            <SetCityToAdminDialog
+                profile={user}
+                isOpen={modifyCityIsOpen}
+                setIsOpen={setModifyCityIsOpen}
+            />
+        </div>
+    )
+}
+
+const CityItem: React.FC<React.HTMLAttributes<HTMLDivElement> & {
+    cityID: string,
+    userID: string,
+    citySize: number
+}> = ({
+          citySize,
+          cityID,
+          userID,
+          children
+      }) => {
+
+    const {onRemoveAdmonOnCity, loading} = useRemoveAdminOnCity()
+
+    const [isOpen, setIsOpen] = React.useState(false)
+
+    const handleRemoveCity = () => {
+        onRemoveAdmonOnCity({
+            city_id: cityID,
+            user_id: userID
+        })
+    }
+
+    return (
+        <div
+            className={cn("bg-white/40 border rounded-md p-2 flex items-center justify-between gap-2 group", citySize < 2 && "opacity-70")}>
+            <div>{children}</div>
+            {citySize > 1 && (<Dialog open={isOpen} onOpenChange={setIsOpen}>
+                <DialogTrigger asChild>
+                    {<button disabled={loading} className={"hidden group-hover:block transition"}>
+                        {loading ? <LoaderCircle/> : <AiFillDelete/>}
+                    </button>}
+                </DialogTrigger>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Confirmer la suppression de la ville pour cet administrateur</DialogTitle>
+                        <DialogDescription className={"pt-4"}>
+                            Êtes-vous sûr de vouloir effectuer cette opération ? Après cela, vous ne pourrez plus
+                            revenir en arrière.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter>
+                        <div className={`mt-[20px] w-full flex flex-col gap-2`}>
+
+                            <BtnBase
+                                onClick={() => setIsOpen(false)}
+                                shape={'square'}
+                                to={''}
+                                variant={'contained'}
+                                color={'blue'}
+                                fullwidth={true}
+                                className={"w-full"}
+                                disabled={loading}
+                            >
+                                Annuler
+                            </BtnBase>
+                            <BtnBase
+                                shape={'square'}
+                                to={''}
+                                variant={'contained'}
+                                fontWeight={'bold'}
+                                color={'yellow'}
+                                fullwidth={true}
+                                className={"w-full"}
+                                disabled={loading}
+                                onClick={handleRemoveCity}
+                                loading={loading}
+                            >
+                                Retirer la ville
+                            </BtnBase>
+
+                        </div>
+                    </DialogFooter>
+                </DialogContent>
+
+            </Dialog>)}
         </div>
     )
 }

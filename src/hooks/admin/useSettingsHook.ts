@@ -1,7 +1,13 @@
 import TicketService from "@/services/admin/ticket/ticketService";
 import React from "react";
 import {useRouter} from "next/navigation";
-import {AddAdminInput, UpdatePasswordInput, UpdateProfileInput} from "@/schema/ADMIN/settings.schema";
+import {
+    AddAdminInput,
+    AddAdminOnCityInput,
+    RemoveAdminOnCityInput,
+    UpdatePasswordInput,
+    UpdateProfileInput
+} from "@/schema/ADMIN/settings.schema";
 import SettingsService, {SettingsApiPath} from "@/services/admin/settings/settingsService";
 import LoginService from "@/services/__form/auth/LoginService";
 import {useMutationProvider, useQueryProvider} from "@/hooks/hooksProvider";
@@ -28,7 +34,9 @@ export const useUpdateProfile = () => {
     }
 
     React.useEffect(() => {
-        void TicketService.invalidMessages()
+        if (data && isSuccess) {
+            void TicketService.invalidMessages()
+        }
     }, [isSuccess, data])
 
     React.useEffect(() => {
@@ -36,6 +44,7 @@ export const useUpdateProfile = () => {
             void LoginService.refreshProfile()
         }
     }, [data, isSuccess])
+
 
     return {
         data,
@@ -45,7 +54,6 @@ export const useUpdateProfile = () => {
     }
 
 }
-
 
 export const useUpdatePassword = () => {
 
@@ -66,7 +74,9 @@ export const useUpdatePassword = () => {
     }
 
     React.useEffect(() => {
-        void TicketService.invalidMessages()
+        if (data && isSuccess) {
+            void TicketService.invalidMessages()
+        }
     }, [isSuccess, data])
 
 
@@ -118,7 +128,9 @@ export const useCreateAdmin = () => {
     }
 
     React.useEffect(() => {
-        void SettingsService.refreshAdmins()
+        if (data && isSuccess) {
+            void SettingsService.refreshAdmins()
+        }
     }, [isSuccess, data])
 
     return {
@@ -126,6 +138,72 @@ export const useCreateAdmin = () => {
         loading,
         isSuccess,
         onCreateAdmin,
+    }
+
+}
+
+export const useAddAdminOnCity = () => {
+
+    const {
+        data,
+        loading,
+        isSuccess,
+        isError,
+        handleMutation,
+    } = useMutationProvider({
+        mutationFn: SettingsService.addAdminOnCity,
+        successMessage: "Ville associer à l'admin.",
+    });
+
+    const onAddAdminOnCity = (data: AddAdminOnCityInput) => {
+        handleMutation(data)
+    }
+
+    React.useEffect(() => {
+        if (isSuccess && data) {
+            void SettingsService.refreshAdmins()
+            void LoginService.refreshProfile()
+        }
+    }, [isSuccess, data])
+
+    return {
+        data,
+        loading,
+        isSuccess,
+        onAddAdminOnCity,
+    }
+
+}
+
+export const useRemoveAdminOnCity = () => {
+
+    const {
+        data,
+        loading,
+        isSuccess,
+        isError,
+        handleMutation,
+    } = useMutationProvider({
+        mutationFn: SettingsService.removeAdminOnCity,
+        successMessage: "Ville dissocier de l'admin.",
+    });
+
+    const onRemoveAdmonOnCity = (data: RemoveAdminOnCityInput) => {
+        handleMutation(data)
+    }
+
+    React.useEffect(() => {
+        if (data && isSuccess) {
+            void SettingsService.refreshAdmins()
+            void LoginService.refreshProfile()
+        }
+    }, [isSuccess, data])
+
+    return {
+        data,
+        loading,
+        isSuccess,
+        onRemoveAdmonOnCity,
     }
 
 }
@@ -147,7 +225,9 @@ export const useDeactivateOrActivateAdmin = () => {
     }
 
     React.useEffect(() => {
-        void SettingsService.refreshAdmins()
+        if (data && isSuccess) {
+            void SettingsService.refreshAdmins()
+        }
     }, [isSuccess, data])
 
     return {
@@ -155,6 +235,35 @@ export const useDeactivateOrActivateAdmin = () => {
         loading,
         isSuccess,
         onToggleStatus,
+    }
+
+}
+
+
+export const useDeleteFleet = () => {
+
+    const {
+        data,
+        isSuccess,
+        ...options
+    } = useMutationProvider({
+        mutationFn: SettingsService.deleteFleet,
+        successMessage: "Flotte suprimé.",
+    })
+
+    const $router= useRouter()
+
+    React.useEffect(() => {
+        if(isSuccess && data){
+            $router.replace("/app/fleet")
+            $router.refresh()
+        }
+    }, [isSuccess, data])
+
+    return {
+        data,
+        isSuccess,
+        ...options
     }
 
 }

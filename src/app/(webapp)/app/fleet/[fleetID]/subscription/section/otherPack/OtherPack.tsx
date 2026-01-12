@@ -1,3 +1,5 @@
+"use client";
+
 import {ABlockTitle} from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
 import {AbonnTypeCard} from "@/app/(webapp)/app/fleet/[fleetID]/subscription/section/acrtiveAbonn/activeAbonn";
 import * as React from "react"
@@ -6,6 +8,7 @@ import {Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious,
 import {usGetSubscriptionPacks} from "@/hooks/subscription/useSubscription";
 import {useGetMyPosition} from "@/hooks/__globlal/useGlobalHook";
 import Loading from "@/components/ui/Loader";
+import {getSubscriptionColors} from "@/utils/subscriptionColors";
 
 export function PackCaroussel() {
 
@@ -36,23 +39,8 @@ export function PackCaroussel() {
         <Carousel className="w-full">
             <CarouselContent className="-ml-1">
                 {data && data.map((d, i) => {
-                    let textColor = "text-[#E51D13]"
-                    let bgColor = "bg-gradient-to-r from-[#A70000] via-[#ff0000] to-[#A70000]"
-
-                    switch (d._instance.name) {
-                        case "starter particulier":
-                            textColor = "text-[#002978]"
-                            bgColor = "bg-gradient-to-r from-[#002978] via-[#2746C9] to-[#002978]"
-                            break
-                        case "premium particulier":
-                            textColor = "text-[#002978]"
-                            bgColor = "bg-gradient-to-r from-[#2E003E] via-[#6B27C9] to-[#2E003E]"
-                            break
-                        case "premium entreprise":
-                            textColor = "text-[#ffcd6f]"
-                            bgColor = "bg-gradient-to-r from-[#FF9900] via-[#ffcd6f] to-[#E89900]"
-                            break
-                    }
+                    const colors = getSubscriptionColors(d._instance.name);
+                    
                     return (
                         <CarouselItem
                             key={i}
@@ -62,12 +50,12 @@ export function PackCaroussel() {
                                 <AbonnTypeCard
                                     id={d.id}
                                     title={`${d.name}`}
-                                    subtitle={`${d._instance.crossed_out_amount}${d._instance.currency}/véhicule/${d._instance.period}`}
+                                    subtitle={`${d._instance.amount}${d._instance.currency}/véhicule/${d._instance.period}`}
                                     action={
                                         <ChangePackBtn/>
                                     }
-                                    logoColor={textColor}
-                                    className={bgColor}
+                                    logoColor={colors.textColor}
+                                    className={colors.bgColor}
                                 />
                             </div>
                         </CarouselItem>
@@ -96,7 +84,7 @@ export const OtherPack = () => {
     return (
         <div className={"flex flex-col gap-[18px]  p-4 bg-white rounded-[20px]"}>
             <div className={"mb-[23px]"}>
-                <ABlockTitle>Autres packs d’abonnement</ABlockTitle>
+                <ABlockTitle>Autres packs d'abonnement</ABlockTitle>
             </div>
             <PackCaroussel/>
         </div>

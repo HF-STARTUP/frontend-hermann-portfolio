@@ -72,7 +72,7 @@ const DialogBase: React.FC<React.HTMLAttributes<HTMLDivElement> & DialogBaseProp
                     </Transition.Child>
 
                     <div className="fixed inset-0 overflow-y-auto">
-                        <div className="flex min-h-full items-center justify-center p-4 text-center">
+                        <div className="flex min-h-full items-center justify-center lg:p-4 text-center">
                             <Transition.Child
                                 as={Fragment}
                                 enter="ease-out duration-300"
@@ -114,7 +114,7 @@ export const AdminDialogHead: React.FC<DialogHeadProps> = ({
         <div>
             <div className={`flex justify-between items-start pb-[15px] bg-white ${withBack ? 'mb-[10px]' : ''}`}>
                 <div
-                    className={`flex justify-center items-center gap-[24px] text-admin-primary text-[28px] font-bold  leading-[30px] tracking-[-2%]`}>
+                    className={`flex justify-center items-center gap-2 lg:gap-[24px] text-admin-primary text-md lg:text-[28px] font-bold  leading-[30px] tracking-[-2%]`}>
                     {withBack && <div className={`cursor-pointer hover:opacity-60 transition ease-in duration-300`}
                                       onClick={handleToggle}>
                         <ChevronBackIcon/>

@@ -21,6 +21,7 @@ import {UpdateProfileInput, updateProfileInputSchema} from "@/schema/ADMIN/setti
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import {useUserProfile} from "@/hooks/__form/auth/useUserProfile";
 import Loading from "@/components/ui/Loader";
+import {useGetProfileID} from "@/hooks/__globlal/useGlobalHook";
 
 const ProfilePage: React.FC = () => {
     return (
@@ -58,6 +59,7 @@ const PersonalInfosForm = () => {
     }
 
     const {data: profile, isLoading} = useUserProfile()
+    const {profile_id} = useGetProfileID()
 
 
     React.useEffect(() => {

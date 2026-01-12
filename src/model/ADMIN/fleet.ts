@@ -47,7 +47,7 @@ export class FleetModel extends Model {
     }
 
     get start_date() {
-        return this.formatDate(this._instance.end_date)
+        return this.formatDate(this._instance.start_date)
     }
 
     get end_date() {
@@ -58,18 +58,20 @@ export class FleetModel extends Model {
         return this._instance.ca_total + " " + this._instance.currency
     }
 
+    get currency() {
+        return this._instance.currency
+    }
+
     get subscription_amount() {
-        return (this._instance.subscription_amount ? this._instance.subscription_amount + " " : 0) + this._instance.currency
+        return (this._instance.subscription_amount ? this._instance.subscription_amount + " " : 0 + " ") + this._instance.currency
     }
 
     get suscription_name() {
         return this._instance.subscription ?? "Aucun abonnement actif"
     }
 
-    get abon_status() {
-        return this.getDifferenceInDays(new Date(), this._instance.end_date) > 0
-            ? "Active"
-            : "Désactivé"
+    get hasActiveSubscription() {
+        return !!this._instance.subscription;
     }
 }
 

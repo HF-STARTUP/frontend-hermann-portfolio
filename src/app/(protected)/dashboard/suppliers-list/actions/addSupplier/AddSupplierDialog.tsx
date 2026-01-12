@@ -1,3 +1,5 @@
+"use client";
+
 import React, {MouseEventHandler} from "react";
 import DialogBase, {AdminDialogHead, DefaultDialogMainBody, DialogActions} from "@/components/dialog/Dialog";
 import FormGroup from "@/components/box/FormGroup";

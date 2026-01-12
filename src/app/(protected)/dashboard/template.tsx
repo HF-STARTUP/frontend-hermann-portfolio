@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 const Template: React.FC<{ children: React.ReactNode }> = ({children}) => {

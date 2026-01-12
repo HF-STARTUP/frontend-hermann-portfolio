@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import ClientItem
     from "@/app/(protected)/dashboard/clients/_components/suppliersItems/_components/SupplierItem/ClientItem";

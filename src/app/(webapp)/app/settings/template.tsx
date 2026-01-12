@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import SettingSidebar from "@/app/(protected)/dashboard/settings/_components/SettingSidebar";
 import AdminSubNav from "@/components/layout/admin/SubNav/AdminSubNav";

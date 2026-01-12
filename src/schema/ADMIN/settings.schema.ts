@@ -60,12 +60,30 @@ export type AddAdminInput = {
     last_name: string
 }
 
+export type AddAdminOnCityInput = {
+    "last_name"?: string,
+    "first_name"?: string,
+    "access": UserAccess[],
+    "city_id": string,
+    "user_id": string
+}
+
+export type RemoveAdminOnCityInput = {
+    city_id: string,
+    user_id: string
+}
+
+export type UserAccess = {
+    "access_id": number,
+    "type": "read" | "write"
+}
+
 export const AddAdminInputSchema = Joi.object<AddAdminInput>({
     email: _JoiConfig.emailRequired,
     phone: _JoiConfig.phoneRequired,
     first_name: _JoiConfig.strRequired,
     last_name: _JoiConfig.strRequired,
-    city_id: _JoiConfig.strRequired,
+    city_id: _JoiConfig.strOptionnal,
 })
 
 

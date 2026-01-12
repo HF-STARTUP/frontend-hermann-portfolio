@@ -15,6 +15,18 @@ class UserProfile extends Model {
         return datas.map(data => new UserProfile(data));
     }
 
+    get userID() {
+        return this._instance.id;
+    }
+
+    get profileUserID() {
+        return this._instance.user.id;
+    }
+
+    get cities() {
+        return this._instance.admin_on_city
+    }
+
     get username() {
         return this._instance.last_name + " " + this._instance.first_name
     }
@@ -24,11 +36,11 @@ class UserProfile extends Model {
     }
 
     get readRoles() {
-        return this._instance.admin_on_city[0].permissions
+        return this._instance?.admin_on_city[0]?.permissions ?? []
     }
 
     get writeRoles() {
-        return this._instance.admin_on_city[0].permissions.filter(p => p.onglet.access === ACCESS_TYPE.WRITE)
+        return this._instance?.admin_on_city[0]?.permissions.filter(p => p.onglet.access === ACCESS_TYPE.WRITE) ?? []
     }
 
     get listPark() {
@@ -63,6 +75,7 @@ class UserProfile extends Model {
     get getUsername() {
         return this._instance.first_name
     }
+
 
     get isGranted() {
         return false

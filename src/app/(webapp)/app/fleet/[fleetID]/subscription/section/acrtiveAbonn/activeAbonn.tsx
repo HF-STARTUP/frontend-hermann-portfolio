@@ -20,6 +20,7 @@ import {
     DialogTrigger
 } from "@/components/ui/dialog";
 import BtnBase from "@/components/elements/BtnBase";
+import {getSubscriptionColors} from "@/utils/subscriptionColors";
 
 export const ActiveAbonnSection = () => {
 
@@ -43,7 +44,7 @@ export const ActiveAbonnSection = () => {
                     {hasAbonnement ? <AbonnTypeCard
                         title={abon.name}
                         subtitle={activeSubscription.abonResume}
-                        action={<div className="text-black text-xs font-semibold">Expire
+                        action={<div className="text-white text-xs font-semibold">Expire
                             le {activeSubscription.endDate}</div>}
                         logoColor={"text-[#e89900]"}
                         className={"bg-gradient-to-r from-[#FF9900] via-[#ffcd6f] to-[#E89900]"}
@@ -66,7 +67,7 @@ const ActiveAbonnDetails: React.FC<{ subs: AbonResponseModel }> = ({subs}) => {
     return (
         <div className={"flex flex-col gap-[16px] w-full"}>
             {[
-                ["Type d’abonnement :", subs.subscription.name],
+                ["Type d'abonnement :", subs.subscription.name],
                 ["Date de souscription :", subs.startDate]
             ].map((item, index) => (
                 <div key={index} className={"flex justify-between items-center"}>
@@ -87,7 +88,7 @@ const ActiveAbonnDetails: React.FC<{ subs: AbonResponseModel }> = ({subs}) => {
                             "text-center text-[#e51d13] text-sm font-bold font-['DM Sans'] leading-3 px-5 py-[12px] bg-[#ffeae9] rounded-md w-fit hover:opacity-80 transition",
                             "cursor-pointer"
                         )}>
-                        Résilier l’abonnement
+                        Résilier l'abonnement
                     </button>}
                 </DialogTrigger>
                 <DialogContent>
@@ -157,18 +158,34 @@ export const AbonnTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & Abon
                                                                                                        className
                                                                                                    }) => {
 
+    const [isOpen, setIsOpen] = React.useState<boolean>(false)
+
+
     const {data, onActiveSubscription, loading} = useActiveSubscription()
 
     const handleActiveSubscription = () => {
         id && onActiveSubscription(id)
     }
 
+
+    React.useEffect(() => {
+        if (loading && data) {
+            setIsOpen(false)
+        }
+    }, [data, loading])
+
+    // Utiliser le système de couleurs centralisé si aucune couleur n'est fournie
+    const colors = getSubscriptionColors(title);
+    const finalTextColor = logoColor || colors.textColor;
+    const finalBgColor = className || colors.bgColor;
+
     return (
+
         <div
             className={
                 cn(
-                    "px-[17px] py-[18px] bg-[#ffd37f] rounded-lg bg-gradient-to-r from-[#FF9900] via-[#ffcd6f] to-[#E89900] min-w-[302px]",
-                    className
+                    "px-[17px] py-[18px] bg-[#ffd37f] rounded-lg min-w-[302px]",
+                    finalBgColor,
                 )}
         >
             <div className={"flex flex-col gap-[15px]"}>
@@ -177,12 +194,61 @@ export const AbonnTypeCard: React.FC<React.HTMLAttributes<HTMLDivElement> & Abon
                         className={"size-[42px] bg-white flex justify-center items-center rounded-full text-[#E89900]"}>
                         <CrownIcon className={cn(
                             "self-center",
-                            logoColor
-                        )} width={25} height={25}/>
+                            finalTextColor
+                        )}
+                                   width={25}
+                                   height={25}
+                        />
                     </div>
-                    {!loading && <div onClick={handleActiveSubscription}>
-                        {action}
-                    </div>}
+
+                    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                        <DialogTrigger asChild>
+                            <div>
+                                {!loading && <div>{action}</div>}
+                            </div>
+                        </DialogTrigger>
+                        <DialogContent>
+                            <DialogHeader>
+                                <DialogTitle>Activer le pack <span className={""}>"{title}"</span> pour cette flotte de
+                                    véhicules</DialogTitle>
+                                <DialogDescription className={"pt-4"}>
+                                    Êtes-vous sûr de vouloir activer ce pack pour la flotte sélectionnée ? Une fois
+                                    activé, le pack sera immédiatement appliqué à l'ensemble des véhicules de cette
+                                    flotte.
+                                </DialogDescription>
+                            </DialogHeader>
+                            <DialogFooter>
+                                <div className={`mt-[20px] w-full flex flex-col gap-2`}>
+                                    <BtnBase
+                                        onClick={() => setIsOpen(false)}
+                                        shape={'square'}
+                                        to={''}
+                                        variant={'contained'}
+                                        color={'blue'}
+                                        fullwidth={true}
+                                        className={"w-full"}
+                                        disabled={loading}
+                                    >
+                                        Annuler
+                                    </BtnBase>
+                                    <BtnBase
+                                        shape={'square'}
+                                        to={''}
+                                        variant={'contained'}
+                                        fontWeight={'bold'}
+                                        color={'yellow'}
+                                        fullwidth={true}
+                                        className={"w-full"}
+                                        disabled={loading}
+                                        onClick={handleActiveSubscription}
+                                        loading={loading}
+                                    >
+                                        Activer l'abonnement
+                                    </BtnBase>
+                                </div>
+                            </DialogFooter>
+                        </DialogContent>
+                    </Dialog>
                     {loading &&
                         <span className={"text-white font-medium text-[12px]"}>Activation...</span>
                     }

@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {cn} from "@/lib/utils";
 import {ArrowUpIcon} from "lucide-react";
@@ -17,7 +19,7 @@ type ActionCardProps = {
         label: string,
         value: string
     },
-    average: {
+    average?: {
         type: AverageType,
         label?: string
     }
@@ -46,18 +48,18 @@ export const ActionCard: React.FC<React.HTMLAttributes<HTMLDivElement> & ActionC
                 <div className="text-black text-sm font-semibold mb-[3px]">{cardValue.label}</div>
                 <div className="text-[#000b20] text-2xl font-semibold">{cardValue.value}</div>
             </div>
-            <div className={cn(
+            {average && average.type !== AverageType.NEUTRAL && <div className={cn(
                 "flex items-center gap-[6px] text-[#00a656]",
                 average.type === AverageType.NEGATIVE && "text-[#e51d13]",
-                average.type === AverageType.NEUTRAL && "text-warning-400"
+                // average.type === AverageType.NEUTRAL && "text-warning-400"
             )}>
-                {average.type !== AverageType.NEUTRAL && <div className={cn(
+                {<div className={cn(
                     average.type === AverageType.NEGATIVE && "rotate-180"
                 )}>
                     <ArrowUpIcon/>
                 </div>}
                 <div className="text-xs font-medium">{average.label}</div>
-            </div>
+            </div>}
         </div>
     )
 }

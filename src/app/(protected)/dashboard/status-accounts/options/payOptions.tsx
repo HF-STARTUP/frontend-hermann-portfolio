@@ -1,3 +1,5 @@
+"use client";
+
 import VImageProvider from "@/components/helpers/VImageProvider";
 import mtnLogo from "@/assets/agregators/mtn.png"
 import omLogo from "@/assets/agregators/om.png"

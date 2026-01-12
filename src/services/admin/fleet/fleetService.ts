@@ -7,11 +7,15 @@ import {
     FleetListResponseType,
     FleetResponseType,
     ParkDetailsResponseType,
+    ProfitableListResponseType,
     RevenusEvolution
 } from "@/types/admin/fleet";
 import {AbonResponseModel, AdminOnFleetModel, FleetModel, ParkStatResponseType} from "@/model/ADMIN/fleet";
 import {ResponseWithPagination} from "@/types/generic";
 import {endOfDay, format, startOfDay} from "date-fns";
+import { toQueriesString } from "@/lib/utils";
+import {CurencyResponseType} from "@/types/vehicule.type";
+import {FleetByCityResponseType, RevenusRepartitionResponseType} from "@/types/dashboard.schedule.type";
 
 export enum FleetApiPath {
     GetFleetByCityID = '/park/by',
@@ -31,35 +35,136 @@ export enum FleetApiPath {
     DashboardSubscriptionEvolution = "/dashboard/city/subscription/evolution",
     ActivateSubscription = "/subscription/activate-subscription",
     CancelSubscription = "/subscription/cancel-active-subscription",
+    Currency = "currency",
+    OperatorRevenus = "/dashboard/operator-revenue",
+    FleetByCity = "/dashboard/fleet-by-city",
+    SubscriptionPlanRevenus = "/dashboard/subscription-plan-revenue",
+    ProfitableList = "/dashboard/city/park/profitable-list"
 }
 
+export type GetFleetByCityIDParams = {
+    city_id?: string;
+    type?: string;
+    page?: number;
+    itemPerPage?: number;
+    limit?: number;
+    // Filtres de recherche et dates
+    name?: string;
+    subscription_name?: string;
+    created_from?: string; // ISO datetime
+    created_to?: string; // ISO datetime
+    start_date?: string; // ISO datetime
+    end_date?: string; // ISO datetime
+    // Filtres de compteurs
+    vehicles_count_min?: number;
+    vehicles_count_max?: number;
+    drivers_count_min?: number;
+    drivers_count_max?: number;
+}
+
+export type OperatorRevenusInputs = {
+    start_date: string
+    end_date: string
+    currency_id?: string
+    type?: string
+    city_id?: string
+}
+
+export type FleetByCityInputs = {
+    country_id?: string
+}
+
+
+export type SubscriptionPlanRevenusInputs = {
+    start_date: string
+    end_date: string
+    currency_id?: string
+}
+
+export type ProfitableListInputs = {
+    type: string
+    city_id: string
+    currency_id?: string
+}
+
+export interface OperatorRevenueResponse {
+    operator_id: string;
+    operator_name: string;
+    country_name: string;
+    total_amount: number;
+    currency: string;
+    path?: string
+}
 class FleetService extends Service {
     private static instance: FleetService = new FleetService();
 
     private constructor() {
-        super();
+        super()
     }
 
     public static getInstance(): FleetService {
         return FleetService.instance;
     }
 
+    public static async getProfitableList(inputs: ProfitableListInputs) {
+        const [data] = await Promise.all([FleetService.makeRequest<ProfitableListResponseType[]>(
+            FleetService.instance.toQueryString(inputs, FleetApiPath.ProfitableList),
+            'GET'
+        )])
+        return data
+    }
+
+    public static async getSubscriptionPlanRevenus(inputs: SubscriptionPlanRevenusInputs) {
+        const [data] = await Promise.all([FleetService.makeRequest<RevenusRepartitionResponseType>(
+            FleetService.instance.toQueryString(inputs, FleetApiPath.SubscriptionPlanRevenus),
+            'GET'
+        )])
+        return data
+    }
+
+    public static async getFleetByCity(inputs: FleetByCityInputs) {
+        const [data] = await Promise.all([FleetService.makeRequest<FleetByCityResponseType[]>(
+            FleetService.instance.toQueryString(inputs, FleetApiPath.FleetByCity),
+            'GET'
+        )])
+        return data
+    }
+
+    public static async getOratorsRevenus(inputs: OperatorRevenusInputs) {
+        const [data] = await Promise.all([FleetService.makeRequest<OperatorRevenueResponse[]>(
+            FleetService.instance.toQueryString(inputs, FleetApiPath.OperatorRevenus),
+            'GET'
+        )])
+        return data
+    }
+
+    public static async getCurrencies() {
+        const [data] = await Promise.all([FleetService.makeRequest<CurencyResponseType[]>(
+            FleetApiPath.Currency,
+            'GET',
+        )])
+        return data
+    }
+
     static invalidFleets() {
         return FleetService.getInstance().queryClient.invalidateQueries({queryKey: [FleetApiPath.GetFleetByCityID]});
     }
 
-    public static async GetFleetByCityID({city_id, fleet_type}: { city_id: string, fleet_type: string }) {
-
-        const uri = FleetApiPath.GetFleetByCityID + "/" + city_id + `?type=${fleet_type}`
-
-        const data = await FleetService.makeRequest<FleetListResponseType[]>(
+    public static async GetFleetByCityID({city_id, ...params}: GetFleetByCityIDParams) {
+       
+        const uri = toQueriesString(FleetApiPath.GetFleetByCityID + "/" + city_id, params)
+      
+        const {data, ...meta} = await FleetService.makeRequest<ResponseWithPagination<FleetListResponseType[]>>(
             uri,
             'GET',
             undefined,
             true
         )
 
-        return FleetModel.fromArray(data)
+        return {
+            fleets: FleetModel.fromArray(data),
+            ...meta
+        }
     }
 
     public static async getAdminsOnFleet({park_id}: { park_id: string }): Promise<AdminOnFleetModel[]> {
@@ -174,11 +279,12 @@ class FleetService extends Service {
     }
 
 
-    public static async getParkStats({cityID, type}: {
+    public static async getParkStats({cityID, type, currency}: {
         cityID: string,
-        type: string
+        type: string,
+        currency?: string
     }): Promise<ParkDetailsResponseType> {
-        const uri = FleetApiPath.ParkStats + "?city_id=" + cityID + "&type=" + type
+        const uri = FleetApiPath.ParkStats + "?city_id=" + cityID + "&type=" + type + (currency ? ("&currency=" + currency) : "")
         const data = await FleetService.makeRequest<ParkDetailsResponseType>(
             uri,
             'GET',
@@ -304,11 +410,11 @@ class FleetService extends Service {
         cityID: string,
         graphType: string,
         type: string
-    }): Promise<RevenusEvolution[]> {
+    }) {
 
         const uri = FleetApiPath.DashboardSubscriptionEvolution + "?city_id=" + cityID + "&graph=" + graphType + "&type=" + type
 
-        return await FleetService.makeRequest<RevenusEvolution[]>(
+        return await FleetService.makeRequest<RevenusEvolution>(
             uri,
             'GET',
             undefined,
@@ -341,7 +447,5 @@ class FleetService extends Service {
         return this.getInstance().execHttpRequest<T>({url, method, body, secure});
     }
 
-
 }
-
 export default FleetService;

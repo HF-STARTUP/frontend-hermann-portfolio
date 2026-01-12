@@ -6,6 +6,7 @@ import {PageNavigation} from "@/app/(webapp)/app/fleet/[fleetID]/_utils";
 import {AbonnTag} from "@/app/(webapp)/app/fleet/[fleetID]/subscription/section/AABonnHistory/AABonnHistory";
 import {useGetActiveSubscriptionOnFleet} from "@/hooks/admin/useFleetHook";
 import {WarningIcon} from "@/components/ui/__icons";
+import AuthManagerGuard from "@/guard/AuthManagerGuard";
 
 const Template: React.FC<{ children: React.ReactNode }> = ({children}) => {
 
@@ -22,7 +23,7 @@ const Template: React.FC<{ children: React.ReactNode }> = ({children}) => {
                         url: "/fleet",
                     },
                     {
-                        label: "Particuliers /",
+                        label: `${AuthManagerGuard.getEnabledFleetType} /`,
                         url: "/fleet",
                     },
                     // {

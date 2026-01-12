@@ -116,4 +116,5 @@ export type Onglet = {
 export type User = {
     phone: string;
     email: string;
+    id: string
 }

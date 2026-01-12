@@ -1,4 +1,5 @@
 import {differenceInDays, format, formatDistanceToNow} from "date-fns";
+import {fr} from "date-fns/locale";
 
 export const imageBaseUrl = `https://s3.us-west-2.amazonaws.com/images.vtccontrol.com`
 
@@ -9,7 +10,7 @@ abstract class Model {
     }
 
     protected toDate(date: Date, dateFormat: string = 'dd/MM/yyyy ') {
-        return typeof date === "object" ? formatDistanceToNow(date) : "-"
+        return date ? formatDistanceToNow(date, {locale: fr}) : "-"
     }
 
     protected formatDate(date: Date, dateFormat: string = 'dd/MM/yyyy'): string {

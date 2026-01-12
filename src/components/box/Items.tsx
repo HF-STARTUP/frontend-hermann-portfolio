@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {cn} from "@/utils/ui/cn";
 export const VerticalDisplayListItemsContainer: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({

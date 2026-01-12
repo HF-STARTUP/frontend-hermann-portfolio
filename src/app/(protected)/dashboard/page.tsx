@@ -33,6 +33,7 @@ import {useRequestAccountingState, useRequestFleetChatData} from "@/hooks/acount
 import {useGetCurrency} from "@/hooks/__globlal/useGlobalHook";
 import {
     DateWithPreviewsDateType,
+    formatNumber,
     getCurrentMonthYear,
     getMonthDates,
     getPreviousMonthYear,
@@ -116,13 +117,13 @@ const StatCard1 = () => {
                 <AccountStatSubtitleContainer>
                     {accounting?.result && <StatTitle
                         title={"Total chiffre d’affaires :"}
-                        value={`${accounting?.result.difference_current_month} ${currency}`}
+                        value={`${formatNumber(accounting?.result.difference_current_month)} ${currency}`}
                         className={"text-[#2554AE]"}
                     />}
                     {accounting?.result && <div className={"flex gap-2 items-center"}>
                         <StatSubTitle>vs. {getPreviousMonthYear(activeMonths, year)}</StatSubTitle>
                         <StatStatus
-                            variant={accounting?.expensePercent.status}>{accounting?.result.difference_last_month}</StatStatus>
+                            variant={accounting?.expensePercent.status}>{formatNumber(accounting?.result.difference_last_month)}</StatStatus>
                     </div>}
                     {isLoading || !accounting && <LoadingBar/>}
                 </AccountStatSubtitleContainer>

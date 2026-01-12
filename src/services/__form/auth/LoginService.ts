@@ -28,7 +28,9 @@ class LoginService extends Service {
 
     static async login(formData: LoginInputs) {
 
-        return await LoginService.getInstance().execHttpRequest<AdminLoginResponseType>({
+        const logS = new LoginService()
+
+        return await logS.execHttpRequest<AdminLoginResponseType>({
             url: LoginService.loginPath,
             method: 'POST',
             secure: false,
@@ -60,11 +62,10 @@ class LoginService extends Service {
 
     static async getProfileInfo() {
         const response = await LoginService.getInstance().execHttpRequest<AdminProfileResponseType>({
-            url: LoginService.profilePath + ``,
+            url: LoginService.profilePath,
             method: 'GET',
             secure: false,
         })
-
 
         return new UserProfile(response)
     }

@@ -50,7 +50,7 @@ const BtnBase: React.FC<BtnProps> = ({
     const isAdminCtx = isDashboardContext($pathName)
 
 
-    const btnPY = size === 'sm' ? `py-[15px] ${responsive && 'px-[18px] lg:py-[16px]'}` : 'h-[65.36px] flex items-center justify-center'
+    const btnPY = size === 'sm' ? `h-12 ${responsive && 'px-[18px] lg:py-[16px]'}` : 'h-[65.36px] flex items-center justify-center'
 
     const isSquareBtn = shape === 'square'
 

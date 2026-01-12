@@ -1,3 +1,5 @@
+"use client";
+
 import {useQuery} from "@tanstack/react-query";
 import {QUERY_KEYS} from "@/utils/const/queryKeys";
 import {CityService} from "@/services/location/CityService";
