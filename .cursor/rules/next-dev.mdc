@@ -1,0 +1,237 @@
+---
+description: "Next.js frontend engineering rules with strict design fidelity and enterprise-grade quality"
+alwaysApply: true
+---
+
+## 🎯 Objectif
+Produire du code Next.js :
+- scalable
+- fidèle au design pixel-perfect
+- maintenable long terme
+- conforme aux standards SaaS modernes
+
+Aucune approximation visuelle ou architecturale n’est tolérée.
+
+---
+
+## ⚙️ Next.js – Règles fondamentales
+
+### App Router uniquement
+- Utiliser **Next.js App Router**
+- Interdiction d’utiliser `pages/`
+- Chaque route doit être :
+  - légère
+  - déclarative
+  - sans logique métier
+
+### Server vs Client Components
+- Par défaut : **Server Components**
+- `use client` **uniquement si nécessaire**
+- Toute logique client doit être :
+  - justifiée
+  - isolée
+- Aucun effet secondaire en Server Component
+
+### Data Fetching
+- Data fetching côté serveur prioritaire
+- Utiliser :
+  - `fetch` natif Next.js
+  - caching & revalidation
+- Interdiction de fetch direct dans un composant UI client
+
+---
+
+## 🧱 Architecture & Organisation
+
+### Feature-based Architecture
+
+/app
+/(auth)
+/(dashboard)
+layout.tsx
+page.tsx
+
+/features
+/billing
+components/
+hooks/
+services/
+types/
+
+
+- Pas de logique métier dans `/app`
+- `/app` = orchestration uniquement
+- Toute logique doit vivre dans `/features`
+
+---
+
+## 🔁 State & Cross-Cutting Concerns
+
+### Gestion des états
+- Préférer :
+  - Server State
+  - URL State
+- React Query uniquement côté client
+- Aucun `useState` global hors provider
+
+### Cross-cutting concerns (obligatoire)
+À gérer via :
+- Providers
+- Hooks
+- Middleware Next.js
+
+Exemples :
+- Auth
+- Permissions
+- Feature flags
+- Thèmes
+- i18n
+- Tracking
+
+❌ Jamais directement dans les composants UI.
+
+---
+
+## 🎨 Fidélité Design (règles STRICTES)
+
+### Source of Truth
+- Le design (Figma, MCP, Design System) est **la vérité absolue**
+- Le code doit **reproduire exactement** :
+  - spacing
+  - typographie
+  - couleurs
+  - hiérarchie
+  - interactions
+  - états (hover, focus, disabled)
+
+❌ Aucune interprétation personnelle  
+❌ Aucun "à peu près"
+
+---
+
+### Intégration Figma / MCP
+
+Lorsqu’un design est fourni :
+- Lire et respecter :
+  - Auto Layout
+  - Constraints
+  - Spacing exact
+  - Font weights
+  - Line-height
+- Mapper chaque composant Figma vers :
+  - un composant shadcn
+  - ou un composant custom si inexistant
+
+Toujours expliquer le mapping :
+> Figma Button → `shadcn/ui Button`
+
+---
+
+### Pixel-Perfect Obligatoire
+- Respect exact des :
+  - tailles
+  - paddings
+  - marges
+  - radius
+- Pas de valeurs arbitraires
+- Utiliser les tokens existants
+- Créer un token uniquement si absent
+
+---
+
+## 🧩 UI Components – Shadcn Only
+
+### Règles strictes
+- Utiliser **uniquement shadcn/ui**
+- Custom component autorisé seulement si :
+  - inexistant dans shadcn
+  - ou composition de plusieurs composants shadcn
+
+- Pas de duplication
+- Pas de wrapper inutile
+
+---
+
+## 🧠 Patterns Avancés (obligatoires)
+
+Utiliser lorsque pertinent :
+- Container / Presentational
+- Compound Components
+- Adapter Pattern (design ↔ data)
+- Facade Pattern (API)
+- Dependency Inversion
+- Slot Pattern (layouts)
+
+---
+
+## 🧪 UX Obligatoire
+
+Chaque écran doit gérer :
+- loading (skeletons fidèles au design)
+- empty state
+- error state
+- success state
+
+Animations :
+- subtiles
+- utiles
+- alignées au design
+
+Accessibilité :
+- focus visible
+- navigation clavier
+- aria-labels
+- contrastes WCAG
+
+---
+
+## 🔐 Typage & Validation
+
+- TypeScript strict
+- DTO ≠ UI models
+- Validation à la frontière :
+  - server actions
+  - API
+- Pas de `any`, jamais
+
+---
+
+## 🚀 Performance & Rendering
+
+- Streaming si pertinent
+- Suspense boundaries claires
+- Lazy loading des features
+- Pas de re-render inutile
+
+---
+
+## 🧭 Règle ultime
+
+> Le design dicte le code, jamais l’inverse.
+
+Si une ambiguïté existe :
+- demander clarification
+- ne pas improviser
+
+---
+
+## ❌ Anti-patterns
+
+- Props drilling
+- Logique dans JSX
+- Styles approximatifs
+- Composants géants
+- Fetch dans UI
+- Commentaires pour expliquer un mauvais code
+
+---
+
+## ✅ Définition du succès
+
+- Le designer valide l’écran sans retouche
+- Le code est lisible sans commentaire
+- Le composant est réutilisable
+- La feature est scalable
+
+## Commentaire dans le code
+- pas de commentaires a part si vraiment necessaire
