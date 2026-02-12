@@ -8,74 +8,44 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { CreatePromoCodeFormData } from "@/types/marketing.types"
 import { CreateCodeStep1 } from "./CreateCodeStep1"
-import { useCreatePromoCode } from "@/hooks/marketing/useMarketing"
+import { useCreatePromoCodeForm } from "@/hooks/marketing/useMarketing"
 
 interface CreateCodeDialogProps {
   isOpen: boolean
   onClose: () => void
 }
 
-const INITIAL_FORM_DATA: CreatePromoCodeFormData = {
-  type: '',
-  code: '',
-  message: '',
-  value: '',
-  validity: '',
-  usagePerUser: 1,
-}
-
 export const CreateCodeDialog: React.FC<CreateCodeDialogProps> = ({
   isOpen,
   onClose,
 }) => {
-  const [currentStep, setCurrentStep] = React.useState(1)
-  const [formData, setFormData] = React.useState<CreatePromoCodeFormData>(INITIAL_FORM_DATA)
-  
-  const { mutate: createCode, isLoading } = useCreatePromoCode()
-
-  const handleClose = () => {
-    setCurrentStep(1)
-    setFormData(INITIAL_FORM_DATA)
-    onClose()
-  }
-
-  const handleStep1Submit = (data: CreatePromoCodeFormData) => {
-    setFormData(data)
-    setCurrentStep(2)
-  }
-
-  const handleBack = () => {
-    setCurrentStep(1)
-  }
-
-  const handleFinalSubmit = () => {
-    if (!formData.type) return
-    
-    createCode({
-      code: formData.code,
-      type: formData.type,
-      value: formData.value,
-      target: formData.validity,
-    }, {
-      onSuccess: () => {
-        handleClose()
-      }
-    })
-  }
+  const {
+    formData,
+    setField,
+    fieldErrors,
+    currentStep,
+    handleStep1Submit,
+    handleBack,
+    handleFinalSubmit,
+    handleClose,
+    isLoading,
+  } = useCreatePromoCodeForm({ onClose })
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="sm:max-w-[500px] p-6 rounded-2xl">
         {currentStep === 1 && (
           <CreateCodeStep1
-            initialData={formData}
-            onSubmit={handleStep1Submit}
+            formData={formData}
+            onFieldChange={setField}
+            fieldErrors={fieldErrors}
+            onSubmit={handleFinalSubmit}
             onClose={handleClose}
+            isLoading={isLoading}
           />
         )}
-        
+
         {currentStep === 2 && (
           <div className="flex flex-col gap-6">
             <DialogHeader className="flex flex-row justify-between items-center space-y-0">
@@ -84,11 +54,11 @@ export const CreateCodeDialog: React.FC<CreateCodeDialogProps> = ({
               </DialogTitle>
               <span className="text-gray-400 text-sm">Étape 2/2</span>
             </DialogHeader>
-            
+
             <div className="text-center py-8 text-gray-500">
-              Étape 2 - Configuration avancée (à définir)
+              Récapitulatif : créez le code pour valider.
             </div>
-            
+
             <div className="flex gap-4">
               <Button
                 type="button"

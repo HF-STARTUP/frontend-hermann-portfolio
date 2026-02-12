@@ -44,6 +44,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>
          value,
          error,
          label,
+         required,
          fixedPhoneValue,
          onPhoneCodeChange,
          ...props
@@ -93,7 +94,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>
                         htmlFor={_id}
                         className={`text-[14px] leading-[24.57px] tracking-[-2%] text-admin-primary line-clamp-1 mb-2`}
                         title={label}
-                    >{label}</label>}
+                    >{label} {required && <span className="text-red-500">*</span>}</label>}
                     <div className={`relative`}>
                         {as === 'select' ? (<>
                                 <select
@@ -137,6 +138,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>
                                         _isPhoneInput && "pl-[80px]"
                                     )}
                                     ref={ref as React.Ref<HTMLInputElement>}
+                                    required={required}
                                     {...props}
                                 />
                                 <div

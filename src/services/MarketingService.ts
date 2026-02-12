@@ -1,13 +1,14 @@
 import Service from "@/services/Service"
-import { 
-  PromoCode, 
-  MarketingKpi, 
-  CodeUsageData, 
+import {
+  PromoCode,
+  PromoCodeListResponse,
+  MarketingKpi,
+  CodeUsageData,
   CreatePromoCodePayload,
   MarketingFilters,
   Commercial,
   CommercialFilters,
-  CreateCommercialPayload
+  CreateCommercialPayload,
 } from "@/types/marketing.types"
 
 class MarketingService extends Service {
@@ -23,10 +24,10 @@ class MarketingService extends Service {
     })
   }
 
-  async getPromoCodes(filters?: MarketingFilters): Promise<PromoCode[]> {
+  async getPromoCodes(filters?: MarketingFilters): Promise<PromoCodeListResponse> {
     const queryParams = filters ? this.toQueryString(filters) : ""
-    return this.execHttpRequest<PromoCode[]>({
-      url: `codes${queryParams ? `?${queryParams}` : ""}`,
+    return this.execHttpRequest<PromoCodeListResponse>({
+      url: `promo-code${queryParams ? `?${queryParams}` : ""}`,
       method: this.httpMethods.get,
     })
   }
@@ -40,7 +41,7 @@ class MarketingService extends Service {
 
   async createPromoCode(payload: CreatePromoCodePayload): Promise<PromoCode> {
     return this.execHttpRequest<PromoCode>({
-      url: "codes",
+      url: "promo-code",
       method: this.httpMethods.post,
       body: payload,
     })

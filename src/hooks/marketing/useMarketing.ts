@@ -1,21 +1,26 @@
+import React from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import marketingService from "@/services/MarketingService"
-import { 
-  MarketingFilters, 
+import {
+  MarketingFilters,
   CreatePromoCodePayload,
+  CreatePromoCodeFormData,
   PromoCode,
   MarketingKpi,
   CodeUsageData,
   Commercial,
   CommercialFilters,
-  CreateCommercialPayload
+  CreateCommercialPayload,
 } from "@/types/marketing.types"
+import { createPromoCodeSchema } from "@/schema/marketing.schema"
+import { useMutationProvider } from "@/hooks/hooksProvider"
 
 export const MARKETING_QUERY_KEYS = {
   kpis: "marketing-kpis",
   codes: "marketing-codes",
   codeUsageStats: "marketing-code-usage-stats",
   commercials: "marketing-commercials",
+  commercialKpis: "marketing-commercial-kpis",
 } as const
 
 export function useGetMarketingKpis() {
@@ -28,12 +33,18 @@ export function useGetMarketingKpis() {
 }
 
 export function useGetPromoCodes(filters?: MarketingFilters) {
-  const { data, isLoading, error, refetch } = useQuery<PromoCode[]>({
+  const { data, isLoading, error, refetch } = useQuery({
     queryKey: [MARKETING_QUERY_KEYS.codes, filters],
     queryFn: () => marketingService.getPromoCodes(filters),
   })
 
-  return { data: data ?? [], isLoading, error, refetch }
+  return {
+    data: data?.data ?? [],
+    totalRecords: data?.totalRecords ?? 0,
+    isLoading,
+    error,
+    refetch,
+  }
 }
 
 export function useGetCodeUsageStats() {
@@ -47,25 +58,130 @@ export function useGetCodeUsageStats() {
 
 export function useCreatePromoCode() {
   const queryClient = useQueryClient()
-  
-  const mutation = useMutation({
-    mutationFn: (payload: CreatePromoCodePayload) => 
-      marketingService.createPromoCode(payload),
-    onSuccess: () => {
+
+  const { data, loading, isSuccess, isError, handleMutation } =
+    useMutationProvider<CreatePromoCodePayload, PromoCode>({
+      mutationFn: (payload) => marketingService.createPromoCode(payload),
+      successMessage: "Code promo créé.",
+    })
+
+  React.useEffect(() => {
+    if (isSuccess) {
       queryClient.invalidateQueries({ queryKey: [MARKETING_QUERY_KEYS.codes] })
       queryClient.invalidateQueries({ queryKey: [MARKETING_QUERY_KEYS.kpis] })
-      queryClient.invalidateQueries({ queryKey: [MARKETING_QUERY_KEYS.codeUsageStats] })
-    },
-  })
+      queryClient.invalidateQueries({
+        queryKey: [MARKETING_QUERY_KEYS.codeUsageStats],
+      })
+    }
+  }, [isSuccess, queryClient])
 
   return {
-    mutate: mutation.mutate,
-    mutateAsync: mutation.mutateAsync,
-    isLoading: mutation.isPending,
-    isError: mutation.isError,
-    isSuccess: mutation.isSuccess,
-    error: mutation.error,
-    reset: mutation.reset,
+    handleMutation,
+    data,
+    isLoading: loading,
+    isError,
+    isSuccess,
+  }
+}
+
+const INITIAL_CREATE_PROMO_FORM_DATA: CreatePromoCodeFormData = {
+  code_label: "",
+  code_type: "",
+  discount_type: "",
+  discount_value: "",
+  validity_days: "",
+  max_usage_per_user: "",
+  is_stackable: false,
+}
+
+function mapFormDataToPayload(formData: CreatePromoCodeFormData): CreatePromoCodePayload {
+  return {
+    code_label: formData.code_label.trim(),
+    code_type: formData.code_type as CreatePromoCodePayload["code_type"],
+    discount_type: formData.discount_type as CreatePromoCodePayload["discount_type"],
+    discount_value: Number(formData.discount_value),
+    validity_days: Number(formData.validity_days),
+    max_usage_per_user: Number(formData.max_usage_per_user),
+    is_stackable: formData.is_stackable,
+  }
+}
+
+export interface UseCreatePromoCodeFormOptions {
+  onSuccess?: () => void
+  onClose?: () => void
+}
+
+export function useCreatePromoCodeForm(options?: UseCreatePromoCodeFormOptions) {
+  const [formData, setFormData] = React.useState<CreatePromoCodeFormData>(INITIAL_CREATE_PROMO_FORM_DATA)
+  const [currentStep, setCurrentStep] = React.useState(1)
+  const [fieldErrors, setFieldErrors] = React.useState<Record<string, string>>({})
+  const successProcessedRef = React.useRef(false)
+
+  const { handleMutation, isLoading, isSuccess } = useCreatePromoCode()
+
+  const handleClose = React.useCallback(() => {
+    setCurrentStep(1)
+    setFormData(INITIAL_CREATE_PROMO_FORM_DATA)
+    setFieldErrors({})
+    options?.onClose?.()
+  }, [options])
+
+  React.useEffect(() => {
+    if (isSuccess && !successProcessedRef.current) {
+      successProcessedRef.current = true
+      options?.onSuccess?.()
+      handleClose()
+    }
+  }, [isSuccess, options, handleClose])
+
+  const setField = React.useCallback(<K extends keyof CreatePromoCodeFormData>(
+    field: K,
+    value: CreatePromoCodeFormData[K]
+  ) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+    setFieldErrors((prev) => {
+      const next = { ...prev }
+      delete next[field]
+      return next
+    })
+  }, [])
+
+  const handleStep1Submit = React.useCallback((data: CreatePromoCodeFormData) => {
+    setFormData(data)
+    setCurrentStep(2)
+  }, [])
+
+  const handleBack = React.useCallback(() => {
+    setCurrentStep(1)
+  }, [])
+
+  const handleFinalSubmit = React.useCallback(() => {
+    const payload = mapFormDataToPayload(formData)
+    const { error } = createPromoCodeSchema.validate(payload, { abortEarly: false })
+    if (error) {
+      const errors: Record<string, string> = {}
+      error.details.forEach((d) => {
+        const key = d.path[0] as string
+        if (key) errors[key] = d.message
+      })
+      setFieldErrors(errors)
+      return
+    }
+    setFieldErrors({})
+    successProcessedRef.current = false
+    handleMutation(payload)
+  }, [formData, handleMutation])
+
+  return {
+    formData,
+    setField,
+    fieldErrors,
+    currentStep,
+    handleStep1Submit,
+    handleBack,
+    handleFinalSubmit,
+    handleClose,
+    isLoading,
   }
 }
 
