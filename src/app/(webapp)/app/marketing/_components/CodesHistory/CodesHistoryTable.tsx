@@ -15,6 +15,8 @@ import {
 import { MarketingFilters, PromoCode } from "@/types/marketing.types"
 import { CreateCodeDialog } from "../CreateCodeDialog/CreateCodeDialog"
 import BtnBase from "@/components/elements/BtnBase"
+import ConfirmationDialog from "@/components/dialog/confirmation-dialog"
+import { PromoCodeDetailsSheet } from "./PromoCodeDetailsSheet"
 
 export const CodesHistoryTable: React.FC = () => {
   const [filters, setFilters] = React.useState<MarketingFilters>({
@@ -22,17 +24,36 @@ export const CodesHistoryTable: React.FC = () => {
     itemPerPage: 20,
   })
   const [createDialogOpen, setCreateDialogOpen] = React.useState(false)
+  const [editCodeId, setEditCodeId] = React.useState<string | null>(null)
+  const [statusConfirmOpen, setStatusConfirmOpen] = React.useState(false)
+  const [pendingStatusChange, setPendingStatusChange] = React.useState<{
+    codeId: string
+    status: "actif" | "suspendu"
+  } | null>(null)
+  const [selectedCodeId, setSelectedCodeId] = React.useState<string | null>(
+    null
+  )
 
   const { data: codes, totalRecords, isLoading } = useGetPromoCodes(filters)
   const { mutate: updateStatus } = useUpdatePromoCodeStatus()
   const { mutate: deleteCode } = useDeletePromoCode()
+
 
   const itemPerPage = filters.itemPerPage ?? 20
   const totalPages = Math.max(1, Math.ceil(totalRecords / itemPerPage))
   const pageIndex = (filters.page ?? 1) - 1
 
   const handleStatusChange = (codeId: string, newStatus: "actif" | "suspendu") => {
-    updateStatus({ codeId, status: newStatus })
+    setPendingStatusChange({ codeId, status: newStatus })
+    setStatusConfirmOpen(true)
+  }
+
+  const handleConfirmStatusChange = () => {
+    if (pendingStatusChange) {
+      updateStatus(pendingStatusChange)
+      setPendingStatusChange(null)
+    }
+    setStatusConfirmOpen(false)
   }
 
   const handleDelete = (codeId: string) => {
@@ -42,7 +63,21 @@ export const CodesHistoryTable: React.FC = () => {
   }
 
   const handleView = (code: PromoCode) => {
-    console.log("View code details:", code)
+    setSelectedCodeId(code.id)
+  }
+
+  const handleEdit = (code: PromoCode) => {
+    setEditCodeId(code.id)
+    setCreateDialogOpen(true)
+  }
+
+  const handleCloseCreateDialog = () => {
+    setCreateDialogOpen(false)
+    setEditCodeId(null)
+  }
+
+  const handleAssignCommercial = (_code: PromoCode) => {
+    // TODO: ouvrir dialog / sheet pour assigner un commercial
   }
 
   const handlePageChange = (newPageIndex: number) => {
@@ -59,6 +94,8 @@ export const CodesHistoryTable: React.FC = () => {
         onStatusChange: handleStatusChange,
         onDelete: handleDelete,
         onView: handleView,
+        onEdit: handleEdit,
+        onAssignCommercial: handleAssignCommercial,
       }),
     []
   )
@@ -91,7 +128,10 @@ export const CodesHistoryTable: React.FC = () => {
                 size="sm"
                 className="h-12"
                 icon={<Plus className="h-4 w-4" />}
-                onClick={() => setCreateDialogOpen(true)}
+                onClick={() => {
+                  setEditCodeId(null)
+                  setCreateDialogOpen(true)
+                }}
               >
                 Créer un code
               </BtnBase>
@@ -115,12 +155,43 @@ export const CodesHistoryTable: React.FC = () => {
           totalRecords={totalRecords}
           onPageChange={handlePageChange}
           onPageSizeChange={handlePageSizeChange}
+          onRowClick={handleView}
         />
       </CardContent>
 
       <CreateCodeDialog
         isOpen={createDialogOpen}
-        onClose={() => setCreateDialogOpen(false)}
+        onClose={handleCloseCreateDialog}
+        codeId={editCodeId}
+      />
+
+      <ConfirmationDialog
+        open={statusConfirmOpen}
+        setOpen={setStatusConfirmOpen}
+        title={
+          pendingStatusChange?.status === "suspendu"
+            ? "Suspendre le code"
+            : "Activer le code"
+        }
+        subtitle={
+          pendingStatusChange?.status === "suspendu"
+            ? "Êtes-vous sûr de vouloir suspendre ce code promo ? Il ne sera plus utilisable tant qu'il n'est pas réactivé."
+            : "Êtes-vous sûr de vouloir activer ce code promo ?"
+        }
+        triggerText={
+          pendingStatusChange?.status === "suspendu" ? "Suspendre" : "Activer"
+        }
+        onConfirm={handleConfirmStatusChange}
+      />
+
+      <PromoCodeDetailsSheet
+        codeId={selectedCodeId}
+        open={!!selectedCodeId}
+        onOpenChange={(open) => !open && setSelectedCodeId(null)}
+        onStatusChange={handleStatusChange}
+        onDelete={handleDelete}
+        onEdit={handleEdit}
+        onAssignCommercial={handleAssignCommercial}
       />
     </Card>
   )

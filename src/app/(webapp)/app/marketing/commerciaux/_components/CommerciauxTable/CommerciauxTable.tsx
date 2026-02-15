@@ -7,8 +7,13 @@ import { DataTable } from "@/components/ui/DataTable"
 import { Download, Plus } from "lucide-react"
 import { CommerciauxTableFilters } from "./CommerciauxTableFilters"
 import { createColumns } from "./columns"
-import { useGetCommercials, useUpdateCommercialStatus, useDeleteCommercial } from "@/hooks/marketing/useMarketing"
-import { CommercialFilters, Commercial } from "@/types/marketing.types"
+import {
+  useGetSalesAgents,
+  useUpdateCommercialStatus,
+  useDeleteCommercial,
+} from "@/hooks/marketing/useMarketing"
+import type { SalesAgentFilters } from "@/types/marketing.types"
+import { Commercial, CommercialFilters } from "@/types/marketing.types"
 import BtnBase from "@/components/elements/BtnBase"
 import { AddCommercialDialog } from "../AddCommercialDialog/AddCommercialDialog"
 
@@ -135,14 +140,26 @@ export const CommerciauxTable: React.FC = () => {
     performance: "all",
     country: "all",
   })
-  
+
+  const [salesAgentFilters, setSalesAgentFilters] =
+    React.useState<SalesAgentFilters>({
+      itemPerPage: 10,
+      page: 1,
+    })
+
   const [addDialogOpen, setAddDialogOpen] = React.useState(false)
 
-  const { data: commercials, isLoading } = useGetCommercials(filters)
+  const {
+    data: salesAgentsData,
+    totalRecords,
+    raw: rawResponse,
+    isLoading,
+  } = useGetSalesAgents(salesAgentFilters)
+
   const { mutate: updateStatus } = useUpdateCommercialStatus()
   const { mutate: deleteCommercial } = useDeleteCommercial()
 
-  const displayCommercials = commercials.length > 0 ? commercials : MOCK_COMMERCIALS
+  const displayCommercials = [] as Commercial[]
 
   const handleStatusChange = (commercialId: string, newStatus: 'actif' | 'inactif') => {
     updateStatus({ commercialId, status: newStatus })
@@ -176,23 +193,23 @@ export const CommerciauxTable: React.FC = () => {
               Liste des commerciaux
             </h2>
           </div>
-          
-         <div className="flex items-center justify-between">
-          <CommerciauxTableFilters 
-            filters={filters} 
-            onFiltersChange={setFilters} 
-          />
 
-<div className="flex items-center gap-3">
-              <Button 
-                variant="outline" 
+          <div className="flex items-center justify-between">
+            <CommerciauxTableFilters
+              filters={filters}
+              onFiltersChange={setFilters}
+            />
+
+            <div className="flex items-center gap-3">
+              <Button
+                variant="outline"
                 className="h-[47px] gap-2 border-gray-200 rounded-lg"
               >
                 <Download className="h-4 w-4" />
                 Exporter
               </Button>
-              
-              <BtnBase 
+
+              <BtnBase
                 type="button"
                 color="blue"
                 variant="contained"
@@ -206,23 +223,34 @@ export const CommerciauxTable: React.FC = () => {
               </BtnBase>
             </div>
 
-         </div>
+          </div>
         </div>
       </CardHeader>
-      
-      <CardContent className="pt-0 px-0">
+
+      <CardContent className="pt-0 px-0 flex flex-col gap-4">
         <DataTable
           columns={columns}
           data={displayCommercials}
           isLoading={isLoading}
           enableSorting
           enablePagination
-          pageSize={10}
+          pageSize={salesAgentFilters.itemPerPage ?? 10}
           emptyMessage="Aucun commercial trouvé"
         />
+
+        {rawResponse != null && (
+          <details className="mt-4">
+            <summary className="text-sm font-medium text-gray-500 cursor-pointer hover:text-gray-700">
+              Réponse API (JSON)
+            </summary>
+            <pre className="mt-2 p-4 bg-gray-50 rounded-lg text-xs overflow-auto max-h-[400px] border border-gray-200">
+              {JSON.stringify(rawResponse, null, 2)}
+            </pre>
+          </details>
+        )}
       </CardContent>
-      
-      <AddCommercialDialog 
+
+      <AddCommercialDialog
         isOpen={addDialogOpen}
         onClose={() => setAddDialogOpen(false)}
       />

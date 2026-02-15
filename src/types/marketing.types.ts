@@ -53,6 +53,11 @@ export interface MarketingFilters {
   sales_agent_id?: string
 }
 
+export interface PromoCodeMetricsFilterParams {
+  start_date?: string //dateteime
+  end_date?: string //datetime
+}
+
 export interface PromoCodeListResponse {
   data: PromoCode[]
   totalRecords: number
@@ -163,3 +168,69 @@ export const CHANNEL_OPTIONS = [
   { value: 'email', label: 'Email' },
   { value: 'phone', label: 'Téléphone' },
 ] as const
+
+export type SalesAgentChannel = "VISION" | "PRESENTIEL"
+export type SalesAgentStatus = "ACTIVE" | "INACTIVE"
+
+export interface SalesAgentFilters {
+  itemPerPage?: number
+  page?: number
+  channel?: string
+  country_id?: number
+  start_date?: string
+  end_date?: string
+}
+
+export interface SalesAgentListResponse {
+  data: unknown[]
+  totalRecords?: number
+}
+
+export interface CreateSalesAgentPayload {
+  first_name: string
+  last_name: string
+  phone: string
+  country_id: number
+  channel: SalesAgentChannel
+  email?: string
+  identification_number?: string
+  status?: SalesAgentStatus
+}
+
+export interface CreateSalesAgentFormData {
+  first_name: string
+  last_name: string
+  phone: string
+  country_id: number | ""
+  channel: SalesAgentChannel | ""
+  email: string
+  identification_number: string
+  status: SalesAgentStatus | ""
+}
+
+export const COUNTRY_ID_OPTIONS: { id: number; label: string }[] = [
+  { id: 1, label: "Côte d'Ivoire" },
+  { id: 2, label: "Sénégal" },
+  { id: 3, label: "Cameroun" },
+  { id: 4, label: "Burkina Faso" },
+  { id: 5, label: "Mali" },
+  { id: 6, label: "Bénin" },
+  { id: 7, label: "Togo" },
+  { id: 8, label: "Gabon" },
+]
+
+export const SALES_AGENT_CHANNEL_OPTIONS: {
+  value: SalesAgentChannel
+  label: string
+}[] = [
+  { value: "VISION", label: "Vision" },
+  { value: "PRESENTIEL", label: "Présentiel" },
+]
+
+export const SALES_AGENT_STATUS_OPTIONS: {
+  value: SalesAgentStatus
+  label: string
+}[] = [
+  { value: "ACTIVE", label: "Actif" },
+  { value: "INACTIVE", label: "Inactif" },
+]
