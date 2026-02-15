@@ -1,15 +1,14 @@
 "use client"
 
-import React from "react"
-import { 
-  CreatePromoCodeFormData, 
-  CODE_TYPE_OPTIONS, 
-  CODE_VALUE_OPTIONS,
-  PromoCodeType 
+import React, { memo } from "react"
+import {
+  CreatePromoCodeFormData,
+  CODE_TYPE_OPTIONS,
+  DISCOUNT_TYPE_OPTIONS,
+  CodeType,
+  DiscountType,
 } from "@/types/marketing.types"
 import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Button } from "@/components/ui/button"
 import {
   Select,
   SelectContent,
@@ -18,127 +17,218 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { X } from "lucide-react"
+import BtnBase from "@/components/elements/BtnBase"
+import type { FieldError } from "react-hook-form"
+import {
+  Controller,
+  useFormContext,
+  useFormState,
+} from "react-hook-form"
 
 interface CreateCodeStep1Props {
-  initialData: CreatePromoCodeFormData
-  onSubmit: (data: CreatePromoCodeFormData) => void
+  onStep1Submit: () => void
   onClose: () => void
+  title?: string
+}
+
+const CodeLabelField = memo(function CodeLabelField() {
+  const { register } = useFormContext<CreatePromoCodeFormData>()
+  const { errors } = useFormState({ name: "code_label" })
+  const error = errors.code_label as FieldError | undefined
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Input
+        {...register("code_label")}
+        label="Libellé du code*"
+        placeholder="Ex : PROMO25"
+        required
+        error={error}
+      />
+    </div>
+  )
+})
+
+const DiscountValueField = memo(function DiscountValueField() {
+  const { register } = useFormContext<CreatePromoCodeFormData>()
+  const { errors } = useFormState({ name: "discount_value" })
+  const error = errors.discount_value as FieldError | undefined
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Input
+        {...register("discount_value")}
+        label="Valeur de la réduction*"
+        type="number"
+        min={0}
+        step="any"
+        placeholder="Ex : 10 ou 0.2"
+        required
+        error={error}
+      />
+    </div>
+  )
+})
+
+const ValidityDaysField = memo(function ValidityDaysField() {
+  const { register } = useFormContext<CreatePromoCodeFormData>()
+  const { errors } = useFormState({ name: "validity_days" })
+  const error = errors.validity_days as FieldError | undefined
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Input
+        {...register("validity_days")}
+        label="Validité (jours)*"
+        type="number"
+        min={1}
+        placeholder="Ex : 30"
+        required
+        error={error}
+      />
+    </div>
+  )
+})
+
+const MaxUsageField = memo(function MaxUsageField() {
+  const { register } = useFormContext<CreatePromoCodeFormData>()
+  const { errors } = useFormState({ name: "max_usage_per_user" })
+  const error = errors.max_usage_per_user as FieldError | undefined
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Input
+        {...register("max_usage_per_user")}
+        label="Utilisation max par utilisateur*"
+        type="number"
+        min={1}
+        placeholder="Ex : 1"
+        required
+        error={error}
+      />
+    </div>
+  )
+})
+
+function CodeTypeSelectField() {
+  const { control } = useFormContext<CreatePromoCodeFormData>()
+  const { errors } = useFormState({ name: "code_type" })
+
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="text-[14px] leading-[24.57px] tracking-[-2%] text-admin-primary">
+        Type de code<span className="text-red-500">*</span>
+      </label>
+      <Controller
+        control={control}
+        name="code_type"
+        render={({ field }) => (
+          <Select
+            value={field.value || undefined}
+            onValueChange={(value) => field.onChange(value as CodeType)}
+          >
+            <SelectTrigger className="h-[45px] rounded-[10px] border-neutral-300 border-opacity-60">
+              <SelectValue placeholder="Sélectionner le type de code" />
+            </SelectTrigger>
+            <SelectContent>
+              {CODE_TYPE_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      />
+      {errors.code_type?.message ? (
+        <p className="text-sm text-destructive">
+          {String(errors.code_type.message)}
+        </p>
+      ) : null}
+    </div>
+  )
+}
+
+function DiscountTypeSelectField() {
+  const { control } = useFormContext<CreatePromoCodeFormData>()
+  const { errors } = useFormState({ name: "discount_type" })
+
+  return (
+    <div className="flex flex-col gap-2">
+      <label className="text-[14px] leading-[24.57px] tracking-[-2%] text-admin-primary">
+        Type de réduction<span className="text-red-500">*</span>
+      </label>
+      <Controller
+        control={control}
+        name="discount_type"
+        render={({ field }) => (
+          <Select
+            value={field.value || undefined}
+            onValueChange={(value) =>
+              field.onChange(value as DiscountType)
+            }
+          >
+            <SelectTrigger className="h-[45px] rounded-[10px] border-neutral-300 border-opacity-60">
+              <SelectValue placeholder="Sélectionner le type de réduction" />
+            </SelectTrigger>
+            <SelectContent>
+              {DISCOUNT_TYPE_OPTIONS.map((option) => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+      />
+      {errors.discount_type?.message ? (
+        <p className="text-sm text-destructive">
+          {String(errors.discount_type.message)}
+        </p>
+      ) : null}
+    </div>
+  )
 }
 
 export const CreateCodeStep1: React.FC<CreateCodeStep1Props> = ({
-  initialData,
-  onSubmit,
-  onClose,
+  onStep1Submit,
+  title = "Créer un code",
 }) => {
-  const [formData, setFormData] = React.useState<CreatePromoCodeFormData>(initialData)
-
-  const handleChange = (field: keyof CreatePromoCodeFormData, value: string | number) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
-  }
-
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    onSubmit(formData)
+    onStep1Submit()
   }
-
-  const isValid = formData.code && formData.value && formData.validity && formData.usagePerUser > 0
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-5">
       <DialogHeader className="flex flex-row justify-between items-center space-y-0 pb-2">
         <DialogTitle className="text-[28px] font-bold text-admin-primary leading-[30px]">
-          Créer un code
+          {title}
         </DialogTitle>
-        <div className="flex items-center gap-4">
-          <span className="text-gray-400 text-sm">Étape 1/2</span>
-        </div>
+        {/* <span className="text-gray-400 text-sm">Étape 1/2</span> */}
       </DialogHeader>
 
-      <div className="flex flex-col gap-2">
-        <label className="text-[14px] leading-[24.57px] tracking-[-2%] text-admin-primary">
-          Type de code
-        </label>
-        <Select 
-          value={formData.type} 
-          onValueChange={(value) => handleChange('type', value as PromoCodeType)}
-        >
-          <SelectTrigger className="h-[45px] rounded-[10px] border-neutral-300 border-opacity-60">
-            <SelectValue placeholder="Sélectionner le type de code" />
-          </SelectTrigger>
-          <SelectContent>
-            {CODE_TYPE_OPTIONS.map(option => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <Input
-        label="Libellé du code*"
-        value={formData.code}
-        onChange={(e) => handleChange('code', e.target.value)}
-        placeholder="Ex : PROMO25"
-        required
-      />
-
-      <Textarea
-        label="Message affiché à l'utilisateur"
-        value={formData.message}
-        onChange={(e) => handleChange('message', e.target.value)}
-        placeholder="Ex: Félicitations ! Vous bénéficiez de 20% de réduction sur votre premier mois"
-        rows={3}
-      />
-
-      <div className="flex flex-col gap-2">
-        <label className="text-[14px] leading-[24.57px] tracking-[-2%] text-admin-primary">
-          Valeur du code<span className="text-red-500">*</span>
-        </label>
-        <Select 
-          value={formData.value} 
-          onValueChange={(value) => handleChange('value', value)}
-        >
-          <SelectTrigger className="h-[45px] rounded-[10px] border-neutral-300 border-opacity-60">
-            <SelectValue placeholder="Sélectionner la valeur du code" />
-          </SelectTrigger>
-          <SelectContent>
-            {CODE_VALUE_OPTIONS.map(option => (
-              <SelectItem key={option.value} value={option.value}>
-                {option.label}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+      <CodeTypeSelectField />
+      <CodeLabelField />
+      <DiscountTypeSelectField />
+      <DiscountValueField />
 
       <div className="grid grid-cols-2 gap-4">
-        <Input
-          label="Validité*"
-          value={formData.validity}
-          onChange={(e) => handleChange('validity', e.target.value)}
-          placeholder="Ex : 30 jours"
-          required
-        />
-
-        <Input
-          label="Utilisation par utilisateur*"
-          type="number"
-          min={1}
-          value={formData.usagePerUser}
-          onChange={(e) => handleChange('usagePerUser', parseInt(e.target.value) || 1)}
-          required
-        />
+        <ValidityDaysField />
+        <MaxUsageField />
       </div>
 
-      <Button
+      <BtnBase
+        variant="contained"
+        color="blue"
         type="submit"
-        disabled={!isValid}
-        className="mt-4 w-full h-[52px] rounded-[10px] bg-[#DBEAFE] text-blue-600 font-medium text-base hover:bg-blue-100 disabled:opacity-50 disabled:cursor-not-allowed"
+        className="mt-4"
+        shape="square"
+        fullwidth={true}
+        size="sm"
       >
         Suivant
-      </Button>
+      </BtnBase>
     </form>
   )
 }

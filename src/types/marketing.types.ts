@@ -1,23 +1,32 @@
-export type PromoCodeType = 
-  | 'reduction_nouveau_client' 
-  | 'fidelisation_client' 
-  | 'coupon_gratuit' 
-  | 'reddition_commerciale'
-
-export type PromoCodeStatus = 'actif' | 'suspendu' | 'expire'
+export type PromoCodeStatusApi =
+  | "DRAFT"
+  | "ACTIVE"
+  | "SUSPENDED"
+  | "DEACTIVATED"
+  | "EXPIRED"
+  | "ARCHIVED"
 
 export interface PromoCode {
   id: string
-  createdAt: string
-  code: string
-  type: PromoCodeType
-  value: string
-  target: string
-  assignedCommercial: string | null
-  usageCount: number
-  conversions: number
-  conversionRate: number
-  status: PromoCodeStatus
+  code_label: string
+  description: string | null
+  code_type: CodeType
+  discount_type: DiscountType
+  discount_value: number
+  validity_days: number
+  max_usage_per_user: number
+  is_stackable: boolean
+  marketing_campaign: string | null
+  status: PromoCodeStatusApi
+  archived_at: string | null
+  expires_at: string
+  created_at: string
+  updated_at: string
+  sales_agent: unknown | null
+  targets: unknown[]
+  stackable_codes: unknown[]
+  application_modes: unknown[]
+  usage_count: number
 }
 
 export interface MarketingKpi {
@@ -37,43 +46,63 @@ export interface CodeUsageData {
 }
 
 export interface MarketingFilters {
-  search: string
-  conversionRate: string
-  codeType: string
-  status: string
+  itemPerPage?: number
+  page?: number
+  status?: string
+  code_type?: string
+  sales_agent_id?: string
 }
 
+export interface PromoCodeMetricsFilterParams {
+  start_date?: string //dateteime
+  end_date?: string //datetime
+}
+
+export interface PromoCodeListResponse {
+  data: PromoCode[]
+  totalRecords: number
+}
+
+export type CodeType =
+  | "NEW_CLIENT"
+  | "LOYALTY"
+  | "FREE_COUPON"
+  | "COMMERCIAL_RENDITION"
+
+export type DiscountType = "FIXED_AMOUNT" | "PERCENTAGE" | "FREE_PERIOD"
+
 export interface CreatePromoCodePayload {
-  code: string
-  type: PromoCodeType
-  value: string
-  target: string
-  assignedCommercial?: string
+  code_label: string
+  code_type: CodeType
+  discount_type: DiscountType
+  discount_value: number
+  validity_days: number
+  max_usage_per_user: number
+  is_stackable: boolean
 }
 
 export interface CreatePromoCodeFormData {
-  type: PromoCodeType | ''
-  code: string
-  message: string
-  value: string
-  validity: string
-  usagePerUser: number
+  code_label: string
+  code_type: CodeType | ""
+  discount_type: DiscountType | ""
+  discount_value: string
+  validity_days: string
+  max_usage_per_user: string
+  is_stackable: boolean
 }
 
-export const CODE_TYPE_OPTIONS = [
-  { value: 'reduction_nouveau_client', label: 'Réduction nouveau client' },
-  { value: 'fidelisation_client', label: 'Fidélisation client existant' },
-  { value: 'coupon_gratuit', label: 'Coupon gratuit' },
-  { value: 'reddition_commerciale', label: 'Reddition commerciale' },
-] as const
+export const CODE_TYPE_OPTIONS: { value: CodeType; label: string }[] = [
+  { value: "NEW_CLIENT", label: "Nouveau client" },
+  { value: "LOYALTY", label: "Fidélisation" },
+  { value: "FREE_COUPON", label: "Coupon gratuit" },
+  { value: "COMMERCIAL_RENDITION", label: "Reddition commerciale" },
+]
 
-export const CODE_VALUE_OPTIONS = [
-  { value: '-10%', label: '-10% sur 1er mois' },
-  { value: '-20%', label: '-20% sur 1er mois' },
-  { value: '-30%', label: '-30% sur 1er mois' },
-  { value: '1_mois_offert', label: '1 mois offert' },
-  { value: 'gps_30_jours', label: 'GPS offert 30 jours' },
-] as const
+export const DISCOUNT_TYPE_OPTIONS: { value: DiscountType; label: string }[] = [
+  { value: "FIXED_AMOUNT", label: "Montant fixe" },
+  { value: "PERCENTAGE", label: "Pourcentage" },
+  { value: "FREE_PERIOD", label: "Période gratuite" },
+]
 
 // Types pour les Commerciaux
 export type CommercialStatus = 'actif' | 'inactif'
@@ -139,3 +168,69 @@ export const CHANNEL_OPTIONS = [
   { value: 'email', label: 'Email' },
   { value: 'phone', label: 'Téléphone' },
 ] as const
+
+export type SalesAgentChannel = "VISION" | "PRESENTIEL"
+export type SalesAgentStatus = "ACTIVE" | "INACTIVE"
+
+export interface SalesAgentFilters {
+  itemPerPage?: number
+  page?: number
+  channel?: string
+  country_id?: number
+  start_date?: string
+  end_date?: string
+}
+
+export interface SalesAgentListResponse {
+  data: unknown[]
+  totalRecords?: number
+}
+
+export interface CreateSalesAgentPayload {
+  first_name: string
+  last_name: string
+  phone: string
+  country_id: number
+  channel: SalesAgentChannel
+  email?: string
+  identification_number?: string
+  status?: SalesAgentStatus
+}
+
+export interface CreateSalesAgentFormData {
+  first_name: string
+  last_name: string
+  phone: string
+  country_id: number | ""
+  channel: SalesAgentChannel | ""
+  email: string
+  identification_number: string
+  status: SalesAgentStatus | ""
+}
+
+export const COUNTRY_ID_OPTIONS: { id: number; label: string }[] = [
+  { id: 1, label: "Côte d'Ivoire" },
+  { id: 2, label: "Sénégal" },
+  { id: 3, label: "Cameroun" },
+  { id: 4, label: "Burkina Faso" },
+  { id: 5, label: "Mali" },
+  { id: 6, label: "Bénin" },
+  { id: 7, label: "Togo" },
+  { id: 8, label: "Gabon" },
+]
+
+export const SALES_AGENT_CHANNEL_OPTIONS: {
+  value: SalesAgentChannel
+  label: string
+}[] = [
+  { value: "VISION", label: "Vision" },
+  { value: "PRESENTIEL", label: "Présentiel" },
+]
+
+export const SALES_AGENT_STATUS_OPTIONS: {
+  value: SalesAgentStatus
+  label: string
+}[] = [
+  { value: "ACTIVE", label: "Actif" },
+  { value: "INACTIVE", label: "Inactif" },
+]

@@ -2,15 +2,19 @@
 
 import React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { 
-  ChartContainer, 
-  ChartTooltip, 
+import {
+  ChartContainer,
+  ChartTooltip,
   ChartTooltipContent,
-  type ChartConfig 
+  type ChartConfig,
 } from "@/components/ui/chart"
 import { Bar, BarChart, XAxis, YAxis, CartesianGrid } from "recharts"
-import { useGetCodeUsageStats } from "@/hooks/marketing/useMarketing"
+import {
+  useGetCodeUsageStats,
+  useGetPromoCodeUsageByType,
+} from "@/hooks/marketing/useMarketing"
 import { LoadingBar } from "@/components/ui/Loader"
+import { usePromoCodePeriod } from "../../_context/PromoCodePeriodContext"
 
 const MOCK_DATA = [
   { type: "reduction_nouveau_client", label: "Réduction nouveau client", count: 250 },
@@ -27,11 +31,20 @@ const chartConfig: ChartConfig = {
 }
 
 export const CodeUsageChart: React.FC = () => {
+  const { dateRange } = usePromoCodePeriod()
   const { data: stats, isLoading } = useGetCodeUsageStats()
-  
-  const chartData = stats.length > 0 ? stats : MOCK_DATA
+  const { data: usageByType, isLoading: isUsageByTypeLoading } =
+    useGetPromoCodeUsageByType(dateRange)
 
-  if (isLoading) {
+  const chartData =
+    usageByType.length > 0
+      ? usageByType
+      : stats.length > 0
+        ? stats
+        : MOCK_DATA
+  const isLoadingChart = isUsageByTypeLoading || isLoading
+
+  if (isLoadingChart) {
     return (
       <Card className="bg-white">
         <CardHeader>
@@ -59,10 +72,10 @@ export const CodeUsageChart: React.FC = () => {
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 80 }}
           >
-            <CartesianGrid 
-              strokeDasharray="0" 
-              vertical={false} 
-              stroke="#E5E7EB" 
+            <CartesianGrid
+              strokeDasharray="0"
+              vertical={false}
+              stroke="#E5E7EB"
             />
             <XAxis
               dataKey="label"

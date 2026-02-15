@@ -2,9 +2,10 @@
 
 import React from "react"
 import { KpiCard } from "./KpiCard"
-import { useGetMarketingKpis } from "@/hooks/marketing/useMarketing"
+import { useGetMarketingKpis, useGetPromoCodeMetrics } from "@/hooks/marketing/useMarketing"
 import { Ticket, Users } from "lucide-react"
 import { LoadingBar } from "@/components/ui/Loader"
+import { usePromoCodePeriod } from "../../_context/PromoCodePeriodContext"
 
 const MOCK_KPIS = {
   totalCodes: 346,
@@ -14,8 +15,11 @@ const MOCK_KPIS = {
 }
 
 export const MarketingKpiSection: React.FC = () => {
+  const { dateRange } = usePromoCodePeriod()
   const { data: kpis, isLoading } = useGetMarketingKpis()
-  
+  const { data: globalMetrics, isLoading: isGlobalMetricsLoading } =
+    useGetPromoCodeMetrics(dateRange)
+
   const displayKpis = kpis ?? MOCK_KPIS
 
   if (isLoading) {
@@ -31,7 +35,7 @@ export const MarketingKpiSection: React.FC = () => {
         value={displayKpis.totalCodes}
         growth={displayKpis.monthlyGrowth}
       />
-      
+
       <KpiCard
         icon={<Users className="w-6 h-6 text-blue-600" />}
         iconBgColor="bg-blue-50"
@@ -39,7 +43,7 @@ export const MarketingKpiSection: React.FC = () => {
         value={displayKpis.totalCommercials}
         growth={displayKpis.monthlyGrowth}
       />
-      
+
       <KpiCard
         icon={<Ticket className="w-6 h-6 text-emerald-600" />}
         iconBgColor="bg-emerald-50"
