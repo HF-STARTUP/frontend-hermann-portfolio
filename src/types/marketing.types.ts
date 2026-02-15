@@ -6,6 +6,17 @@ export type PromoCodeStatusApi =
   | "EXPIRED"
   | "ARCHIVED"
 
+export interface PromoCodeSalesAgent {
+  id: string
+  first_name: string
+  last_name: string
+  phone: string
+  channel: string
+  email: string
+  created_at: string
+  updated_at: string
+}
+
 export interface PromoCode {
   id: string
   code_label: string
@@ -22,7 +33,7 @@ export interface PromoCode {
   expires_at: string
   created_at: string
   updated_at: string
-  sales_agent: unknown | null
+  sales_agent: PromoCodeSalesAgent | null
   targets: unknown[]
   stackable_codes: unknown[]
   application_modes: unknown[]
@@ -41,8 +52,7 @@ export interface MarketingKpi {
 
 export interface CodeUsageData {
   type: string
-  label: string
-  count: number
+  nombre_utilisation: number
 }
 
 export interface MarketingFilters {
@@ -54,13 +64,62 @@ export interface MarketingFilters {
 }
 
 export interface PromoCodeMetricsFilterParams {
-  start_date?: string //dateteime
-  end_date?: string //datetime
+  start_date?: string
+  end_date?: string
+}
+
+export type PromoCodeMetricsEvolution = "increase" | "decrease" | "stable"
+
+export interface PromoCodeMetricItem {
+  value: number
+  previous_value: number
+  percentage_change: number
+  evolution: PromoCodeMetricsEvolution
+}
+
+export interface PromoCodeMetricsPeriod {
+  start_date: string
+  end_date: string
+}
+
+export interface PromoCodeMetricsData {
+  codes_crees: PromoCodeMetricItem
+  codes_actifs: PromoCodeMetricItem
+  commerciaux_avec_code: PromoCodeMetricItem
+  period: PromoCodeMetricsPeriod
+  previous_period: PromoCodeMetricsPeriod
+}
+
+export interface PromoCodeMetricsResponse {
+  message?: string
+  code?: number
+  data: PromoCodeMetricsData
 }
 
 export interface PromoCodeListResponse {
   data: PromoCode[]
   totalRecords: number
+}
+
+export interface PromoCodeEvent {
+  id: string
+  caused_event: string
+  description: string
+  created_at: string
+  profile_who_create_event: {
+    name?: string
+    first_name?: string
+    last_name?: string
+    [key: string]: unknown
+  } | null
+}
+
+export interface PromoCodeEventsResponse {
+  data: PromoCodeEvent[]
+  totalRecords: number
+  totalPages: number
+  currentPage: number
+  itemPerPage: number
 }
 
 export type CodeType =
@@ -181,9 +240,69 @@ export interface SalesAgentFilters {
   end_date?: string
 }
 
+export type SalesAgentPerformance =
+  | "VERY_WEAK"
+  | "WEAK"
+  | "AVERAGE"
+  | "GOOD"
+  | "EXCELLENT"
+export type EvolutionTrend = "up" | "down" | "stable"
+
+export interface SalesAgentEvolutionItem {
+  percentage: number
+  trend: EvolutionTrend
+}
+
+export interface SalesAgentEvolution {
+  codes_attributed: SalesAgentEvolutionItem
+  codes_used: SalesAgentEvolutionItem
+  total_usages: SalesAgentEvolutionItem
+  paying_accounts: SalesAgentEvolutionItem
+  active_accounts: SalesAgentEvolutionItem
+  conversion_rate: SalesAgentEvolutionItem
+  revenue_generated: SalesAgentEvolutionItem
+}
+
+export interface SalesAgentMetrics {
+  codes_attributed: number
+  codes_used: number
+  total_usages: number
+  paying_accounts: number
+  active_accounts: number
+  conversion_rate: number
+  revenue_generated: number
+  performance: SalesAgentPerformance
+  evolution: SalesAgentEvolution
+}
+
+export interface SalesAgentCountry {
+  id: number
+  name: string
+}
+
+export interface SalesAgent {
+  id: string
+  identification_number: string | null
+  first_name: string
+  last_name: string
+  phone: string
+  country: SalesAgentCountry
+  channel: SalesAgentChannel
+  email: string
+  status: SalesAgentStatus
+  created_at: string
+  updated_at: string
+  promo_codes_count: number
+  promo_codes?: unknown[]
+  metrics: SalesAgentMetrics
+}
+
 export interface SalesAgentListResponse {
-  data: unknown[]
-  totalRecords?: number
+  data: SalesAgent[]
+  totalRecords: number
+  totalPages: number
+  currentPage: number
+  itemPerPage: number
 }
 
 export interface CreateSalesAgentPayload {

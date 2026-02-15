@@ -17,6 +17,8 @@ import { CreateCodeDialog } from "../CreateCodeDialog/CreateCodeDialog"
 import BtnBase from "@/components/elements/BtnBase"
 import ConfirmationDialog from "@/components/dialog/confirmation-dialog"
 import { PromoCodeDetailsSheet } from "./PromoCodeDetailsSheet"
+import { AssignCommercialToCodeDialog } from "./AssignCommercialToCodeDialog"
+import { SalesAgentDetailsSheet } from "../../commerciaux/_components/CommerciauxTable/SalesAgentDetailsSheet"
 
 export const CodesHistoryTable: React.FC = () => {
   const [filters, setFilters] = React.useState<MarketingFilters>({
@@ -33,6 +35,12 @@ export const CodesHistoryTable: React.FC = () => {
   const [selectedCodeId, setSelectedCodeId] = React.useState<string | null>(
     null
   )
+  const [codeToAssign, setCodeToAssign] = React.useState<PromoCode | null>(
+    null
+  )
+  const [selectedSalesAgentId, setSelectedSalesAgentId] = React.useState<
+    string | null
+  >(null)
 
   const { data: codes, totalRecords, isLoading } = useGetPromoCodes(filters)
   const { mutate: updateStatus } = useUpdatePromoCodeStatus()
@@ -76,8 +84,8 @@ export const CodesHistoryTable: React.FC = () => {
     setEditCodeId(null)
   }
 
-  const handleAssignCommercial = (_code: PromoCode) => {
-    // TODO: ouvrir dialog / sheet pour assigner un commercial
+  const handleAssignCommercial = (code: PromoCode) => {
+    setCodeToAssign(code)
   }
 
   const handlePageChange = (newPageIndex: number) => {
@@ -112,13 +120,13 @@ export const CodesHistoryTable: React.FC = () => {
             <CodesTableFilters filters={filters} onFiltersChange={setFilters} />
 
             <div className="flex items-center gap-3">
-              <Button
+              {/* <Button
                 variant="outline"
                 className="h-12 gap-2 border-gray-200"
               >
                 <Download className="h-4 w-4" />
                 Exporter
-              </Button>
+              </Button> */}
 
               <BtnBase
                 type="button"
@@ -192,6 +200,19 @@ export const CodesHistoryTable: React.FC = () => {
         onDelete={handleDelete}
         onEdit={handleEdit}
         onAssignCommercial={handleAssignCommercial}
+        onOpenCommercialDetails={(id) => setSelectedSalesAgentId(id)}
+      />
+
+      <SalesAgentDetailsSheet
+        agentId={selectedSalesAgentId}
+        open={!!selectedSalesAgentId}
+        onOpenChange={(open) => !open && setSelectedSalesAgentId(null)}
+      />
+
+      <AssignCommercialToCodeDialog
+        code={codeToAssign}
+        open={!!codeToAssign}
+        onClose={() => setCodeToAssign(null)}
       />
     </Card>
   )

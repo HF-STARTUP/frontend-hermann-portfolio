@@ -13,7 +13,9 @@ import {
   CreateCommercialPayload,
   CreateSalesAgentPayload,
   PromoCodeMetricsFilterParams,
+  PromoCodeMetricsResponse,
   SalesAgentFilters,
+  SalesAgent,
 } from "@/types/marketing.types";
 import { createPromoCodeSchema } from "@/schema/marketing.schema";
 import { useMutationProvider } from "@/hooks/hooksProvider";
@@ -22,10 +24,13 @@ export const MARKETING_QUERY_KEYS = {
   kpis: "marketing-kpis",
   codes: "marketing-codes",
   promoCodeDetails: "marketing-promo-code-details",
+  promoCodeEvents: "marketing-promo-code-events",
   codeUsageStats: "marketing-code-usage-stats",
   usageByType: "marketing-usage-by-type",
+  promoCodeMetrics: "marketing-promo-code-metrics",
   commercials: "marketing-commercials",
   salesAgents: "marketing-sales-agents",
+  salesAgentDetails: "marketing-sales-agent-details",
   commercialKpis: "marketing-commercial-kpis",
 } as const;
 
@@ -66,14 +71,34 @@ export function useGetPromoCodeDetails(id: string | undefined) {
   };
 }
 
+export function useGetPromoCodeEvents(
+  codeId: string | undefined,
+  params?: { itemPerPage?: number; page?: number }
+) {
+  const result = useQuery({
+    queryKey: [MARKETING_QUERY_KEYS.promoCodeEvents, codeId, params],
+    queryFn: () =>
+      marketingService.getPromoCodeEvents(codeId!, {
+        itemPerPage: params?.itemPerPage ?? 20,
+        page: params?.page ?? 1,
+      }),
+    enabled: Boolean(codeId),
+  })
+  return {
+    ...result,
+    data: result.data ?? null,
+  }
+}
+
 export function useGetPromoCodeMetrics(filters?: PromoCodeMetricsFilterParams) {
-  const { ...options } = useQuery({
-    queryKey: [MARKETING_QUERY_KEYS.codes, filters],
+  const result = useQuery({
+    queryKey: [MARKETING_QUERY_KEYS.promoCodeMetrics, filters],
     queryFn: () => marketingService.getCodeUsageMetrics(filters),
   });
 
   return {
-    ...options,
+    ...result,
+    data: result.data,
   };
 }
 
@@ -336,6 +361,37 @@ export function useDeletePromoCode() {
   };
 }
 
+export function useAssignPromoCodeToSalesAgent() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: ({
+      promoCodeId,
+      salesAgentId,
+    }: {
+      promoCodeId: string;
+      salesAgentId: string;
+    }) =>
+      marketingService.assignPromoCodeToSalesAgent(promoCodeId, salesAgentId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [MARKETING_QUERY_KEYS.codes] });
+      queryClient.invalidateQueries({
+        queryKey: [MARKETING_QUERY_KEYS.promoCodeDetails],
+      });
+      queryClient.invalidateQueries({ queryKey: [MARKETING_QUERY_KEYS.kpis] });
+    },
+  });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isLoading: mutation.isPending,
+    isError: mutation.isError,
+    isSuccess: mutation.isSuccess,
+    error: mutation.error,
+  };
+}
+
 // Hooks pour les Commerciaux
 export function useGetCommercials(filters?: CommercialFilters) {
   const { data, isLoading, error, refetch } = useQuery<Commercial[]>({
@@ -355,7 +411,29 @@ export function useGetSalesAgents(filters?: SalesAgentFilters) {
   return {
     data: data?.data ?? [],
     totalRecords: data?.totalRecords ?? 0,
+    totalPages: data?.totalPages ?? 1,
+    currentPage: data?.currentPage ?? 1,
+    itemPerPage: data?.itemPerPage ?? 10,
     raw: data,
+    isLoading,
+    error,
+    refetch,
+  };
+}
+
+export function useGetSalesAgentDetails(
+  id: string | undefined,
+  params?: { start_date?: string; end_date?: string },
+  options?: { enabled?: boolean }
+) {
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: [MARKETING_QUERY_KEYS.salesAgentDetails, id, params],
+    queryFn: () => marketingService.getSalesAgentById(id!, params),
+    enabled: Boolean(id) && (options?.enabled !== false),
+  });
+
+  return {
+    data: data ?? null,
     isLoading,
     error,
     refetch,
@@ -419,6 +497,41 @@ export function useCreateSalesAgent() {
   };
 }
 
+export function useUpdateSalesAgent() {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: ({
+      id,
+      payload,
+    }: {
+      id: string;
+      payload: CreateSalesAgentPayload;
+    }) => marketingService.updateSalesAgent(id, payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [MARKETING_QUERY_KEYS.salesAgents],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [MARKETING_QUERY_KEYS.salesAgentDetails],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [MARKETING_QUERY_KEYS.commercialKpis],
+      });
+    },
+  });
+
+  return {
+    mutate: mutation.mutate,
+    mutateAsync: mutation.mutateAsync,
+    isLoading: mutation.isPending,
+    isError: mutation.isError,
+    isSuccess: mutation.isSuccess,
+    error: mutation.error,
+    reset: mutation.reset,
+  };
+}
+
 export function useUpdateCommercialStatus() {
   const queryClient = useQueryClient();
 
@@ -433,6 +546,9 @@ export function useUpdateCommercialStatus() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [MARKETING_QUERY_KEYS.commercials],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [MARKETING_QUERY_KEYS.salesAgents],
       });
       queryClient.invalidateQueries({
         queryKey: [MARKETING_QUERY_KEYS.commercialKpis],
@@ -459,6 +575,9 @@ export function useDeleteCommercial() {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [MARKETING_QUERY_KEYS.commercials],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [MARKETING_QUERY_KEYS.salesAgents],
       });
       queryClient.invalidateQueries({
         queryKey: [MARKETING_QUERY_KEYS.commercialKpis],
