@@ -17,6 +17,8 @@ import {
   SalesAgent,
   PromoCodeMetricsData,
   PromoCodeEventsResponse,
+  PromoCodeProspectsResponse,
+  PromoCodeMetricsByIdResponse,
 } from "@/types/marketing.types";
 
 class MarketingService extends Service {
@@ -55,6 +57,26 @@ class MarketingService extends Service {
     const queryParams = params ? this.toQueryString(params) : ""
     return this.execHttpRequest<PromoCodeEventsResponse>({
       url: `promo-code/${id}/events${queryParams ? `?${queryParams}` : ""}`,
+      method: this.httpMethods.get,
+    })
+  }
+
+  async getPromoCodeProspects(
+    id: string,
+    params?: { itemPerPage?: number; page?: number }
+  ): Promise<PromoCodeProspectsResponse> {
+    const queryParams = params ? this.toQueryString(params) : ""
+    return this.execHttpRequest<PromoCodeProspectsResponse>({
+      url: `promo-code/${id}/prospects${queryParams ? `?${queryParams}` : ""}`,
+      method: this.httpMethods.get,
+    })
+  }
+
+  async getPromoCodeMetricsById(
+    id: string
+  ): Promise<PromoCodeMetricsByIdResponse> {
+    return this.execHttpRequest<PromoCodeMetricsByIdResponse>({
+      url: `promo-code/${id}/metrics`,
       method: this.httpMethods.get,
     })
   }

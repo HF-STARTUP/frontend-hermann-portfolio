@@ -42,7 +42,7 @@ const CodeLabelField = memo(function CodeLabelField() {
     <div className="flex flex-col gap-2">
       <Input
         {...register("code_label")}
-        label="Libellé du code*"
+        label="Libellé du code"
         placeholder="Ex : PROMO25"
         required
         error={error}

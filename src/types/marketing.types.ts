@@ -122,6 +122,16 @@ export interface PromoCodeEventsResponse {
   itemPerPage: number
 }
 
+export interface PromoCodeProspectsResponse {
+  data: Record<string, unknown>[]
+  totalRecords: number
+  totalPages: number
+  currentPage: number
+  itemPerPage: number
+}
+
+export type PromoCodeMetricsByIdResponse = Record<string, unknown>
+
 export type CodeType =
   | "NEW_CLIENT"
   | "LOYALTY"
