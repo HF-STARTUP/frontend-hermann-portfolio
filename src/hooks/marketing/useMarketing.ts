@@ -25,6 +25,8 @@ export const MARKETING_QUERY_KEYS = {
   codes: "marketing-codes",
   promoCodeDetails: "marketing-promo-code-details",
   promoCodeEvents: "marketing-promo-code-events",
+  promoCodeProspects: "marketing-promo-code-prospects",
+  promoCodeMetricsById: "marketing-promo-code-metrics-by-id",
   codeUsageStats: "marketing-code-usage-stats",
   usageByType: "marketing-usage-by-type",
   promoCodeMetrics: "marketing-promo-code-metrics",
@@ -82,6 +84,37 @@ export function useGetPromoCodeEvents(
         itemPerPage: params?.itemPerPage ?? 20,
         page: params?.page ?? 1,
       }),
+    enabled: Boolean(codeId),
+  })
+  return {
+    ...result,
+    data: result.data ?? null,
+  }
+}
+
+export function useGetPromoCodeProspects(
+  codeId: string | undefined,
+  params?: { itemPerPage?: number; page?: number }
+) {
+  const result = useQuery({
+    queryKey: [MARKETING_QUERY_KEYS.promoCodeProspects, codeId, params],
+    queryFn: () =>
+      marketingService.getPromoCodeProspects(codeId!, {
+        itemPerPage: params?.itemPerPage ?? 20,
+        page: params?.page ?? 1,
+      }),
+    enabled: Boolean(codeId),
+  })
+  return {
+    ...result,
+    data: result.data ?? null,
+  }
+}
+
+export function useGetPromoCodeMetricsById(codeId: string | undefined) {
+  const result = useQuery({
+    queryKey: [MARKETING_QUERY_KEYS.promoCodeMetricsById, codeId],
+    queryFn: () => marketingService.getPromoCodeMetricsById(codeId!),
     enabled: Boolean(codeId),
   })
   return {
