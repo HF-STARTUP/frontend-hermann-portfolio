@@ -181,9 +181,69 @@ export interface SalesAgentFilters {
   end_date?: string
 }
 
+export type SalesAgentPerformance =
+  | "VERY_WEAK"
+  | "WEAK"
+  | "AVERAGE"
+  | "GOOD"
+  | "EXCELLENT"
+export type EvolutionTrend = "up" | "down" | "stable"
+
+export interface SalesAgentEvolutionItem {
+  percentage: number
+  trend: EvolutionTrend
+}
+
+export interface SalesAgentEvolution {
+  codes_attributed: SalesAgentEvolutionItem
+  codes_used: SalesAgentEvolutionItem
+  total_usages: SalesAgentEvolutionItem
+  paying_accounts: SalesAgentEvolutionItem
+  active_accounts: SalesAgentEvolutionItem
+  conversion_rate: SalesAgentEvolutionItem
+  revenue_generated: SalesAgentEvolutionItem
+}
+
+export interface SalesAgentMetrics {
+  codes_attributed: number
+  codes_used: number
+  total_usages: number
+  paying_accounts: number
+  active_accounts: number
+  conversion_rate: number
+  revenue_generated: number
+  performance: SalesAgentPerformance
+  evolution: SalesAgentEvolution
+}
+
+export interface SalesAgentCountry {
+  id: number
+  name: string
+}
+
+export interface SalesAgent {
+  id: string
+  identification_number: string | null
+  first_name: string
+  last_name: string
+  phone: string
+  country: SalesAgentCountry
+  channel: SalesAgentChannel
+  email: string
+  status: SalesAgentStatus
+  created_at: string
+  updated_at: string
+  promo_codes_count: number
+  promo_codes?: unknown[]
+  metrics: SalesAgentMetrics
+}
+
 export interface SalesAgentListResponse {
-  data: unknown[]
-  totalRecords?: number
+  data: SalesAgent[]
+  totalRecords: number
+  totalPages: number
+  currentPage: number
+  itemPerPage: number
 }
 
 export interface CreateSalesAgentPayload {

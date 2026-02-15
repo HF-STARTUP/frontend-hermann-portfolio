@@ -2,8 +2,26 @@ import { useCallback, useEffect } from "react"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { joiResolver } from "@hookform/resolvers/joi"
 import type { CreateSalesAgentPayload } from "@/types/marketing.types"
-import { useCreateSalesAgent } from "@/hooks/marketing/useMarketing"
+import type { SalesAgent } from "@/types/marketing.types"
+import {
+  useCreateSalesAgent,
+  useUpdateSalesAgent,
+  useGetSalesAgentDetails,
+} from "@/hooks/marketing/useMarketing"
 import { createSalesAgentFormSchema } from "@/schema/marketing.schema"
+
+function salesAgentToFormValues(agent: SalesAgent): AddSalesAgentFormValues {
+  return {
+    first_name: agent.first_name ?? "",
+    last_name: agent.last_name ?? "",
+    phone: agent.phone ?? "",
+    country_id: agent.country?.id ?? 0,
+    channel: agent.channel ?? "",
+    email: agent.email ?? "",
+    identification_number: agent.identification_number ?? "",
+    status: agent.status ?? "",
+  }
+}
 
 export interface AddSalesAgentFormValues {
   first_name: string
@@ -49,10 +67,12 @@ export interface UseAddSalesAgentFormOptions {
   onSuccess?: () => void
   onClose?: () => void
   isOpen?: boolean
+  agentId?: string | null
 }
 
 export function useAddSalesAgentForm(options?: UseAddSalesAgentFormOptions) {
-  const { onSuccess, onClose, isOpen = false } = options ?? {}
+  const { onSuccess, onClose, isOpen = false, agentId } = options ?? {}
+  const isEdit = Boolean(agentId)
 
   const form = useForm<AddSalesAgentFormValues>({
     resolver: joiResolver(createSalesAgentFormSchema),
@@ -61,7 +81,18 @@ export function useAddSalesAgentForm(options?: UseAddSalesAgentFormOptions) {
   })
 
   const { reset } = form
-  const { mutate: createSalesAgent, isPending } = useCreateSalesAgent()
+  const { data: editAgent, isLoading: isLoadingDetails } =
+    useGetSalesAgentDetails(
+      isEdit && isOpen ? agentId ?? undefined : undefined,
+      undefined,
+      { enabled: isEdit && isOpen && Boolean(agentId) }
+    )
+  const { mutate: createSalesAgent, isPending: isCreatePending } =
+    useCreateSalesAgent()
+  const { mutate: updateSalesAgent, isPending: isUpdatePending } =
+    useUpdateSalesAgent()
+
+  const isSubmitting = isCreatePending || isUpdatePending || (isEdit && isLoadingDetails)
 
   const handleClose = useCallback(() => {
     reset(DEFAULT_VALUES)
@@ -71,26 +102,55 @@ export function useAddSalesAgentForm(options?: UseAddSalesAgentFormOptions) {
   const onSubmit: SubmitHandler<AddSalesAgentFormValues> = useCallback(
     (data) => {
       const payload = mapFormValuesToPayload(data)
-      createSalesAgent(payload, {
-        onSuccess: () => {
-          reset(DEFAULT_VALUES)
-          onSuccess?.()
-          onClose?.()
-        },
-      })
+      if (isEdit && agentId) {
+        updateSalesAgent(
+          { id: agentId, payload },
+          {
+            onSuccess: () => {
+              reset(DEFAULT_VALUES)
+              onSuccess?.()
+              onClose?.()
+            },
+          }
+        )
+      } else {
+        createSalesAgent(payload, {
+          onSuccess: () => {
+            reset(DEFAULT_VALUES)
+            onSuccess?.()
+            onClose?.()
+          },
+        })
+      }
     },
-    [createSalesAgent, reset, onSuccess, onClose],
+    [
+      isEdit,
+      agentId,
+      updateSalesAgent,
+      createSalesAgent,
+      reset,
+      onSuccess,
+      onClose,
+    ]
   )
 
   useEffect(() => {
-    if (!isOpen) return
-    reset(DEFAULT_VALUES)
-  }, [isOpen, reset])
+    if (isOpen && !isEdit) {
+      reset(DEFAULT_VALUES)
+    }
+  }, [isOpen, isEdit, reset])
+
+  useEffect(() => {
+    if (isOpen && isEdit && editAgent) {
+      reset(salesAgentToFormValues(editAgent))
+    }
+  }, [isOpen, isEdit, editAgent, reset])
 
   return {
     ...form,
     handleClose,
     onSubmit,
-    isSubmitting: isPending,
+    isSubmitting,
+    isEdit,
   }
 }

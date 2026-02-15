@@ -13,6 +13,7 @@ import {
   PromoCodeMetricsFilterParams,
   SalesAgentFilters,
   SalesAgentListResponse,
+  SalesAgent,
 } from "@/types/marketing.types";
 
 class MarketingService extends Service {
@@ -139,12 +140,34 @@ class MarketingService extends Service {
     })
   }
 
+  async getSalesAgentById(
+    id: string,
+    params?: { start_date?: string; end_date?: string },
+  ): Promise<SalesAgent> {
+    const queryParams = params ? this.toQueryString(params) : ""
+    return this.execHttpRequest<SalesAgent>({
+      url: `sales-agent/${id}${queryParams ? `?${queryParams}` : ""}`,
+      method: this.httpMethods.get,
+    })
+  }
+
   async createSalesAgent(
     payload: CreateSalesAgentPayload,
   ): Promise<Commercial> {
     return this.execHttpRequest<Commercial>({
       url: "sales-agent",
       method: this.httpMethods.post,
+      body: payload,
+    });
+  }
+
+  async updateSalesAgent(
+    id: string,
+    payload: CreateSalesAgentPayload,
+  ): Promise<SalesAgent> {
+    return this.execHttpRequest<SalesAgent>({
+      url: `sales-agent/${id}`,
+      method: this.httpMethods.update,
       body: payload,
     });
   }

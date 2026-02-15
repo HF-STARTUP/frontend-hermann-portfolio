@@ -35,6 +35,7 @@ import BtnBase from "@/components/elements/BtnBase"
 interface AddCommercialDialogProps {
   isOpen: boolean
   onClose: () => void
+  agentId?: string | null
 }
 
 type TextFieldProps = {
@@ -176,13 +177,16 @@ function StatusSelectField() {
 export const AddCommercialDialog: React.FC<AddCommercialDialogProps> = ({
   isOpen,
   onClose,
+  agentId = null,
 }) => {
   const formMethods = useAddSalesAgentForm({
     isOpen,
     onClose,
+    agentId,
   })
 
-  const { handleSubmit, onSubmit, isSubmitting, handleClose } = formMethods
+  const { handleSubmit, onSubmit, isSubmitting, handleClose, isEdit } =
+    formMethods
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
@@ -191,7 +195,7 @@ export const AddCommercialDialog: React.FC<AddCommercialDialogProps> = ({
           <>
             <DialogHeader>
               <DialogTitle className="text-[24px] font-semibold text-[#0b0b0b]">
-                Ajouter un commercial
+                {isEdit ? "Modifier un commercial" : "Ajouter un commercial"}
               </DialogTitle>
             </DialogHeader>
 
@@ -219,8 +223,8 @@ export const AddCommercialDialog: React.FC<AddCommercialDialogProps> = ({
                   <TextField
                     name="phone"
                     label="Numéro de téléphone"
-                    type="tel"
-                    placeholder="Entrer le numéro de téléphone"
+                    type="text"
+                    placeholder="+237567946392"
                     required
                   />
                   <TextField
@@ -245,7 +249,15 @@ export const AddCommercialDialog: React.FC<AddCommercialDialogProps> = ({
                 <StatusSelectField />
 
                 <BtnBase
-                  children={isSubmitting ? "Ajout en cours..." : "Ajouter"}
+                  children={
+                    isSubmitting
+                      ? isEdit
+                        ? "Enregistrement..."
+                        : "Ajout en cours..."
+                      : isEdit
+                        ? "Enregistrer"
+                        : "Ajouter"
+                  }
                   type="submit"
                   disabled={isSubmitting}
                   loading={isSubmitting}
