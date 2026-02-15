@@ -8,10 +8,11 @@ export default function CommerciauxPage() {
   const [period, setPeriod] = React.useState("this_month")
 
   return (
-    <div className="flex flex-col gap-6">
+    <div className="flex flex-col gap-4">
       <CommerciauxHeader
         period={period}
         onPeriodChange={setPeriod}
+        withPeriodSelector={false}
       />
 
       <CommerciauxTable />

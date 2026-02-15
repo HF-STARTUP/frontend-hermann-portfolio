@@ -29,6 +29,8 @@ interface CreateCodeStep1Props {
   onStep1Submit: () => void
   onClose: () => void
   title?: string
+  submitLabel?: string
+  isLoading?: boolean
 }
 
 const CodeLabelField = memo(function CodeLabelField() {
@@ -58,7 +60,7 @@ const DiscountValueField = memo(function DiscountValueField() {
     <div className="flex flex-col gap-2">
       <Input
         {...register("discount_value")}
-        label="Valeur de la réduction*"
+        label="Valeur de la réduction"
         type="number"
         min={0}
         step="any"
@@ -79,7 +81,7 @@ const ValidityDaysField = memo(function ValidityDaysField() {
     <div className="flex flex-col gap-2">
       <Input
         {...register("validity_days")}
-        label="Validité (jours)*"
+        label="Validité (jours)"
         type="number"
         min={1}
         placeholder="Ex : 30"
@@ -99,7 +101,7 @@ const MaxUsageField = memo(function MaxUsageField() {
     <div className="flex flex-col gap-2">
       <Input
         {...register("max_usage_per_user")}
-        label="Utilisation max par utilisateur*"
+        label="Utilisation max par utilisateur"
         type="number"
         min={1}
         placeholder="Ex : 1"
@@ -193,6 +195,8 @@ function DiscountTypeSelectField() {
 export const CreateCodeStep1: React.FC<CreateCodeStep1Props> = ({
   onStep1Submit,
   title = "Créer un code",
+  submitLabel = "Créer le code",
+  isLoading = false,
 }) => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -205,7 +209,6 @@ export const CreateCodeStep1: React.FC<CreateCodeStep1Props> = ({
         <DialogTitle className="text-[28px] font-bold text-admin-primary leading-[30px]">
           {title}
         </DialogTitle>
-        {/* <span className="text-gray-400 text-sm">Étape 1/2</span> */}
       </DialogHeader>
 
       <CodeTypeSelectField />
@@ -226,8 +229,9 @@ export const CreateCodeStep1: React.FC<CreateCodeStep1Props> = ({
         shape="square"
         fullwidth={true}
         size="sm"
+        disabled={isLoading}
       >
-        Suivant
+        {submitLabel}
       </BtnBase>
     </form>
   )

@@ -124,13 +124,13 @@ export const CommerciauxTable: React.FC = () => {
             />
 
             <div className="flex items-center gap-3">
-              <Button
+              {/* <Button
                 variant="outline"
                 className="h-[47px] gap-2 border-gray-200 rounded-lg"
               >
                 <Download className="h-4 w-4" />
                 Exporter
-              </Button>
+              </Button> */}
 
               <BtnBase
                 type="button"

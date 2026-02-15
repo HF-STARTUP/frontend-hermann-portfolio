@@ -57,7 +57,7 @@ export const PromoCodeActionsMenu: React.FC<PromoCodeActionsMenuProps> = ({
           </DropdownMenuItem>
         )}
         <DropdownMenuItem onClick={() => onAssignCommercial?.(code)}>
-          Assigner un commercial
+          {code.sales_agent ? "Réassigner" : "Assigner un commercial"}
         </DropdownMenuItem>
         <DropdownMenuItem onClick={() => onEdit?.(code)}>
           Modifier

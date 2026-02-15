@@ -1,35 +1,37 @@
 "use client"
 
 import React from "react"
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
 } from "@/components/ui/select"
 import VLinkProvider from "@/components/helpers/VLinkProvider"
 
 interface CommerciauxHeaderProps {
   period: string
-  onPeriodChange: (period: string) => void
+  onPeriodChange: (period: string) => void,
+  withPeriodSelector: false
 }
 
 export const CommerciauxHeader: React.FC<CommerciauxHeaderProps> = ({
   period,
   onPeriodChange,
+  withPeriodSelector = true
 }) => {
   return (
     <div className="flex flex-col gap-2 mb-8">
       <div className="text-slate-500 text-sm font-medium leading-normal">
-        <VLinkProvider 
+        <VLinkProvider
           className="hover:underline underline-offset-4 transition delay-75 duration-200 ease-in"
           to="/app/dashboard"
         >
           Admin VTCControl
         </VLinkProvider>
         {" / "}
-        <VLinkProvider 
+        <VLinkProvider
           className="hover:underline underline-offset-4 transition delay-75 duration-200 ease-in"
           to="/app/marketing"
         >
@@ -38,13 +40,13 @@ export const CommerciauxHeader: React.FC<CommerciauxHeaderProps> = ({
         {" / "}
         <span>Commerciaux</span>
       </div>
-      
+
       <div className="flex items-center justify-between">
         <h1 className="text-[34px] font-bold text-[#405768] leading-[42px]">
           Gestion des commerciaux
         </h1>
-        
-        <Select value={period} onValueChange={onPeriodChange}>
+
+        {withPeriodSelector && <Select value={period} onValueChange={onPeriodChange}>
           <SelectTrigger className="w-[180px] h-10 border-gray-200 rounded-lg bg-white">
             <SelectValue placeholder="Ce mois-ci" />
           </SelectTrigger>
@@ -56,7 +58,7 @@ export const CommerciauxHeader: React.FC<CommerciauxHeaderProps> = ({
             <SelectItem value="this_year">Cette année</SelectItem>
             <SelectItem value="all_time">Tout le temps</SelectItem>
           </SelectContent>
-        </Select>
+        </Select>}
       </div>
     </div>
   )

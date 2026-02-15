@@ -76,7 +76,6 @@ export function useCreatePromoCodeForm(options?: UseCreatePromoCodeFormOptions) 
   const createMutation = useCreatePromoCode()
   const updateMutation = useUpdatePromoCode()
 
-  const handleMutation = isEdit ? updateMutation.handleMutation : createMutation.handleMutation
   const isLoading = isEdit ? updateMutation.isLoading : createMutation.isLoading
   const isSuccess = isEdit ? updateMutation.isSuccess : createMutation.isSuccess
 
@@ -111,9 +110,16 @@ export function useCreatePromoCodeForm(options?: UseCreatePromoCodeFormOptions) 
 
   const handleStep1Submit = useCallback(() => {
     trigger().then((valid) => {
-      if (valid) setCurrentStep(2)
+      if (!valid) return
+      const data = getValues()
+      const payload = mapFormValuesToPayload(data)
+      if (isEdit && codeId) {
+        updateMutation.handleMutation({ id: codeId, payload })
+      } else {
+        createMutation.handleMutation(payload)
+      }
     })
-  }, [trigger])
+  }, [trigger, getValues, isEdit, codeId, createMutation, updateMutation])
 
   const handleBack = useCallback(() => {
     setCurrentStep(1)
@@ -123,11 +129,11 @@ export function useCreatePromoCodeForm(options?: UseCreatePromoCodeFormOptions) 
     const data = getValues()
     const payload = mapFormValuesToPayload(data)
     if (isEdit && codeId) {
-      handleMutation({ id: codeId, payload })
+      updateMutation.handleMutation({ id: codeId, payload })
     } else {
-      handleMutation(payload as never)
+      createMutation.handleMutation(payload)
     }
-  }, [getValues, handleMutation, isEdit, codeId])
+  }, [getValues, isEdit, codeId, createMutation, updateMutation])
 
   return {
     ...form,

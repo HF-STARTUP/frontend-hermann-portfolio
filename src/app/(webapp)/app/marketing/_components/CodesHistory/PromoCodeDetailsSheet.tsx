@@ -10,7 +10,10 @@ import {
 } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { useGetPromoCodeDetails } from "@/hooks/marketing/useMarketing"
+import {
+  useGetPromoCodeDetails,
+  useGetPromoCodeEvents,
+} from "@/hooks/marketing/useMarketing"
 import {
   CODE_TYPE_OPTIONS,
   DISCOUNT_TYPE_OPTIONS,
@@ -18,12 +21,18 @@ import {
   type CodeType,
   type DiscountType,
 } from "@/types/marketing.types"
-import { Ticket, Loader2 } from "lucide-react"
+import { Ticket, Loader2, Pencil } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Button } from "@/components/ui/button"
+import type {
+  PromoCodeSalesAgent,
+  PromoCodeEvent,
+} from "@/types/marketing.types"
 import type { PromoCode } from "@/types/marketing.types"
 import { PromoCodeActionsMenu } from "./PromoCodeActionsMenu"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { SimpleEmptyElement } from "@/components/box/PageNetworkState"
+import { AiOutlineReload } from "react-icons/ai"
 
 const STATUS_LABELS: Record<PromoCodeStatusApi, string> = {
   DRAFT: "Brouillon",
@@ -73,6 +82,41 @@ function formatDate(iso: string): string {
   }
 }
 
+function formatEventDate(iso: string): string {
+  try {
+    const d = new Date(iso)
+    const date = d.toLocaleDateString("fr-FR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    })
+    const time = d.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    })
+    return `${date} • ${time}`
+  } catch {
+    return iso
+  }
+}
+
+function getEventDotClassName(causedEvent: string): string {
+  if (causedEvent.includes("created")) return "bg-blue-500"
+  if (causedEvent.includes("activated")) return "bg-emerald-500"
+  if (causedEvent.includes("suspended") || causedEvent.includes("deactivated"))
+    return "bg-amber-500"
+  return "bg-gray-400"
+}
+
+function getProfileDisplayName(profile: PromoCodeEvent["profile_who_create_event"]): string | null {
+  if (!profile) return null
+  if (typeof profile.name === "string") return profile.name
+  if (profile.first_name || profile.last_name)
+    return [profile.first_name, profile.last_name].filter(Boolean).join(" ")
+  return null
+}
+
 interface PromoCodeDetailsSheetProps {
   codeId: string | null
   open: boolean
@@ -81,6 +125,7 @@ interface PromoCodeDetailsSheetProps {
   onDelete?: (codeId: string) => void
   onEdit?: (code: PromoCode) => void
   onAssignCommercial?: (code: PromoCode) => void
+  onOpenCommercialDetails?: (agentId: string) => void
 }
 
 export const PromoCodeDetailsSheet: React.FC<PromoCodeDetailsSheetProps> = ({
@@ -91,9 +136,14 @@ export const PromoCodeDetailsSheet: React.FC<PromoCodeDetailsSheetProps> = ({
   onDelete,
   onEdit,
   onAssignCommercial,
+  onOpenCommercialDetails,
 }) => {
   const { data: code, isLoading } = useGetPromoCodeDetails(
     open && codeId ? codeId : undefined
+  )
+  const { data: eventsData, isLoading: eventsLoading } = useGetPromoCodeEvents(
+    open && codeId ? codeId : undefined,
+    { itemPerPage: 20, page: 1 }
   )
 
   return (
@@ -156,6 +206,7 @@ export const PromoCodeDetailsSheet: React.FC<PromoCodeDetailsSheetProps> = ({
                     Informations générales
                   </TabsTrigger>
                   <TabsTrigger value="prospects">Prospects liés</TabsTrigger>
+                  <TabsTrigger value="historique">Historique</TabsTrigger>
                 </TabsList>
                 <TabsContent value="general" className="mt-4">
                   <dl className="space-y-3 text-sm">
@@ -202,9 +253,77 @@ export const PromoCodeDetailsSheet: React.FC<PromoCodeDetailsSheetProps> = ({
                       />
                     )}
                   </dl>
+
+                  {code.sales_agent && (
+                    <AssignedCommercialBlock
+                      agent={code.sales_agent}
+                      onOpenDetails={() =>
+                        onOpenCommercialDetails?.(code.sales_agent!.id)
+                      }
+                      onReassign={() => onAssignCommercial?.(code)}
+                    />
+                  )}
                 </TabsContent>
                 <TabsContent value="prospects" className="mt-4">
                   <SimpleEmptyElement message="Aucun prospect lié pour l'instant" />
+                </TabsContent>
+                <TabsContent value="historique" className="mt-4">
+                  {eventsLoading ? (
+                    <div className="flex items-center justify-center py-8">
+                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+                    </div>
+                  ) : !eventsData?.data?.length ? (
+                    <SimpleEmptyElement message="Aucun événement pour l'instant." />
+                  ) : (
+                    <ul className="space-y-2">
+                      {eventsData.data.map((event, index) => {
+                        const profileName = getProfileDisplayName(
+                          event.profile_who_create_event
+                        )
+                        const dateTime = formatEventDate(event.created_at)
+                        const isFirst = index === 0
+                        const isLast = index === eventsData.data.length - 1
+                        return (
+                          <li
+                            key={event.id}
+                            className="flex gap-4"
+                          >
+                            <div className="flex w-6 shrink-0 flex-col items-center">
+                              {!isFirst && (
+                                <div className="h-2 w-px min-h-2 flex-shrink-0 bg-gray-200" aria-hidden />
+                              )}
+                              <div
+                                className={cn(
+                                  "h-3 w-3 shrink-0 rounded-full border-2 border-background shadow-sm",
+                                  getEventDotClassName(event.caused_event)
+                                )}
+                                aria-hidden
+                              />
+                              {!isLast && (
+                                <div className="w-px flex-1 min-h-4 bg-gray-200" aria-hidden />
+                              )}
+                            </div>
+                            <div className="min-w-0 flex-1 pb-4 last:pb-0">
+                              <div className="rounded-xl border border-gray-100 bg-gray-50/80 px-3.5 py-3 transition-colors hover:border-gray-200 hover:bg-gray-50">
+                                <p className="font-medium text-gray-900 text-sm leading-snug">
+                                  {event.description}
+                                </p>
+                                <div className="mt-1.5 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs text-gray-500">
+                                  <span>{dateTime}</span>
+                                  {profileName && (
+                                    <>
+                                      <span aria-hidden>•</span>
+                                      <span>{profileName}</span>
+                                    </>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  )}
                 </TabsContent>
               </Tabs>
             </ScrollArea>
@@ -212,6 +331,63 @@ export const PromoCodeDetailsSheet: React.FC<PromoCodeDetailsSheetProps> = ({
         )}
       </SheetContent>
     </Sheet>
+  )
+}
+
+function AssignedCommercialBlock({
+  agent,
+  onOpenDetails,
+  onReassign,
+}: {
+  agent: PromoCodeSalesAgent
+  onOpenDetails: () => void
+  onReassign: () => void
+}) {
+  const name = [agent.first_name, agent.last_name].filter(Boolean).join(" ") || "—"
+  const initials = [agent.first_name, agent.last_name]
+    .filter(Boolean)
+    .map((n) => n[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase()
+
+  return (
+    <div className="mt-6 pt-4 border-t border-gray-100">
+      <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-3">
+        Commercial assigné
+      </p>
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={onOpenDetails}
+        onKeyDown={(e) => e.key === "Enter" && onOpenDetails()}
+        className={cn(
+          "flex items-center gap-3 p-3 rounded-xl border border-gray-100",
+          "bg-gray-50/80 hover:bg-gray-100/80 cursor-pointer transition-colors",
+          "focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+        )}
+      >
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600 font-semibold text-sm">
+          {initials || "—"}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="font-medium text-gray-900 truncate">{name}</p>
+          <p className="text-sm text-gray-500 truncate">{agent.email || "—"}</p>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 shrink-0 rounded-full"
+          onClick={(e) => {
+            e.stopPropagation()
+            onReassign()
+          }}
+          title="Réassigner"
+        >
+          <AiOutlineReload className="h-4 w-4 text-gray-500" />
+        </Button>
+      </div>
+    </div>
   )
 }
 

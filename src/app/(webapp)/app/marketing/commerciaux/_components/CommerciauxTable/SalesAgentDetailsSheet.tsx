@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useState } from "react"
 import {
   Sheet,
   SheetContent,
@@ -26,6 +26,8 @@ import {
 import type { SalesAgent } from "@/types/marketing.types"
 import { Loader2, Calendar, MoreVertical, ArrowUp, FileText, Pencil } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { SalesAgentAssignedCodesList } from "./SalesAgentAssignedCodesList"
+import { PromoCodeDetailsSheet } from "@/app/(webapp)/app/marketing/_components/CodesHistory/PromoCodeDetailsSheet"
 
 interface SalesAgentDetailsSheetProps {
   agentId: string | null
@@ -107,6 +109,7 @@ export const SalesAgentDetailsSheet: React.FC<SalesAgentDetailsSheetProps> = ({
   endDate,
   onEdit,
 }) => {
+  const [selectedCodeId, setSelectedCodeId] = useState<string | null>(null)
   const params =
     startDate || endDate
       ? { start_date: startDate, end_date: endDate }
@@ -177,8 +180,8 @@ export const SalesAgentDetailsSheet: React.FC<SalesAgentDetailsSheetProps> = ({
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                       <DropdownMenuItem onClick={() => onEdit?.(data)}>
-                      Modifier
-                    </DropdownMenuItem>
+                        Modifier
+                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
@@ -259,9 +262,6 @@ export const SalesAgentDetailsSheet: React.FC<SalesAgentDetailsSheetProps> = ({
                         <h3 className="text-sm font-semibold text-gray-900">
                           Détails
                         </h3>
-                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                          <Pencil className="h-4 w-4" />
-                        </Button>
                       </div>
                       <dl className="space-y-0 text-sm">
                         <DetailRow label="Nom" value={data.last_name ?? "—"} />
@@ -287,9 +287,10 @@ export const SalesAgentDetailsSheet: React.FC<SalesAgentDetailsSheetProps> = ({
                     </div>
                   </TabsContent>
                   <TabsContent value="codes" className="mt-4">
-                    <p className="text-sm text-gray-500 py-4">
-                      Aucun code attribué pour l&apos;instant.
-                    </p>
+                    <SalesAgentAssignedCodesList
+                      salesAgentId={data?.id ?? null}
+                      onCodeClick={setSelectedCodeId}
+                    />
                   </TabsContent>
                   <TabsContent value="payments" className="mt-4">
                     <p className="text-sm text-gray-500 py-4">
@@ -302,6 +303,11 @@ export const SalesAgentDetailsSheet: React.FC<SalesAgentDetailsSheetProps> = ({
           </>
         )}
       </SheetContent>
+      <PromoCodeDetailsSheet
+        codeId={selectedCodeId}
+        open={!!selectedCodeId}
+        onOpenChange={(isOpen) => !isOpen && setSelectedCodeId(null)}
+      />
     </Sheet>
   )
 }

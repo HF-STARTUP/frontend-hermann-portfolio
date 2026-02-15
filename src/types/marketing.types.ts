@@ -6,6 +6,17 @@ export type PromoCodeStatusApi =
   | "EXPIRED"
   | "ARCHIVED"
 
+export interface PromoCodeSalesAgent {
+  id: string
+  first_name: string
+  last_name: string
+  phone: string
+  channel: string
+  email: string
+  created_at: string
+  updated_at: string
+}
+
 export interface PromoCode {
   id: string
   code_label: string
@@ -22,7 +33,7 @@ export interface PromoCode {
   expires_at: string
   created_at: string
   updated_at: string
-  sales_agent: unknown | null
+  sales_agent: PromoCodeSalesAgent | null
   targets: unknown[]
   stackable_codes: unknown[]
   application_modes: unknown[]
@@ -41,8 +52,7 @@ export interface MarketingKpi {
 
 export interface CodeUsageData {
   type: string
-  label: string
-  count: number
+  nombre_utilisation: number
 }
 
 export interface MarketingFilters {
@@ -54,13 +64,62 @@ export interface MarketingFilters {
 }
 
 export interface PromoCodeMetricsFilterParams {
-  start_date?: string //dateteime
-  end_date?: string //datetime
+  start_date?: string
+  end_date?: string
+}
+
+export type PromoCodeMetricsEvolution = "increase" | "decrease" | "stable"
+
+export interface PromoCodeMetricItem {
+  value: number
+  previous_value: number
+  percentage_change: number
+  evolution: PromoCodeMetricsEvolution
+}
+
+export interface PromoCodeMetricsPeriod {
+  start_date: string
+  end_date: string
+}
+
+export interface PromoCodeMetricsData {
+  codes_crees: PromoCodeMetricItem
+  codes_actifs: PromoCodeMetricItem
+  commerciaux_avec_code: PromoCodeMetricItem
+  period: PromoCodeMetricsPeriod
+  previous_period: PromoCodeMetricsPeriod
+}
+
+export interface PromoCodeMetricsResponse {
+  message?: string
+  code?: number
+  data: PromoCodeMetricsData
 }
 
 export interface PromoCodeListResponse {
   data: PromoCode[]
   totalRecords: number
+}
+
+export interface PromoCodeEvent {
+  id: string
+  caused_event: string
+  description: string
+  created_at: string
+  profile_who_create_event: {
+    name?: string
+    first_name?: string
+    last_name?: string
+    [key: string]: unknown
+  } | null
+}
+
+export interface PromoCodeEventsResponse {
+  data: PromoCodeEvent[]
+  totalRecords: number
+  totalPages: number
+  currentPage: number
+  itemPerPage: number
 }
 
 export type CodeType =
