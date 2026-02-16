@@ -161,7 +161,7 @@ export const PromoCodeDetailsSheet: React.FC<PromoCodeDetailsSheetProps> = ({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange} direction="right">
-      <SheetContent side="right" className="p-0 flex flex-col w-full max-w-md">
+      <SheetContent side="right" className="p-0 flex flex-col w-full max-w-xl">
         {isLoading && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/80">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />

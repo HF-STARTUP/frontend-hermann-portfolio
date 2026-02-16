@@ -8,6 +8,7 @@ import {
 } from "@/types/marketing.types"
 import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
+import { CopyToClipboard } from "@/components/ui/copy-to-clipboard"
 import { cn } from "@/lib/utils"
 import { PromoCodeActionsMenu } from "./PromoCodeActionsMenu"
 
@@ -89,9 +90,7 @@ export const createColumns = (
       cell: ({ row }) => {
         const typeLabel =
           CODE_TYPE_LABELS[row.original.code_type] ?? row.original.code_type
-        return (
-          <span className="text-sm text-gray-600">{typeLabel}</span>
-        )
+        return <CopyToClipboard text={typeLabel} />
       },
     },
     {
