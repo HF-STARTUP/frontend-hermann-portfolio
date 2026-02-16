@@ -45,7 +45,7 @@ export function CopyToClipboard({
         )}
       >
         <span
-          className={cn("text-sm text-gray-600 truncate min-w-0", textClassName)}
+          className={cn("truncate min-w-0", textClassName)}
         >
           {text}
         </span>

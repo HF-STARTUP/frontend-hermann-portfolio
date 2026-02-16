@@ -35,6 +35,7 @@ import { PromoCodeActionsMenu } from "./PromoCodeActionsMenu"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { SimpleEmptyElement } from "@/components/box/PageNetworkState"
 import { AiOutlineReload } from "react-icons/ai"
+import { CopyToClipboard } from "@/components/ui/copy-to-clipboard"
 
 const STATUS_LABELS: Record<PromoCodeStatusApi, string> = {
   DRAFT: "Brouillon",
@@ -184,7 +185,7 @@ export const PromoCodeDetailsSheet: React.FC<PromoCodeDetailsSheetProps> = ({
                   </div>
                   <div className="min-w-0">
                     <SheetTitle className="text-lg font-semibold text-gray-900 truncate">
-                      {code.code_label}
+                      <CopyToClipboard text={code.code_label} />
                     </SheetTitle>
                     <SheetDescription className="mt-0.5 text-sm text-gray-500">
                       {code.description ?? "—"}
