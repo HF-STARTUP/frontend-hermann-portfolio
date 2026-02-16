@@ -35,6 +35,7 @@ import { PromoCodeActionsMenu } from "./PromoCodeActionsMenu"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { SimpleEmptyElement } from "@/components/box/PageNetworkState"
 import { AiOutlineReload } from "react-icons/ai"
+import { CopyToClipboard } from "@/components/ui/copy-to-clipboard"
 
 const STATUS_LABELS: Record<PromoCodeStatusApi, string> = {
   DRAFT: "Brouillon",
@@ -161,7 +162,7 @@ export const PromoCodeDetailsSheet: React.FC<PromoCodeDetailsSheetProps> = ({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange} direction="right">
-      <SheetContent side="right" className="p-0 flex flex-col w-full max-w-md">
+      <SheetContent side="right" className="p-0 flex flex-col w-full max-w-xl">
         {isLoading && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/80">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -184,7 +185,7 @@ export const PromoCodeDetailsSheet: React.FC<PromoCodeDetailsSheetProps> = ({
                   </div>
                   <div className="min-w-0">
                     <SheetTitle className="text-lg font-semibold text-gray-900 truncate">
-                      {code.code_label}
+                      <CopyToClipboard text={code.code_label} />
                     </SheetTitle>
                     <SheetDescription className="mt-0.5 text-sm text-gray-500">
                       {code.description ?? "—"}
