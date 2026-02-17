@@ -122,15 +122,35 @@ export interface PromoCodeEventsResponse {
   itemPerPage: number
 }
 
+export interface PromoCodeProspect {
+  id: string
+  nom: string
+  date_inscription: string
+  date_activation: string | null
+  status_abonnement: string
+  formule: string
+  subscription_account_id: string
+}
+
 export interface PromoCodeProspectsResponse {
-  data: Record<string, unknown>[]
+  data: PromoCodeProspect[]
   totalRecords: number
   totalPages: number
   currentPage: number
   itemPerPage: number
 }
 
-export type PromoCodeMetricsByIdResponse = Record<string, unknown>
+export interface PromoCodeMetricsById {
+  nb_conversion: number
+  nb_utilisation: number
+  revenus_generes: number
+  nb_abonnements_payants: number
+  taux_conversion: number
+  nb_comptes_crees: number
+  nb_abandons: number
+}
+
+export type PromoCodeMetricsByIdResponse = PromoCodeMetricsById
 
 export type CodeType =
   | "NEW_CLIENT"
