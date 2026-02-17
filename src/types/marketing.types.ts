@@ -122,11 +122,30 @@ export interface PromoCodeEventsResponse {
   itemPerPage: number
 }
 
+export interface PromoCodeProspectPark {
+  id: string
+  name: string
+}
+
+export interface PromoCodeProspectOwner {
+  id: string
+  email: string
+  phone: string
+}
+
+export interface PromoCodeProspectCompte {
+  id: string
+  name: string
+  owner: PromoCodeProspectOwner
+  parks: PromoCodeProspectPark[]
+}
+
 export interface PromoCodeProspect {
   id: string
-  nom: string
+  compte: PromoCodeProspectCompte
   date_inscription: string
   date_activation: string | null
+  date_expiration: string | null
   status_abonnement: string
   formule: string
   subscription_account_id: string
