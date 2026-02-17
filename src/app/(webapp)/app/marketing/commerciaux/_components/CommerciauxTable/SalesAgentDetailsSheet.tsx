@@ -217,7 +217,7 @@ export const SalesAgentDetailsSheet: React.FC<SalesAgentDetailsSheetProps> = ({
                   />
                 </div>
 
-                <Card className="rounded-xl border-blue-100 bg-blue-50/50 overflow-hidden">
+                {/* <Card className="rounded-xl border-blue-100 bg-blue-50/50 overflow-hidden">
                   <CardHeader className="pb-2 pt-4 px-4">
                     <div className="flex items-center gap-2">
                       <FileText className="h-4 w-4 text-blue-600" />
@@ -242,7 +242,7 @@ export const SalesAgentDetailsSheet: React.FC<SalesAgentDetailsSheetProps> = ({
                       Effectuer le paiement
                     </Button>
                   </CardContent>
-                </Card>
+                </Card> */}
 
                 <Tabs defaultValue="general" className="w-full">
                   <TabsList className="w-full justify-start rounded-lg bg-muted/60 p-1">
@@ -252,9 +252,9 @@ export const SalesAgentDetailsSheet: React.FC<SalesAgentDetailsSheetProps> = ({
                     <TabsTrigger value="codes">
                       Codes attribués ({data.promo_codes_count ?? data.promo_codes?.length ?? 0})
                     </TabsTrigger>
-                    <TabsTrigger value="payments">
+                    {/* <TabsTrigger value="payments">
                       Historique de paiement
-                    </TabsTrigger>
+                    </TabsTrigger> */}
                   </TabsList>
                   <TabsContent value="general" className="mt-4">
                     <div>
