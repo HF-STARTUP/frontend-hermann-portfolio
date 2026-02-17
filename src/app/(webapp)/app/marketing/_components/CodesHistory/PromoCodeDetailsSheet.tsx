@@ -32,6 +32,8 @@ import type {
 } from "@/types/marketing.types"
 import type { PromoCode } from "@/types/marketing.types"
 import { PromoCodeActionsMenu } from "./PromoCodeActionsMenu"
+import { ProspectsList } from "./ProspectsList"
+import { PromoCodeStatsSection } from "./PromoCodeStatsSection"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { SimpleEmptyElement } from "@/components/box/PageNetworkState"
 import { AiOutlineReload } from "react-icons/ai"
@@ -213,14 +215,17 @@ export const PromoCodeDetailsSheet: React.FC<PromoCodeDetailsSheetProps> = ({
               </div>
             </SheetHeader>
 
-            <ScrollArea className="flex-1 px-4 pb-6">
+            <ScrollArea className="flex-1 px-4 pb-8">
+              <PromoCodeStatsSection
+                metrics={metricsData}
+                isLoading={metricsLoading}
+              />
               <Tabs defaultValue="general" className="w-full mt-3">
                 <TabsList className="w-full justify-start rounded-lg bg-muted/60 p-1">
                   <TabsTrigger value="general">
                     Informations générales
                   </TabsTrigger>
-                  <TabsTrigger value="prospects">Prospects liés</TabsTrigger>
-                  <TabsTrigger value="metrics">Métriques</TabsTrigger>
+                  <TabsTrigger value="prospects">Prospects liés ({prospectsData?.totalRecords ?? 0})</TabsTrigger>
                   <TabsTrigger value="historique">Historique</TabsTrigger>
                 </TabsList>
                 <TabsContent value="general" className="mt-4">
@@ -280,26 +285,10 @@ export const PromoCodeDetailsSheet: React.FC<PromoCodeDetailsSheetProps> = ({
                   )}
                 </TabsContent>
                 <TabsContent value="prospects" className="mt-4">
-                  {prospectsLoading ? (
-                    <div className="flex items-center justify-center py-8">
-                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                    </div>
-                  ) : (
-                    <pre className="rounded-lg border bg-muted/30 p-4 text-xs overflow-auto max-h-80">
-                      {JSON.stringify(prospectsData ?? null, null, 2)}
-                    </pre>
-                  )}
-                </TabsContent>
-                <TabsContent value="metrics" className="mt-4">
-                  {metricsLoading ? (
-                    <div className="flex items-center justify-center py-8">
-                      <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                    </div>
-                  ) : (
-                    <pre className="rounded-lg border bg-muted/30 p-4 text-xs overflow-auto max-h-80">
-                      {JSON.stringify(metricsData ?? null, null, 2)}
-                    </pre>
-                  )}
+                  <ProspectsList
+                    prospects={prospectsData?.data ?? []}
+                    isLoading={prospectsLoading}
+                  />
                 </TabsContent>
                 <TabsContent value="historique" className="mt-4">
                   {eventsLoading ? (

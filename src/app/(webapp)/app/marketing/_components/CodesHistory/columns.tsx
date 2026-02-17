@@ -80,7 +80,7 @@ export const createColumns = (
       header: "Code",
       cell: ({ row }) => (
         <span className="text-sm font-medium text-gray-900">
-          {row.original.code_label}
+          <CopyToClipboard text={row.original.code_label} />
         </span>
       ),
     },
@@ -90,7 +90,7 @@ export const createColumns = (
       cell: ({ row }) => {
         const typeLabel =
           CODE_TYPE_LABELS[row.original.code_type] ?? row.original.code_type
-        return <CopyToClipboard text={typeLabel} />
+        return <span className="text-sm text-gray-600">{typeLabel}</span>
       },
     },
     {

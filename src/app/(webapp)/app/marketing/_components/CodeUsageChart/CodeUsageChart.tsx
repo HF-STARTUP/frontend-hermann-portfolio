@@ -68,7 +68,7 @@ export const CodeUsageChart: React.FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[400px] w-full">
+        <ChartContainer config={chartConfig} className="w-full">
           <BarChart
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 80 }}
