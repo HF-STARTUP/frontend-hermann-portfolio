@@ -18,8 +18,6 @@ function salesAgentToFormValues(agent: SalesAgent): AddSalesAgentFormValues {
     country_id: agent.country?.id ?? 0,
     channel: agent.channel ?? "",
     email: agent.email ?? "",
-    identification_number: agent.identification_number ?? "",
-    status: agent.status ?? "",
   }
 }
 
@@ -30,8 +28,6 @@ export interface AddSalesAgentFormValues {
   country_id: number
   channel: string
   email: string
-  identification_number: string
-  status: string
 }
 
 const DEFAULT_VALUES: AddSalesAgentFormValues = {
@@ -41,8 +37,6 @@ const DEFAULT_VALUES: AddSalesAgentFormValues = {
   country_id: 0,
   channel: "",
   email: "",
-  identification_number: "",
-  status: "",
 }
 
 function mapFormValuesToPayload(
@@ -56,10 +50,6 @@ function mapFormValuesToPayload(
     channel: data.channel as CreateSalesAgentPayload["channel"],
   }
   if (data.email?.trim()) payload.email = data.email.trim()
-  if (data.identification_number?.trim())
-    payload.identification_number = data.identification_number.trim()
-  if (data.status && data.status !== "")
-    payload.status = data.status as CreateSalesAgentPayload["status"]
   return payload
 }
 

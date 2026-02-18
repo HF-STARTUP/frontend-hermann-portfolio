@@ -10,7 +10,6 @@ const CODE_TYPE_VALUES = ["NEW_CLIENT", "LOYALTY", "FREE_COUPON", "COMMERCIAL_RE
 const DISCOUNT_TYPE_VALUES = ["FIXED_AMOUNT", "PERCENTAGE", "FREE_PERIOD"] as const
 
 const SALES_AGENT_CHANNEL_VALUES = ["VISION", "PRESENTIEL"] as const
-const SALES_AGENT_STATUS_VALUES = ["ACTIVE", "INACTIVE"] as const
 
 export const createPromoCodeSchema = Joi.object<CreatePromoCodePayload>({
   code_label: _JoiConfig.strRequired,
@@ -120,12 +119,6 @@ export const createSalesAgentSchema = Joi.object<CreateSalesAgentPayload>({
   email: _JoiConfig.strOptionnal.email({ tlds: { allow: false } }).messages({
     "string.email": "Format d'email invalide",
   }),
-  identification_number: _JoiConfig.strOptionnal,
-  status: Joi.string()
-    .valid(...SALES_AGENT_STATUS_VALUES)
-    .optional()
-    .allow("")
-    .messages({ "any.only": "Statut invalide" }),
 })
 
 export const createSalesAgentFormSchema = createSalesAgentSchema

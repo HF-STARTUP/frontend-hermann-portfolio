@@ -16,11 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import {
-  COUNTRY_ID_OPTIONS,
-  SALES_AGENT_CHANNEL_OPTIONS,
-  SALES_AGENT_STATUS_OPTIONS,
-} from "@/types/marketing.types"
+import { SALES_AGENT_CHANNEL_OPTIONS } from "@/types/marketing.types"
+import { useCountries } from "@/hooks/location/useCountry/useCountry"
 import { useAddSalesAgentForm } from "@/hooks/marketing/useAddSalesAgentForm"
 import type { AddSalesAgentFormValues } from "@/hooks/marketing/useAddSalesAgentForm"
 import type { FieldError } from "react-hook-form"
@@ -72,10 +69,11 @@ const TextField = memo<TextFieldProps>(function TextField({
 function CountrySelectField() {
   const { control } = useFormContext<AddSalesAgentFormValues>()
   const { errors } = useFormState({ name: "country_id" })
+  const { data: countries, isLoading: loadingCountries } = useCountries()
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[14px] font-semibold text-[#405768]">
+      <label className="text-[14px] text-[#405768]">
         Pays<span className="text-red-500">*</span>
       </label>
       <Controller
@@ -85,14 +83,15 @@ function CountrySelectField() {
           <Select
             value={field.value === 0 ? "" : String(field.value)}
             onValueChange={(v) => field.onChange(v === "" ? 0 : Number(v))}
+            disabled={loadingCountries}
           >
-            <SelectTrigger className="h-[50px] rounded-[12px] border-[#80878c]">
+            <SelectTrigger className="">
               <SelectValue placeholder="Sélectionner le pays" />
             </SelectTrigger>
             <SelectContent>
-              {COUNTRY_ID_OPTIONS.map((option) => (
-                <SelectItem key={option.id} value={String(option.id)}>
-                  {option.label}
+              {countries?.map((c) => (
+                <SelectItem key={c.id} value={String(c.id)}>
+                  {c.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -114,15 +113,15 @@ function ChannelSelectField() {
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-[14px] font-semibold text-[#405768]">
-        Canal principal<span className="text-red-500">*</span>
+      <label className="text-[14px] text-[#405768]">
+        Canal d'acquisition des clients<span className="text-red-500">*</span>
       </label>
       <Controller
         control={control}
         name="channel"
         render={({ field }) => (
           <Select value={field.value} onValueChange={field.onChange}>
-            <SelectTrigger className="h-[50px] rounded-[12px] border-[#80878c]">
+            <SelectTrigger className="">
               <SelectValue placeholder="Sélectionner le canal" />
             </SelectTrigger>
             <SelectContent>
@@ -140,36 +139,6 @@ function ChannelSelectField() {
           {String(errors.channel.message)}
         </p>
       ) : null}
-    </div>
-  )
-}
-
-function StatusSelectField() {
-  const { control } = useFormContext<AddSalesAgentFormValues>()
-
-  return (
-    <div className="flex flex-col gap-2">
-      <label className="text-[14px] font-semibold text-[#405768]">
-        Statut
-      </label>
-      <Controller
-        control={control}
-        name="status"
-        render={({ field }) => (
-          <Select value={field.value} onValueChange={field.onChange}>
-            <SelectTrigger className="h-[50px] rounded-[12px] border-[#80878c]">
-              <SelectValue placeholder="Sélectionner le statut" />
-            </SelectTrigger>
-            <SelectContent>
-              {SALES_AGENT_STATUS_OPTIONS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
-      />
     </div>
   )
 }
@@ -240,13 +209,7 @@ export const AddCommercialDialog: React.FC<AddCommercialDialogProps> = ({
                   <ChannelSelectField />
                 </div>
 
-                <TextField
-                  name="identification_number"
-                  label="Numéro d'identification"
-                  placeholder="Entrer le numéro d'identification"
-                />
 
-                <StatusSelectField />
 
                 <BtnBase
                   children={
