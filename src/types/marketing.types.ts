@@ -209,7 +209,7 @@ export const CODE_TYPE_OPTIONS: { value: CodeType; label: string }[] = [
 export const DISCOUNT_TYPE_OPTIONS: { value: DiscountType; label: string }[] = [
   { value: "FIXED_AMOUNT", label: "Montant fixe" },
   { value: "PERCENTAGE", label: "Pourcentage" },
-  { value: "FREE_PERIOD", label: "Période gratuite" },
+  // { value: "FREE_PERIOD", label: "Période gratuite" },
 ]
 
 // Types pour les Commerciaux
