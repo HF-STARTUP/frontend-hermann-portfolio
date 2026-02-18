@@ -52,38 +52,36 @@ class MarketingService extends Service {
 
   async getPromoCodeEvents(
     id: string,
-    params?: { itemPerPage?: number; page?: number }
+    params?: { itemPerPage?: number; page?: number },
   ): Promise<PromoCodeEventsResponse> {
-    const queryParams = params ? this.toQueryString(params) : ""
+    const queryParams = params ? this.toQueryString(params) : "";
     return this.execHttpRequest<PromoCodeEventsResponse>({
       url: `promo-code/${id}/events${queryParams ? `?${queryParams}` : ""}`,
       method: this.httpMethods.get,
-    })
+    });
   }
 
   async getPromoCodeProspects(
     id: string,
-    params?: { itemPerPage?: number; page?: number }
+    params?: { itemPerPage?: number; page?: number },
   ): Promise<PromoCodeProspectsResponse> {
-    const queryParams = params ? this.toQueryString(params) : ""
+    const queryParams = params ? this.toQueryString(params) : "";
     return this.execHttpRequest<PromoCodeProspectsResponse>({
       url: `promo-code/${id}/prospects${queryParams ? `?${queryParams}` : ""}`,
       method: this.httpMethods.get,
-    })
+    });
   }
 
   async getPromoCodeMetricsById(
-    id: string
+    id: string,
   ): Promise<PromoCodeMetricsByIdResponse> {
     return this.execHttpRequest<PromoCodeMetricsByIdResponse>({
       url: `promo-code/${id}/metrics`,
       method: this.httpMethods.get,
-    })
+    });
   }
 
-  async getCodeUsageMetrics(
-    filters?: PromoCodeMetricsFilterParams,
-  ) {
+  async getCodeUsageMetrics(filters?: PromoCodeMetricsFilterParams) {
     const queryParams = filters ? this.toQueryString(filters) : "";
     return this.execHttpRequest<PromoCodeMetricsData>({
       url: `promo-code/metrics${queryParams ? `?${queryParams}` : ""}`,
@@ -134,11 +132,11 @@ class MarketingService extends Service {
     const path =
       status === "suspendu"
         ? `promo-code/${codeId}/suspend`
-        : `promo-code/${codeId}/activate`
+        : `promo-code/${codeId}/activate`;
     return this.execHttpRequest<PromoCode>({
       url: path,
       method: this.httpMethods.update,
-    })
+    });
   }
 
   async assignPromoCodeToSalesAgent(
@@ -149,7 +147,7 @@ class MarketingService extends Service {
       url: `promo-code/${promoCodeId}/assign-sales-agent`,
       method: this.httpMethods.post,
       body: { sales_agent_id: salesAgentId },
-    })
+    });
   }
 
   async deletePromoCode(codeId: string): Promise<void> {
@@ -182,22 +180,22 @@ class MarketingService extends Service {
   async getSalesAgents(
     filters?: SalesAgentFilters,
   ): Promise<SalesAgentListResponse> {
-    const queryParams = filters ? this.toQueryString(filters) : ""
+    const queryParams = filters ? this.toQueryString(filters) : "";
     return this.execHttpRequest<SalesAgentListResponse>({
       url: `sales-agent${queryParams ? `?${queryParams}` : ""}`,
       method: this.httpMethods.get,
-    })
+    });
   }
 
   async getSalesAgentById(
     id: string,
     params?: { start_date?: string; end_date?: string },
   ): Promise<SalesAgent> {
-    const queryParams = params ? this.toQueryString(params) : ""
+    const queryParams = params ? this.toQueryString(params) : "";
     return this.execHttpRequest<SalesAgent>({
       url: `sales-agent/${id}${queryParams ? `?${queryParams}` : ""}`,
       method: this.httpMethods.get,
-    })
+    });
   }
 
   async createSalesAgent(
@@ -206,7 +204,7 @@ class MarketingService extends Service {
     return this.execHttpRequest<Commercial>({
       url: "sales-agent",
       method: this.httpMethods.post,
-      body: payload,
+      body: { ...payload, commission: 1, salary: 1, channel: "VISION" },
     });
   }
 

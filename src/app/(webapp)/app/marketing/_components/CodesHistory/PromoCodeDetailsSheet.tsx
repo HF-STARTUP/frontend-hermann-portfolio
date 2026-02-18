@@ -238,7 +238,10 @@ export const PromoCodeDetailsSheet: React.FC<PromoCodeDetailsSheetProps> = ({
                       label="Type de code"
                       value={getCodeTypeLabel(code.code_type)}
                     />
-                    <DetailRow label="Code" value={code.code_label} />
+
+                    <DetailRow label="Code" value={
+                      <CopyToClipboard text={code.code_label} />
+                    } />
                     <DetailRow
                       label="Valeur du code"
                       value={getDiscountLabel(
@@ -419,7 +422,7 @@ function DetailRow({
   value,
 }: {
   label: string
-  value: string
+  value: React.ReactNode
 }) {
   return (
     <div className="flex justify-between gap-4 py-1.5 border-b border-gray-100 last:border-0">

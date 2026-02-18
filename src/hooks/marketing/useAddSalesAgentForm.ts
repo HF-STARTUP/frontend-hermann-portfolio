@@ -16,10 +16,7 @@ function salesAgentToFormValues(agent: SalesAgent): AddSalesAgentFormValues {
     last_name: agent.last_name ?? "",
     phone: agent.phone ?? "",
     country_id: agent.country?.id ?? 0,
-    channel: agent.channel ?? "",
     email: agent.email ?? "",
-    identification_number: agent.identification_number ?? "",
-    status: agent.status ?? "",
   }
 }
 
@@ -28,10 +25,7 @@ export interface AddSalesAgentFormValues {
   last_name: string
   phone: string
   country_id: number
-  channel: string
   email: string
-  identification_number: string
-  status: string
 }
 
 const DEFAULT_VALUES: AddSalesAgentFormValues = {
@@ -39,10 +33,7 @@ const DEFAULT_VALUES: AddSalesAgentFormValues = {
   last_name: "",
   phone: "",
   country_id: 0,
-  channel: "",
   email: "",
-  identification_number: "",
-  status: "",
 }
 
 function mapFormValuesToPayload(
@@ -53,13 +44,8 @@ function mapFormValuesToPayload(
     last_name: data.last_name.trim(),
     phone: data.phone.trim(),
     country_id: data.country_id,
-    channel: data.channel as CreateSalesAgentPayload["channel"],
   }
   if (data.email?.trim()) payload.email = data.email.trim()
-  if (data.identification_number?.trim())
-    payload.identification_number = data.identification_number.trim()
-  if (data.status && data.status !== "")
-    payload.status = data.status as CreateSalesAgentPayload["status"]
   return payload
 }
 
@@ -87,9 +73,9 @@ export function useAddSalesAgentForm(options?: UseAddSalesAgentFormOptions) {
       undefined,
       { enabled: isEdit && isOpen && Boolean(agentId) }
     )
-  const { mutate: createSalesAgent, isPending: isCreatePending } =
+  const { mutate: createSalesAgent, isLoading: isCreatePending } =
     useCreateSalesAgent()
-  const { mutate: updateSalesAgent, isPending: isUpdatePending } =
+  const { mutate: updateSalesAgent, isLoading: isUpdatePending } =
     useUpdateSalesAgent()
 
   const isSubmitting = isCreatePending || isUpdatePending || (isEdit && isLoadingDetails)

@@ -359,7 +359,7 @@ export interface CreateSalesAgentPayload {
   last_name: string
   phone: string
   country_id: number
-  channel: SalesAgentChannel
+  channel?: SalesAgentChannel
   email?: string
   identification_number?: string
   status?: SalesAgentStatus
@@ -370,10 +370,7 @@ export interface CreateSalesAgentFormData {
   last_name: string
   phone: string
   country_id: number | ""
-  channel: SalesAgentChannel | ""
   email: string
-  identification_number: string
-  status: SalesAgentStatus | ""
 }
 
 export const COUNTRY_ID_OPTIONS: { id: number; label: string }[] = [
@@ -391,7 +388,7 @@ export const SALES_AGENT_CHANNEL_OPTIONS: {
   value: SalesAgentChannel
   label: string
 }[] = [
-  { value: "VISION", label: "Vision" },
+  { value: "VISION", label: "Visio conférence" },
   { value: "PRESENTIEL", label: "Présentiel" },
 ]
 
