@@ -359,7 +359,7 @@ export interface CreateSalesAgentPayload {
   last_name: string
   phone: string
   country_id: number
-  channel: SalesAgentChannel
+  channel?: SalesAgentChannel
   email?: string
   identification_number?: string
   status?: SalesAgentStatus
@@ -370,7 +370,6 @@ export interface CreateSalesAgentFormData {
   last_name: string
   phone: string
   country_id: number | ""
-  channel: SalesAgentChannel | ""
   email: string
 }
 

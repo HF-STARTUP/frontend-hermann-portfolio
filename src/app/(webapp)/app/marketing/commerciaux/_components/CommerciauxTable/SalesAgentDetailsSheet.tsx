@@ -269,16 +269,13 @@ export const SalesAgentDetailsSheet: React.FC<SalesAgentDetailsSheetProps> = ({
                         <DetailRow label="Email" value={data.email ?? "—"} />
                         <DetailRow
                           label="Numéro de téléphone"
-                          value={data.phone ? `+${data.phone}` : "—"}
+                          value={data.phone ? `${data.phone}` : "—"}
                         />
                         <DetailRow
                           label="Pays"
                           value={data.country?.name ?? "—"}
                         />
-                        <DetailRow
-                          label="Canal principal"
-                          value={getChannelLabel(data.channel)}
-                        />
+
                         <DetailRow
                           label="Type de rémunération"
                           value="—"

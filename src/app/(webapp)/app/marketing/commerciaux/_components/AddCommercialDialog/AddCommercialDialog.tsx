@@ -16,7 +16,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { SALES_AGENT_CHANNEL_OPTIONS } from "@/types/marketing.types"
 import { useCountries } from "@/hooks/location/useCountry/useCountry"
 import { useAddSalesAgentForm } from "@/hooks/marketing/useAddSalesAgentForm"
 import type { AddSalesAgentFormValues } from "@/hooks/marketing/useAddSalesAgentForm"
@@ -107,42 +106,6 @@ function CountrySelectField() {
   )
 }
 
-function ChannelSelectField() {
-  const { control } = useFormContext<AddSalesAgentFormValues>()
-  const { errors } = useFormState({ name: "channel" })
-
-  return (
-    <div className="flex flex-col gap-2">
-      <label className="text-[14px] text-[#405768]">
-        Canal d'acquisition des clients<span className="text-red-500">*</span>
-      </label>
-      <Controller
-        control={control}
-        name="channel"
-        render={({ field }) => (
-          <Select value={field.value} onValueChange={field.onChange}>
-            <SelectTrigger className="">
-              <SelectValue placeholder="Sélectionner le canal" />
-            </SelectTrigger>
-            <SelectContent>
-              {SALES_AGENT_CHANNEL_OPTIONS.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        )}
-      />
-      {errors.channel?.message ? (
-        <p className="text-sm text-red-500">
-          {String(errors.channel.message)}
-        </p>
-      ) : null}
-    </div>
-  )
-}
-
 export const AddCommercialDialog: React.FC<AddCommercialDialogProps> = ({
   isOpen,
   onClose,
@@ -204,12 +167,9 @@ export const AddCommercialDialog: React.FC<AddCommercialDialogProps> = ({
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 gap-4">
                   <CountrySelectField />
-                  <ChannelSelectField />
                 </div>
-
-
 
                 <BtnBase
                   children={

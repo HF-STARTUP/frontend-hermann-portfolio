@@ -9,8 +9,6 @@ import type {
 const CODE_TYPE_VALUES = ["NEW_CLIENT", "LOYALTY", "FREE_COUPON", "COMMERCIAL_RENDITION"] as const
 const DISCOUNT_TYPE_VALUES = ["FIXED_AMOUNT", "PERCENTAGE", "FREE_PERIOD"] as const
 
-const SALES_AGENT_CHANNEL_VALUES = ["VISION", "PRESENTIEL"] as const
-
 export const createPromoCodeSchema = Joi.object<CreatePromoCodePayload>({
   code_label: _JoiConfig.strRequired,
   code_type: Joi.string()
@@ -112,10 +110,6 @@ export const createSalesAgentSchema = Joi.object<CreateSalesAgentPayload>({
       "number.base": "Le pays est requis",
       "number.min": "Le pays est requis",
     }),
-  channel: Joi.string()
-    .valid(...SALES_AGENT_CHANNEL_VALUES)
-    .required()
-    .messages({ "any.only": "Canal invalide" }),
   email: _JoiConfig.strOptionnal.email({ tlds: { allow: false } }).messages({
     "string.email": "Format d'email invalide",
   }),

@@ -503,9 +503,9 @@ export function useCreateCommercial() {
 export function useCreateSalesAgent() {
   const queryClient = useQueryClient();
 
-  const mutation = useMutation({
-    mutationFn: (payload: CreateSalesAgentPayload) =>
-      marketingService.createSalesAgent(payload),
+  const mutation = useMutationProvider<CreateSalesAgentPayload, Commercial>({
+    mutationFn: (payload) => marketingService.createSalesAgent(payload),
+    successMessage: "Commercial ajouté.",
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: [MARKETING_QUERY_KEYS.commercials],
