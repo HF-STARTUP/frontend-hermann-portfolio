@@ -12,13 +12,15 @@ import {Popover, PopoverContent, PopoverTrigger} from "@/components/ui/popover";
 import {FleetModel} from "@/model/ADMIN/fleet";
 import {format} from "date-fns";
 import {IoMdClose} from "react-icons/io";
-import {CalendarMinus} from "lucide-react";
+import {CalendarMinus, Users} from "lucide-react";
 import {ABlockTitle} from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
 import {LuListFilter} from "react-icons/lu";
 import {Button} from "@/components/ui/button";
 import {cn} from "@/lib/utils";
 import {CgPlayListSearch} from "react-icons/cg";
 import { Card, CardContent } from "@/components/ui/card";
+import KpiGrid, { KpiCard, KpiShimmerGrid } from "@/components/display/Kpi";
+import useFleetHook from "../../_hook/useFleetHook";
 
 enum FleetAbonType {
     premium_entreprise = "premium_entreprise",
@@ -224,10 +226,11 @@ export const FleetList = () => {
         })
         setPage(1)
     }
-
-
+ 
+    const {KpiItems} = useFleetHook()
         return (
             <div>
+                <KpiGrid items={KpiItems} />
                 <div className={"flex justify-between items-center"}>
                     <div className={"lg:mt-[24px] flex items-center justify-between gap-[26px] w-full"}>
                         <ABlockTitle>Sélectionnez une flotte</ABlockTitle>

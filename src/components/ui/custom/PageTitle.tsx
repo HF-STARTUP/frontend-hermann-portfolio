@@ -92,7 +92,7 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                 {isSecondFleet && <button onClick={() => $router.replace("/app/fleet/")}>
                     <ChevronBackIcon className={"text-xs"}/>
                 </button>}
-                <div>{page_title}</div>
+                <div className="text-[#506D82] font-bold text-3xl">{page_title}</div>
             </div>
             {isSecondFleet && <div>
                 <Select
