@@ -19,15 +19,15 @@ export interface KpiItem {
 export const getCardVariant = (variant?: CardVariant): string => {
     switch(variant){
         case 'green':
-            return 'bg-[#00A7571A] text-[#00A757]';
+            return 'bg-vaGreen/10 text-vaGreen';
         case 'red':
-            return 'bg-[#E51D131A] text-[#E51D13]';
+            return 'bg-vaRed/10 text-vaRed';
         case 'orange':
-            return 'bg-[#FFBD4C1A] text-[#FFBD4C]';
+            return 'bg-vaOrange/10 text-vaOrange';
             case 'blue':
-                return 'bg-[#018BFB1A] text-[#018BFB]';
+                return 'bg-vaBlue/10 text-vaBlue';
         case 'yellow':
-            return 'bg-[#FFC7001A] text-[#FFC700]';
+            return 'bg-vaYellow/10 text-vaYellow';
         case 'light-blue':
             return 'bg-[#EEF5FF1A] text-[#37A3FF]';
         case 'light-green':
@@ -92,7 +92,7 @@ export const KpiCard = ({icon, title, value, variant, className, border=false, v
                     variation && (
                         <div className={cn(
                             "flex items-center gap-1",
-                            variation === "up" ? "text-[#00A757]": variation === "down" ? "text-[#E51D13]" : "text-[#FF9900]"
+                            variation === "up" ? "text-vaGreen": variation === "down" ? "text-vaRed" : "text-vaOrange"
                         )}>
                             {variation === "up" ? <ArrowUp className="size-6" /> : variation === "down" ? <ArrowDown className="size-6" /> : <Minus className="size-6" />}                         
                             { hint && <span className="text-xs">{hint}</span>}
@@ -105,13 +105,14 @@ export const KpiCard = ({icon, title, value, variant, className, border=false, v
 };
 
 
-const KpiGrid = ({ items }: { items: KpiItem[] }) => {
+const KpiGrid = ({ items, border=false }: { items: KpiItem[], border?: boolean }) => {
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
             {items.map((item, index) => (
                 <KpiCard 
                     key={index} 
                     {...item} 
+                    border={border}
                 />
             ))}
         </div>
