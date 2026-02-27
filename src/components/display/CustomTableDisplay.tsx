@@ -211,7 +211,7 @@ export function DataTable<T>({ columns, data, pagination, isLoading, rowActions 
                 <div className="min-w-[800px] space-y-4">
                     <div
                         style={gridTemplate}
-                        className="grid bg-vaPrimary text-white rounded-2xl w-fit"
+                        className="grid bg-vaPrimary text-white rounded-2xl w-fit min-w-full"
                     >
                         {columns.map((col, idx) => (
                             <div
@@ -237,7 +237,7 @@ export function DataTable<T>({ columns, data, pagination, isLoading, rowActions 
                                 <div
                                     key={rowIndex}
                                     style={gridTemplate}
-                                    className="grid items-center bg-white border border-[#E0E9FF] rounded-2xl transition-all group w-fit hover:bg-vaPrimary/5 duration-300 cursor-pointer"
+                                    className="grid items-center bg-white border border-[#E0E9FF] rounded-2xl transition-all group w-fit min-w-full hover:bg-vaPrimary/5 duration-300 cursor-pointer"
                                 >
                                     {columns.map((col, colIdx) => (
                                         <div key={colIdx} className="px-6 py-4 text-sm text-[#506D82] truncate">
