@@ -15,12 +15,15 @@ module.exports = {
         extend: {
             colors: {
                 vaPrimary: "#0A255B",
+
                 vaYellow: "#FFC700",
                 vaGreen: "#00A757",
                 vaOrange: "#FF9900",
                 vaRed: "#E51D13",
                 vaBlue: "#018BFB",
+                vaMainBlue: "#2554AE",
                 vaTextPrimary: "#506D82",
+                vaLightGray: "#8E9BBA",
 
                 'admin-primary': '#506D82',
                 'text-body': '#80878C',

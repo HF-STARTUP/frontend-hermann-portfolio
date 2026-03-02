@@ -3,7 +3,6 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { FleetModel } from "@/model/ADMIN/fleet";
 import { cn } from "@/lib/utils";
-import { CrownIcon } from "@/components/ui/__icons";
 import { Crown } from "lucide-react";
 
 /**

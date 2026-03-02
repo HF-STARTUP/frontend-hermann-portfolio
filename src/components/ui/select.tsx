@@ -15,15 +15,21 @@ const SelectValue = SelectPrimitive.Value
 const SelectTrigger = React.forwardRef<
     React.ElementRef<typeof SelectPrimitive.Trigger>,
     React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
+    & {variant?: "default" | "outline" | "mainBlue" | "mainBlueOutline", leftIcon?: React.ReactNode }
+>(({ className, children, variant = "default", leftIcon, ...props }, ref) => (
     <SelectPrimitive.Trigger
         ref={ref}
         className={cn(
-            "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+            "flex h-10 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-fit",
+            variant === "default" && "border-input bg-background",
+            variant === "outline" && "border-input bg-background hover:bg-vaMainBlue/10",
+            variant === "mainBlue" && "border-vaMainBlue bg-vaMainBlue text-white hover:bg-vaMainBlue/90",
+            variant === "mainBlueOutline" && "border-vaMainBlue bg-white text-vaMainBlue hover:bg-vaMainBlue/10",
             className
         )}
         {...props}
     >
+      {leftIcon && leftIcon}
       {children}
       <SelectPrimitive.Icon asChild>
         <ChevronDown className="h-4 w-4 opacity-50" />

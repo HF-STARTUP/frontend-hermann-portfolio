@@ -1,5 +1,5 @@
 import { KpiItem } from "@/components/display/Kpi"
-import { StretchHorizontal } from "lucide-react"
+import { Eye, StretchHorizontal } from "lucide-react"
 import React, { useCallback, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useGetFleetsList } from "@/hooks/admin/useFleetHook"
@@ -153,11 +153,27 @@ const useFleetHook = () => {
                     id: "view",
                     label: "Voir",
                     onClick: (fleet) => router.push(`/app/fleet/${fleet.id}`),
+                    variant: "gray",
                 },
                 {
-                    id: "edit",
-                    label: "Modifier",
+                    id: "suspend",
+                    label: "Suspendre",
                     onClick: () => {},
+                    variant: "gray"
+                },
+                {
+                    id: "supprimer",
+                    label: "Supprimer",
+                    variant: "destructive",
+                    onClick: () => {},
+                },
+                {
+                    id: "debug_mode",
+                    label: "Mode débogage",
+                    variant: "vaBlue",
+                    onClick: () => {
+                        console.log(item)
+                    },
                 },
             ]
             if (!item.hasActiveSubscription) {

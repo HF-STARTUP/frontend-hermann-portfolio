@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@radix-ui/react-select";
 import React from "react";
 import { MoreVertical } from "lucide-react";
 import {
@@ -9,6 +8,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 export interface PaginationProps {
     currentPage: number;
@@ -106,7 +106,7 @@ export interface RowAction<T> {
     id: string;
     label: string;
     onClick: (item: T) => void;
-    variant?: "default" | "destructive";
+    variant?: "default" | "destructive" | "ghost" | "mainBlue" | "gray" | "vaBlue";
     icon?: React.ReactNode;
 }
 
@@ -171,6 +171,26 @@ function TableRowActionsDropdown<T>({
     if (actions.length === 0) {
         return <div className="px-6 py-4" />;
     }
+
+    const getVariant = (variant: RowAction<T>["variant"]) => {
+        switch (variant) {
+            case "default":
+                return "bg-white text-gray-500 hover:bg-gray-100";
+            case "destructive":
+                return "text-vaRed focus:text-vaRed";
+            case "ghost":
+                return "text-vaLightGray";
+            case "mainBlue":
+                return "text-vaMainBlue";
+            case "gray":
+                return "text-gray-500";
+            case "vaBlue":
+                return "text-vaBlue";
+            default:
+                return "text-gray-500";
+        }
+    }
+
     return (
         <div className="px-6 py-4 flex justify-end">
             <DropdownMenu>
@@ -184,7 +204,7 @@ function TableRowActionsDropdown<T>({
                         <DropdownMenuItem
                             key={action.id}
                             onClick={() => action.onClick(item)}
-                            className={action.variant === "destructive" ? "text-destructive focus:text-destructive" : undefined}
+                            className={cn(getVariant(action.variant), "cursor-pointer text-xs font-medium hover:bg-vaPrimary/5 text-center")}
                         >
                             {action.icon && <span className="mr-2">{action.icon}</span>}
                             {action.label}

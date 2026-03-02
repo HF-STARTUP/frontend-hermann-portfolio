@@ -2,11 +2,12 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { LuSearch } from "react-icons/lu"
+import { LuChevronDown, LuFilter, LuPlus, LuSearch } from "react-icons/lu"
 import KpiGrid from "@/components/display/Kpi"
 import { DataTable } from "@/components/display/CustomTableDisplay"
 import useFleetHook from "@/app/(webapp)/app/fleet/_hook/useFleetHook"
-import { Card, CardContent } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { AnchorIcon } from "lucide-react"
 
 export const FleetList = () => {
     const {
@@ -28,8 +29,8 @@ export const FleetList = () => {
                 Liste des flottes ({fleets.length})
             </div>
 
-            <div className="flex justify-between items-center">
-                <div className="filters flex items-center gap-4 flex-wrap">
+            <div className="flex justify-between items-end flex-wrap gap-4">
+                <div className="filters flex items-center gap-4 flex-wrap w-full">
                     <div className="search">
                         <div className="search-input relative flex items-center bg-white p-2 rounded-xl">
                             <Input
@@ -97,6 +98,28 @@ export const FleetList = () => {
                         </SelectContent>
                     </Select>
                 </div>
+                <div className="flex justify-end items-center gap-4 flex-wrap ml-auto">
+                    <Button size="xl" variant="mainBlue" className="rounded-2xl">
+                        <LuPlus className="w-4 h-4 mr-2" />
+                        Ajouter une flotte
+                    </Button>
+                    <Button size="xl" variant="mainBlue" className="rounded-2xl">
+                        <LuFilter className="w-4 h-4 mr-2" />
+                        Filtre avance
+                    </Button>
+                    <Select>
+                        <SelectTrigger variant="mainBlueOutline" leftIcon={<AnchorIcon className="size-4 mr-2" />}>
+                            <SelectValue placeholder="Exporter" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="csv">CSV</SelectItem>
+                            <SelectItem value="excel">Excel</SelectItem>
+                            <SelectItem value="pdf">PDF</SelectItem>
+                        </SelectContent>
+                    </Select>
+                
+                </div>
+
             </div>
 
             <div className="custom-scrollbar rounded-lg overflow-x-scroll">
