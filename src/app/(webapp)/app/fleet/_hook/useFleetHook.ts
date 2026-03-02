@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useGetFleetsList } from "@/hooks/admin/useFleetHook"
 import { FleetModel } from "@/model/ADMIN/fleet"
 import { Column, RowAction } from "@/components/display/CustomTableDisplay"
-import { AbonStatusBadge, SubscriptionBadge } from "../sections/fleets-list/fleetColumns"
+import { AbonStatusBadge, SubscriptionBadge } from "../components/fleets-list/fleetColumns"
 
 export interface FilterState {
     searchTerm: string
@@ -153,13 +153,13 @@ const useFleetHook = () => {
                     id: "view",
                     label: "Voir",
                     onClick: (fleet) => router.push(`/app/fleet/${fleet.id}`),
-                    variant: "gray",
+                    variant: "ghost",
                 },
                 {
                     id: "suspend",
                     label: "Suspendre",
                     onClick: () => {},
-                    variant: "gray"
+                    variant: "ghost"
                 },
                 {
                     id: "supprimer",

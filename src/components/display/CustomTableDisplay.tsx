@@ -175,7 +175,7 @@ function TableRowActionsDropdown<T>({
     const getVariant = (variant: RowAction<T>["variant"]) => {
         switch (variant) {
             case "default":
-                return "bg-white text-gray-500 hover:bg-gray-100";
+                return "text-gray-500";
             case "destructive":
                 return "text-vaRed focus:text-vaRed";
             case "ghost":
@@ -186,8 +186,9 @@ function TableRowActionsDropdown<T>({
                 return "text-gray-500";
             case "vaBlue":
                 return "text-vaBlue";
+            
             default:
-                return "text-gray-500";
+                return "text-vaLightGray";
         }
     }
 
@@ -227,7 +228,7 @@ export function DataTable<T>({ columns, data, pagination, isLoading, rowActions 
 
     return (
         <div className="w-full space-y-2">
-            <div className="w-full overflow-x-auto scrollbar-thin scrollbar-thumb-rounded-full scrollbar-track-transparent scrollbar-thumb-vaPrimary/20 transition-all duration-300 space-y-2">
+            <div className="w-full overflow-x-auto custom-scrollbar space-y-2">
                 <div className="min-w-[800px] space-y-4">
                     <div
                         style={gridTemplate}

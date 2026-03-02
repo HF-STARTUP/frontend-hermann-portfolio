@@ -14,13 +14,13 @@ import {
     Dialog,
     DialogContent,
     DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger
 } from "@/components/ui/dialog";
 import BtnBase from "@/components/elements/BtnBase";
 import {getSubscriptionColors} from "@/utils/subscriptionColors";
+import { DialogFooter } from "@/components/display/DialogFooter";
 
 export const ActiveAbonnSection = () => {
 

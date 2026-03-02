@@ -8,6 +8,8 @@ import { DataTable } from "@/components/display/CustomTableDisplay"
 import useFleetHook from "@/app/(webapp)/app/fleet/_hook/useFleetHook"
 import { Button } from "@/components/ui/button"
 import { AnchorIcon } from "lucide-react"
+import { AdvancedFiltersDialog } from "../_dialogs/AdvancedFiltersDialog"
+import { useState } from "react"
 
 export const FleetList = () => {
     const {
@@ -21,6 +23,8 @@ export const FleetList = () => {
         handleSearchChange,
         handleAbonTypeFilter,
     } = useFleetHook()
+
+    const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(false)
 
     return (
         <div className="flex flex-col space-y-6">
@@ -103,9 +107,9 @@ export const FleetList = () => {
                         <LuPlus className="w-4 h-4 mr-2" />
                         Ajouter une flotte
                     </Button>
-                    <Button size="xl" variant="mainBlue" className="rounded-2xl">
+                    <Button size="xl" variant="mainBlue" className="rounded-2xl" onClick={() => setIsAdvancedFiltersOpen(true)}>
                         <LuFilter className="w-4 h-4 mr-2" />
-                        Filtre avance
+                        Filtre avancé
                     </Button>
                     <Select>
                         <SelectTrigger variant="mainBlueOutline" leftIcon={<AnchorIcon className="size-4 mr-2" />}>
@@ -131,6 +135,7 @@ export const FleetList = () => {
                     rowActions={rowActions}
                 />
             </div>
+            <AdvancedFiltersDialog isOpen={isAdvancedFiltersOpen} onClose={() => setIsAdvancedFiltersOpen(false)} />
         </div>
     )
 }

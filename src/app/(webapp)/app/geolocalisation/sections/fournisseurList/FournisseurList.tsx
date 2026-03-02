@@ -1,6 +1,6 @@
 "use client";
 
-import {FournisseurListTab} from "@/app/(webapp)/app/fleet/sections/fleets-list/config";
+import {FournisseurListTab} from "@/app/(webapp)/app/fleet/components/fleets-list/config";
 
 export const FournisseurList = () => {
 
