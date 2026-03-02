@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button"
 import { CreatePromoCodeFormData } from "@/types/marketing.types"
 import { CreateCodeStep1 } from "./CreateCodeStep1"
 import { useCreatePromoCode } from "@/hooks/marketing/useMarketing"
+import { DialogMainBody } from "@/components/display/DialogMainBody"
+import { DialogFooter } from "@/components/display/DialogFooter"
 
 interface CreateCodeDialogProps {
   isOpen: boolean
@@ -67,7 +69,7 @@ export const CreateCodeDialog: React.FC<CreateCodeDialogProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
-      <DialogContent className="sm:max-w-[500px] p-6 rounded-2xl">
+      <DialogContent>
         {currentStep === 1 && (
           <CreateCodeStep1
             initialData={formData}
@@ -78,18 +80,20 @@ export const CreateCodeDialog: React.FC<CreateCodeDialogProps> = ({
         
         {currentStep === 2 && (
           <div className="flex flex-col gap-6">
-            <DialogHeader className="flex flex-row justify-between items-center space-y-0">
+            <DialogHeader>
               <DialogTitle className="text-[28px] font-bold text-admin-primary">
                 Créer un code
               </DialogTitle>
               <span className="text-gray-400 text-sm">Étape 2/2</span>
             </DialogHeader>
             
-            <div className="text-center py-8 text-gray-500">
-              Étape 2 - Configuration avancée (à définir)
-            </div>
+            <DialogMainBody>
+              <div className="text-center py-8 text-gray-500">
+                Étape 2 - Configuration avancée (à définir)
+              </div>
+            </DialogMainBody>
             
-            <div className="flex gap-4">
+            <DialogFooter className="flex gap-4">
               <Button
                 type="button"
                 variant="outline"
@@ -106,7 +110,7 @@ export const CreateCodeDialog: React.FC<CreateCodeDialogProps> = ({
               >
                 {isLoading ? "Création..." : "Créer le code"}
               </Button>
-            </div>
+            </DialogFooter>
           </div>
         )}
       </DialogContent>

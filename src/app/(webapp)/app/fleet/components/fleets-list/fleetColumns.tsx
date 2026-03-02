@@ -3,7 +3,7 @@
 import { ColumnDef } from "@tanstack/react-table";
 import { FleetModel } from "@/model/ADMIN/fleet";
 import { cn } from "@/lib/utils";
-import { CrownIcon } from "@/components/ui/__icons";
+import { Crown } from "lucide-react";
 
 /**
  * Composant pour afficher le statut de l'abonnement avec style
@@ -15,9 +15,9 @@ export const AbonStatusBadge = ({ status }: { status: string }) => {
     return (
         <div
             className={cn(
-                "flex items-center justify-center gap-[8.8px] h-[22px] px-[15px] py-[0.88px] rounded-sm",
-                isActive && "text-[#83BF6E] bg-[#EAFAE5]",
-                isInactive && "text-[#FF0000] bg-[#FAE5E5]"
+                "flex items-center justify-center gap-2 rounded-lg py-1 font-semibold",
+                isActive && "text-vaGreen bg-vaGreen/10",
+                isInactive && "text-vaRed bg-vaRed/10"
             )}
         >
             {status}
@@ -36,13 +36,13 @@ export const SubscriptionBadge = ({ name }: { name: string }) => {
     return (
         <div
             className={cn(
-                "flex items-center justify-center gap-[8.8px] h-[30px] px-[15px] py-[20px] rounded-sm text-nowrap",
-                isEssential && "text-[#e51d13] bg-[#FFEBEA]",
-                isPremium && "text-[#E89900] bg-[#FFF8DE]",
-                isStarter && "text-blue-primary bg-blue-primary/10"
+                "flex items-center justify-center gap-2 p-1 rounded-lg",
+                isEssential && "text-vaOrange bg-vaOrange/10",
+                isPremium && "text-vaYellow bg-vaYellow/10",
+                isStarter && "text-vaBlue bg-vaBlue/10"
             )}
         >
-            {(isEssential || isPremium || isStarter) && <CrownIcon />}
+            {(isEssential || isPremium || isStarter) && <Crown size={16} />}
             <div>{name}</div>
         </div>
     );

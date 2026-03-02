@@ -73,6 +73,14 @@ export class FleetModel extends Model {
     get hasActiveSubscription() {
         return !!this._instance.subscription;
     }
+
+    get created_at() {
+        return this.formatDate(this._instance.created_at);
+    }
+
+    get statusDisplay() {
+        return this.hasActiveSubscription ? "Actif" : "Inactif";
+    }
 }
 
 export class AdminOnFleetModel extends Model {

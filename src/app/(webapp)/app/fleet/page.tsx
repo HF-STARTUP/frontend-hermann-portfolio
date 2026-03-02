@@ -2,7 +2,7 @@
 
 import {Crumb} from "@/components/ui/custom/crumb";
 import {PageTitle} from "@/components/ui/custom/PageTitle";
-import {FleetList} from "@/app/(webapp)/app/fleet/sections/fleets-list/fleetList";
+import {FleetList} from "@/app/(webapp)/app/fleet/components/fleets-list/fleetList";
 import {useRouter} from "next/navigation";
 
 export default function ADahboardPage() {

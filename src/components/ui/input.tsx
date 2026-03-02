@@ -71,17 +71,24 @@ const Input = React.forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>
         }
 
         const classes = cn(
-            `m-0 block 
-          h-[45px] px-[20px] py-[10px] text-text-body
-          w-full rounded-[10px] 
-          border-neutral-300 border border-solid border-opacity-60 bg-transparent
-          bg-clip-padding text-base leading-tight text-neutral-700 transition duration-200
-          ease-linear placeholder:text-stone-300 focus:border-primary text-[10px] font-normal
-          focus:text-neutral-700 focus:outline-none peer-focus:text-primary focus:outline-offset-1 focus:outline-2 focus:outline-blue-200`,
-            error ? "focus-visible:ring-yRed" : "focus-visible:ring-yPrimary",
-            error ? " border-yRed/30 hover:border-yRed/80" : " border-black/5 hover:border-yPrimary/30",
+            // 1. Layout & Taille
+            "block h-[45px] w-full rounded-xl px-5 py-2.5",
+            "text-base leading-tight font-normal transition-all duration-200",
+            
+            // 2. Look & Couleurs (Default)
+            "bg-transparent border border-solid border-neutral-300/60 text-neutral-700",
+            "placeholder:text-stone-300 bg-clip-padding",
+            
+            // 3. Focus & Interactions
+            "focus:outline-none focus:ring focus:ring-blue-200 focus:border-none",
+            
+            // 4. États Conditionnels (Erreur vs Normal)
+            error 
+                ? "border-yRed/30 hover:border-yRed/80 focus:ring-yRed" 
+                : "border-black/5 hover:border-yPrimary/30 focus:ring-yPrimary",
+            
+            // 5. Ajustements dynamiques
             leftIcon && "pl-[50px]",
-            "text-[16px] text-neutral-700",
             className
         );
 
