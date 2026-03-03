@@ -10,8 +10,11 @@ import { Button } from "@/components/ui/button"
 import { AnchorIcon } from "lucide-react"
 import { AdvancedFiltersDialog } from "../_dialogs/AdvancedFiltersDialog"
 import { useState } from "react"
+import FleetFromDialog from "../_dialogs/FleetFormDialog"
+import FleetDetailsSheet from "../_dialogs/FleetDetailsSheet"
 
 export const FleetList = () => {
+    const [detailsSheet, setDetailsSheet] = useState<{ isOpen: boolean; fleetId: string | null }>({ isOpen: false, fleetId: null })
     const {
         KpiItems,
         fleets,
@@ -22,10 +25,12 @@ export const FleetList = () => {
         pagination,
         handleSearchChange,
         handleAbonTypeFilter,
-    } = useFleetHook()
+    } = useFleetHook({
+        onViewFleet: (fleet) => setDetailsSheet({ isOpen: true, fleetId: fleet.id }),
+    })
 
     const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(false)
-
+    const [isCreateFleetOpen, setIsCreateFleetOpen] = useState(false)
     return (
         <div className="flex flex-col space-y-6">
             <KpiGrid items={KpiItems} />
@@ -103,7 +108,7 @@ export const FleetList = () => {
                     </Select>
                 </div>
                 <div className="flex justify-end items-center gap-4 flex-wrap ml-auto">
-                    <Button size="xl" variant="mainBlue" className="rounded-2xl">
+                    <Button size="xl" variant="mainBlue" className="rounded-2xl" onClick={() => setIsCreateFleetOpen(true)}>
                         <LuPlus className="w-4 h-4 mr-2" />
                         Ajouter une flotte
                     </Button>
@@ -133,9 +138,18 @@ export const FleetList = () => {
                     pagination={pagination}
                     isLoading={isLoading}
                     rowActions={rowActions}
+                    onRowClick={(fleet) => setDetailsSheet({ isOpen: true, fleetId: fleet.id })}
                 />
             </div>
             <AdvancedFiltersDialog isOpen={isAdvancedFiltersOpen} onClose={() => setIsAdvancedFiltersOpen(false)} />
+            <FleetFromDialog isOpen={isCreateFleetOpen} onClose={() => setIsCreateFleetOpen(false)} action="create" />
+            <FleetDetailsSheet
+                isOpen={detailsSheet.isOpen}
+                onClose={() => setDetailsSheet({ isOpen: false, fleetId: null })}
+                fleetId={detailsSheet.fleetId ?? ""}
+                onEdit={() => {}}
+                onDelete={() => {}}
+            />
         </div>
     )
 }

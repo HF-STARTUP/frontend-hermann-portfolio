@@ -50,8 +50,8 @@ export function createSelectionColumn<TData>(): ColumnDef<TData> {
 /**
  * Utilitaire pour formater les montants en FCFA
  */
-export function formatCurrency(amount: number): string {
-    return `${amount.toLocaleString()} FCFA`;
+export function formatCurrency(amount: number, currency?: string): string {
+    return `${amount.toLocaleString()} ${currency??"XAF"}`;
 }
 
 /**

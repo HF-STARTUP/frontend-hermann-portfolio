@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useGetFleetsList } from "@/hooks/admin/useFleetHook"
 import { FleetModel } from "@/model/ADMIN/fleet"
 import { Column, RowAction } from "@/components/display/CustomTableDisplay"
-import { AbonStatusBadge, SubscriptionBadge } from "../components/fleets-list/fleetColumns"
+import { AbonStatusBadge, SubscriptionBadge } from "../components/_sub_components/columnHelperComponents"
 
 export interface FilterState {
     searchTerm: string
@@ -35,7 +35,11 @@ const initialFilterState: FilterState = {
     driversCountMax: undefined,
 }
 
-const useFleetHook = () => {
+export interface UseFleetHookOptions {
+    onViewFleet?: (fleet: FleetModel) => void;
+}
+
+const useFleetHook = (options?: UseFleetHookOptions) => {
     const router = useRouter()
     const [page, setPage] = useState(1)
     const [itemPerPage, setItemPerPage] = useState(10)
@@ -152,7 +156,7 @@ const useFleetHook = () => {
                 {
                     id: "view",
                     label: "Voir",
-                    onClick: (fleet) => router.push(`/app/fleet/${fleet.id}`),
+                    onClick: (fleet) => options?.onViewFleet ? options.onViewFleet(fleet) : router.push(`/app/fleet/${fleet.id}`),
                     variant: "ghost",
                 },
                 {
@@ -186,7 +190,7 @@ const useFleetHook = () => {
             }
             return actions
         },
-        [router]
+        [router, options?.onViewFleet]
     )
 
     const handleSearchChange = (searchTerm: string) => {

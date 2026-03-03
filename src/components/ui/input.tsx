@@ -72,15 +72,15 @@ const Input = React.forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>
 
         const classes = cn(
             // 1. Layout & Taille
-            "block h-[45px] w-full rounded-xl px-5 py-2.5",
+            "block w-full rounded-xl px-5 py-2.5",
             "text-base leading-tight font-normal transition-all duration-200",
             
             // 2. Look & Couleurs (Default)
             "bg-transparent border border-solid border-neutral-300/60 text-neutral-700",
-            "placeholder:text-stone-300 bg-clip-padding",
+            "placeholder:text-vaTextPrimary/50 bg-clip-padding",
             
             // 3. Focus & Interactions
-            "focus:outline-none focus:ring focus:ring-blue-200 focus:border-none",
+            "focus:outline-none focus:ring focus:ring-vaBlue focus:border-none",
             
             // 4. États Conditionnels (Erreur vs Normal)
             error 
