@@ -32,20 +32,21 @@ export interface FleetKpiCardProps {
     variation?: 'up' | 'down' | 'stable';
     variant?: KpiVariant;
     hint?: string;
+    unit?: string;
 }
-export function FleetKpiCard({ title, value, variation, variant, hint }: FleetKpiCardProps) {
+export function FleetKpiCard({ title, value, variation, variant, hint, unit }: FleetKpiCardProps) {
     return (
         <div className={cn("flex flex-col gap-2 p-4 rounded-2xl w-full", getKpiVariantColor(variant))}>
             <span className="text-sm text-vaLightGray line-clamp-1 truncate font-semibold" title={title}>{title}</span>
-            <span className="text-lg font-semibold text-[#000B20]">{value}</span>
+            <span className="text-lg font-semibold text-[#000B20]">{value} {unit && <span className="text-xs text-vaLightGray">{unit}</span>}</span>
             {hint && <span className={cn("text-xs line-clamp-1 truncate font-semibold")} title={hint}>{hint}</span>}
         </div>
     )
 }
 
-export default function FleetKpiGrid({ kpiItems }: { kpiItems: FleetKpiCardProps[] }) {
+export default function FleetKpiGrid({ kpiItems, className }: { kpiItems: FleetKpiCardProps[], className?: string }) {
     return (
-        <div className="grid grid-cols-3 gap-4 w-full">
+        <div className={`grid grid-cols-3 gap-4 w-full ${className}`}>
             {kpiItems.map((kpi) => (
                 <FleetKpiCard key={kpi.title} {...kpi} />
             ))}

@@ -1,7 +1,7 @@
 import { Column } from "@/components/display/CustomTableDisplay";
 import { useGetActiveCurrency } from "@/hooks/__globlal/useGlobalHook";
 import React, { useMemo } from "react";
-import { AbonStatusBadge, SubscriptionBadge } from "../components/_sub_components/columnHelperComponents";
+import { AbonStatusBadge, SubscriptionBadge } from "../components/_sub_components/badges";
 
 export interface SubscriptionRow {
   date: string;
@@ -20,7 +20,7 @@ export const useFleetSubscriptionsHook = () => {
 
   const subscriptions: SubscriptionRow[] = [
     {
-      date: "2026-01-01",
+      date: "22 Fév.2026 à 10:00",
       plan: "ESSENTIEL",
       amount: 100,
       period: "monthly",
@@ -31,7 +31,7 @@ export const useFleetSubscriptionsHook = () => {
       status: "using",
     },
     {
-      date: "2026-01-01",
+      date: "22 Fév.2026 à 10:00",
       plan: "ESSENTIEL",
       amount: 100,
       period: "monthly",
@@ -42,7 +42,7 @@ export const useFleetSubscriptionsHook = () => {
       status: "paid",
     },
     {
-      date: "2026-01-01",
+      date: "22 Fév.2026 à 10:00",
       plan: "ESSENTIEL",
       amount: 100,
       period: "monthly",
@@ -53,7 +53,7 @@ export const useFleetSubscriptionsHook = () => {
       status: "expired",
     },
     {
-      date: "2026-01-01",
+      date: "22 Fév.2026 à 10:00",
       plan: "ESSENTIEL",
       amount: 100,
       period: "monthly",
@@ -64,7 +64,7 @@ export const useFleetSubscriptionsHook = () => {
       status: "expired",
     },
     {
-      date: "2026-01-01",
+      date: "22 Fév.2026 à 10:00",
       plan: "ESSENTIEL",
       amount: 100,
       period: "monthly",
@@ -75,7 +75,7 @@ export const useFleetSubscriptionsHook = () => {
       status: "using",
     },
     {
-      date: "2026-01-01",
+      date: "22 Fév.2026 à 10:00",
       plan: "ESSENTIEL",
       amount: 100,
       period: "monthly",
@@ -86,7 +86,7 @@ export const useFleetSubscriptionsHook = () => {
       status: "paid",
     },
     {
-      date: "2026-01-01",
+      date: "22 Fév.2026 à 10:00",
       plan: "ESSENTIEL",
       amount: 100,
       period: "monthly",

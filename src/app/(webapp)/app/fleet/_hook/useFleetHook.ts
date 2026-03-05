@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation"
 import { useGetFleetsList } from "@/hooks/admin/useFleetHook"
 import { FleetModel } from "@/model/ADMIN/fleet"
 import { Column, RowAction } from "@/components/display/CustomTableDisplay"
-import { AbonStatusBadge, SubscriptionBadge } from "../components/_sub_components/columnHelperComponents"
+import { AbonStatusBadge, SubscriptionBadge } from "../components/_sub_components/badges"
 
 export interface FilterState {
     searchTerm: string
@@ -37,6 +37,8 @@ const initialFilterState: FilterState = {
 
 export interface UseFleetHookOptions {
     onViewFleet?: (fleet: FleetModel) => void;
+    onSuspendFleet?: (fleet: FleetModel) => void;
+    onDeleteFleet?: (fleet: FleetModel) => void;
 }
 
 const useFleetHook = (options?: UseFleetHookOptions) => {
@@ -162,14 +164,14 @@ const useFleetHook = (options?: UseFleetHookOptions) => {
                 {
                     id: "suspend",
                     label: "Suspendre",
-                    onClick: () => {},
+                    onClick: (fleet) => options?.onSuspendFleet?.(fleet),
                     variant: "ghost"
                 },
                 {
                     id: "supprimer",
                     label: "Supprimer",
                     variant: "destructive",
-                    onClick: () => {},
+                    onClick: (fleet) => options?.onDeleteFleet?.(fleet),
                 },
                 {
                     id: "debug_mode",
@@ -185,12 +187,12 @@ const useFleetHook = (options?: UseFleetHookOptions) => {
                     id: "delete",
                     label: "Supprimer",
                     variant: "destructive",
-                    onClick: () => {},
+                    onClick: (fleet) => options?.onDeleteFleet?.(fleet),
                 })
             }
             return actions
         },
-        [router, options?.onViewFleet]
+        [router, options?.onViewFleet, options?.onSuspendFleet, options?.onDeleteFleet]
     )
 
     const handleSearchChange = (searchTerm: string) => {

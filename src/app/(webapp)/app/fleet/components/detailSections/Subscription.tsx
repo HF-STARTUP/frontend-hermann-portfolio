@@ -1,5 +1,5 @@
 import { DateRangePicker } from "@/components/ui/custom/date-range-picker";
-import { SubscriptionBadge } from "../_sub_components/columnHelperComponents";
+import { SubscriptionBadge } from "../_sub_components/badges";
 import { DateRange } from "react-day-picker";
 import { useState } from "react";
 import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from "@/components/ui/select";

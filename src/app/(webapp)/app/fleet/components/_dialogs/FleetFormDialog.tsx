@@ -70,16 +70,16 @@ export default function FleetFromDialog({ isOpen, onClose, action, fleetId }: { 
                             </div>
                         </div>
                         <div className="flex flex-col gap-2">
-                            <label htmlFor="name" className="text-sm font-medium">Propriétaire <span className="text-vaRed">*</span> </label>
-                            <Input type="text" id="name" placeholder="Ex: John Doe" />
+                            <label htmlFor="owner" className="text-sm font-medium">Propriétaire <span className="text-vaRed">*</span> </label>
+                            <Input type="text" id="owner" placeholder="Ex: John Doe" />
                         </div>
                         <div className="grid grid-cols-2 w-full gap-4">
                             <div className="flex flex-col gap-2">
-                                <label htmlFor="" className="text-sm font-medium">Adresse e-mail <span className="text-vaRed">*</span> </label>
+                                <label htmlFor="email" className="text-sm font-medium">Adresse e-mail <span className="text-vaRed">*</span> </label>
                                 <Input type="email" id="email" placeholder="Ex: john.doe@example.com" />
                             </div>
                             <div className="flex flex-col gap-2">
-                                <label htmlFor="" className="text-sm font-medium">Numéro de téléphone <span className="text-vaRed">*</span> </label>
+                                <label htmlFor="phone" className="text-sm font-medium">Numéro de téléphone <span className="text-vaRed">*</span> </label>
                                 <Input type="tel" id="phone" placeholder="Ex: 675 67 65 43" />
                             </div>
                         </div>

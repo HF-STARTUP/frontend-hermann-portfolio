@@ -1,5 +1,7 @@
 import { EmptyData } from "@/components/box/PageNetworkState"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { Edit } from "lucide-react"
 
 export interface DetailRowProps {
     label: string
@@ -19,8 +21,8 @@ export function DetailRow({ label, value, className }: DetailRowProps) {
 export function DetailRowShimmer() {
     return (
         <div className="flex items-center justify-between">
-           <div className="w-24 h-4 bg-vaLightGray/20 rounded-full animate-pulse"></div>
-           <div className="w-24 h-4 bg-vaLightGray/20 rounded-full animate-pulse"></div>
+            <div className="w-24 h-4 bg-vaLightGray/20 rounded-full animate-pulse"></div>
+            <div className="w-24 h-4 bg-vaLightGray/20 rounded-full animate-pulse"></div>
         </div>
     )
 }
@@ -42,15 +44,19 @@ export function DetailRowList({ rows, isLoading }: { rows: DetailRowProps[], isL
     if (rows.length === 0) {
         return (
             <div className="flex flex-col gap-4 border border-[#E5E7EB] rounded-2xl p-4">
-                <div className="mb-2 text-xl font-semibold">Détails du profil</div>
-                <EmptyData  message="Aucune donnée trouvée" description="Aucune donnée trouvée" />
+                <EmptyData message="Aucune donnée trouvée" description="Aucune donnée trouvée" />
             </div>
         )
     }
 
     return (
         <div className="flex flex-col gap-4 border border-[#E5E7EB] rounded-2xl p-4">
-            <div className="mb-2 text-xl font-semibold">Détails du profil</div>
+            <div className="mb-2 text-xl font-semibold flex items-center justify-between w-full">
+                Détails du profil
+                <Button variant="ghost" size="icon" className="text-vaLightGray">
+                    <Edit size={24} />
+                </Button>
+            </div>
             {rows.map((row) => (
                 <DetailRow key={row.label} {...row} />
             ))}

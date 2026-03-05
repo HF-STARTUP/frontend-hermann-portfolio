@@ -92,7 +92,6 @@ export const AdvancedFiltersDialog = ({ isOpen, onClose }: { isOpen: boolean, on
               </div>
             </div>
           </DialogMainBody>
-          <hr />
           <DialogFooter className="grid grid-cols-2 gap-3">
             <Button variant={"outline"}>
               Réinitialiser

@@ -5,7 +5,7 @@ import {DashboardIcon, InfoIcon, LayoutListIcon, SettingIcon} from "@/components
 import {cn} from "@/lib/utils";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
-import {CreditCardIcon, Megaphone, ChevronDown, Tag, Users} from "lucide-react";
+import {CreditCardIcon, Megaphone, ChevronDown, Tag, Users, ArrowRightLeft} from "lucide-react";
 import {motion, AnimatePresence} from 'framer-motion';
 
 export const Sidebar = () => {
@@ -62,8 +62,8 @@ export const Sidebar = () => {
             {/*    to={"/app/geolocalisation"}*/}
             {/*/>*/}
             <SidebarItem
-                label={"Transactions bancaires"}
-                icon={<CreditCardIcon/>}
+                label={"Transactions & Revenus"}
+                icon={<ArrowRightLeft className="rotate-45" />}
                 to={"/app/transactions"}
             />
             <SidebarItem
