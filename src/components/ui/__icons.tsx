@@ -1660,28 +1660,40 @@ export const ArrowDropIcon: React.FC<NavItemIconProps> = (props) => {
 
 export const CashAltIcon: React.FC<NavItemIconProps> = (props) => {
     return (
-        <svg width="42" height="42" viewBox="0 0 42 42" fill="none" xmlns="http://www.w3.org/2000/svg" {...props}>
-            <rect width="42" height="42" rx="21" fill="#F4EBFF"/>
-            <g clip-path="url(#clip0_3384_2334)">
+        <svg 
+            width="24" 
+            height="24" 
+            viewBox="9 9 24 24" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg" 
+            {...props}
+        >
+            <g>
                 <path
                     d="M16 20C16 19.4696 16.2107 18.9609 16.5858 18.5858C16.9609 18.2107 17.4696 18 18 18H28C28.5304 18 29.0391 18.2107 29.4142 18.5858C29.7893 18.9609 30 19.4696 30 20V26C30 26.5304 29.7893 27.0391 29.4142 27.4142C29.0391 27.7893 28.5304 28 28 28H18C17.4696 28 16.9609 27.7893 16.5858 27.4142C16.2107 27.0391 16 26.5304 16 26V20Z"
-                    stroke="#6D00FB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                />
                 <path
                     d="M21 23C21 23.5304 21.2107 24.0391 21.5858 24.4142C21.9609 24.7893 22.4696 25 23 25C23.5304 25 24.0391 24.7893 24.4142 24.4142C24.7893 24.0391 25 23.5304 25 23C25 22.4696 24.7893 21.9609 24.4142 21.5858C24.0391 21.2107 23.5304 21 23 21C22.4696 21 21.9609 21.2107 21.5858 21.5858C21.2107 21.9609 21 22.4696 21 23Z"
-                    stroke="#6D00FB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                />
                 <path
                     d="M26 18V16C26 15.4696 25.7893 14.9609 25.4142 14.5858C25.0391 14.2107 24.5304 14 24 14H14C13.4696 14 12.9609 14.2107 12.5858 14.5858C12.2107 14.9609 12 15.4696 12 16V22C12 22.5304 12.2107 23.0391 12.5858 23.4142C12.9609 23.7893 13.4696 24 14 24H16"
-                    stroke="#6D00FB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    stroke="currentColor" 
+                    strokeWidth="2" 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round"
+                />
             </g>
-            <defs>
-                <clipPath id="clip0_3384_2334">
-                    <rect width="24" height="24" fill="white" transform="translate(9 9)"/>
-                </clipPath>
-            </defs>
         </svg>
-
-    )
-}
+    );
+};
 
 
 export const ArrowDoubleIcon: React.FC<NavItemIconProps> = (props) => {

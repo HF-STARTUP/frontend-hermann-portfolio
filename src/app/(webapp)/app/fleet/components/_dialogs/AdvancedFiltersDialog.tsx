@@ -10,7 +10,6 @@ export const AdvancedFiltersDialog = ({ isOpen, onClose }: { isOpen: boolean, on
   return (
     <Dialog open={isOpen} onOpenChange={onClose} bgType="blured">
       <DialogContent>
-        <div className="flex flex-col min-h-0 max-h-[calc(90dvh-3rem)]">
           <DialogHeader>
             <DialogTitle>Filtrer et trier</DialogTitle>
           </DialogHeader>
@@ -93,7 +92,6 @@ export const AdvancedFiltersDialog = ({ isOpen, onClose }: { isOpen: boolean, on
               </div>
             </div>
           </DialogMainBody>
-          <hr />
           <DialogFooter className="grid grid-cols-2 gap-3">
             <Button variant={"outline"}>
               Réinitialiser
@@ -102,7 +100,6 @@ export const AdvancedFiltersDialog = ({ isOpen, onClose }: { isOpen: boolean, on
               Appliquer
             </Button>
           </DialogFooter>
-        </div>
       </DialogContent>
     </Dialog>
   )

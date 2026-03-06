@@ -1,7 +1,7 @@
 "use client"
 
 import {ChevronBackIcon} from "@/components/ui/__icons";
-import React from "react";
+import React, { ReactNode } from "react";
 import {usePathname, useRouter} from "next/navigation";
 import {
     Select,
@@ -34,7 +34,9 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     items?: [],
     withSelect?: boolean
     onValueChange?: (selectedValue: string) => void,
-}> = ({page_title, isSecondFleet, items = defaultSelect, onValueChange, withSelect = true}) => {
+    end_component?: ReactNode,
+    close_component?: ReactNode
+}> = ({page_title, isSecondFleet, items = defaultSelect, onValueChange, withSelect = true, end_component, close_component }) => {
 
     const {parkID} = useGetParkID()
 
@@ -86,13 +88,18 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
 
 
     return (
-        <div className={"flex items-center lg:justify-start justify-between  md:gap-[16px] mb-[26px] w-full lg:w-fit"}>
+        <div className={"flex items-center justify-between  gap-12 flex-wrap my-5 w-full"}>
             <div
                 className="text-vaTextPrimary text-[1.5rem] md:text-[34px] font-bold font-['DM Sans'] leading-[42px] flex items-center gap-1">
                 {isSecondFleet && <button onClick={() => $router.replace("/app/fleet/")}>
                     <ChevronBackIcon className={"text-xs"}/>
                 </button>}
-                <div className="text-[#506D82] font-bold text-3xl">{page_title}</div>
+                <div className="text-[#506D82] font-bold text-3xl flex items-center gap-4">{page_title}
+                    
+                    {close_component &&
+                        close_component
+                    }
+                     </div>
             </div>
             {isSecondFleet && <div>
                 <Select
@@ -129,6 +136,13 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
                     </SelectContent>
                 </Select>
             </div>
+            }
+            {
+
+            }
+
+            {
+                end_component && end_component
             }
             {withSelect &&
                 <div className={"flex items-center gap-2"}>

@@ -1,30 +1,30 @@
 "use client"
 
-import {CustomChartLineUtils3} from "@/app/(protected)/dashboard/_components/_utils/CustomChartLine.utils";
-import React, {useMemo} from "react";
+import { CustomChartLineUtils3 } from "@/app/(protected)/dashboard/_components/_utils/CustomChartLine.utils";
+import React, { useMemo, useState } from "react";
 import {
-    useGetCourseEvolution,
-    useGetDashboardSubscriptionEvolution,
-    useGetEntretienEvolution,
-    useGetProfitableList,
-    useGetRevenusEvolution,
-    useGetSubscriptionPlanRevenus
-} from "@/hooks/admin/useFleetHook";
-import {endOfMonth, startOfMonth} from "date-fns";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+    useDashboardAbonnEvolution,
+    useDashboardBestFleet,
+    useDashboardCashEvolution,
+    useDashboardCourseEvolution,
+    useDashboardEntretienEvolution
+} from "@/app/(webapp)/app/dashboard/_hook/useDashboardSectionsHooks";
+import { endOfMonth, startOfMonth } from "date-fns";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Loading from "@/components/ui/Loader";
 import StackBarChart from "@/lib/react-chart-2/stackBarDiagram";
-import {toIsoDate} from "@/services/Service";
-import {useGetActiveCurrency} from "@/hooks/__globlal/useGlobalHook";
+import { toIsoDate } from "@/services/Service";
+import { useGetActiveCurrency } from "@/hooks/__globlal/useGlobalHook";
 
-import {Doughnut} from "react-chartjs-2"
-import {type ChartOptions} from "chart.js"
+import { Doughnut } from "react-chartjs-2"
+import { type ChartOptions } from "chart.js"
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
-import {Car, TrendingUp} from "lucide-react";
-import {ScrollArea} from "@/components/ui/scroll-area";
-import {EmptyData} from "@/components/box/PageNetworkState";
-import {CartesianGrid, Line, LineChart, XAxis, YAxis} from "recharts"
-import {ChartContainer, ChartTooltip, ChartTooltipContent} from "@/components/ui/chart"
+import { Car, TrendingUp } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { EmptyData } from "@/components/box/PageNetworkState";
+import { CartesianGrid, Line, LineChart, XAxis, YAxis } from "recharts"
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
+import { useGetSubscriptionPlanRevenus } from "@/hooks/admin/useFleetHook";
 
 interface DataPoint {
     label: string
@@ -38,75 +38,77 @@ interface RevenueChartProps {
 }
 
 
+/*
 export const AbonnEvolution = () => {
 
     const [graphType, setGraphType] = React.useState("month")
-
-    const {data, isLoading} = useGetDashboardSubscriptionEvolution(graphType)
+    const {points, isLoading, hasData} = useDashboardAbonnEvolution(graphType)
 
 
     return (
         <div className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[20px] lg:gap-[77px] rounded-[20px]"}>
             <div className={"flex items-center justify-between"}>
                 <ABlockTitle>Evolution abonnements</ABlockTitle>
-                {/*<div>*/}
-                {/*    <div className={"flex items-center gap-2"}>*/}
-                {/*        <DateSelect type="month" currentMonth={month} handleSelect={handleSelectMonth}/>*/}
-                {/*        <DateSelect type="year" handleSelect={handleSelectYear}/>*/}
-                {/*    </div>*/}
-                {/*</div>*/}
+                {/!*<div>*!/}
+                {/!*    <div className={\"flex items-center gap-2\"}>*!/}
+                {/!*        <DateSelect type=\"month\" currentMonth={month} handleSelect={handleSelectMonth}/>*!/}
+                {/!*        <DateSelect type=\"year\" handleSelect={handleSelectYear}/>*!/}
+                {/!*    </div>*!/}
+                {/!*</div>*!/}
                 <Select
-                    defaultValue={"month"}
+                    defaultValue={\"month\"}
                     onValueChange={v => setGraphType(v)}
                 >
-                    <SelectTrigger className="w-fit">
-                        <SelectValue placeholder="Selectionner la fréquence"/>
+                    <SelectTrigger className=\"w-fit\">
+                        <SelectValue placeholder=\"Selectionner la fréquence\"/>
                     </SelectTrigger>
                     <SelectContent>
                         <SelectGroup>
-                            <SelectItem value="month">Mensuel</SelectItem>
-                            <SelectItem value="year">Annuel</SelectItem>
+                            <SelectItem value=\"month\">Mensuel</SelectItem>
+                            <SelectItem value=\"year\">Annuel</SelectItem>
                         </SelectGroup>
                     </SelectContent>
                 </Select>
             </div>
-            {isLoading && <Loading className={"h-[150px]"}/>}
-            {!data || !data?.data && !isLoading && <EmptyData message={"Aucune donnée ici pour l'instant"}/>}
-            {data && data?.data && (
+            {isLoading && <Loading className={\"h-[150px]\"}/>}
+            {!hasData && !isLoading && <EmptyData message={\"Aucune donnée ici pour l'instant\"}/>}
+            {hasData && (
                 <ModernLineChart
-                    data={data.data.map(d => ({label: d.item, value: d.amount}))}
+                    data={points}
                 />
             )}
-            {/*{data && <CustomChartLineUtils3*/}
-            {/*    idata={data.map(d => d.revenue)}*/}
-            {/*    ilabels={data.map(d => d.item)}*/}
-            {/*/>}*/}
-            {/*{data && JSON.stringify(data.data.map(d => ({label: d.item, value: d.amount})))}*/}
+            {/!*{data && <CustomChartLineUtils3*!/}
+            {/!*    idata={data.map(d => d.revenue)}*!/}
+            {/!*    ilabels={data.map(d => d.item)}*!/}
+            {/!* />}*!/}
+            {/!*{data && JSON.stringify(data.data.map(d => ({label: d.item, value: d.amount})))}*!/}
         </div>
     )
 }
+*/
 
+/*
 export const CourseEvolution = () => {
 
-    const [graphType, setGraphType] = React.useState("month")
-    const {data: courseEvolution, isLoading} = useGetCourseEvolution(graphType)
+    const [graphType, setGraphType] = React.useState(\"month\")
+    const {data: courseEvolution, isLoading} = useDashboardCourseEvolution(graphType)
 
     return (
-        <div className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px]  gap-[20px] lg:gap-[77px] rounded-[20px]"}>
-            <div className={"flex items-center justify-between"}>
+        <div className={\"flex flex-col justify-between bg-white h-full py-[17px] px-[27px]  gap-[20px] lg:gap-[77px] rounded-[20px]\"}>
+            <div className={\"flex items-center justify-between\"}>
                 <ABlockTitle>Evolution courses</ABlockTitle>
                 <div>
                     <Select
-                        defaultValue={"month"}
+                        defaultValue={\"month\"}
                         onValueChange={v => setGraphType(v)}
                     >
-                        <SelectTrigger className="w-fit">
-                            <SelectValue placeholder="Selectionner la fréquence"/>
+                        <SelectTrigger className=\"w-fit\">
+                            <SelectValue placeholder=\"Selectionner la fréquence\"/>
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="month">Mensuel</SelectItem>
-                                <SelectItem value="year">Annuel</SelectItem>
+                                <SelectItem value=\"month\">Mensuel</SelectItem>
+                                <SelectItem value=\"year\">Annuel</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
@@ -116,42 +118,43 @@ export const CourseEvolution = () => {
                 idata={courseEvolution.map(d => d.revenue)}
                 ilabels={courseEvolution.map(d => d.item)}
             />}
-            {isLoading && <Loading className={"h-[200px]"}/>}
+            {isLoading && <Loading className={\"h-[200px]\"}/>}
         </div>
     )
 }
+*/
 
 
+/*
 export const CashEvolution = () => {
 
-    const [graphType, setGraphType] = React.useState("month")
-
-    const {data, isLoading} = useGetRevenusEvolution(graphType)
+    const [graphType, setGraphType] = React.useState(\"month\")
+    const {data, isLoading} = useDashboardCashEvolution(graphType)
 
 
     return (
         <div
-            className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px]  gap-[20px] lg:gap-[77px] rounded-[20px]"}>
-            <div className={"flex items-center justify-between"}>
+            className={\"flex flex-col justify-between bg-white h-full py-[17px] px-[27px]  gap-[20px] lg:gap-[77px] rounded-[20px]\"}>
+            <div className={\"flex items-center justify-between\"}>
                 <ABlockTitle>Evolution chiffre d’affaires</ABlockTitle>
                 <div>
                     <Select
-                        defaultValue={"month"}
+                        defaultValue={\"month\"}
                         onValueChange={v => setGraphType(v)}
                     >
-                        <SelectTrigger className="w-fit">
-                            <SelectValue placeholder="Selectionner la fréquence"/>
+                        <SelectTrigger className=\"w-fit\">
+                            <SelectValue placeholder=\"Selectionner la fréquence\"/>
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="month">Mensuel</SelectItem>
-                                <SelectItem value="year">Annuel</SelectItem>
+                                <SelectItem value=\"month\">Mensuel</SelectItem>
+                                <SelectItem value=\"year\">Annuel</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
                 </div>
             </div>
-            {isLoading && <Loading className={"h-[150px]"}/>}
+            {isLoading && <Loading className={\"h-[150px]\"}/>}
             {data && <CustomChartLineUtils3
                 idata={data.map(d => d.revenue)}
                 ilabels={data.map(d => d.item)}
@@ -159,35 +162,37 @@ export const CashEvolution = () => {
         </div>
     )
 }
+*/
 
+/*
 export const EntretienEvolution = () => {
 
-    const [graphType, setGraphType] = React.useState("month")
-    const {data, isLoading} = useGetEntretienEvolution(graphType)
+    const [graphType, setGraphType] = React.useState(\"month\")
+    const {data, isLoading} = useDashboardEntretienEvolution(graphType)
 
-    let t: { t: string } = {t: ""}
+    let t: { t: string } = {t: \"\"}
     return (
-        <div className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px]  gap-[20px] lg:gap-[77px] rounded-[20px]"}>
-            <div className={"flex items-center justify-between"}>
+        <div className={\"flex flex-col justify-between bg-white h-full py-[17px] px-[27px]  gap-[20px] lg:gap-[77px] rounded-[20px]\"}>
+            <div className={\"flex items-center justify-between\"}>
                 <ABlockTitle>Evolution entretiens</ABlockTitle>
                 <div>
                     <Select
-                        defaultValue={"month"}
+                        defaultValue={\"month\"}
                         onValueChange={v => setGraphType(v)}
                     >
-                        <SelectTrigger className="w-fit">
-                            <SelectValue placeholder="Selectionner la fréquence"/>
+                        <SelectTrigger className=\"w-fit\">
+                            <SelectValue placeholder=\"Selectionner la fréquence\"/>
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectItem value="month">Mensuel</SelectItem>
-                                <SelectItem value="year">Annuel</SelectItem>
+                                <SelectItem value=\"month\">Mensuel</SelectItem>
+                                <SelectItem value=\"year\">Annuel</SelectItem>
                             </SelectGroup>
                         </SelectContent>
                     </Select>
                 </div>
             </div>
-            <div className={"h-[300px]"}>
+            <div className={\"h-[300px]\"}>
                 {data && <StackBarChart ilabels={data.map(d => d.item)} idata={[
                     {
                         label: 'Carburant',
@@ -205,13 +210,14 @@ export const EntretienEvolution = () => {
                         backgroundColor: '#FFDE6C',
                     },
                 ]}/>}
-                {isLoading && <Loading className={"h-[200px]"}/>}
+                {isLoading && <Loading className={\"h-[200px]\"}/>}
             </div>
         </div>
     )
 }
+*/
 
-export const ABlockTitle: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({children}) => {
+export const ABlockTitle: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ children }) => {
 
     return (
         <h4 className="text-black text-lg lg:text-2xl font-semibold block">{children}</h4>
@@ -229,12 +235,13 @@ const colors = [
     "#96ceb4"
 ]
 
+/*
 export const SouscriptionPartition = () => {
-    // const [graphType, setGraphType] = React.useState("year")
+    // const [graphType, setGraphType] = React.useState(\"year\")
     // const currentYear = getYear(new Date())
     // const currentMonth = getMonth(new Date())
     const {currency} = useGetActiveCurrency()
-    const [method, setMethod] = React.useState<string>("Ce Mois")
+    const [method, setMethod] = React.useState<string>(\"Ce Mois\")
 
     const curDate = new Date();
 
@@ -263,15 +270,15 @@ export const SouscriptionPartition = () => {
                 {
                     data: data.map((item) => item.value),
                     backgroundColor: colors.slice(0, data.length),
-                    borderColor: "#ffffff",
+                    borderColor: \"#ffffff\",
                     borderWidth: 3,
-                    cutout: "60%",
+                    cutout: \"60%\",
                 },
             ],
         }
     }, [data])
 
-    const options: ChartOptions<"doughnut"> = {
+    const options: ChartOptions<\"doughnut\"> = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
@@ -295,23 +302,23 @@ export const SouscriptionPartition = () => {
     }
 
     const formatNumber = (num: number) => {
-        return new Intl.NumberFormat("fr-FR").format(num)
+        return new Intl.NumberFormat(\"fr-FR\").format(num)
     }
 
     return (
         <div
-            className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[20px] lg:gap-[77px] rounded-[20px]"}>
-            <div className={"flex items-center justify-between"}>
+            className={\"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[20px] lg:gap-[77px] rounded-[20px]\"}>
+            <div className={\"flex items-center justify-between\"}>
                 <ABlockTitle>Sondage des abonnements</ABlockTitle>
                 <Select
                     value={method}
                     onValueChange={setMethod}
                 >
-                    <SelectTrigger className="w-fit bg-slate-50">
-                        <SelectValue placeholder="Selectionner"/>
+                    <SelectTrigger className=\"w-fit bg-slate-50\">
+                        <SelectValue placeholder=\"Selectionner\"/>
                     </SelectTrigger>
                     <SelectContent>
-                        {["Ce Mois"].map((city) => (
+                        {[\"Ce Mois\"].map((city) => (
                             <SelectItem key={city} value={city}>
                                 {city}
                             </SelectItem>
@@ -319,25 +326,25 @@ export const SouscriptionPartition = () => {
                     </SelectContent>
                 </Select>
             </div>
-            {isLoading && <Loading className={"h-[150px]"}/>}
-            {/* Chart Container */}
-            {!isLoading && <div className="flex flex-col items-center">
-                <div className="relative h-80 w-80">
+            {isLoading && <Loading className={\"h-[150px]\"}/>}
+            {/!* Chart Container *!/}
+            {!isLoading && <div className=\"flex flex-col items-center\">
+                <div className=\"relative h-80 w-80\">
                     {<Doughnut
-                        data={chartData}
+                        data={chartData || []}
                         options={options}
                     />}
 
-                    {/* Center Text */}
-                    <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                    {/!* Center Text *!/}
+                    <div className=\"absolute inset-0 flex flex-col items-center justify-center pointer-events-none\">
                         <div
-                            className="text-[#1c1c1c] text-2xl font-bold">{formatNumber(total)} {revenusDatas?.currency}</div>
-                        <div className="text-[#878787] text-sm">Total</div>
+                            className=\"text-[#1c1c1c] text-2xl font-bold\">{formatNumber(total)} {revenusDatas?.currency}</div>
+                        <div className=\"text-[#878787] text-sm\">Total</div>
                     </div>
                 </div>
 
-                {/* Percentage Labels around the chart */}
-                <div className="relative pointer-events-none">
+                {/!* Percentage Labels around the chart *!/}
+                <div className=\"relative pointer-events-none\">
                     {data.map((item, index) => {
                         const percentage = ((item.value / total) * 100).toFixed(1)
                         const angle = index * (360 / data.length) - 90 // Start from top
@@ -348,7 +355,7 @@ export const SouscriptionPartition = () => {
                         return (
                             <div
                                 key={index}
-                                className="absolute transform -translate-x-1/2 -translate-y-1/2"
+                                className=\"absolute transform -translate-x-1/2 -translate-y-1/2\"
                                 style={{
                                     left: `calc(50% + ${x}px)`,
                                     top: `calc(50% + ${y}px)`,
@@ -356,12 +363,12 @@ export const SouscriptionPartition = () => {
                             >
                                 <div
                                     className={`px-3 py-1 rounded-full shadow-sm border ${
-                                        colors[index] === "#000000"
-                                            ? "bg-[#1c1c1c] text-white"
-                                            : "bg-white border-[#eaedf2] text-[#1c1c1c]"
+                                        colors[index] === \"#000000\"
+                                            ? \"bg-[#1c1c1c] text-white\"
+                                            : \"bg-white border-[#eaedf2] text-[#1c1c1c]\"
                                     }`}
                                 >
-                                    <span className="text-sm font-medium">{percentage}%</span>
+                                    <span className=\"text-sm font-medium\">{percentage}%</span>
                                 </div>
                             </div>
                         )
@@ -369,113 +376,115 @@ export const SouscriptionPartition = () => {
                 </div>
             </div>}
 
-            {/* Legend */}
-            <div className="flex flex-col gap-4 max-w-md">
+            {/!* Legend *!/}
+            <div className=\"flex flex-col gap-4 max-w-md\">
                 {data.map((item, index) => (
-                    <div key={index} className="flex items-center justify-between">
-                        <div className="flex items-center gap-3">
-                            <div className="w-3 h-3 rounded-full" style={{backgroundColor: colors[index]}}></div>
-                            <span className="text-[#1c1c1c] text-base">{item.label}</span>
+                    <div key={index} className=\"flex items-center justify-between\">
+                        <div className=\"flex items-center gap-3\">
+                            <div className=\"w-3 h-3 rounded-full\" style={{backgroundColor: colors[index]}}></div>
+                            <span className=\"text-[#1c1c1c] text-base\">{item.label}</span>
                         </div>
-                        <span className="text-[#1c1c1c] font-medium">{formatNumber(item.value)} XOF</span>
+                        <span className=\"text-[#1c1c1c] font-medium\">{formatNumber(item.value)} XOF</span>
                     </div>
                 ))}
             </div>
         </div>
     )
 }
+*/
 
 export const BestFleet = () => {
 
-    const {data: fleetData, isLoading} = useGetProfitableList({
-        type: AuthManagerGuard.getEnabledFleetType as string,
-        city_id: String(AuthManagerGuard.getEnabledCity),
-        currency_id: AuthManagerGuard.getCurrency
-    })
+    const { fleetData, isLoading, currency } = useDashboardBestFleet()
+
+    const [ville, setVille] = useState<string | undefined>()
+    const [type, setType] = useState<string | undefined>()
 
     return (
-        <div
-            className={"flex flex-col justify-between bg-white h-full py-[17px] px-[27px] gap-[20px] lg:gap-[77px] rounded-[20px]"}>
+        <div className={"flex flex-col bg-white p-6 rounded-2xl h-fit max-w-full"}>
             <div className={"flex flex-col items-start justify-between"}>
-                <ABlockTitle>Meilleurs flottes</ABlockTitle>
+                <div className="flex items-center justify-between w-full">
+                    <p className="text-2xl font-bold text-vaTextPrimary">Meilleures flottes</p>
+                    <div className="flex items-center gap-2">
+                        <Select value={ville} defaultValue="1">
+                            <SelectTrigger className="bg-vaLightGray/10 border-none rounded-xl text-vaTextPrimary px-4 font-semibold">
+                                <SelectValue placeholder="Ville"></SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="1">Douala</SelectItem>
+                                <SelectItem value="2">Yaounde</SelectItem>
+                                <SelectItem value="3">Coccody</SelectItem>
+                                <SelectItem value="4">Kinshassa</SelectItem>
+                                <SelectItem value="5">San Pedro</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Select value={type} defaultValue="1">
+                            <SelectTrigger className="bg-vaLightGray/10 border-none rounded-xl text-vaTextPrimary px-4 font-semibold">
+                                <SelectValue placeholder="type"></SelectValue>
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="1">Particulier</SelectItem>
+                                <SelectItem value="2">Professionnel</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                </div>
+                
 
-                <div className="bg-[#ffffff] mt-4 w-full">
+                <div className="w-full">
                     {fleetData && <div className="space-y-6 pt-6 w-full">
-                        {/* Compact Fleet List */}
-                        <div className="rounded-lg shadow-sm border w-full">
-                            {/* Header */}
-                            {/*<div*/}
-                            {/*    className="grid grid-cols-12 gap-4 p-4 border-b bg-slate-50 text-sm font-medium text-slate-600">*/}
-                            {/*    <div className="col-span-5">Nom de la flotte</div>*/}
-                            {/*    /!*<div className="col-span-2">Type</div>*!/*/}
-                            {/*    <div className="col-span-4">Véhicules</div>*/}
-                            {/*    <div className="col-span-3">Flux financier</div>*/}
-                            {/*</div>*/}
-
-                            {/* Fleet Items */}
+                        <div className="w-full">
+                            {/* Fleet Items & Header Container */}
                             {!isLoading && fleetData && fleetData.length == 0 && (
                                 <div>
-                                    <EmptyData message={"Aucune donnée pour le moment"}/>
+                                    <EmptyData message={"Aucune donnée pour le moment"} />
                                 </div>
                             )}
-                            {fleetData && fleetData.length ? <div className="divide-y divide-slate-100 w-full">
-                                <ScrollArea className={"h-[500px]"}>
-                                    {fleetData.map((fleet) => (
-                                        <div
-                                            key={fleet.id}
-                                            className="grid grid-cols-12 gap-4 p-4 hover:bg-slate-50 transition-colors cursor-pointer w-full"
-                                        >
-                                            <div className="col-span-12 flex items-center space-x-3">
-                                                <div className="p-2 bg-blue-100 rounded-lg">
-                                                    <Car className="h-4 w-4 text-blue-600"/>
-                                                </div>
-                                                <div>
-                                                    <p className="font-medium text-slate-900">{fleet.park_name}</p>
-                                                    <p className="text-xs text-slate-500">ID: {fleet.id}</p>
-                                                </div>
+
+                            {fleetData && fleetData.length ? (
+                                <div className="w-full">
+                                    {/* Scrollable Area - Hauteur conservée à 33.5rem */}
+                                    <div className={"h-full max-h-[39rem] overflow-x-auto overflow-y-auto w-full custom-scrollbar"}>
+
+                                        {/* Conteneur interne avec largeur mini pour le scroll horizontal sur mobile */}
+                                        <div className="w-full min-w-[750px]">
+
+                                            {/* Header (placé ici pour scroller avec le contenu) */}
+                                            <div className="grid grid-cols-4 gap-4 border-b border-vaGray pb-4 text-base font-normal text-vaTextPrimary sticky top-0 bg-white z-[5]">
+                                                <div className="">Flotte</div>
+                                                <div className="">Type</div>
+                                                <div className="">Nombres de véhicules</div>
+                                                <div className="">Flux financiers</div>
                                             </div>
 
-                                            {/*<div className="col-span-2 flex items-center">*/}
-                                            {/*    <Badge*/}
-                                            {/*        variant={fleet.type === "Professionnel" ? "default" : "secondary"}*/}
-                                            {/*        className={`text-xs ${*/}
-                                            {/*            fleet.type === "Professionnel"*/}
-                                            {/*                ? "bg-blue-100 text-blue-800 hover:bg-blue-100"*/}
-                                            {/*                : "bg-purple-100 text-purple-800 hover:bg-purple-100"*/}
-                                            {/*        }`}*/}
-                                            {/*    >*/}
-                                            {/*        {fleet.type}*/}
-                                            {/*    </Badge>*/}
-                                            {/*</div>*/}
-
-                                            <div className={"col-span-1"}></div>
-
-                                            <div className="col-span-4 flex items-center">
-                                                <div className="flex items-center space-x-2">
-                                                    <Car className="h-4 w-4 text-slate-400"/>
-                                                    <span
-                                                        className="font-semibold text-slate-900">{fleet.vehicle_number}</span>
-                                                </div>
-                                            </div>
-
-                                            <div className="col-span-6 flex items-center">
-                                                <div className="flex items-center space-x-2">
-                                                    <TrendingUp className="h-4 w-4 text-green-500"/>
-                                                    <div>
-                                                  <span className="font-semibold text-slate-900">
-                                                    {fleet.flux.toLocaleString()} {fleet.currency}
-                                                  </span>
+                                            {/* Fleet Items */}
+                                            {fleetData.map((fleet) => (
+                                                <div
+                                                    key={fleet.id}
+                                                    className="grid grid-cols-4 w-full py-4 text-sm text-black font-medium gap-4 items-center"
+                                                >
+                                                    <div className="w-full">
+                                                        {fleet.park_name}
+                                                    </div>
+                                                    <div className="w-full">
+                                                        {fleet.type}
+                                                    </div>
+                                                    <div className="w-full">
+                                                        {fleet.vehicle_number}
+                                                    </div>
+                                                    <div className="w-full">
+                                                        {fleet.flux} {currency}
                                                     </div>
                                                 </div>
-                                            </div>
+                                            ))}
                                         </div>
-                                    ))}
-                                </ScrollArea>
-                            </div> : <span></span>}
+                                    </div>
+                                </div>
+                            ) : <span></span>}
                         </div>
                     </div>}
                 </div>
-                {isLoading && <Loading className={"h-[150px]"}/>}
+                {isLoading && <Loading className={"h-[150px]"} />}
             </div>
         </div>
     )
@@ -496,12 +505,12 @@ interface ModernLineChartProps {
 }
 
 export function ModernLineChart({
-                                    data,
-                                    title = "Diagramme en ligne",
-                                    description = "Évolution des données dans le temps",
-                                    color = "hsl(var(--chart-1))",
-                                    height = 400,
-                                }: ModernLineChartProps) {
+    data,
+    title = "Diagramme en ligne",
+    description = "Évolution des données dans le temps",
+    color = "hsl(var(--chart-1))",
+    height = 400,
+}: ModernLineChartProps) {
     const chartConfig = {
         value: {
             label: "Valeur",
@@ -521,13 +530,13 @@ export function ModernLineChart({
                         bottom: 20,
                     }}
                 >
-                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" vertical={false}/>
+                    <CartesianGrid strokeDasharray="3 3" className="stroke-muted" vertical={false} />
                     <XAxis dataKey="label" tickLine={false} axisLine={false} className="text-muted-foreground"
-                           fontSize={12}/>
-                    <YAxis tickLine={false} axisLine={false} className="text-muted-foreground" fontSize={12}/>
+                        fontSize={12} />
+                    <YAxis tickLine={false} axisLine={false} className="text-muted-foreground" fontSize={12} />
                     <ChartTooltip
-                        content={<ChartTooltipContent/>}
-                        cursor={{stroke: color, strokeWidth: 1, strokeDasharray: "5 5"}}
+                        content={<ChartTooltipContent />}
+                        cursor={{ stroke: color, strokeWidth: 1, strokeDasharray: "5 5" }}
                     />
                     <Line
                         type="monotone"

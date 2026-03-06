@@ -15,16 +15,17 @@ const SelectValue = SelectPrimitive.Value
 const SelectTrigger = React.forwardRef<
     React.ElementRef<typeof SelectPrimitive.Trigger>,
     React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
-    & {variant?: "default" | "outline" | "mainBlue" | "mainBlueOutline", leftIcon?: React.ReactNode }
->(({ className, children, variant = "default", leftIcon, ...props }, ref) => (
+    & {variant?: "default" | "outline" | "mainBlue" | "mainBlueOutline", leftIcon?: React.ReactNode, inForm?: boolean }
+>(({ className, children, variant = "default", leftIcon, inForm = false, ...props }, ref) => (
     <SelectPrimitive.Trigger
         ref={ref}
         className={cn(
-            "flex h-10 items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-fit",
+            "flex items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 w-fit",
             variant === "default" && "border-input bg-background",
             variant === "outline" && "border-input bg-background hover:bg-vaMainBlue/10",
             variant === "mainBlue" && "border-vaMainBlue bg-vaMainBlue text-white hover:bg-vaMainBlue/90",
             variant === "mainBlueOutline" && "border-vaMainBlue bg-white text-vaMainBlue hover:bg-vaMainBlue/10",
+            inForm && "focus:outline-none focus:ring focus:ring-vaBlue/30 focus:border-none bg-transparent border border-solid border-neutral-300/60 text-neutral-700 placeholder:text-vaTextPrimary/50 bg-clip-padding",         
             className
         )}
         {...props}

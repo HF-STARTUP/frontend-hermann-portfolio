@@ -39,6 +39,7 @@ type TextFieldProps = {
     value?: string | number | readonly string[] | undefined
     register?: UseFormRegisterReturn,
     errors?: FieldErrors;
+    className?:string
 }
 
 type SelectFieldProp = {
@@ -134,7 +135,7 @@ export const FieldDate: React.FC<TextFieldProps> = ({label, placeholder, size, r
     )
 }
 
-export const TextArea: React.FC<TextFieldProps> = ({label, register, placeholder, size, ...props}) => {
+export const TextArea: React.FC<TextFieldProps> = ({label, register, className, placeholder, size, ...props}) => {
 
 
     const $pathName = usePathname()
@@ -151,10 +152,10 @@ export const TextArea: React.FC<TextFieldProps> = ({label, register, placeholder
                 htmlFor={fielID}> {label}</label>
             <textarea
                 id={fielID}
-                className="m-0 block h-[148px] w-full rounded-md border border-solid border-neutral-300 border-opacity-60 bg-transparent
-                bg-clip-padding text-base leading-tight text-neutral-300 transition duration-200
-                ease-linear placeholder:text-stone-300 focus:border-primary text-[10px] font-normal px-[20px] py-[10px]
-                focus:text-neutral-700 focus:outline-none peer-focus:text-primary0"
+                className={cn("m-0 block h-[148px] w-full rounded-md border border-solid border-neutral-300 border-opacity-60 bg-transparent",
+                "bg-clip-padding text-base leading-tight text-neutral-300 transition duration-200",
+                "ease-linear placeholder:text-stone-300 focus:border-primary text-[10px] font-normal px-[20px] py-[10px] resize-none",
+                "focus:text-neutral-700 focus:outline-none peer-focus:text-primary0", className)}
                 rows={3}
                 placeholder={placeholder}
                 {...register}

@@ -4,13 +4,13 @@ import {cn} from "@/lib/utils";
 import {CarCrashIcon, MoneyCashIcon, UserFleetIcon} from "@/components/ui/__icons";
 import React from "react";
 import {CircleArrowLeft, CircleArrowRight} from "lucide-react";
-import {useGetDashboardActivities} from "@/hooks/admin/useFleetHook";
 import {eachDayOfInterval, endOfMonth, format, getDay, getMonth, getYear, startOfMonth} from "date-fns";
 import {fr} from 'date-fns/locale';
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {formatInTimeZone, toZonedTime} from 'date-fns-tz';
 import {EmptyData} from "@/components/box/PageNetworkState";
 import Loading from "@/components/ui/Loader";
+import {useDashboardActivities} from "@/app/(webapp)/app/dashboard/_hook/useDashboardSectionsHooks";
 
 
 export const Activities = () => {
@@ -24,10 +24,7 @@ export const Activities = () => {
     const [month, setMonth] = React.useState<number>(currentMonth)
     const [year, setYear] = React.useState<number>(currentYear)
 
-    const {
-        data,
-        isLoading
-    } = useGetDashboardActivities(new Date(year, month, day, 0, 0, 0), new Date(year, month, day, 23, 59, 0))
+    const {data, isLoading} = useDashboardActivities({year, month, day})
 
     const handleSelectMonth = (value: string) => {
         setMonth(+value)

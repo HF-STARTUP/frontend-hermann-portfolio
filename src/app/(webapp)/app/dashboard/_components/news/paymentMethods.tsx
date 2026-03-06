@@ -1,17 +1,14 @@
 "use client"
-import React, {useMemo} from "react";
+import React from "react";
 import {Card, CardContent} from "@/components/ui/card";
 import {ABlockTitle} from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
-import {useGetOperatorsRevenus} from "@/hooks/admin/useFleetHook";
-import {toIsoDate} from "@/services/Service";
-import {endOfMonth, startOfMonth} from "date-fns";
-import {formatNumber} from "@/lib/utils";
 import Loading from "@/components/ui/Loader";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import Image from "next/image";
 import {imageBaseUrl} from "@/model/Model";
 import {EmptyData} from "@/components/box/PageNetworkState";
+import {useDashboardPaymentMethods} from "@/app/(webapp)/app/dashboard/_hook/useDashboardSectionsHooks";
 
 type PaymentMethod = {
     name: string,
@@ -23,25 +20,7 @@ type PaymentMethod = {
 export default function PaymentMethods() {
 
     const [method, setMethod] = React.useState<string>("Ce Mois")
-    const curDate = new Date();
-
-    const {data, isLoading} = useGetOperatorsRevenus({
-        start_date: toIsoDate(startOfMonth(curDate)),
-        end_date: toIsoDate(endOfMonth(curDate))
-    })
-
-    const paymentMethods: PaymentMethod[] = useMemo(() => {
-        if (!data || data.length === 0) return []
-
-        const total = data.reduce((sum, d) => sum + d.total_amount, 0)
-
-        return data.map(d => ({
-            name: d.operator_name,
-            amount: `${formatNumber(d.total_amount)} ${d.currency}`,
-            progress: total > 0 ? Math.round((d.total_amount / total) * 100) : 0,
-            path: d.path
-        }))
-    }, [data])
+    const {paymentMethods, isLoading} = useDashboardPaymentMethods()
 
     return (
         <Card className="bg-[#ffffff] shadow-none border-0">

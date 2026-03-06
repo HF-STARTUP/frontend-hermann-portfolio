@@ -1,15 +1,13 @@
 "use client"
 
-import React, {useEffect, useState} from "react"
+import React from "react"
 import {ComposableMap, Geographies, Geography, Marker} from "react-simple-maps"
 import {Card} from "@/components/ui/card"
-import {ABlockTitle} from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
-import {useGetFleetByCity} from "@/hooks/admin/useFleetHook";
-import {useCountries} from "@/hooks/location/useCountry/useCountry";
 import {CustomComboBox} from "@/components/ui/custom/custom-comobo-box";
 import {Button} from "@/components/ui/button";
 import {RotateCcw, ZoomIn, ZoomOut} from "lucide-react";
 import {ScrollArea} from "@/components/ui/scroll-area";
+import {useDashboardFleetMapSection} from "@/app/(webapp)/app/dashboard/_hook/useDashboardSectionsHooks";
 
 // Chemin vers le fichier GeoJSON pour la carte du monde
 const geoUrl = "/map-raw.json"
@@ -26,87 +24,29 @@ interface FleetMapProps {
 }
 
 export default function FleetMap({fleets}: FleetMapProps) {
-    const [selectedCountrie, setSelectedCountrie] = useState<string>()
-    const {data: nbFleets, isLoading} = useGetFleetByCity({country_id: selectedCountrie})
-    const [filter, setFilter] = useState<string>("all")
-    const {data: countries, isLoading: loadingCountries} = useCountries({fleet: true})
-
-    const [dimensions, setDimensions] = useState({width: 800, height: 359})
-
-    // États pour les contrôles de la carte
-    const [zoom, setZoom] = useState(1)
-    const [center, setCenter] = useState<[number, number]>([0, 30])
-    const [isDragging, setIsDragging] = useState(false)
-    const [dragStart, setDragStart] = useState<[number, number]>([0, 0])
-
-    // Fonction pour mettre à jour les dimensions en fonction du conteneur
-    useEffect(() => {
-        const updateDimensions = () => {
-            const container = document.getElementById("map-container")
-            if (container) {
-                setDimensions({
-                    width: container.clientWidth,
-                    height: container.clientHeight,
-                })
-            }
-        }
-        window.addEventListener("resize", updateDimensions)
-        updateDimensions() // Initialisation
-        return () => window.removeEventListener("resize", updateDimensions)
-    }, [])
-
-    // Filtrer les flottes en fonction du filtre sélectionné
-    const filteredFleets = filter === "all" ? fleets : fleets.filter((fleet) => fleet.city === filter)
-
-    // Obtenir les villes uniques pour le filtre
-    const uniqueCities = Array.from(new Set(fleets.map((fleet) => fleet.city)))
-
-    // Fonctions de contrôle du zoom
-    const handleZoomIn = () => {
-        setZoom((prev) => Math.min(prev * 1.5, 8))
-    }
-
-    const handleZoomOut = () => {
-        setZoom((prev) => Math.max(prev / 1.5, 0.5))
-    }
-
-    const handleReset = () => {
-        setZoom(1)
-        setCenter([0, 30])
-    }
-
-    // Fonctions de gestion du drag
-    const handleMouseDown = (event: React.MouseEvent) => {
-        setIsDragging(true)
-        setDragStart([event.clientX, event.clientY])
-    }
-
-    const handleMouseMove = (event: React.MouseEvent) => {
-        if (!isDragging) return
-
-        const deltaX = event.clientX - dragStart[0]
-        const deltaY = event.clientY - dragStart[1]
-
-        const sensitivity = 0.5 / zoom
-
-        setCenter((prev) => [prev[0] - deltaX * sensitivity, prev[1] + deltaY * sensitivity])
-
-        setDragStart([event.clientX, event.clientY])
-    }
-
-    const handleMouseUp = () => {
-        setIsDragging(false)
-    }
-
-    const handleMouseLeave = () => {
-        setIsDragging(false)
-    }
+    const {
+        selectedCountrie,
+        setSelectedCountrie,
+        countries,
+        nbFleets,
+        dimensions,
+        zoom,
+        center,
+        isDragging,
+        handleZoomIn,
+        handleZoomOut,
+        handleReset,
+        handleMouseDown,
+        handleMouseMove,
+        handleMouseUp,
+        handleMouseLeave,
+    } = useDashboardFleetMapSection(fleets)
 
 
     return (
-        <Card className="p-6 border-0 shadow-none">
+        <Card className="p-6 border-0 rounded-2xl shadow-none">
             <div className="flex justify-between items-center mb-6">
-                <ABlockTitle>Flottes par villes</ABlockTitle>
+                <p className="text-2xl font-semibold text-vaTextPrimary mb-6">Flottes actives</p>
 
                 <CustomComboBox
                     options={countries ? [

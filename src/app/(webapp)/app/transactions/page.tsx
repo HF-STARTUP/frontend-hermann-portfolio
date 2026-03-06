@@ -1,13 +1,13 @@
 "use client"
 
-import {Crumb} from "@/components/ui/custom/crumb";
-import {PageTitle} from "@/components/ui/custom/PageTitle";
+import { Crumb } from "@/components/ui/custom/crumb";
+import { PageTitle } from "@/components/ui/custom/PageTitle";
 import React from "react";
 import Course from "@/model/course/Course";
-import {useGetCurrency} from "@/hooks/__globlal/useGlobalHook";
-import {UserCircleIcon} from "lucide-react";
-import {CardItemMenu, CardItemMenuContainer} from "@/components/box/AdminListItemComponents";
-import {CourseInfoDialog} from "@/app/(protected)/dashboard/races/_actions/courseInfos/CourseInfosDialog";
+import { useGetCurrency } from "@/hooks/__globlal/useGlobalHook";
+import { UserCircleIcon } from "lucide-react";
+import { CardItemMenu, CardItemMenuContainer } from "@/components/box/AdminListItemComponents";
+import { CourseInfoDialog } from "@/app/(protected)/dashboard/races/_actions/courseInfos/CourseInfosDialog";
 import {
     ItemBadge,
     ItemContainer, ItemLabel,
@@ -15,7 +15,7 @@ import {
     SubTitle2,
     TitleItem
 } from "@/app/(protected)/dashboard/races/components/racesList/racesList";
-import {EmptyData} from "@/components/box/PageNetworkState";
+import TransactionBody from "./TransactionsBody";
 
 export default function TransactionPage() {
 
@@ -26,19 +26,13 @@ export default function TransactionPage() {
                     items={[
                         {
                             label: "Transactions",
-                            url: "/transactions",
+                            url: "transactions",
                         }
                     ]}
                 />
-                <div>
-                    <div className={"flex items-center justify-between"}>
-                        <PageTitle
-                            page_title={"Transactions bancaires"}
-                            withSelect={false}
-                        />
-                    </div>
+                <div>                
                     <div className={"mt-2"}>
-                        <EmptyData message={"Aucune transaction pour le moment."}/>
+                        <TransactionBody />
                     </div>
                 </div>
             </div>
@@ -46,10 +40,10 @@ export default function TransactionPage() {
     )
 }
 
-const TransactionItem: React.FC<{ course: Course }> = ({course}) => {
+const TransactionItem: React.FC<{ course: Course }> = ({ course }) => {
 
     const [courseInfoIsOpen, setCourseInfoIsOpen] = React.useState(false)
-    const {currency} = useGetCurrency()
+    const { currency } = useGetCurrency()
 
     return (
         <>
@@ -60,7 +54,7 @@ const TransactionItem: React.FC<{ course: Course }> = ({course}) => {
                     <SubTitle2>{course.vehicle.getFullName} - {course.vehicle.getRegistration}</SubTitle2>
                     {course.currentDriver &&
                         <div className="text-[#506D82] text-sm font-medium flex items-center gap-2">
-                            <UserCircleIcon/>
+                            <UserCircleIcon />
                             <div>Chauffeur : {course.currentDriver?.getUsername}</div>
                         </div>}
                 </div>
@@ -69,7 +63,7 @@ const TransactionItem: React.FC<{ course: Course }> = ({course}) => {
                         <ItemLabel>{course.startAt}</ItemLabel>
                         <ItemLabel>{course.startHour}</ItemLabel>
                         <ItemLabel>{course.amount} {currency}</ItemLabel>
-                        <ItemBadge title={course.status}/>
+                        <ItemBadge title={course.status} />
                     </div>
 
                     <div className={"mt-1"}>

@@ -75,7 +75,8 @@ html, body {
 }
 
 .custom-scrollbar {
-    @apply scrollbar-thin scrollbar-thumb-rounded-full scrollbar-track-transparent scrollbar-thumb-vaPrimary/20 transition-all duration-300;
+    @apply scrollbar-thin scrollbar-thumb-rounded-full scrollbar-track-transparent 
+       transition-all duration-300;
 }
 
 /* Personnaliser la scrollbar uniquement pour .custom-scrollbar */

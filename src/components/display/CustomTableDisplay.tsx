@@ -116,6 +116,7 @@ interface DataTableProps<T> {
     pagination: PaginationProps;
     isLoading?: boolean;
     rowActions?: (item: T) => RowAction<T>[];
+    onRowClick?: (item: T) => void;
 }
 
 
@@ -193,7 +194,7 @@ function TableRowActionsDropdown<T>({
     }
 
     return (
-        <div className="px-6 py-4 flex justify-end">
+        <div className="px-6 py-4 flex justify-end" onClick={(e) => e.stopPropagation()}>
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -217,7 +218,7 @@ function TableRowActionsDropdown<T>({
     );
 }
 
-export function DataTable<T>({ columns, data, pagination, isLoading, rowActions }: DataTableProps<T>) {
+export function DataTable<T>({ columns, data, pagination, isLoading, rowActions, onRowClick }: DataTableProps<T>) {
     const hasActions = !!rowActions;
     const totalColumns = columns.length + (hasActions ? 1 : 0);
     const gridTemplate = {
@@ -258,7 +259,11 @@ export function DataTable<T>({ columns, data, pagination, isLoading, rowActions 
                                 <div
                                     key={rowIndex}
                                     style={gridTemplate}
+                                    role={onRowClick ? "button" : undefined}
+                                    tabIndex={onRowClick ? 0 : undefined}
+                                    onKeyDown={onRowClick ? (e) => e.key === "Enter" && onRowClick(row) : undefined}
                                     className="grid items-center bg-white border border-[#E0E9FF] rounded-2xl transition-all group w-fit min-w-full hover:bg-vaPrimary/5 duration-300 cursor-pointer"
+                                    onClick={onRowClick ? () => onRowClick(row) : undefined}
                                 >
                                     {columns.map((col, colIdx) => (
                                         <div key={colIdx} className="px-6 py-4 text-sm text-[#506D82] truncate">

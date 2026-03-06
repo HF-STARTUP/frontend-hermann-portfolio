@@ -3,7 +3,7 @@ import { ArrowDown, ArrowUp, Minus } from "lucide-react";
 import { isValidElement, ReactNode } from "react"
 import { cloneElement } from 'react';
 
-export type CardVariant = 'green' | 'red' | 'orange' | 'yellow' | 'blue' | 'light-blue' | 'light-green' | 'default';
+export type CardVariant = 'green' | 'red' | 'orange' | 'yellow' | 'blue' | 'light-blue' | 'light-green' | 'purple' |'default' ;
 
 export interface KpiItem {
     icon: ReactNode;
@@ -14,6 +14,7 @@ export interface KpiItem {
     className?: string;
     border?: boolean;
     hint?: string;
+    unit?: string;
 }
 
 export const getCardVariant = (variant?: CardVariant): string => {
@@ -25,13 +26,15 @@ export const getCardVariant = (variant?: CardVariant): string => {
         case 'orange':
             return 'bg-vaOrange/10 text-vaOrange';
             case 'blue':
-                return 'bg-vaBlue/10 text-vaBlue';
+                return 'bg-vaMainBlue/10 text-vaMainBlue';
         case 'yellow':
             return 'bg-vaYellow/10 text-vaYellow';
         case 'light-blue':
-            return 'bg-[#EEF5FF1A] text-[#37A3FF]';
+            return 'bg-vaBlue/10 text-vaBlue';
         case 'light-green':
-            return 'bg-[#E6F5EB1A] text-[#02B66A]';
+            return 'bg-vaDarkGreen text-vaLightGreen';
+        case 'purple':
+                return 'bg-vaDarkPurple text-vaPurple';
         case 'default':
             return 'bg-[#F9FAFB] text-[#111827]';
         default:
@@ -64,7 +67,7 @@ export const KpiShimmerGrid = ({ count = 4 }: { count?: number }) => {
     );
 };
 
-export const KpiCard = ({icon, title, value, variant, className, border=false, variation, hint}: KpiItem) => {
+export const KpiCard = ({icon, title, value, variant, className, border=false, variation, hint, unit}: KpiItem) => {
     const renderedIcon = isValidElement(icon) 
     ? cloneElement(icon as React.ReactElement, {
         className: cn("shrink-0 size-5", icon.props.className)
@@ -85,7 +88,7 @@ export const KpiCard = ({icon, title, value, variant, className, border=false, v
             </div>
             <div className="flex flex-col gap-1">
                 <span className="text-sm text-[#000000] font-semibold">{title}</span>
-                <span className="text-xl font-semibold text-[#000B20]">{value}</span>
+                <span className="text-xl font-semibold text-[#000B20]">{value} { unit && <span className="text-sm">{unit}</span>}</span>
             </div>
             <div className="">
                 {

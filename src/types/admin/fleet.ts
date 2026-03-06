@@ -142,7 +142,7 @@ export interface SubscriptionPrevision {
 
 export type CaTotal = {
     total: number
-    indicateur: string
+    indicateur: 'up' | 'down' | 'stable',
     indicateur_value: string
 }
 
@@ -163,6 +163,8 @@ export type StProfitable = {
 export interface RevenusEvolution {
     currency: string;
     data: Datum[];
+    revenue: number,    
+    item: string,
 }
 
 export interface Datum {
