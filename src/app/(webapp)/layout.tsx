@@ -20,7 +20,7 @@ export default function WebAppGroupLayout({
             <Navbar/>
             <Sidebar/>
             <NavigationLoaderWrapper/>
-            <div className={"px-8 lg:ml-[295px] pt-[110px] pb-[50px] bg-[#f5f5f574]"}>
+            <div className={"px-8 lg:ml-[295px] pt-[110px] pb-[100px] bg-[#f5f5f574]"}>
                 <main>
                     {children}
                 </main>
