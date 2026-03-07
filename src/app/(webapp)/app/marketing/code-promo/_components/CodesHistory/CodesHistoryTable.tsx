@@ -7,124 +7,62 @@ import { DataTable } from "@/components/ui/DataTable"
 import { Download, Plus } from "lucide-react"
 import { CodesTableFilters } from "./CodesTableFilters"
 import { createColumns } from "./columns"
-import { useGetPromoCodes, useUpdatePromoCodeStatus, useDeletePromoCode } from "@/hooks/marketing/useMarketing"
+import {
+  useGetPromoCodes,
+  useUpdatePromoCodeStatus,
+  useDeletePromoCode,
+} from "@/hooks/marketing/useMarketing"
 import { MarketingFilters, PromoCode } from "@/types/marketing.types"
 import { CreateCodeDialog } from "../CreateCodeDialog/CreateCodeDialog"
 import BtnBase from "@/components/elements/BtnBase"
-
-const MOCK_CODES: PromoCode[] = [
-  {
-    id: "1",
-    createdAt: "12 Jan 2025 18:30",
-    code: "LOYAL_30",
-    type: "reduction_nouveau_client",
-    value: "-20% sur\n1er mois",
-    target: "Nouveaux\nclients",
-    assignedCommercial: null,
-    usageCount: 346,
-    conversions: 90,
-    conversionRate: 57,
-    status: "actif",
-  },
-  {
-    id: "2",
-    createdAt: "12 Jan 2025 18:30",
-    code: "LOYAL_30",
-    type: "coupon_gratuit",
-    value: "GPS offert\n30 jours",
-    target: "Clients\npremium",
-    assignedCommercial: "Ruth N'Guessan",
-    usageCount: 346,
-    conversions: 90,
-    conversionRate: 72,
-    status: "expire",
-  },
-  {
-    id: "3",
-    createdAt: "12 Jan 2025 18:30",
-    code: "LOYAL_30",
-    type: "fidelisation_client",
-    value: "1 mois\noffert",
-    target: "Clients actifs >\n3 mois",
-    assignedCommercial: null,
-    usageCount: 346,
-    conversions: 90,
-    conversionRate: 0,
-    status: "suspendu",
-  },
-  {
-    id: "4",
-    createdAt: "12 Jan 2025 18:30",
-    code: "FREEGPS",
-    type: "reduction_nouveau_client",
-    value: "-20% sur\n1er mois",
-    target: "Nouveaux\nClients",
-    assignedCommercial: "Jean Kouamé",
-    usageCount: 346,
-    conversions: 90,
-    conversionRate: 67,
-    status: "actif",
-  },
-  {
-    id: "5",
-    createdAt: "12 Jan 2025 18:30",
-    code: "FREEGPS",
-    type: "reddition_commerciale",
-    value: "-20% sur\n1er mois",
-    target: "Prospects\n(démo demandée)",
-    assignedCommercial: "Jean Kouamé",
-    usageCount: 346,
-    conversions: 90,
-    conversionRate: 0,
-    status: "suspendu",
-  },
-  {
-    id: "6",
-    createdAt: "12 Jan 2025 18:30",
-    code: "FREEGPS",
-    type: "reddition_commerciale",
-    value: "-20% sur\n1er mois",
-    target: "Prospects\n(démo demandée)",
-    assignedCommercial: "Jean Kouamé",
-    usageCount: 346,
-    conversions: 90,
-    conversionRate: 92,
-    status: "actif",
-  },
-  {
-    id: "7",
-    createdAt: "12 Jan 2025 18:30",
-    code: "FREEGPS",
-    type: "coupon_gratuit",
-    value: "-20% sur\n1er mois",
-    target: "Clients\npremium",
-    assignedCommercial: "Jean Kouamé",
-    usageCount: 346,
-    conversions: 90,
-    conversionRate: 67,
-    status: "actif",
-  },
-]
+import ConfirmationDialog from "@/components/dialog/confirmation-dialog"
+import { PromoCodeDetailsSheet } from "./PromoCodeDetailsSheet"
+import { AssignCommercialToCodeDialog } from "./AssignCommercialToCodeDialog"
+import { SalesAgentDetailsSheet } from "../../commerciaux/_components/CommerciauxTable/SalesAgentDetailsSheet"
 
     
     export const CodesHistoryTable = ({onCreateCode}:{onCreateCode: () => void}) => {
   const [filters, setFilters] = React.useState<MarketingFilters>({
-    search: "",
-    conversionRate: "all",
-    codeType: "all",
-    status: "all",
+    page: 1,
+    itemPerPage: 20,
   })
-  
   const [createDialogOpen, setCreateDialogOpen] = React.useState(false)
+  const [editCodeId, setEditCodeId] = React.useState<string | null>(null)
+  const [statusConfirmOpen, setStatusConfirmOpen] = React.useState(false)
+  const [pendingStatusChange, setPendingStatusChange] = React.useState<{
+    codeId: string
+    status: "actif" | "suspendu"
+  } | null>(null)
+  const [selectedCodeId, setSelectedCodeId] = React.useState<string | null>(
+    null
+  )
+  const [codeToAssign, setCodeToAssign] = React.useState<PromoCode | null>(
+    null
+  )
+  const [selectedSalesAgentId, setSelectedSalesAgentId] = React.useState<
+    string | null
+  >(null)
 
-  const { data: codes, isLoading } = useGetPromoCodes(filters)
+  const { data: codes, totalRecords, isLoading } = useGetPromoCodes(filters)
   const { mutate: updateStatus } = useUpdatePromoCodeStatus()
   const { mutate: deleteCode } = useDeletePromoCode()
 
-  const displayCodes = codes.length > 0 ? codes : MOCK_CODES
 
-  const handleStatusChange = (codeId: string, newStatus: 'actif' | 'suspendu') => {
-    updateStatus({ codeId, status: newStatus })
+  const itemPerPage = filters.itemPerPage ?? 20
+  const totalPages = Math.max(1, Math.ceil(totalRecords / itemPerPage))
+  const pageIndex = (filters.page ?? 1) - 1
+
+  const handleStatusChange = (codeId: string, newStatus: "actif" | "suspendu") => {
+    setPendingStatusChange({ codeId, status: newStatus })
+    setStatusConfirmOpen(true)
+  }
+
+  const handleConfirmStatusChange = () => {
+    if (pendingStatusChange) {
+      updateStatus(pendingStatusChange)
+      setPendingStatusChange(null)
+    }
+    setStatusConfirmOpen(false)
   }
 
   const handleDelete = (codeId: string) => {
@@ -134,15 +72,40 @@ const MOCK_CODES: PromoCode[] = [
   }
 
   const handleView = (code: PromoCode) => {
-    console.log("View code details:", code)
+    setSelectedCodeId(code.id)
+  }
+
+  const handleEdit = (code: PromoCode) => {
+    setEditCodeId(code.id)
+    setCreateDialogOpen(true)
+  }
+
+  const handleCloseCreateDialog = () => {
+    setCreateDialogOpen(false)
+    setEditCodeId(null)
+  }
+
+  const handleAssignCommercial = (code: PromoCode) => {
+    setCodeToAssign(code)
+  }
+
+  const handlePageChange = (newPageIndex: number) => {
+    setFilters((prev) => ({ ...prev, page: newPageIndex + 1 }))
+  }
+
+  const handlePageSizeChange = (newSize: number) => {
+    setFilters((prev) => ({ ...prev, itemPerPage: newSize, page: 1 }))
   }
 
   const columns = React.useMemo(
-    () => createColumns({
-      onStatusChange: handleStatusChange,
-      onDelete: handleDelete,
-      onView: handleView,
-    }),
+    () =>
+      createColumns({
+        onStatusChange: handleStatusChange,
+        onDelete: handleDelete,
+        onView: handleView,
+        onEdit: handleEdit,
+        onAssignCommercial: handleAssignCommercial,
+      }),
     []
   )
 
@@ -153,23 +116,20 @@ const MOCK_CODES: PromoCode[] = [
           <h2 className="text-xl font-semibold text-gray-900">
             Historique des codes
           </h2>
-          
+
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <CodesTableFilters 
-              filters={filters} 
-              onFiltersChange={setFilters} 
-            />
-            
+            <CodesTableFilters filters={filters} onFiltersChange={setFilters} />
+
             <div className="flex items-center gap-3">
-              <Button 
-                variant="outline" 
+              {/* <Button
+                variant="outline"
                 className="h-12 gap-2 border-gray-200"
               >
                 <Download className="h-4 w-4" />
                 Exporter
-              </Button>
-              
-              <BtnBase 
+              </Button> */}
+
+              <BtnBase
                 type="button"
                 color="blue"
                 variant="contained"
@@ -177,7 +137,10 @@ const MOCK_CODES: PromoCode[] = [
                 size="sm"
                 className="h-12"
                 icon={<Plus className="h-4 w-4" />}
-                onClick={() => setCreateDialogOpen(true)}
+                onClick={() => {
+                  setEditCodeId(null)
+                  setCreateDialogOpen(true)
+                }}
               >
                 Créer un code
               </BtnBase>
@@ -185,22 +148,72 @@ const MOCK_CODES: PromoCode[] = [
           </div>
         </div>
       </CardHeader>
-      
+
       <CardContent className="pt-0">
         <DataTable
           columns={columns}
-          data={displayCodes}
+          data={codes}
           isLoading={isLoading}
           enableSorting
           enablePagination
-          pageSize={7}
+          pageSize={itemPerPage}
           emptyMessage="Aucun code promo trouvé"
+          manualPagination
+          pageIndex={pageIndex}
+          totalPages={totalPages}
+          totalRecords={totalRecords}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
+          onRowClick={handleView}
         />
       </CardContent>
-      
-      <CreateCodeDialog 
+
+      <CreateCodeDialog
         isOpen={createDialogOpen}
-        onClose={() => setCreateDialogOpen(false)}
+        onClose={handleCloseCreateDialog}
+        codeId={editCodeId}
+      />
+
+      <ConfirmationDialog
+        open={statusConfirmOpen}
+        setOpen={setStatusConfirmOpen}
+        title={
+          pendingStatusChange?.status === "suspendu"
+            ? "Suspendre le code"
+            : "Activer le code"
+        }
+        subtitle={
+          pendingStatusChange?.status === "suspendu"
+            ? "Êtes-vous sûr de vouloir suspendre ce code promo ? Il ne sera plus utilisable tant qu'il n'est pas réactivé."
+            : "Êtes-vous sûr de vouloir activer ce code promo ?"
+        }
+        triggerText={
+          pendingStatusChange?.status === "suspendu" ? "Suspendre" : "Activer"
+        }
+        onConfirm={handleConfirmStatusChange}
+      />
+
+      <PromoCodeDetailsSheet
+        codeId={selectedCodeId}
+        open={!!selectedCodeId}
+        onOpenChange={(open) => !open && setSelectedCodeId(null)}
+        onStatusChange={handleStatusChange}
+        onDelete={handleDelete}
+        onEdit={handleEdit}
+        onAssignCommercial={handleAssignCommercial}
+        onOpenCommercialDetails={(id) => setSelectedSalesAgentId(id)}
+      />
+
+      <SalesAgentDetailsSheet
+        agentId={selectedSalesAgentId}
+        open={!!selectedSalesAgentId}
+        onOpenChange={(open) => !open && setSelectedSalesAgentId(null)}
+      />
+
+      <AssignCommercialToCodeDialog
+        code={codeToAssign}
+        open={!!codeToAssign}
+        onClose={() => setCodeToAssign(null)}
       />
     </Card>
   )

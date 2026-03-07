@@ -1,7 +1,7 @@
 "use client"
 
 import {useEffect, useState} from 'react';
-import {useMutation, UseMutationResult, useQuery} from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import notify from "@/utils/func/notification";
 
 
@@ -9,35 +9,26 @@ type UseSuperMutationOptions<TInput, TResult> = {
     mutationFn: (input: TInput) => Promise<TResult>;
     successMessage: string;
     updateMessage?: string | null;
+    onSuccess?: (data: TResult, variables: TInput, context: unknown) => void;
 };
-
-
-type UseSuperMutationReturn<TInput, TResult> = {
-    data: TResult | undefined;
-    loading: boolean;
-    isSuccess: boolean;
-    isError: boolean;
-    handleMutation: (inputData: TInput, update?: boolean) => void;
-};
-
 
 export function useMutationProvider<TInput, TResult>({
-                                                         mutationFn,
-                                                         successMessage,
-                                                         updateMessage = null
-                                                     }: UseSuperMutationOptions<TInput, TResult>): UseSuperMutationReturn<TInput, TResult> {
+    mutationFn,
+    successMessage,
+    updateMessage = null,
+    onSuccess,
+}: UseSuperMutationOptions<TInput, TResult>) {
     const [loading, setLoading] = useState<boolean>(false);
     const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
-    const {
-        mutate,
-        isError,
-        error,
-        isSuccess,
-        data
-    }: UseMutationResult<TResult, Error, TInput> = useMutation<TResult, Error, TInput>({
-        mutationFn: mutationFn,
+    const mutation = useMutation<TResult, Error, TInput>({
+        mutationFn,
+        onSuccess: (data, variables, context) => {
+            onSuccess?.(data, variables, context);
+        },
     });
+
+    const { mutate, isError, error, isSuccess, data } = mutation;
 
     useEffect(() => {
         if (isError && error) {
@@ -63,11 +54,9 @@ export function useMutationProvider<TInput, TResult>({
     };
 
     return {
-        data,
-        loading,
-        isSuccess,
-        isError,
+        ...mutation,
         handleMutation,
+        loading,
     };
 }
 
