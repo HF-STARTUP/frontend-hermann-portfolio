@@ -5,7 +5,7 @@ import { KpiCard } from "./KpiCard"
 import { useGetPromoCodeMetrics } from "@/hooks/marketing/useMarketing"
 import { Ticket, Users } from "lucide-react"
 import { LoadingBar } from "@/components/ui/Loader"
-import { usePromoCodePeriod } from "../../_context/PromoCodePeriodContext"
+import { usePromoCodePeriod } from "../../../_context/PromoCodePeriodContext"
 
 export const MarketingKpiSection: React.FC = () => {
   const { dateRange } = usePromoCodePeriod()

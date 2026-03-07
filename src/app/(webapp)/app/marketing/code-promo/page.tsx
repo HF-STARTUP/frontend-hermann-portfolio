@@ -1,11 +1,11 @@
 "use client"
 
 import React from "react"
-import { PromoCodePeriodProvider } from "./_context/PromoCodePeriodContext"
 import { MarketingHeader } from "./_components/MarketingHeader"
 import { MarketingKpiSection } from "./_components/KpiCards/MarketingKpiSection"
 import { CodeUsageChart } from "./_components/CodeUsageChart/CodeUsageChart"
 import { CodesHistoryTable } from "./_components/CodesHistory/CodesHistoryTable"
+import { PromoCodePeriodProvider } from "../_context/PromoCodePeriodContext"
 
 export default function MarketingPage() {
   return (
@@ -17,7 +17,7 @@ export default function MarketingPage() {
 
         <CodeUsageChart />
 
-        <CodesHistoryTable />
+        <CodesHistoryTable  />
       </div>
     </PromoCodePeriodProvider>
   )

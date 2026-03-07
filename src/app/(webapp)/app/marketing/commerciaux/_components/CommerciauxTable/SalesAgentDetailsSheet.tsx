@@ -27,7 +27,7 @@ import type { SalesAgent } from "@/types/marketing.types"
 import { Loader2, Calendar, MoreVertical, ArrowUp, FileText, Pencil } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { SalesAgentAssignedCodesList } from "./SalesAgentAssignedCodesList"
-import { PromoCodeDetailsSheet } from "@/app/(webapp)/app/marketing/_components/CodesHistory/PromoCodeDetailsSheet"
+import { PromoCodeDetailsSheet } from "../../../code-promo/_components/CodesHistory/PromoCodeDetailsSheet"
 
 interface SalesAgentDetailsSheetProps {
   agentId: string | null
@@ -121,7 +121,7 @@ export const SalesAgentDetailsSheet: React.FC<SalesAgentDetailsSheetProps> = ({
   )
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange} direction="right">
+    <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent
         side="right"
         className="p-0 flex flex-col w-full max-w-xl overflow-hidden"

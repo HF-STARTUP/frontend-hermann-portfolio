@@ -18,10 +18,10 @@ import BtnBase from "@/components/elements/BtnBase"
 import ConfirmationDialog from "@/components/dialog/confirmation-dialog"
 import { PromoCodeDetailsSheet } from "./PromoCodeDetailsSheet"
 import { AssignCommercialToCodeDialog } from "./AssignCommercialToCodeDialog"
-import { SalesAgentDetailsSheet } from "../../commerciaux/_components/CommerciauxTable/SalesAgentDetailsSheet"
+import { SalesAgentDetailsSheet } from "../../../commerciaux/_components/CommerciauxTable/SalesAgentDetailsSheet"
 
     
-    export const CodesHistoryTable = ({onCreateCode}:{onCreateCode: () => void}) => {
+    export const CodesHistoryTable = ({onCreateCode}:{onCreateCode?: () => void}) => {
   const [filters, setFilters] = React.useState<MarketingFilters>({
     page: 1,
     itemPerPage: 20,

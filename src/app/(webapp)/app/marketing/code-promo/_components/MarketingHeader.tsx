@@ -9,10 +9,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import VLinkProvider from "@/components/helpers/VLinkProvider"
-import {
-  usePromoCodePeriod,
-  type PromoCodePeriod,
-} from "../_context/PromoCodePeriodContext"
+import { PromoCodePeriod, usePromoCodePeriod } from "../../_context/PromoCodePeriodContext"
 
 export const MarketingHeader: React.FC = () => {
   const { period, setPeriod } = usePromoCodePeriod()

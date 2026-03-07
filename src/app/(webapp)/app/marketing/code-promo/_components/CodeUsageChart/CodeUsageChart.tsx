@@ -11,8 +11,8 @@ import {
 import { Bar, BarChart, XAxis, YAxis, CartesianGrid } from "recharts"
 import { useGetPromoCodeUsageByType } from "@/hooks/marketing/useMarketing"
 import { LoadingBar } from "@/components/ui/Loader"
-import { usePromoCodePeriod } from "../../_context/PromoCodePeriodContext"
 import type { CodeUsageData } from "@/types/marketing.types"
+import { usePromoCodePeriod } from "../../../_context/PromoCodePeriodContext"
 
 const chartConfig: ChartConfig = {
   count: {
