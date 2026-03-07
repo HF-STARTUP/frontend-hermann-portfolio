@@ -106,7 +106,8 @@ const MOCK_CODES: PromoCode[] = [
   },
 ]
 
-export const CodesHistoryTable: React.FC = () => {
+    
+    export const CodesHistoryTable = ({onCreateCode}:{onCreateCode: () => void}) => {
   const [filters, setFilters] = React.useState<MarketingFilters>({
     search: "",
     conversionRate: "all",

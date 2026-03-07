@@ -15,6 +15,7 @@ export interface KpiItem {
     border?: boolean;
     hint?: string;
     unit?: string;
+    items?:{label: string, value:string | number, unit?: string}[]
 }
 
 export const getCardVariant = (variant?: CardVariant): string => {
@@ -67,7 +68,7 @@ export const KpiShimmerGrid = ({ count = 4 }: { count?: number }) => {
     );
 };
 
-export const KpiCard = ({icon, title, value, variant, className, border=false, variation, hint, unit}: KpiItem) => {
+export const KpiCard = ({icon, title, value, variant, className, border=false, variation, hint, unit, items}: KpiItem) => {
     const renderedIcon = isValidElement(icon) 
     ? cloneElement(icon as React.ReactElement, {
         className: cn("shrink-0 size-5", icon.props.className)
@@ -90,6 +91,21 @@ export const KpiCard = ({icon, title, value, variant, className, border=false, v
                 <span className="text-sm text-[#000000] font-semibold">{title}</span>
                 <span className="text-xl font-semibold text-[#000B20]">{value} { unit && <span className="text-sm">{unit}</span>}</span>
             </div>
+            {items &&
+            <div className="flex flex-col gap-3 w-full">
+                {
+                    items.map((item, index)=>
+                        <div className="flex items-center justify-between w-full text-sm" key={index}>
+                            <div className="label text-vaTextPrimary">
+                                {item.label}
+                            </div>
+                            <div className="value text-black font-semibold">
+                                {item.value} {item.unit && <span className="text-xs text-vaLightGray">{item.unit}</span> }
+                            </div>
+                        </div>
+                    )
+                }
+            </div>}
             <div className="">
                 {
                     variation && (

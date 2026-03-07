@@ -53,8 +53,8 @@ export const KpiCard: React.FC<KpiCardProps> = ({
           </div>
           
           {growth !== undefined && (
-            <div className="flex items-center gap-1 text-emerald-500">
-              <ArrowUp className="w-4 h-4" />
+            <div className="flex items-center gap-1 text-vaGreen">
+              <ArrowUp className="size-4" />
               <span className="text-sm font-medium">
                 +{growth} {growthLabel}
               </span>
