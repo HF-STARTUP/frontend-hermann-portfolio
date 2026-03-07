@@ -8,6 +8,7 @@ import AudienceChart from "./_components/PublicAtteintChart"
 import { useAudianceHook } from "./_hook/useAudianceHook"
 import UsageStatsChart from "./_components/MostUsedModule"
 import { useUsageStatsHook } from "./_hook/useUsageStatsHook"
+import CityEngagementMap from "./_components/CitiesEngagements"
 
 const MarketingDashboardBody = () => {
     const { KpiItems, activesAccountChartValues, createdAccountChartValues, inactivesAccountChartValues, overviewLabels } = useMarketingDashboardHook()
@@ -47,8 +48,9 @@ const MarketingDashboardBody = () => {
                     <AudienceChart data={audienceData} total = {totalAudience}  />
                 </div>
             </div>
-            <div className="grid grid-cols-1 xl:grid-cols-2">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
                 <UsageStatsChart data={usageData} />
+                <CityEngagementMap />
             </div>
         </div>
     )
