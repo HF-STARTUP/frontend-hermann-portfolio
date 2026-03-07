@@ -5,8 +5,9 @@ import {DashboardIcon, InfoIcon, LayoutListIcon, SettingIcon} from "@/components
 import {cn} from "@/lib/utils";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
-import {CreditCardIcon, Megaphone, ChevronDown, Tag, Users, ArrowRightLeft} from "lucide-react";
+import {CreditCardIcon, Megaphone, ChevronDown, Tag, Users, ArrowRightLeft, MegaphoneIcon} from "lucide-react";
 import {motion, AnimatePresence} from 'framer-motion';
+import { LuMegaphone } from "react-icons/lu";
 
 export const Sidebar = () => {
 
@@ -72,11 +73,15 @@ export const Sidebar = () => {
                 to={"/app/tickets"}
             />
             <SidebarItemWithSubmenu
-                label={"Marketing/communication"}
-                icon={<Megaphone className="w-6 h-6" />}
+                label={"Marketing & Campagnes"}
+                icon={<MegaphoneIcon className="w-6 h-6" />}
+                to = {"/app/marketing/dashboard"}
                 subItems={[
-                    { label: "Code promo", to: "/app/marketing", icon: <Tag className="w-5 h-5" /> },
-                    { label: "Commerciaux", to: "/app/marketing/commerciaux", icon: <Users className="w-5 h-5" /> },
+                    { label: "Campagnes", to: "/app/marketing/campagnes" },
+                    { label: "Leads & Conversations", to: "/app/marketing/leads" },
+                    { label: "Pipeline Clients", to: "/app/marketing/pipeline" },
+                    { label: "Code promo", to: "/app/marketing/code-promo" },
+                    { label: "Commerciaux", to: "/app/marketing/commerciaux" },
                 ]}
             />
             <SidebarItem
@@ -126,13 +131,14 @@ const SidebarItemWithSubmenu: React.FC<{
     label: string
     icon: React.ReactNode
     subItems: SubItem[]
-}> = ({label, icon, subItems}) => {
+    to?: string
+}> = ({label, icon, subItems, to}) => {
     const [isOpen, setIsOpen] = useState(false)
     const cur_path = usePathname()
     const isActive = subItems.some(item => cur_path === item.to || cur_path.startsWith(item.to + '/'))
 
     return (
-        <div className="w-full">
+        <Link href={to??"#"} className="w-full">
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={cn(
@@ -207,6 +213,6 @@ const SidebarItemWithSubmenu: React.FC<{
                     </motion.div>
                 )}
             </AnimatePresence>
-        </div>
+        </Link>
     )
 }
