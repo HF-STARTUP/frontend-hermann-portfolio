@@ -2,22 +2,17 @@
 
 import React from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { 
-  ChartContainer, 
-  ChartTooltip, 
+import {
+  ChartContainer,
+  ChartTooltip,
   ChartTooltipContent,
-  type ChartConfig 
+  type ChartConfig,
 } from "@/components/ui/chart"
 import { Bar, BarChart, XAxis, YAxis, CartesianGrid } from "recharts"
-import { useGetCodeUsageStats } from "@/hooks/marketing/useMarketing"
+import { useGetPromoCodeUsageByType } from "@/hooks/marketing/useMarketing"
 import { LoadingBar } from "@/components/ui/Loader"
-
-const MOCK_DATA = [
-  { type: "reduction_nouveau_client", label: "Réduction nouveau client", count: 250 },
-  { type: "fidelisation_client", label: "Fidélisation client existant", count: 200 },
-  { type: "coupon_gratuit", label: "Coupon gratuit", count: 100 },
-  { type: "reddition_commerciale", label: "Reddition Commerciale\n(Démo)", count: 50 },
-]
+import type { CodeUsageData } from "@/types/marketing.types"
+import { usePromoCodePeriod } from "../../../_context/PromoCodePeriodContext"
 
 const chartConfig: ChartConfig = {
   count: {
@@ -26,10 +21,29 @@ const chartConfig: ChartConfig = {
   },
 }
 
+function formatTypeLabel(type: string): string {
+  const labels: Record<string, string> = {
+    NEW_CLIENT: "Nouveau client",
+    LOYALTY: "Fidélisation",
+    FREE_COUPON: "Coupon gratuit",
+    COMMERCIAL_RENDITION: "Reddition commerciale",
+  }
+  return labels[type] ?? type
+}
+
+function toChartData(items: CodeUsageData[]): { label: string; count: number }[] {
+  return items.map((d) => ({
+    label: formatTypeLabel(d.type),
+    count: d.nombre_utilisation,
+  }))
+}
+
 export const CodeUsageChart: React.FC = () => {
-  const { data: stats, isLoading } = useGetCodeUsageStats()
-  
-  const chartData = stats.length > 0 ? stats : MOCK_DATA
+  const { dateRange } = usePromoCodePeriod()
+  const { data: usageByType, isLoading } =
+    useGetPromoCodeUsageByType(dateRange)
+
+  const chartData = toChartData(usageByType)
 
   if (isLoading) {
     return (
@@ -54,15 +68,15 @@ export const CodeUsageChart: React.FC = () => {
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[400px] w-full">
+        <ChartContainer config={chartConfig} className="w-full">
           <BarChart
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 80 }}
           >
-            <CartesianGrid 
-              strokeDasharray="0" 
-              vertical={false} 
-              stroke="#E5E7EB" 
+            <CartesianGrid
+              strokeDasharray="0"
+              vertical={false}
+              stroke="#E5E7EB"
             />
             <XAxis
               dataKey="label"
@@ -84,8 +98,7 @@ export const CodeUsageChart: React.FC = () => {
               axisLine={false}
               tickLine={false}
               tick={{ fontSize: 12, fill: "#6B7280" }}
-              domain={[0, 300]}
-              ticks={[0, 50, 100, 150, 200, 250, 300]}
+              domain={[0, "auto"]}
             />
             <ChartTooltip
               content={<ChartTooltipContent />}

@@ -1,91 +1,102 @@
 "use client"
 
 import React from "react"
-import { Input } from "@/components/ui/input"
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select"
-import { Search } from "lucide-react"
-import { CommercialFilters } from "@/types/marketing.types"
+import { Input } from "@/components/ui/input"
+import { useCountries } from "@/hooks/location/useCountry/useCountry"
+import {
+  SalesAgentFilters,
+  SALES_AGENT_CHANNEL_OPTIONS,
+} from "@/types/marketing.types"
+
+export type SalesAgentTableFilters = Pick<
+  SalesAgentFilters,
+  "channel" | "country_id" | "start_date" | "end_date"
+>
 
 interface CommerciauxTableFiltersProps {
-  filters: CommercialFilters
-  onFiltersChange: (filters: CommercialFilters) => void
+  filters: SalesAgentTableFilters
+  onFiltersChange: (filters: SalesAgentTableFilters) => void
 }
 
-export const CommerciauxTableFilters: React.FC<CommerciauxTableFiltersProps> = ({
-  filters,
-  onFiltersChange,
-}) => {
-  const handleChange = (field: keyof CommercialFilters, value: string) => {
+export const CommerciauxTableFilters: React.FC<
+  CommerciauxTableFiltersProps
+> = ({ filters, onFiltersChange }) => {
+  const { data: countries, isLoading: loadingCountries } = useCountries()
+
+  const handleChange = <K extends keyof SalesAgentTableFilters>(
+    field: K,
+    value: SalesAgentTableFilters[K]
+  ) => {
     onFiltersChange({ ...filters, [field]: value })
   }
 
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
-        <Input
-          placeholder="Recherche un commercial..."
-          value={filters.search}
-          onChange={(e) => handleChange('search', e.target.value)}
-          className="pl-10 w-[250px] h-[47px] border-gray-200 rounded-lg"
-        />
-      </div>
-
-      <Select value={filters.conversionRate} onValueChange={(v) => handleChange('conversionRate', v)}>
-        <SelectTrigger className="w-[220px] h-[47px] border-gray-200 rounded-lg">
-          <SelectValue placeholder="Tous les taux de conversions" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Tous les taux de conversions</SelectItem>
-          <SelectItem value="high">Élevé (&gt;70%)</SelectItem>
-          <SelectItem value="medium">Moyen (40-70%)</SelectItem>
-          <SelectItem value="low">Faible (&lt;40%)</SelectItem>
-        </SelectContent>
-      </Select>
-
-      <Select value={filters.status} onValueChange={(v) => handleChange('status', v)}>
-        <SelectTrigger className="w-[150px] h-[47px] border-gray-200 rounded-lg">
-          <SelectValue placeholder="Tous les statuts" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">Tous les statuts</SelectItem>
-          <SelectItem value="actif">Actif</SelectItem>
-          <SelectItem value="inactif">Inactif</SelectItem>
-        </SelectContent>
-      </Select>
-
-      <Select value={filters.performance} onValueChange={(v) => handleChange('performance', v)}>
+      <Select
+        value={filters.channel ?? "all"}
+        onValueChange={(v) =>
+          handleChange("channel", v === "all" ? undefined : v)
+        }
+      >
         <SelectTrigger className="w-[180px] h-[47px] border-gray-200 rounded-lg">
-          <SelectValue placeholder="Tous les performances" />
+          <SelectValue placeholder="Canal" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="all">Tous les performances</SelectItem>
-          <SelectItem value="excellent">Excellent</SelectItem>
-          <SelectItem value="bon">Bon</SelectItem>
-          <SelectItem value="moyen">Moyen</SelectItem>
-          <SelectItem value="faible">Faible</SelectItem>
+          <SelectItem value="all">Tous les canaux</SelectItem>
+          {SALES_AGENT_CHANNEL_OPTIONS.map((opt) => (
+            <SelectItem key={opt.value} value={opt.value}>
+              {opt.label}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
 
-      <Select value={filters.country} onValueChange={(v) => handleChange('country', v)}>
-        <SelectTrigger className="w-[150px] h-[47px] border-gray-200 rounded-lg">
+      <Select
+        value={filters.country_id != null ? String(filters.country_id) : "all"}
+        onValueChange={(v) =>
+          handleChange("country_id", v === "all" ? undefined : Number(v))
+        }
+        disabled={loadingCountries}
+      >
+        <SelectTrigger className="w-[200px] h-[47px] border-gray-200 rounded-lg">
           <SelectValue placeholder="Tous les pays" />
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Tous les pays</SelectItem>
-          <SelectItem value="CI">Côte d'Ivoire</SelectItem>
-          <SelectItem value="SN">Sénégal</SelectItem>
-          <SelectItem value="CM">Cameroun</SelectItem>
-          <SelectItem value="BF">Burkina Faso</SelectItem>
-          <SelectItem value="ML">Mali</SelectItem>
+          {countries?.map((c) => (
+            <SelectItem key={c.id} value={String(c.id)}>
+              {c.name}
+            </SelectItem>
+          ))}
         </SelectContent>
       </Select>
+
+      {/* <Input
+        type="date"
+        placeholder="Date de début"
+        value={filters.start_date ?? ""}
+        onChange={(e) =>
+          handleChange("start_date", e.target.value || undefined)
+        }
+        className="w-[160px] h-[47px] border-gray-200 rounded-lg"
+      />
+
+      <Input
+        type="date"
+        placeholder="Date de fin"
+        value={filters.end_date ?? ""}
+        onChange={(e) =>
+          handleChange("end_date", e.target.value || undefined)
+        }
+        className="w-[160px] h-[47px] border-gray-200 rounded-lg"
+      /> */}
     </div>
   )
 }

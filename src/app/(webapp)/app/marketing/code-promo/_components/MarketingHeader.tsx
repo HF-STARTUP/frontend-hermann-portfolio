@@ -1,24 +1,19 @@
 "use client"
 
 import React from "react"
-import { 
-  Select, 
-  SelectContent, 
-  SelectItem, 
-  SelectTrigger, 
-  SelectValue 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select"
 import VLinkProvider from "@/components/helpers/VLinkProvider"
+import { PromoCodePeriod, usePromoCodePeriod } from "../../_context/PromoCodePeriodContext"
 
-interface MarketingHeaderProps {
-  period: string
-  onPeriodChange: (period: string) => void
-}
+export const MarketingHeader: React.FC = () => {
+  const { period, setPeriod } = usePromoCodePeriod()
 
-export const MarketingHeader: React.FC<MarketingHeaderProps> = ({
-  period,
-  onPeriodChange,
-}) => {
   return (
     <div className="flex flex-col gap-2 mb-8">
       <div className="text-slate-500 text-sm font-medium leading-normal">
@@ -39,7 +34,10 @@ export const MarketingHeader: React.FC<MarketingHeaderProps> = ({
           Gestion des codes
         </h1>
         
-        <Select value={period} onValueChange={onPeriodChange}>
+        <Select
+          value={period}
+          onValueChange={(value) => setPeriod(value as PromoCodePeriod)}
+        >
           <SelectTrigger className="w-[180px] h-10 border-gray-200 rounded-lg bg-white">
             <SelectValue placeholder="Ce mois-ci" />
           </SelectTrigger>
