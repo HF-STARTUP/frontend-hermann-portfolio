@@ -213,10 +213,12 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     );
 }
 
-const SectionTitle = () => {
+export const PageSubTitle = ({subtitle}:{subtitle: string}) => {
 
     return (
-        <div></div>
+        <p className="text-[#506D82] font-bold text-xl flex items-center gap-4">
+            { subtitle }
+        </p>
     )
 }
 

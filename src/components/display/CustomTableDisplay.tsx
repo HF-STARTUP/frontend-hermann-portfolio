@@ -187,7 +187,7 @@ function TableRowActionsDropdown<T>({
                 return "text-gray-500";
             case "vaBlue":
                 return "text-vaBlue";
-            
+
             default:
                 return "text-vaLightGray";
         }
@@ -239,7 +239,7 @@ export function DataTable<T>({ columns, data, pagination, isLoading, rowActions,
                             <div
                                 key={idx}
                                 className={cn(
-                                    "px-6 py-4 text-left text-xs font-semibold tracking-wider",
+                                    "px-6 py-4 text-left text-xs font-semibold tracking-wider min-w-48",
                                     col.className
                                 )}
                             >
@@ -262,16 +262,27 @@ export function DataTable<T>({ columns, data, pagination, isLoading, rowActions,
                                     role={onRowClick ? "button" : undefined}
                                     tabIndex={onRowClick ? 0 : undefined}
                                     onKeyDown={onRowClick ? (e) => e.key === "Enter" && onRowClick(row) : undefined}
-                                    className="grid items-center bg-white border border-[#E0E9FF] rounded-2xl transition-all group w-fit min-w-full hover:bg-vaPrimary/5 duration-300 cursor-pointer"
+                                    className="grid items-center bg-white border border-[#E0E9FF] rounded-2xl transition-all group w-fit min-w-full hover:bg-vaPrimary/5 duration-300 cursor-pointer py-2"
                                     onClick={onRowClick ? () => onRowClick(row) : undefined}
                                 >
-                                    {columns.map((col, colIdx) => (
-                                        <div key={colIdx} className="px-6 py-4 text-sm text-[#506D82] truncate">
-                                            {typeof col.accessor === "function"
-                                                ? col.accessor(row)
-                                                : (row[col.accessor as keyof T] as React.ReactNode)}
-                                        </div>
-                                    ))}
+                                    {columns.map((col, colIdx) => {
+                                        const value = typeof col.accessor === "function"
+                                            ? col.accessor(row)
+                                            : row[col.accessor as keyof T];
+
+                                        const isSimpleType = typeof value === "string" || typeof value === "number";
+                                        const titleValue = isSimpleType ? String(value) : undefined;
+
+                                        return (
+                                            <div
+                                                key={colIdx}
+                                                className="px-6 text-sm text-[#506D82] truncate"
+                                                title={titleValue}
+                                            >
+                                                {value as React.ReactNode}
+                                            </div>
+                                        );
+                                    })}
                                     {hasActions && rowActions && (
                                         <TableRowActionsDropdown item={row} getActions={rowActions} />
                                     )}
