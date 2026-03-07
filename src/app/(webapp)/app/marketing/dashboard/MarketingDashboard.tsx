@@ -9,10 +9,11 @@ import { useAudianceHook } from "./_hook/useAudianceHook"
 import UsageStatsChart from "./_components/MostUsedModule"
 import { useUsageStatsHook } from "./_hook/useUsageStatsHook"
 import CityEngagementMap from "./_components/CitiesEngagements"
+import NotificationBand from "@/components/display/NotificationBand"
 
 const MarketingDashboardBody = () => {
     const { KpiItems, activesAccountChartValues, createdAccountChartValues, inactivesAccountChartValues, overviewLabels } = useMarketingDashboardHook()
-    const {data: audienceData, isLoading, totalAudience} = useAudianceHook();
+    const { data: audienceData, isLoading, totalAudience } = useAudianceHook();
     const { data: usageData } = useUsageStatsHook()
     return (
         <div className="space-y-6">
@@ -39,13 +40,26 @@ const MarketingDashboardBody = () => {
                     </SelectContent>
                 </Select>} />
 
+            <NotificationBand variant="warning"
+                content={
+                    {
+                        details: "Contacter sous 24h - Jean Entreprise Alpha",
+                        label: "Tâche en retard (1j)"
+                    }
+                }
+                dialogTitle="Tâche en retard"
+                children={<div>
+                    <h1>Taches en retard</h1>
+                </div>}
+            />
+
             <KpiGrid items={KpiItems} />
             <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-5 gap-4 col-span-12">
                 <div className="lg:col-span-2 xl:col-span-3">
                     <EngagementChart activeUserAccount={activesAccountChartValues} chartLabels={overviewLabels} createdAccountValues={createdAccountChartValues} innactiveAccountValue={inactivesAccountChartValues} />
                 </div>
                 <div className="xl:col-span-2">
-                    <AudienceChart data={audienceData} total = {totalAudience}  />
+                    <AudienceChart data={audienceData} total={totalAudience} />
                 </div>
             </div>
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
