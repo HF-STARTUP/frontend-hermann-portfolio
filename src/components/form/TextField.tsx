@@ -1,6 +1,6 @@
 "use client"
 
-import React, {DetailedHTMLProps, Fragment, TextareaHTMLAttributes, useId, useState} from "react";
+import React, { DetailedHTMLProps, Fragment, TextareaHTMLAttributes, useId, useState } from "react";
 import cardNumber from "@/assets/img/pay/card-number.png"
 import Image from "next/image";
 import {
@@ -11,14 +11,14 @@ import {
     SearchIcon,
     TrashIcon
 } from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
-import {usePathname} from "next/navigation";
-import {isDashboardContext} from "@/utils/urlValidation";
-import {Combobox, Switch, Transition} from "@headlessui/react";
-import {FieldErrors, UseFormRegisterReturn} from "react-hook-form";
+import { usePathname } from "next/navigation";
+import { isDashboardContext } from "@/utils/urlValidation";
+import { Combobox, Switch, Transition } from "@headlessui/react";
+import { FieldErrors, UseFormRegisterReturn } from "react-hook-form";
 import useAppStore from "@/stores/global/useAppStore";
 import VImageProvider from "@/components/helpers/VImageProvider";
-import {cn} from "@/utils/ui/cn";
-import {BiChevronRight} from "react-icons/bi";
+import { cn } from "@/utils/ui/cn";
+import { BiChevronRight } from "react-icons/bi";
 
 export type VSelectProp = {
     label: string,
@@ -39,7 +39,7 @@ type TextFieldProps = {
     value?: string | number | readonly string[] | undefined
     register?: UseFormRegisterReturn,
     errors?: FieldErrors;
-    className?:string
+    className?: string
 }
 
 type SelectFieldProp = {
@@ -51,17 +51,17 @@ type SelectFieldProp = {
 
 
 const TextField: React.FC<TextFieldProps> = ({
-                                                 label,
-                                                 value,
-                                                 required,
-                                                 inputType = 'text',
-                                                 placeholder,
-                                                 size,
-                                                 errors,
-                                                 register,
-                                                 onChange,
-                                                 disabled
-                                             }) => {
+    label,
+    value,
+    required,
+    inputType = 'text',
+    placeholder,
+    size,
+    errors,
+    register,
+    onChange,
+    disabled
+}) => {
 
     const $pathName = usePathname()
     const fielID = useId()
@@ -104,7 +104,7 @@ const TextField: React.FC<TextFieldProps> = ({
 }
 
 
-export const FieldDate: React.FC<TextFieldProps> = ({label, placeholder, size, register, errors, ...props}) => {
+export const FieldDate: React.FC<TextFieldProps> = ({ label, placeholder, size, register, errors, ...props }) => {
 
     const $pathName = usePathname()
     const fielID = useId()
@@ -135,7 +135,7 @@ export const FieldDate: React.FC<TextFieldProps> = ({label, placeholder, size, r
     )
 }
 
-export const TextArea: React.FC<TextFieldProps> = ({label, register, className, placeholder, size, ...props}) => {
+export const TextArea: React.FC<TextFieldProps> = ({ label, register, className, placeholder, size, ...props }) => {
 
 
     const $pathName = usePathname()
@@ -148,14 +148,12 @@ export const TextArea: React.FC<TextFieldProps> = ({label, register, className, 
     return (
         <div className={`flex-col justify-start items-start gap-2 inline-flex w-full`}>
             <label
-                className={`${isMd ? 'text-[14px] leading-[24.57px] tracking-[-2%] text-admin-primary' : (isAdminCtx ? "text-text-body text-base font-normal finter leading-relaxed tracking-tight" : "text-stone-500 text-xs font-medium")}`}
+                className={`${'text-sm leading-[24.57px] tracking-[-2%] font-medium'}`}
                 htmlFor={fielID}> {label}</label>
             <textarea
                 id={fielID}
-                className={cn("m-0 block h-[148px] w-full rounded-md border border-solid border-neutral-300 border-opacity-60 bg-transparent",
-                "bg-clip-padding text-base leading-tight text-neutral-300 transition duration-200",
-                "ease-linear placeholder:text-stone-300 focus:border-primary text-[10px] font-normal px-[20px] py-[10px] resize-none",
-                "focus:text-neutral-700 focus:outline-none peer-focus:text-primary0", className)}
+                className={cn("bg-transparent border border-solid border-neutral-300/60 text-neutral-700 rounded-2xl  resize-none w-full p-2",
+                    "placeholder:text-vaTextPrimary/50 focus:outline-none focus:ring-2 focus:ring-vaBlue/30 focus:border-vaBlue/50", className)}
                 rows={3}
                 placeholder={placeholder}
                 {...register}
@@ -165,7 +163,7 @@ export const TextArea: React.FC<TextFieldProps> = ({label, register, className, 
     )
 }
 
-export const CheckBox: React.FC<TextFieldProps> = ({label}) => {
+export const CheckBox: React.FC<TextFieldProps> = ({ label }) => {
 
     const checkboxID = useId()
 
@@ -211,15 +209,15 @@ export const CheckBox: React.FC<TextFieldProps> = ({label}) => {
 }
 
 export const SelectField2: React.FC<TextFieldProps & SelectFieldProp & React.HTMLAttributes<HTMLDivElement>> = ({
-                                                                                                                    label,
-                                                                                                                    loading,
-                                                                                                                    items,
-                                                                                                                    variant = "square",
-                                                                                                                    fit,
-                                                                                                                    size,
-                                                                                                                    handleSelect,
-                                                                                                                    ...props
-                                                                                                                }) => {
+    label,
+    loading,
+    items,
+    variant = "square",
+    fit,
+    size,
+    handleSelect,
+    ...props
+}) => {
 
     const $pathName = usePathname()
 
@@ -245,7 +243,7 @@ export const SelectField2: React.FC<TextFieldProps & SelectFieldProp & React.HTM
                     {loading && <option>Chargement...</option>}
                     {!loading && items?.map((item, k) => (
                         <option className={`text-base leading-tight text-neutral-700`} key={k}
-                                value={item.value}>{item.label}</option>
+                            value={item.value}>{item.label}</option>
                     ))}
                 </select>
             </div>
@@ -253,18 +251,18 @@ export const SelectField2: React.FC<TextFieldProps & SelectFieldProp & React.HTM
     )
 }
 export const SelectField: React.FC<TextFieldProps & SelectFieldProp & React.HTMLAttributes<HTMLSelectElement>> = ({
-                                                                                                                      label,
-                                                                                                                      loading,
-                                                                                                                      items,
-                                                                                                                      variant = "square",
-                                                                                                                      mode = 'default',
-                                                                                                                      fit,
-                                                                                                                      size,
-                                                                                                                      errors,
-                                                                                                                      register,
-                                                                                                                      handleSelect,
-                                                                                                                      ...props
-                                                                                                                  }) => {
+    label,
+    loading,
+    items,
+    variant = "square",
+    mode = 'default',
+    fit,
+    size,
+    errors,
+    register,
+    handleSelect,
+    ...props
+}) => {
 
     const $pathName = usePathname();
     const isAdminCtx = isDashboardContext($pathName);
@@ -319,19 +317,19 @@ export const SelectField: React.FC<TextFieldProps & SelectFieldProp & React.HTML
     return (
         <div className="flex-col justify-start items-start gap-2 inline-flex w-full">
             <label htmlFor=""
-                   className={"text-[14px] leading-[24.57px] tracking-[-2%] text-admin-primary"}>{label}</label>
+                className={"text-[14px] leading-[24.57px] tracking-[-2%] text-admin-primary"}>{label}</label>
             <select
                 {...(register ? register : {})}
                 onChange={e => handleSelect && handleSelect(e.currentTarget.value)}
                 defaultValue={items?.length && items[0].value} className={cn(
-                `m-0 block 
+                    `m-0 block 
           h-[45px] px-[20px] py-[10px] text-text-body
           w-full rounded-[10px] 
           border-neutral-300 border border-solid border-opacity-60 bg-transparent
           bg-clip-padding text-base leading-tight text-neutral-700 transition duration-200
           ease-linear placeholder:text-stone-300 focus:border-primary text-[16px] font-normal
           focus:text-neutral-700 focus:outline-none peer-focus:text-primary focus:outline-offset-1 focus:outline-2 focus:outline-blue-200`
-            )}>
+                )}>
                 {items?.map(i => (<option key={i.value} value={i.value}>{i.label}</option>))}
             </select>
             {hasError &&
@@ -340,7 +338,7 @@ export const SelectField: React.FC<TextFieldProps & SelectFieldProp & React.HTML
     )
 }
 
-export const CreditCardField: React.FC<TextFieldProps> = ({label, name, placeholder}) => {
+export const CreditCardField: React.FC<TextFieldProps> = ({ label, name, placeholder }) => {
 
     return (
         <div className={`flex-col justify-start items-start gap-2 inline-flex w-full`}>
@@ -353,21 +351,21 @@ export const CreditCardField: React.FC<TextFieldProps> = ({label, name, placehol
                     bg-clip-padding text-base leading-tight text-neutral-700 transition duration-200
                     ease-linear placeholder:text-stone-300 focus:border-primary text-[10px] font-normal px-[20px] py-[10px]
                     focus:text-neutral-700 focus:outline-none peer-focus:text-primary focus:outline-offset-1 focus:outline-2 focus:outline-blue-200
-                `} type="text" name={name} placeholder={placeholder}/>
+                `} type="text" name={name} placeholder={placeholder} />
                 <Image src={cardNumber} alt={`${label}`} width={47}
-                       className={`absolute bottom-2 right-[27px] -mb-0.5 transform translate-x-1/2 -translate-y-1/2 text-black peer-placeholder-shown:text-gray-300 h-6 w-6`}/>
+                    className={`absolute bottom-2 right-[27px] -mb-0.5 transform translate-x-1/2 -translate-y-1/2 text-black peer-placeholder-shown:text-gray-300 h-6 w-6`} />
             </div>
         </div>
     )
 }
 
 export const SearchTextField: React.FC<{ fieldVariant?: `main` | `default` } & TextFieldProps> = ({
-                                                                                                      fieldVariant,
-                                                                                                      label,
-                                                                                                      name,
-                                                                                                      value, onChange,
-                                                                                                      placeholder
-                                                                                                  }) => {
+    fieldVariant,
+    label,
+    name,
+    value, onChange,
+    placeholder
+}) => {
 
     const isMainVariant = fieldVariant === `main`
 
@@ -377,7 +375,7 @@ export const SearchTextField: React.FC<{ fieldVariant?: `main` | `default` } & T
                 <label className="text-black text-xl font-medium leading-[48.57px]"> {label}</label>}
             <div className={`relative flex-1 flex flex-col w-full`}>
                 <SearchIcon className={`absolute bottom-2 left-[27px] top-[20.8px] -mb-0.5 transform translate-x-1/2 
-                -translate-y-1/2 text-black peer-placeholder-shown:text-gray-300 text-[5px]`}/>
+                -translate-y-1/2 text-black peer-placeholder-shown:text-gray-300 text-[5px]`} />
                 <input
                     value={value}
                     onChange={onChange}
@@ -392,7 +390,7 @@ export const SearchTextField: React.FC<{ fieldVariant?: `main` | `default` } & T
                     focus:text-neutral-700 focus:outline-none peer-focus:text-primary focus:outline-offset-1 focus:outline-2 focus:outline-blue-200
                     text-slate-400 text-sm font-normal leading-tight
                     placeholder:text-sm placeholder:font-normal placeholder:leading-tight
-                `} type="text" name={name} placeholder={placeholder}/>
+                `} type="text" name={name} placeholder={placeholder} />
             </div>
         </div>
     )
@@ -400,11 +398,11 @@ export const SearchTextField: React.FC<{ fieldVariant?: `main` | `default` } & T
 
 export type FilterParamType = { name: string, key: string }
 
-export const SimpleFilterSelect: React.FC<{ items: FilterParamType[] }> = ({items}) => {
+export const SimpleFilterSelect: React.FC<{ items: FilterParamType[] }> = ({ items }) => {
     const [isActive, setIsActive] = useState(false)
     const [isFilterReversed, setIsFilterReversed] = useState(false)
     const [activeItem, setActiveItem] = useState(items[0])
-    const {setFilterToken, setSortAsc} = useAppStore()
+    const { setFilterToken, setSortAsc } = useAppStore()
 
     const handleToggleActive = () => {
         setIsActive(!isActive)
@@ -434,7 +432,7 @@ export const SimpleFilterSelect: React.FC<{ items: FilterParamType[] }> = ({item
                     leading-normal text-slate-500
                 `}>
                     <button onClick={handleReverFilter}>
-                        <FilterIcon className={`${isFilterReversed ? "rotate-180" : ""}`}/>
+                        <FilterIcon className={`${isFilterReversed ? "rotate-180" : ""}`} />
                     </button>
                     <div>Filtrer par:</div>
                 </div>
@@ -443,14 +441,14 @@ export const SimpleFilterSelect: React.FC<{ items: FilterParamType[] }> = ({item
                     onClick={handleToggleActive}
                 >
                     <div>{activeItem.name}</div>
-                    <ChevronDownIcon/>
+                    <ChevronDownIcon />
                 </div>
                 {isActive && <div
                     className={`bg-stone-50 text-gray-500 text-sm font-medium leading-normal absolute top-[22px] right-[18px]`}>
                     <ul>
                         {items.filter(item => item !== activeItem).map((item) => (
                             <SimpleFilterItem onClick={() => handleSetActiveItem(item)} key={item.key}
-                                              label={item.name}/>
+                                label={item.name} />
                         ))
                         }
                     </ul>
@@ -460,13 +458,13 @@ export const SimpleFilterSelect: React.FC<{ items: FilterParamType[] }> = ({item
     )
 }
 
-const SimpleFilterItem: React.FC<{ label: string } & React.HTMLAttributes<HTMLElement>> = ({label, ...props}) => {
+const SimpleFilterItem: React.FC<{ label: string } & React.HTMLAttributes<HTMLElement>> = ({ label, ...props }) => {
     return (
         <li className={`hover:opacity-75 ease-in delay-75 duration-300 cursor-pointer`} {...props}>{label}</li>
     )
 }
 
-export function SwitchField({handleToggle}: { handleToggle?: (state: boolean) => void }) {
+export function SwitchField({ handleToggle }: { handleToggle?: (state: boolean) => void }) {
     const [enabled, setEnabled] = useState(false)
 
     React.useEffect(() => {
@@ -498,32 +496,32 @@ export const RadioField: React.FC<{
     name: string,
     onChange?: (checked?: boolean) => void
 }> = ({
-          label,
-          defaultChecked = false,
-          name,
-          variant,
-          onChange
-      }) => {
+    label,
+    defaultChecked = false,
+    name,
+    variant,
+    onChange
+}) => {
 
-    const [isDefaultChecked, setIsDefaultChecked] = React.useState(defaultChecked)
+        const [isDefaultChecked, setIsDefaultChecked] = React.useState(defaultChecked)
 
-    const _id = useId()
-    const isTitle = variant === "title"
-    const isText = variant === "text"
+        const _id = useId()
+        const isTitle = variant === "title"
+        const isText = variant === "text"
 
-    React.useEffect(() => {
+        React.useEffect(() => {
 
-        console.log(`isDefaultChecked = ${isDefaultChecked}`)
+            console.log(`isDefaultChecked = ${isDefaultChecked}`)
 
-        if (defaultChecked) {
-            setIsDefaultChecked(true)
-        }
-    }, [defaultChecked])
+            if (defaultChecked) {
+                setIsDefaultChecked(true)
+            }
+        }, [defaultChecked])
 
-    return (
-        <div className={"mb-[0.125rem]  min-h-[1.5rem] pl-[1.5rem] flex items-center"}>
-            <input
-                className={`relative float-left -ml-[1.5rem] mr-1 mt-0.5 h-5 w-5 appearance-none rounded-full border-2 
+        return (
+            <div className={"mb-[0.125rem]  min-h-[1.5rem] pl-[1.5rem] flex items-center"}>
+                <input
+                    className={`relative float-left -ml-[1.5rem] mr-1 mt-0.5 h-5 w-5 appearance-none rounded-full border-2 
                     border-solid border-neutral-300 before:pointer-events-none before:absolute before:h-4 before:w-4
                     before:scale-0 before:rounded-full before:bg-transparent before:opacity-0 before:shadow-[0px_0px_0px_13px_transparent]
                     before:content-[''] after:absolute after:z-[1] after:block after:h-4 after:w-4 after:rounded-full after:content-[''] checked:border-gray-500
@@ -535,32 +533,32 @@ export const RadioField: React.FC<{
                     checked:focus:before:shadow-[0px_0px_0px_13px_#3b71ca] checked:focus:before:transition-[box-shadow_0.2s,transform_0.2s]
                     dark:border-neutral-600
                 `}
-                type="radio"
-                name={name}
-                id={_id}
-                defaultChecked={isDefaultChecked}
-                onChange={(event) => onChange && onChange(event.target.checked)}
-            />
-            <label
-                className={`${isText ?
-                    'text-text-body font-normal finter text-[14px] max-w-[467px]'
-                    : (isTitle ? 'text-black font-semibold text-[16px]' : 'text-admin-primary font-medium')} 
+                    type="radio"
+                    name={name}
+                    id={_id}
+                    defaultChecked={isDefaultChecked}
+                    onChange={(event) => onChange && onChange(event.target.checked)}
+                />
+                <label
+                    className={`${isText ?
+                        'text-text-body font-normal finter text-[14px] max-w-[467px]'
+                        : (isTitle ? 'text-black font-semibold text-[16px]' : 'text-admin-primary font-medium')} 
                     mt-px inline-block ${isText ? 'pl-[20px]' : 'pl-[0.15rem]'} hover:cursor-pointer text-base leading-7`
-                }
-                htmlFor={_id}
-            >
-                {label}
-            </label>
-        </div>
-    )
-}
+                    }
+                    htmlFor={_id}
+                >
+                    {label}
+                </label>
+            </div>
+        )
+    }
 
 
 export const LabelField: React.FC<{
     label: string,
     value: string,
     withDelimiter?: boolean
-} & React.HTMLAttributes<HTMLDivElement>> = ({label, value, withDelimiter = true, ...props}) => {
+} & React.HTMLAttributes<HTMLDivElement>> = ({ label, value, withDelimiter = true, ...props }) => {
 
     return (
         <div {...props}>
@@ -589,40 +587,40 @@ export const BtnField: React.FC<{
     variant?: 'icon' | 'btn',
     iconType?: 'chevron' | 'add'
 } & React.HTMLAttributes<HTMLDivElement>> = ({
-                                                 label,
-                                                 variant = 'btn',
-                                                 iconType = 'add',
-                                                 className,
-                                                 ...props
-                                             }) => {
+    label,
+    variant = 'btn',
+    iconType = 'add',
+    className,
+    ...props
+}) => {
 
-    const isIcon = variant === 'icon'
-    const isAdd = iconType === "add"
+        const isIcon = variant === 'icon'
+        const isAdd = iconType === "add"
 
-    return (
-        <div {...props}>
-            <button type={"button"} className={cn(
-                `w-full border text-[14px] text-admin-primary
+        return (
+            <div {...props}>
+                <button type={"button"} className={cn(
+                    `w-full border text-[14px] text-admin-primary
             font-medium leading-[14px]  flex justify-between items-center
             hover:bg-indigo-50 hover:text-blue-800 hover:border-blue-200 transition duration-200
             `,
-                `${!isIcon ? 'rounded-[10px] h-[45px] px-[20px] py-[10px]' : 'rounded-full size-[45px] flex items-center justify-center text-[28px]'}`,
-                !isIcon && "border-gray-500 bg-gray-200 hover:bg-gray-100 hover:border-gray-500 hover:text-admin-primary",
-                className
-            )}>
-                {!isIcon && <div>{label}</div>}
-                {isAdd && <AddIcon width={28} height={28}/>}
-                {!isAdd && <BiChevronRight width={28} height={28}/>}
-            </button>
-        </div>
-    )
-}
+                    `${!isIcon ? 'rounded-[10px] h-[45px] px-[20px] py-[10px]' : 'rounded-full size-[45px] flex items-center justify-center text-[28px]'}`,
+                    !isIcon && "border-gray-500 bg-gray-200 hover:bg-gray-100 hover:border-gray-500 hover:text-admin-primary",
+                    className
+                )}>
+                    {!isIcon && <div>{label}</div>}
+                    {isAdd && <AddIcon width={28} height={28} />}
+                    {!isAdd && <BiChevronRight width={28} height={28} />}
+                </button>
+            </div>
+        )
+    }
 
 
 export const ImageUploadField: React.FC<{
     onSelect?: (formImage: File, isDelete?: boolean) => void,
     selectImageData?: File
-}> = ({onSelect, selectImageData}) => {
+}> = ({ onSelect, selectImageData }) => {
 
     const id = useId()
 
@@ -644,13 +642,13 @@ export const ImageUploadField: React.FC<{
     return (
         <div>
             <label htmlFor={id}>
-                {!selectImageData && <EmptyImageUploadField/>}
+                {!selectImageData && <EmptyImageUploadField />}
                 {selectImageData &&
                     <SelectedImageUploadField onRemove={() => onSelect && onSelect(selectImageData, true)}
-                                              imageData={imageData}/>}
+                        imageData={imageData} />}
 
             </label>
-            <input type={'file'} id={id} className={`hidden`} accept={`image/*`} onChange={handleSelectFile}/>
+            <input type={'file'} id={id} className={`hidden`} accept={`image/*`} onChange={handleSelectFile} />
         </div>
     )
 }
@@ -662,12 +660,12 @@ const EmptyImageUploadField: React.FC = () => {
         <div className={`text-text-body bg-white size-[97px] rounded-[10px] flex items-center justify-center border border-text-body border-dashed
                     cursor-pointer hover:opacity-75 transition duration-200
                 `}>
-            <AddIcon/>
+            <AddIcon />
         </div>
     )
 }
 
-const SelectedImageUploadField: React.FC<{ imageData: string, onRemove: () => void }> = ({imageData, onRemove}) => {
+const SelectedImageUploadField: React.FC<{ imageData: string, onRemove: () => void }> = ({ imageData, onRemove }) => {
 
     const handleRemoveImageData = (e: React.MouseEvent<HTMLDivElement>) => {
         e.preventDefault()
@@ -677,11 +675,11 @@ const SelectedImageUploadField: React.FC<{ imageData: string, onRemove: () => vo
 
     return (
         <div onClick={handleRemoveImageData}
-             className={`size-[97px] rounded-[10px] cursor-pointer hover:opacity-75 transition duration-200 overflow-hidden border`}
-             style={{backgroundImage: `url(${imageData})`, backgroundPosition: 'center', backgroundSize: 'cover'}}>
+            className={`size-[97px] rounded-[10px] cursor-pointer hover:opacity-75 transition duration-200 overflow-hidden border`}
+            style={{ backgroundImage: `url(${imageData})`, backgroundPosition: 'center', backgroundSize: 'cover' }}>
             <div
                 className={`opacity-0 hover:opacity-1 w-full h-full bg-black/[0.6] flex items-center justify-center text-[39px] cursor-pointer hover:opacity-95 transition duration-200 text-white`}>
-                <TrashIcon/>
+                <TrashIcon />
             </div>
         </div>
     )
@@ -693,64 +691,64 @@ export const ImageUploadFieldGroup: React.FC<{
     existingImages?: string[] | undefined,
     handleChange?: (files: File[]) => void
 } & React.HTMLAttributes<HTMLDivElement>> = ({
-                                                 label,
-                                                 multiple = true,
-                                                 children,
-                                                 handleChange,
-                                                 existingImages,
-                                                 ...props
-                                             }) => {
-    const [imagesSelected, setImagesSelected] = React.useState<File[]>([])
+    label,
+    multiple = true,
+    children,
+    handleChange,
+    existingImages,
+    ...props
+}) => {
+        const [imagesSelected, setImagesSelected] = React.useState<File[]>([])
 
-    const MAX_UPLOAD_IMAGE = multiple ? 4 : 1
+        const MAX_UPLOAD_IMAGE = multiple ? 4 : 1
 
-    const handleSelectImage = (dataImage: File, isDelete?: boolean) => {
-        if (isDelete) {
-            const filtered = imagesSelected.filter(img => img !== dataImage)
-            setImagesSelected(filtered)
-            handleChange && handleChange(filtered)
-            return
+        const handleSelectImage = (dataImage: File, isDelete?: boolean) => {
+            if (isDelete) {
+                const filtered = imagesSelected.filter(img => img !== dataImage)
+                setImagesSelected(filtered)
+                handleChange && handleChange(filtered)
+                return
+            }
+            setImagesSelected([...imagesSelected, dataImage])
+            handleChange && handleChange([...imagesSelected, dataImage])
         }
-        setImagesSelected([...imagesSelected, dataImage])
-        handleChange && handleChange([...imagesSelected, dataImage])
-    }
 
-    const isAvailableToSelectMoreImage = imagesSelected.length < MAX_UPLOAD_IMAGE
+        const isAvailableToSelectMoreImage = imagesSelected.length < MAX_UPLOAD_IMAGE
 
-    if (existingImages && existingImages.length) {
-        return (
-            <div className={`flex gap-2`}>
-                {existingImages && typeof existingImages === "object" && existingImages.map((im, i) => {
-                    return (
-                        <div key={i}
-                             className={`size-[97px] rounded-[10px] cursor-pointer hover:opacity-75 relative transition duration-200 overflow-hidden border`}>
-                            <VImageProvider width={100} height={100} src={im} alt={''} className={`size-[97px]`}/>
-                            <div
-                                className={`opacity-0 absolute top-0 hover:opacity-1 w-full h-full bg-black/[0.6] flex items-center justify-center text-[39px] cursor-pointer hover:opacity-95 transition duration-200 text-white`}>
-                                <TrashIcon/>
+        if (existingImages && existingImages.length) {
+            return (
+                <div className={`flex gap-2`}>
+                    {existingImages && typeof existingImages === "object" && existingImages.map((im, i) => {
+                        return (
+                            <div key={i}
+                                className={`size-[97px] rounded-[10px] cursor-pointer hover:opacity-75 relative transition duration-200 overflow-hidden border`}>
+                                <VImageProvider width={100} height={100} src={im} alt={''} className={`size-[97px]`} />
+                                <div
+                                    className={`opacity-0 absolute top-0 hover:opacity-1 w-full h-full bg-black/[0.6] flex items-center justify-center text-[39px] cursor-pointer hover:opacity-95 transition duration-200 text-white`}>
+                                    <TrashIcon />
+                                </div>
                             </div>
-                        </div>
-                    )
-                })}
+                        )
+                    })}
+                </div>
+            )
+        }
+
+        return (
+            <div {...props}>
+                <div>
+                    <div
+                        className={`text-[14px] leading-[24.57px] tracking-[-2%] font-medium  text-admin-primary mb-[10px]`}>{label}</div>
+                    <div className={`flex gap-[15px] items-center justify-start`}>
+                        {imagesSelected.map((imgS, k) => (
+                            <ImageUploadField selectImageData={imgS} key={k} onSelect={handleSelectImage} />
+                        ))}
+                        {isAvailableToSelectMoreImage && <ImageUploadField onSelect={handleSelectImage} />}
+                    </div>
+                </div>
             </div>
         )
     }
-
-    return (
-        <div {...props}>
-            <div>
-                <div
-                    className={`text-[14px] leading-[24.57px] tracking-[-2%] font-medium  text-admin-primary mb-[10px]`}>{label}</div>
-                <div className={`flex gap-[15px] items-center justify-start`}>
-                    {imagesSelected.map((imgS, k) => (
-                        <ImageUploadField selectImageData={imgS} key={k} onSelect={handleSelectImage}/>
-                    ))}
-                    {isAvailableToSelectMoreImage && <ImageUploadField onSelect={handleSelectImage}/>}
-                </div>
-            </div>
-        </div>
-    )
-}
 
 // export const ImageUploadFieldGroup: React.FC<{
 //     label: string,
