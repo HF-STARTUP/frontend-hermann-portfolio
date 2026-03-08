@@ -99,7 +99,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>
                 <div>
                     {label && <label
                         htmlFor={_id}
-                        className={`text-[14px] leading-[24.57px] tracking-[-2%] text-admin-primary line-clamp-1 mb-2`}
+                        className={`text-[14px] leading-[24.57px] tracking-[-2%] font-medium line-clamp-1 mb-2`}
                         title={label}
                     >{label} {required && <span className="text-red-500">*</span>}</label>}
                     <div className={`relative`}>

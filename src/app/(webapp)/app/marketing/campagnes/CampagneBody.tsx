@@ -13,11 +13,14 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { DataTable } from "@/components/display/CustomTableDisplay"
 import CampagneKanbanGrid from "./_components/CampagneKanbanCard"
+import CampagneForm from "./_components/_dialogs/CampagneForm"
+import CampagneDetailsSheet from "./_components/_dialogs/CampagneDetailsSheet"
 
 const CampagneBody = () => {
-    const { CampagneKpi, campagnesList, pagination, tableColumns, currency, finishedCampagnes, processingCampagnes, todoCampagnes } = useCampagnesHook()
+    const { CampagneKpi, campagnesList, pagination, tableColumns, currency, finishedCampagnes, processingCampagnes, todoCampagnes, onViewCampagne, rowActions, selectedCampagne, setSelectedCampagne, isCampagneDetailsVisible, setIsCampagneDetailsVisible } = useCampagnesHook()
     const [viewType, setViewType] = useState<'table' | 'kanban'>('table')
     const [isCreateCampagne, setIsCreateCampagne] = useState<boolean>(false)
+
     return (
         <div className="space-y-6">
             <Crumb
@@ -45,7 +48,7 @@ const CampagneBody = () => {
 
             <KpiGrid items={CampagneKpi} />
             <div className="flex items-center gap-8 flex-wrap">
-                <PageSubTitle subtitle={`Liste des campagnes(${ campagnesList.length })`} />
+                <PageSubTitle subtitle={`Liste des campagnes(${campagnesList.length})`} />
                 <Tabs
                     value={viewType}
                     onValueChange={(value) => setViewType(value as "table" | "kanban")}
@@ -124,7 +127,7 @@ const CampagneBody = () => {
                     <Button size="xl" variant="mainBlue" className="rounded-2xl" onClick={() => setIsCreateCampagne(true)}>
                         <LuPlus className="w-4 h-4 mr-2" />
                         Créer une campagne
-                    </Button>                
+                    </Button>
                     <Select>
                         <SelectTrigger variant="mainBlueOutline" className="rounded-xl h-11" leftIcon={<AnchorIcon className="size-4 mr-2" />}>
                             <SelectValue placeholder="Exporter" />
@@ -139,9 +142,11 @@ const CampagneBody = () => {
                 </div>
             </div>
 
-            { viewType == "table" && <DataTable columns={tableColumns} data={campagnesList} pagination={pagination} />}
-            { viewType == "kanban" && <CampagneKanbanGrid currency={currency} finished={finishedCampagnes} processing={processingCampagnes} toDo={todoCampagnes} />}
+            {viewType == "table" && <DataTable rowActions={rowActions} onRowClick={(camp)=>onViewCampagne(camp)} columns={tableColumns} data={campagnesList} pagination={pagination} />}
+            {viewType == "kanban" && <CampagneKanbanGrid currency={currency} finished={finishedCampagnes} processing={processingCampagnes} toDo={todoCampagnes} />}
 
+            <CampagneForm isOpenned={isCreateCampagne} onClose={() => setIsCreateCampagne(false)} />
+            <CampagneDetailsSheet id={selectedCampagne?.id} endDate={selectedCampagne?.endDate} isOpenned={isCampagneDetailsVisible} name={selectedCampagne?.name} onClose={ ()=> setIsCampagneDetailsVisible(false)} startDate={selectedCampagne?.startDate} userName={selectedCampagne?.assignedTo} />
         </div>
     )
 }
