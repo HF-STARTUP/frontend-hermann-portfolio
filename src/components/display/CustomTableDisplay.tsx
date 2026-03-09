@@ -230,7 +230,7 @@ export function DataTable<T>({ columns, data, pagination, isLoading, rowActions,
     return (
         <div className="w-full space-y-2">
             <div className="w-full overflow-x-auto custom-scrollbar space-y-2">
-                <div className="min-w-[800px] space-y-4">
+                <div className="min-w-max max-w-[1000px] space-y-4">
                     <div
                         style={gridTemplate}
                         className="grid bg-vaPrimary text-white rounded-2xl w-fit min-w-full"
@@ -239,7 +239,7 @@ export function DataTable<T>({ columns, data, pagination, isLoading, rowActions,
                             <div
                                 key={idx}
                                 className={cn(
-                                    "px-6 py-4 text-left text-xs font-semibold tracking-wider min-w-48",
+                                    "px-4 py-4 text-left text-xs font-semibold tracking-wider min-w-48",
                                     col.className
                                 )}
                             >
@@ -276,7 +276,7 @@ export function DataTable<T>({ columns, data, pagination, isLoading, rowActions,
                                         return (
                                             <div
                                                 key={colIdx}
-                                                className="px-6 text-sm text-[#506D82] truncate"
+                                                className="px-4 text-sm text-[#506D82] truncate"
                                                 title={titleValue}
                                             >
                                                 {value as React.ReactNode}
