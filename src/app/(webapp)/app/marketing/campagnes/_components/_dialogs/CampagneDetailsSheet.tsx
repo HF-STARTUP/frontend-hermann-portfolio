@@ -6,6 +6,7 @@ import { useState } from "react"
 import { Calendar, MoreVertical, User } from "lucide-react"
 import CampagneDetailsSection from "../_detail_sections/Details"
 import CampagneChecklist from "../_detail_sections/CampagneChecklist"
+import CampagneLeadsSection from "../_detail_sections/CampagneLeads"
 
 const CampagneDetailsSheet = ({ name, startDate, endDate, userName, id, isOpenned, onClose }: { name?: string, startDate?: string, endDate?: string, userName?: string, id?: string, isOpenned: boolean, onClose: () => void }) => {
     const [activeTab, setActiveTab] = useState<"details" |
@@ -53,6 +54,9 @@ const CampagneDetailsSheet = ({ name, startDate, endDate, userName, id, isOpenne
                 <DialogMainBody className="flex-1 max-h-[calc(100dvh-180px)] bg-vaLightGray/5 h-full pb-8 relative">
                     {activeTab === "details" && <CampagneDetailsSection id={id} />}
                     {activeTab === "checklist" && <CampagneChecklist id={id} />}
+                    {activeTab === "leads" && <CampagneLeadsSection id={id} />}
+
+                    
                 </DialogMainBody>
             </SheetContent>
         </Sheet>)
