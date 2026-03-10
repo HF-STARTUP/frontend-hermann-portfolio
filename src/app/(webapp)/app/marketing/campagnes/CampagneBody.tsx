@@ -15,11 +15,40 @@ import { DataTable } from "@/components/display/CustomTableDisplay"
 import CampagneKanbanGrid from "./_components/CampagneKanbanCard"
 import CampagneForm from "./_components/_dialogs/CampagneForm"
 import CampagneDetailsSheet from "./_components/_dialogs/CampagneDetailsSheet"
+import { SuspendCampagneDialog } from "./_components/_dialogs/Confirmations/ConfirmSuspendDialog"
+import { DeleteCampagneDialog } from "./_components/_dialogs/Confirmations/DeleteCampagneDialog"
+import { DuplicateCampagneDialog } from "./_components/_dialogs/Confirmations/ConfirmDuplicateDialog"
 
 const CampagneBody = () => {
-    const { CampagneKpi, campagnesList, pagination, tableColumns, currency, finishedCampagnes, processingCampagnes, todoCampagnes, onViewCampagne, rowActions, selectedCampagne, setSelectedCampagne, isCampagneDetailsVisible, setIsCampagneDetailsVisible } = useCampagnesHook()
+    const {
+        CampagneKpi,
+        campagnesList, 
+        pagination,
+        tableColumns,
+        currency,
+        finishedCampagnes, 
+        processingCampagnes, 
+        todoCampagnes, 
+        onViewCampagne, 
+        rowActions, 
+        selectedCampagne, 
+        setSelectedCampagne, 
+        isCampagneDetailsVisible, 
+        setIsCampagneDetailsVisible,
+
+        action,
+        handleAdd,
+        handleEdit, 
+        isDeleteVisible,
+        isDuplicateVisible,
+        isFormDialogOpen,
+        setIsFormDialogOpen,
+        isSupendVisible,
+        setIsDeleteVisible,
+        setIsDuplicateVisible,
+        setIsSuspendVisible,        
+    } = useCampagnesHook()
     const [viewType, setViewType] = useState<'table' | 'kanban'>('table')
-    const [isCreateCampagne, setIsCreateCampagne] = useState<boolean>(false)
 
     return (
         <div className="space-y-6">
@@ -124,7 +153,7 @@ const CampagneBody = () => {
                 </div>
 
                 <div className="flex justify-end items-center gap-4 flex-wrap ml-auto">
-                    <Button size="xl" variant="mainBlue" className="rounded-2xl" onClick={() => setIsCreateCampagne(true)}>
+                    <Button size="xl" variant="mainBlue" className="rounded-2xl" onClick={() => handleAdd()}>
                         <LuPlus className="w-4 h-4 mr-2" />
                         Créer une campagne
                     </Button>
@@ -142,11 +171,14 @@ const CampagneBody = () => {
                 </div>
             </div>
 
-            {viewType == "table" && <DataTable rowActions={rowActions} onRowClick={(camp)=>onViewCampagne(camp)} columns={tableColumns} data={campagnesList} pagination={pagination} />}
+            {viewType == "table" && <DataTable rowActions={rowActions} onRowClick={(camp) => onViewCampagne(camp)} columns={tableColumns} data={campagnesList} pagination={pagination} />}
             {viewType == "kanban" && <CampagneKanbanGrid currency={currency} finished={finishedCampagnes} processing={processingCampagnes} toDo={todoCampagnes} />}
 
-            <CampagneForm isOpenned={isCreateCampagne} onClose={() => setIsCreateCampagne(false)} />
-            <CampagneDetailsSheet id={selectedCampagne?.id} endDate={selectedCampagne?.endDate} isOpenned={isCampagneDetailsVisible} name={selectedCampagne?.name} onClose={ ()=> setIsCampagneDetailsVisible(false)} startDate={selectedCampagne?.startDate} userName={selectedCampagne?.assignedTo} />
+            <CampagneForm isOpenned={isFormDialogOpen} onClose={() => setIsFormDialogOpen(false)} action={action} />
+            <CampagneDetailsSheet id={selectedCampagne?.id} endDate={selectedCampagne?.endDate} isOpenned={isCampagneDetailsVisible} name={selectedCampagne?.name} onClose={() => setIsCampagneDetailsVisible(false)} startDate={selectedCampagne?.startDate} userName={selectedCampagne?.assignedTo} onEdit={handleEdit} onSuspend={()=>setIsSuspendVisible(true)} onDuplicate={()=>setIsDuplicateVisible(true)} onDelete={()=>setIsDeleteVisible(true)} />
+            <SuspendCampagneDialog isOpen={isSupendVisible} onClose={()=>setIsSuspendVisible(false)} />
+            <DeleteCampagneDialog isOpen={isDeleteVisible} onClose={()=>setIsDeleteVisible(false)} />
+            <DuplicateCampagneDialog isOpen={isDuplicateVisible} onClose={()=>setIsDuplicateVisible(false)} />
         </div>
     )
 }

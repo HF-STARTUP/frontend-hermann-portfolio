@@ -27,6 +27,24 @@ export interface CampagneType {
 export const useCampagnesHook = () => {
   const { currency } = useGetActiveCurrency();
 
+  const [action, setAction] = useState<"add" | "edit">("add");
+  const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
+
+
+  const [isSupendVisible, setIsSuspendVisible] = useState(false);
+  const [isDuplicateVisible, setIsDuplicateVisible] = useState(false);
+  const [isDeleteVisible, setIsDeleteVisible] = useState(false);
+
+  const handleEdit = () => {
+    setAction("edit");
+    setIsFormDialogOpen(true);
+  };
+
+  const handleAdd = () => {
+    setAction("add");
+    setIsFormDialogOpen(true);
+  };
+
   const kpiItems: KpiItem[] = [
     {
       icon: React.createElement(PiMegaphone, { className: "-scale-x-100" }),
@@ -331,22 +349,16 @@ export const useCampagnesHook = () => {
     .filter((c) => c.status === "todo")
     .map(formatChannels);
 
-  
-    const [isCampagneDetailsVisible, setIsCampagneDetailsVisible] = useState<boolean>(false);
-    const [selectedCampagne, setSelectedCampagne] = useState<CampagneType>();
+  const [isCampagneDetailsVisible, setIsCampagneDetailsVisible] =
+    useState<boolean>(false);
+  const [selectedCampagne, setSelectedCampagne] = useState<CampagneType>();
 
-
-   const onViewCampagne= (camp?: CampagneType) => 
-    {
-      setSelectedCampagne(camp);
-      setIsCampagneDetailsVisible(true);
-    };
-    const onSuspendCamp= (camp: CampagneType) => {
-
-    };
-    const onDeleteCamp= (camp: CampagneType) => {
-
-    };
+  const onViewCampagne = (camp?: CampagneType) => {
+    setSelectedCampagne(camp);
+    setIsCampagneDetailsVisible(true);
+  };
+  const onSuspendCamp = (camp: CampagneType) => {};
+  const onDeleteCamp = (camp: CampagneType) => {};
 
   const rowActions = useCallback(
     (item: CampagneType): RowAction<CampagneType>[] => {
@@ -360,32 +372,32 @@ export const useCampagnesHook = () => {
         {
           id: "edit",
           label: "Modifier",
-          onClick: (camp) => {},
+          onClick: (camp) => handleEdit(),
           variant: "mainBlue",
+        },
+        {
+          id: "supend",
+          label: "Suspendre",
+          variant: "ghost",
+          onClick: (camp) => { setIsSuspendVisible(true) },
         },
         {
           id: "dupliquer",
           label: "Dupliquer",
           variant: "ghost",
-          onClick: (camp) => {
-            console.log(camp);
-          },
+          onClick: (camp) => { setIsDuplicateVisible(true) },
         },
         {
           id: "supprimer",
           label: "Supprimer",
           variant: "destructive",
-          onClick: (camp) => {},
-        }      
+          onClick: (camp) => { setIsDeleteVisible(true) },
+        },
       ];
       return actions;
     },
-    [
-      onViewCampagne,
-      onSuspendCamp,
-      onDeleteCamp,
-    ],
-  );
+    [onViewCampagne, onSuspendCamp, onDeleteCamp],
+  ); 
 
   return {
     CampagneKpi: kpiItems,
@@ -402,6 +414,19 @@ export const useCampagnesHook = () => {
     setSelectedCampagne,
     onViewCampagne,
     isCampagneDetailsVisible,
-    setIsCampagneDetailsVisible
+    setIsCampagneDetailsVisible,
+
+    action,
+    isFormDialogOpen,
+    setIsFormDialogOpen,
+    handleEdit,
+    handleAdd,
+
+    setIsDuplicateVisible,
+    isDuplicateVisible,
+    setIsDeleteVisible,
+    isDeleteVisible,
+    setIsSuspendVisible,
+    isSupendVisible,
   };
 };

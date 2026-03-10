@@ -7,21 +7,80 @@ import { Calendar, MoreVertical, User } from "lucide-react"
 import CampagneDetailsSection from "../_detail_sections/Details"
 import CampagneChecklist from "../_detail_sections/CampagneChecklist"
 import CampagneLeadsSection from "../_detail_sections/CampagneLeads"
+import CommentsList from "../_detail_sections/CampagneCommentsSection"
+import { useCampagneComments } from "../../_hook/useCampagneCommentsHook"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { cn } from "@/lib/utils"
 
-const CampagneDetailsSheet = ({ name, startDate, endDate, userName, id, isOpenned, onClose }: { name?: string, startDate?: string, endDate?: string, userName?: string, id?: string, isOpenned: boolean, onClose: () => void }) => {
+const CampagneDetailsSheet = ({ 
+    name, 
+    startDate, 
+    endDate, 
+    userName, 
+    id, 
+    isOpenned, 
+    onClose,
+    onEdit,
+onSuspend,
+onDuplicate,
+onDelete
+ }: { 
+    name?: string, 
+    startDate?: string, 
+    endDate?: string, 
+    userName?: string,
+    id?: string, 
+    isOpenned: boolean, 
+    onClose: () => void,
+    onEdit: ()=>void,
+    onSuspend: ()=>void,
+    onDuplicate: ()=> void,
+    onDelete: ()=> void,
+}) => {
     const [activeTab, setActiveTab] = useState<"details" |
         "checklist" |
         "leads" |
         "comments">("details")
+    const { campagneComments } = useCampagneComments()
     return (
         <Sheet onOpenChange={onClose} open={isOpenned} >
             <SheetContent variant={"2xl"}>
                 <SheetHeader>
                     <SheetTitle className="flex items-center justify-between flex-row">
                         {name}
-                        <Button variant={"ghost"} size={"icon"}>
-                            <MoreVertical />
-                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="ghost" size="icon" className="h-8 w-8">
+                                    <MoreVertical className="h-4 w-4" />
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                                    <DropdownMenuItem  
+                                        onClick={()=>onEdit()}                                      
+                                        className={cn("cursor-pointer text-vaBlue hover:text-vaBlue text-xs font-medium hover:bg-vaPrimary/5 text-center")}
+                                    >
+                                       Modifier 
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem   
+                                        onClick={()=>onSuspend()}                                     
+                                        className={cn("cursor-pointer text-vaTextPrimary hover:text-vaTextPrimary text-xs font-medium hover:bg-vaPrimary/5 text-center")}
+                                    >
+                                       Suspendre 
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem   
+                                        onClick={()=>onDuplicate()}                                     
+                                        className={cn("cursor-pointer text-vaTextPrimary hover:text-vaTextPrimary text-xs font-medium hover:bg-vaPrimary/5 text-center")}
+                                    >
+                                       Dupliquer 
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem  
+                                        onClick={()=>onDelete()}                                      
+                                        className={cn("cursor-pointer text-vaRed hover:text-vaRed text-xs font-medium hover:bg-vaPrimary/5 text-center")}
+                                    >
+                                       Supprimer 
+                                    </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </SheetTitle>
                     <div className="flex items-center gap-4">
                         <Button variant={"secondary"} size={"sm"} fullWidth={false}>
@@ -55,8 +114,9 @@ const CampagneDetailsSheet = ({ name, startDate, endDate, userName, id, isOpenne
                     {activeTab === "details" && <CampagneDetailsSection id={id} />}
                     {activeTab === "checklist" && <CampagneChecklist id={id} />}
                     {activeTab === "leads" && <CampagneLeadsSection id={id} />}
+                    {activeTab === "comments" && <CommentsList id={id} comments={campagneComments} />}
 
-                    
+
                 </DialogMainBody>
             </SheetContent>
         </Sheet>)
