@@ -6,6 +6,7 @@ import { Select, SelectItem, SelectContent, SelectTrigger, SelectValue } from "@
 import { AnchorIcon } from "lucide-react"
 import { LuSearch } from "react-icons/lu"
 import { useCampagneLeadsHook } from "../../_hook/useCampagneLeadsHook"
+import { EmptyData } from "@/components/box/PageNetworkState"
 
 const CampagneLeadsSection = ({ id }: { id?: string }) => {
     const { leadsList, pagination, tableColumns } = useCampagneLeadsHook()
@@ -75,7 +76,7 @@ const CampagneLeadsSection = ({ id }: { id?: string }) => {
 
                 </div>
             </div>
-            <DataTable columns={tableColumns} data={leadsList} pagination={pagination} />
+            { leadsList.length ? <DataTable columns={tableColumns} data={leadsList} pagination={pagination} /> : <EmptyData message="Aucun lead pour le moment" description="Les leads apparaîtront ici" />}
         </div>
     )
 }
