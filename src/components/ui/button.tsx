@@ -22,6 +22,7 @@ const buttonVariants = cva(
         link: "text-primary underline-offset-4 hover:underline",
         mainBlue: "bg-vaMainBlue text-white",
         mainBlueOutline: "border border-vaMainBlue text-vaMainBlue",
+        orange: "bg-vaOrange text-black font-semibold"
       },
       size: {
         default: "h-10 px-4 py-2",
@@ -44,8 +45,8 @@ export interface ButtonProps
   asChild?: boolean
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps & { fullWidth?: boolean }>(
-  ({ className, variant, size, asChild = false, fullWidth = false, ...props }, ref) => {
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps & { fullWidth?: boolean, loading?:boolean }>(
+  ({ className, variant, size, asChild = false,loading = false, fullWidth = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
     return (
       <Comp
