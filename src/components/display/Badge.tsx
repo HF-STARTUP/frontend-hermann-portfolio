@@ -71,9 +71,9 @@ export const getBadgeVariant = (type?: BadgeType): BadgeVariant => {
     }
 }
 
-const Badge = ({ variant, type, icon, children }: { variant?: BadgeVariant, type?: BadgeType, icon?: ReactNode, children?: ReactNode }) => {
+const Badge = ({ variant, type, icon, children, className }: { variant?: BadgeVariant, type?: BadgeType, icon?: ReactNode, children?: ReactNode, className?: string }) => {
     return (
-        <div className={`py-1 px-2 w-fit flex items-center justify-center gap-2 rounded-lg text-xs font-semibold ${getBadgeVariantClasses(variant || getBadgeVariant(type))}`}>
+        <div className={`py-1 px-2 w-fit flex items-center justify-center gap-2 rounded-lg text-xs font-semibold ${getBadgeVariantClasses(variant || getBadgeVariant(type))} ${className}`}>
             {
                 icon && icon
             }
