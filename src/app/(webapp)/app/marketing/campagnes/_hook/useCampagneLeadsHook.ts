@@ -9,11 +9,14 @@ export interface LeadItem {
     name: string;
     email?: string;
     initials: string;
+    phoneNum?: string
   };
   chanel: string;
   date: string;
   commercialName: string;
   status: LeadStatus;
+  company?: string;
+  
 }
 
 export const useCampagneLeadsHook = () => {

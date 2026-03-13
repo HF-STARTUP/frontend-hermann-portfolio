@@ -67,11 +67,11 @@ export const Sidebar = () => {
                 icon={<ArrowRightLeft className="rotate-45" />}
                 to={"/app/transactions"}
             />
-            <SidebarItem
+            {/* <SidebarItem
                 label={"Tickets de réclamations"}
                 icon={<InfoIcon/>}
                 to={"/app/tickets"}
-            />
+            /> */}
             <SidebarItemWithSubmenu
                 label={"Marketing & Campagnes"}
                 icon={<MegaphoneIcon className="w-6 h-6" />}
