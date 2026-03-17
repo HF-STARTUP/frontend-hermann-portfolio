@@ -1,10 +1,11 @@
 import { LeadStatus } from "@/app/(webapp)/app/marketing/campagnes/_hook/useCampagneLeadsHook";
 import { CampagneStatus } from "@/app/(webapp)/app/marketing/campagnes/_hook/useCampagnesHook";
+import { PackageType, ProfileStatus } from "@/app/(webapp)/app/subscriptions/_hooks/usePackageList";
 import { ReactNode } from "react";
 
 export type BadgeVariant = 'green' | "orange" | "red" | "purple" | "blue" | "light-blue" | "default"
 
-export type BadgeType = LeadStatus | CampagneStatus
+export type BadgeType = LeadStatus | CampagneStatus | PackageType | ProfileStatus
 
 export const getBadgeVariantClasses = (variant: BadgeVariant): string => {
     switch (variant) {
@@ -19,10 +20,10 @@ export const getBadgeVariantClasses = (variant: BadgeVariant): string => {
         case 'purple':
             return "bg-vaPurple/10 text-vaPurple";
         case 'red':
-            return "bg-vaRed/10 text-vaRed"
+            return "bg-vaRed/10 text-vaRed";
 
         default:
-            return "text-black/10 bg-vaLightGray";
+            return "text-black bg-vaLightGray/30";
     }
 }
 
@@ -42,6 +43,18 @@ export const getBadgeText = (type?: BadgeType) => {
             return "Perdu";
         case "qualified":
             return "Qualifié";
+        case "CROISSANCE":
+            return "CROISSANCE";
+        case "ELITE":
+            return "ÉLITE";
+        case "ESSENTIEL":
+            return "ESSENTIEL";
+        case "PERFORMANCE":
+            return "PERFORMANCE"
+        case "active":
+            return "Actif";
+        case "suspended":
+            return "Suspendu"
 
         default:
             return "Inconnu";
@@ -64,19 +77,32 @@ export const getBadgeVariant = (type?: BadgeType): BadgeVariant => {
             return "red";
         case "qualified":
             return "light-blue";
-
+        case "CROISSANCE":
+            return "light-blue";
+        case "ELITE":
+            return "green";
+        case "ESSENTIEL":
+            return "orange";
+        case "PERFORMANCE":
+            return "blue"
+        case "active":
+            return "green";
+        case "suspended":
+            return "default"
 
         default:
             return "default";
     }
 }
 
-const Badge = ({ variant, type, icon, children, className }: { variant?: BadgeVariant, type?: BadgeType, icon?: ReactNode, children?: ReactNode, className?: string }) => {
+const Badge = ({ variant, type, icon, children, className, iconOnly }: { variant?: BadgeVariant, type?: BadgeType, icon?: ReactNode, children?: ReactNode, className?: string, iconOnly?:boolean }) => {
     return (
-        <div className={`py-1 px-2 w-fit flex items-center justify-center gap-2 rounded-lg text-xs font-semibold ${getBadgeVariantClasses(variant || getBadgeVariant(type))} ${className}`}>
-            {
-                icon && icon
-            }
+        <div className={`py-1 px-2 w-fit flex items-center justify-center gap-2 rounded-lg text-xs font-semibold ${getBadgeVariantClasses(variant || getBadgeVariant(type))} ${iconOnly?"!px-1 !py-1 !rounded-full":""} ${className}`}>
+          {icon && (
+                <span className="flex items-center size-4 [&>svg]:size-full">
+                    {icon}
+                </span>
+            )}
             {type && <span> {getBadgeText(type)} </span>}
 
             {children && children}

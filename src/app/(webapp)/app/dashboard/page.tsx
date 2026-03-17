@@ -45,54 +45,57 @@ export default function DashboardPage() {
 
 
             {expiredSubscriptions.length &&
-                <NotificationBand content={subscriptionsBandContent} children={<ExpiredSubsList subs={expiredSubscriptions} /> } dialogTitle={`Abonnements expirant bientôt (${expiredSubscriptions.length})`} variant="error" />
+                <NotificationBand content={subscriptionsBandContent} children={<ExpiredSubsList subs={expiredSubscriptions} />} dialogTitle={`Abonnements expirant bientôt (${expiredSubscriptions.length})`} variant="error" />
             }
             {inactiveFleets.length &&
-                <NotificationBand content={fleetBandContent} children={<InnactiveFleetList fleets={inactiveFleets} /> } dialogTitle={`Flottes inactives (${inactiveFleets.length})`} variant="error" />
+                <NotificationBand content={fleetBandContent} children={<InnactiveFleetList fleets={inactiveFleets} />} dialogTitle={`Flottes inactives (${inactiveFleets.length})`} variant="error" />
             }
 
             <HeadSection />
 
 
 
-            <div className={"mt-[24px] grid grid-cols-12 gap-[24px] gap-x-[30px]"}>
-                {/* <div className={"col-span-12 2xl:col-span-5 "}>
+            <div className={"mt-8 grid grid-cols-12 gap-6"}>
+                <div className="col-span-12">
+                    {/* <div className={" 2xl:col-span-5 "}>
                     <AbonnEvolution/>
                 </div> */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-5 gap-4 col-span-12">
-                    <div className="lg:col-span-2 xl:col-span-3">
-                        <RevenueChart chartLabels={chartLabels} chartValues={chartValues} currency={currency} totalRevenus={totalRevenus} variation={variation} />
-                    </div>
-                    <div className="xl:col-span-2">
-                        <RevenueBySourceChart data={chartData} currency={currency} />
-                    </div>
-                </div>
-                <div className={"col-span-12"}>
-                    <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-5 gap-4 col-span-12">
+                    <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-5 gap-4 ">
                         <div className="lg:col-span-2 xl:col-span-3">
-                            <FleetMap
-                                fleets={fleets}
-                            />
+                            <RevenueChart chartLabels={chartLabels} chartValues={chartValues} currency={currency} totalRevenus={totalRevenus} variation={variation} />
                         </div>
-
-                        <div className={"xl:col-span-2"}>
-                            <BestFleet />
+                        <div className="xl:col-span-2">
+                            <RevenueBySourceChart data={chartData} currency={currency} />
                         </div>
                     </div>
-                    {/*<Activities/>*/}
-                </div>
-            </div>
-            <div className={"mt-[24px]"}>
-                <div className={"grid grid-cols-12 gap-[24px] gap-x-[30px]"}>
+                    <div className={""}>
+                        <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-5 gap-4 ">
+                            <div className="lg:col-span-2 xl:col-span-3">
+                                <FleetMap
+                                    fleets={fleets}
+                                />
+                            </div>
 
-                    {/* <div className={"col-span-12 2xl:col-span-4"}>
+                            <div className={"xl:col-span-2"}>
+                                <BestFleet />
+                            </div>
+                        </div>
+                        {/*<Activities/>*/}
+                    </div>
+                </div>
+                <div className={"mt-[24px]"}>
+                    <div className={"grid grid-cols-12 gap-[24px] gap-x-[30px]"}>
+
+                        {/* <div className={" 2xl:col-span-4"}>
                         <SouscriptionPartition/>
                     </div>
-                    <div className={"col-span-12 2xl:col-span-4"}>
+                    <div className={" 2xl:col-span-4"}>
                         <PaymentMethods/>
                     </div> */}
+                    </div>
                 </div>
             </div>
+
         </div>
     )
 }

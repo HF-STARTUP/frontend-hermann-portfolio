@@ -8,7 +8,7 @@ export type CardVariant = 'green' | 'red' | 'orange' | 'yellow' | 'blue' | 'ligh
 export interface KpiItem {
     icon: ReactNode;
     title: string;
-    value: string | number;
+    value?: string | number;
     variation?: 'up' | 'down' | 'stable';
     variant?: CardVariant,
     className?: string;
