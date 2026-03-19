@@ -68,7 +68,9 @@ class DriverService extends Service {
     }
 
     static getGradeQuery() {
-        return useQuery({queryKey: [QUERY_KEYS.driver.getDriverGrade], queryFn: DriverService.getGrade})
+        return useQuery({
+            queryKey: [QUERY_KEYS.driver.getDriverGrade],
+             queryFn: DriverService.getGrade})
     }
 
     private static async getDriverType() {

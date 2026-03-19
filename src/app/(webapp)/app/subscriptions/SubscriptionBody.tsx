@@ -16,12 +16,33 @@ import { usePackagesList } from "./_hooks/usePackageList"
 import { DataTable } from "@/components/display/CustomTableDisplay"
 import { useState } from "react"
 import PackageForm from "./_components/_dialog/PackageForm"
+import SubscriptionDetailsSheet from "./_components/_dialog/SubscriptionDetailsSheet"
+import { SuspendPackageDialog } from "./_components/_dialog/SuspendPackageConfirmation"
+import { DeletePackageDialog } from "./_components/_dialog/DeletePackageConfirmation"
 
 const SubscriptionsBody = () => {
 
     const { kpiItems } = useSubscriptionsHook()
-    const { packagesList, pagination, tableColumns } = usePackagesList()
-    const [isFormOpenned, setIsFormOpenned] = useState(false)
+    const { packagesList, 
+        pagination, 
+        tableColumns, 
+        handleViewPackage, 
+        isDetailsSheetOpen, 
+        selectedPackage, 
+        setIsDetailsSheetOpen, 
+        rowActions, 
+        isDeleteVisible, 
+        isSupendVisible, 
+        setIsDeleteVisible, 
+        setIsSuspendVisible, 
+        isFormDialogOpen, 
+        setIsFormDialogOpen,
+        action,
+        setAction,
+        handleAdd,
+        handleEdit
+    } = usePackagesList()
+    
     return (
         <div className="space-y-6">
             <Crumb
@@ -94,7 +115,7 @@ const SubscriptionsBody = () => {
 
                 {/* Conteneur Actions : Aligné à droite sur desktop, pleine largeur sur mobile */}
                 <div className="flex flex-wrap items-center justify-start lg:justify-end w-full lg:w-max gap-4">
-                    <Button size="xl" variant="mainBlue" className="rounded-2xl w-full sm:w-auto" onClick={()=>setIsFormOpenned(true)}>
+                    <Button size="xl" variant="mainBlue" className="rounded-2xl w-full sm:w-auto" onClick={()=>handleAdd()}>
                         <LuPlus className="w-4 h-4 mr-2" />
                         Ajouter un package
                     </Button>
@@ -116,10 +137,17 @@ const SubscriptionsBody = () => {
             </div>
 
             {/* Packages table */}
+               
+            <DataTable columns={tableColumns} data={packagesList} pagination={pagination} onRowClick={(item)=>handleViewPackage(item)} rowActions={rowActions} />
 
-            <DataTable columns={tableColumns} data={packagesList} pagination={pagination} />
+            {/* Dialogs */}
+            <SubscriptionDetailsSheet isOpenned={isDetailsSheetOpen} onClose={()=>setIsDetailsSheetOpen(false)} packageId={selectedPackage?.packageName || ""}  packageData={selectedPackage} onEdit={()=>handleEdit()} onDelete={()=>setIsDeleteVisible(true)} onSuspend={()=>setIsSuspendVisible(true)}  />
 
-            <PackageForm isOpenned={isFormOpenned} onClose={()=>setIsFormOpenned(false)}  />
+            <PackageForm isOpenned={isFormDialogOpen} onClose={()=>setIsFormDialogOpen(false)} action={ action }  />
+            
+            <SuspendPackageDialog isOpen={isSupendVisible} onClose={()=>setIsSuspendVisible(false)} />
+
+            <DeletePackageDialog isOpen={isDeleteVisible} onClose={()=>setIsDeleteVisible(false)} PackageId={selectedPackage?.packageName || ""} />
         </div>
     )
 }

@@ -1,4 +1,7 @@
 import { NotificationBandContent } from "@/components/display/NotificationBand";
+import { useGetCurrenciesList } from "@/hooks/admin/useFleetHook";
+import { useState } from "react";
+import { DateRange } from "react-day-picker";
 
 export interface SubscriptionExpiredSoon {
     fleetName: string;
@@ -12,7 +15,13 @@ export interface InactiveFleet {
     inactiveDays: string
 }
 
-export const useDashboardHook = ()=>{
+export interface DashboardGlobalFilters {
+    dateRange?: DateRange;
+    currency?: string | number;
+    profileType?: "particulier" | "professionnel" | "all";
+}
+
+export const useDashboardHook = () => {
     const expiredSubscriptions: SubscriptionExpiredSoon[] = [
         { expiredAt: "05 Mars 2026", fleetName: "LogiCam Unit", remainingDays: "1 jour restant" },
         { expiredAt: "07 Mars 2026", fleetName: "Express Douala", remainingDays: "3 jours restants" },
@@ -41,23 +50,27 @@ export const useDashboardHook = ()=>{
 
     const subscriptionsBandContent: NotificationBandContent = {
         label: `${expiredSubscriptions.length} abonnements expirent dans 7 jours`,
-        details: `${
-            expiredSubscriptions.map((subs) => subs.fleetName).join(', ')
-        }`
-    } 
+        details: `${expiredSubscriptions.map((subs) => subs.fleetName).join(', ')
+            }`
+    }
 
     const fleetBandContent: NotificationBandContent = {
         label: `${inactiveFleets.length} flottes sont inactives depuis 30 jours`,
-        details: `${
-            inactiveFleets.map((fleet) => fleet.fleetName).join(', ')
-        }`
-    } 
+        details: `${inactiveFleets.map((fleet) => fleet.fleetName).join(', ')
+            }`
+    }
 
-    return{
+    const [globalFilters, setGlobalFilters] = useState<DashboardGlobalFilters>()
+    const {data: currencies, isLoading: isloadingCurrencies} = useGetCurrenciesList()
+    return {
         expiredSubscriptions,
         inactiveFleets,
         subscriptionsBandContent,
-        fleetBandContent
+        fleetBandContent,
+        globalFilters,
+        setGlobalFilters,
+        currencies,
+        isloadingCurrencies
     }
 
 }

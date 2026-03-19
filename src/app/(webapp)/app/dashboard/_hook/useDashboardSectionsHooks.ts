@@ -18,6 +18,10 @@ import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import { useGetActiveCurrency } from "@/hooks/__globlal/useGlobalHook";
 import { RevenueData } from "../_components/RevenusBySource";
 import { useCountries } from "@/hooks/location/useCountry/useCountry";
+import { DashboardGlobalFilters } from "./useDashboardHook";
+import { useGetDashboardRevenueChartData } from "@/hooks/dashboard/useDashboard";
+import { group } from "console";
+import { DashboardParams, PeriodType } from "@/types/dashboard.type";
 
 // Abonnements – Evolution
 
@@ -281,27 +285,28 @@ export const useDashboardFleetMapSection = (fleets: FleetMapItem[]) => {
 
 // Diagramme d'evolution des revenus
 
-export const useDashboardRevenusEvolution = () => {
-  const { currency } = useGetActiveCurrency();
+export interface RevenueChartLocalFilters {
+  groupBy: PeriodType;
+}
 
-  const chartValues: number[] = [
-    6000000, 18000000, 7000000, 2000000, 8050000, 17000000, 3000000, 12000000,
-    5000000, 9000000, 3600000, 2300000,
-  ];
-  const chartLabels: string[] = [
-    "Jan",
-    "Fev",
-    "Mar",
-    "Avr",
-    "Mai",
-    "Jui",
-    "Jul",
-    "Aou",
-    "Sept",
-    "Oct",
-    "Nov",
-    "Dec",
-  ];
+export const useDashboardRevenusEvolution = (globalFilters?:DashboardGlobalFilters) => {
+  const [localFilters, setLocalFilters] = React.useState<RevenueChartLocalFilters>({
+    groupBy: "month",
+  });
+  const queryParams = React.useMemo<DashboardParams>(() => ({
+      account_type: globalFilters?.profileType,
+      start_date: globalFilters?.dateRange?.from?.toISOString(),
+      end_date: globalFilters?.dateRange?.to?.toISOString(),      
+      currency_id: globalFilters?.currency as number,
+
+      group_by: localFilters.groupBy as PeriodType,
+    }), [globalFilters, localFilters]);
+
+  const { currency } = useGetActiveCurrency();
+  const {data: chartData, isLoading: isLoadingRevenusChartData} = useGetDashboardRevenueChartData(queryParams);
+
+  const chartValues: number[] = chartData?.values || [];
+  const chartLabels: string[] = chartData?.labels || [];
   const variation: {
     percent: string;
     variation: "up" | "down" | "constant";
@@ -312,7 +317,7 @@ export const useDashboardRevenusEvolution = () => {
     variation: "down",
   };
 
-  const totalRevenus = `${formatNumber(90000000)}`;
+  const totalRevenus = chartData?.total || "0";
 
   return {
     chartLabels,
@@ -320,6 +325,9 @@ export const useDashboardRevenusEvolution = () => {
     variation,
     totalRevenus,
     currency,
+    localFilters, 
+    setLocalFilters,
+    isLoadingRevenusChartData
   };
 };
 

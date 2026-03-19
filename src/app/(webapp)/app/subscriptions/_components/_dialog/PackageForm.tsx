@@ -9,7 +9,7 @@ import { PackageStep2 } from "../_form_steps/Step2"
 import { PackageStep3 } from "../_form_steps/Step3"
 import { PackageOverview } from "../_form_steps/Overview"
 
-const PackageForm = ({ isOpenned, onClose }: { isOpenned: boolean, onClose: () => void }) => {
+const PackageForm = ({ isOpenned, onClose, action = "add" }: { isOpenned: boolean, onClose: () => void, action?: "add" | "edit" }) => {
     const { step, handleGoToNext, handleBack, formData, updateFormData } = usePackageForm()
 
     return (
@@ -21,7 +21,7 @@ const PackageForm = ({ isOpenned, onClose }: { isOpenned: boolean, onClose: () =
                             {step > 1 && <Button variant={"ghost"} size={"icon"} onClick={() => handleBack()}>
                                 <ChevronLeft />
                             </Button>}
-                            <DialogTitle> {step == 1 ? "Créer un package" : step == 2 ? "Tarifactions" :step==3? "Fonctionnalités":"Aperçu"} </DialogTitle>
+                            <DialogTitle> {step == 1 ? (action=="add"?"Créer un package":"Modifier un package") : step == 2 ? "Tarifactions" :step==3? "Fonctionnalités":"Aperçu"} </DialogTitle>
                         </div>
 
                        {step < 4 && <p className="text-vaTextPrimary">Étape {step}/3</p>}

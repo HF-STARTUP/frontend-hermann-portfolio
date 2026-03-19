@@ -2,74 +2,70 @@
 
 import React from "react";
 import { KpiItem } from "@/components/display/Kpi";
-import { DashboardIcon, CarCrashIcon, UserIcon, CashAltIcon } from "@/components/ui/__icons";
+import { CashAltIcon } from "@/components/ui/__icons";
 import { formatNumber } from "@/lib/utils";
-import { useGetParkStats } from "@/hooks/admin/useFleetHook";
 import { useGetActiveCurrency } from "@/hooks/__globlal/useGlobalHook";
+import { useGetDashboardMetrics } from "@/hooks/dashboard/useDashboard";
+import { ArrowRightLeft, StretchHorizontal } from "lucide-react";
+import { DashboardGlobalFilters } from "./useDashboardHook";
 
-type UseDashboardKpisResult = {
-  kpis: KpiItem[];
-  isLoading: boolean;
-  error?: unknown;
-};
+export const useDashboardKpis = (globalFilters?: DashboardGlobalFilters) => {
+  
+  const queryParams = React.useMemo(() => ({
+    account_type: globalFilters?.profileType,
+    start_date: globalFilters?.dateRange?.from?.toISOString(),
+    end_date: globalFilters?.dateRange?.to?.toISOString(),      
+    currency_id: globalFilters?.currency as number,
+  }), [globalFilters]);
 
-export const useDashboardKpis = (): UseDashboardKpisResult => {
-  const { data, isLoading } = useGetParkStats();
-  const {currency} = useGetActiveCurrency();
 
-  const kpis = React.useMemo<KpiItem[]>(() => {
+  const { data, isLoading } = useGetDashboardMetrics(queryParams);
+  
+  const { currency } = useGetActiveCurrency();
+
+  const kpiItems = React.useMemo<KpiItem[]>(() => {
     if (!data) return [];
 
-    const items: KpiItem[] = [
-      {
-        icon: React.createElement(DashboardIcon),
-        title: "Total flottes",
-        value: data.flotte.total,
-        variation: (data.flotte.indicateur),
-        hint: data.flotte.indicateur_value
-          ? `${data.flotte.indicateur_value} ce mois`
-          : undefined,
-        variant: "red",
-      },
-      {
-        icon: React.createElement(CarCrashIcon),
-        title: "Total véhicules",
-        value: data.vehicle.total,
-        variation: (data.vehicle.indicateur),
-        hint: data.vehicle.indicateur_value
-          ? `${data.vehicle.indicateur_value}% ce mois`
-          : undefined,
-        variant: "blue",
-      },
-      {
-        icon: React.createElement(UserIcon),
-        title: "Total chauffeurs",
-        value: data.driver.total,
-        variation: (data.driver.indicateur),
-        hint: data.driver.indicateur_value
-          ? `${data.driver.indicateur_value} ce mois`
-          : undefined,
-        variant: "green",
-      },
+    return [
       {
         icon: React.createElement(CashAltIcon),
-        title: "Chiffre d’affaires",
-        value: data.ca_total.total,
-        variation: (data.ca_total.indicateur),
-        hint: data.ca_total.indicateur_value
-          ? `${formatNumber(data.ca_total.indicateur_value)}% vs mois précédent`
-          : undefined,
+        title: "Revenus générés (abonnements)",
+        value: data.revenueAmount,
+        variation: data.isRevenueUp ? 'up' : 'down',
+        hint: `${data.revenueTrend}% ${data.revenueTrendLabel}`,
         variant: "purple",
         unit: currency,
       },
+      {
+        icon: React.createElement(StretchHorizontal),
+        title: "Total flottes",
+        value: data.fleetsRatio,
+        variation: data.isFleetsUp ? 'up' : 'down',
+        hint: `${data.fleetsTrend}% vs periode précédente`,
+        variant: "blue",
+      },
+      {
+        icon: React.createElement(ArrowRightLeft, { className: "rotate-45" }),
+        title: "Total abonnements",
+        value: data.subscriptionsRatio,
+        variation: data.isSubscriptionsUp ? 'up' : 'down',
+        hint: `${data.subscriptionsTrend}% vs periode précédente`,
+        variant: "light-blue",
+      },
+      {
+        icon: React.createElement(CashAltIcon),
+        title: "Coût marketing actuel",
+        value: formatNumber(540000),
+        variation: 'up',
+        hint: "Données statiques",
+        variant: "green",
+        unit: currency,
+      },
     ];
-
-    return items;
-  }, [data]);
+  }, [data, currency]);
 
   return {
-    kpis,
+    kpiItems,
     isLoading,
   };
 };
-

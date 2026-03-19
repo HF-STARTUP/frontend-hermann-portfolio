@@ -56,7 +56,6 @@ export const Sidebar = () => {
                 label={"Flottes"}
                 icon={<LayoutListIcon />}
                 to={"/app/fleet"}
-
             />
             {/*<SidebarItem*/}
             {/*    label={"Géolocalisation"}*/}

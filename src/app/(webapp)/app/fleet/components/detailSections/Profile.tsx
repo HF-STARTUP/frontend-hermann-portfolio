@@ -5,7 +5,7 @@ import { Edit } from "lucide-react"
 
 export interface DetailRowProps {
     label: string
-    value: string
+    value?: string
     className?: string
 }
 
@@ -13,7 +13,7 @@ export function DetailRow({ label, value, className }: DetailRowProps) {
     return (
         <div className={cn("flex items-center justify-between", className)}>
             <span className="text-sm text-vaLightGray">{label}</span>
-            <span className="text-sm text-[#000000] font-medium">{value}</span>
+            <span className="text-sm text-[#000000] font-medium">{value??""}</span>
         </div>
     )
 }

@@ -124,7 +124,10 @@ export const KpiCard = ({icon, title, value, variant, className, border=false, v
 };
 
 
-const KpiGrid = ({ items, border=false }: { items: KpiItem[], border?: boolean }) => {
+const KpiGrid = ({ items, border=false, isLoading }: { items: KpiItem[], border?: boolean, isLoading?: boolean }) => {
+    if(isLoading){
+        return <KpiShimmerGrid count={4} />
+    }
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
             {items.map((item, index) => (

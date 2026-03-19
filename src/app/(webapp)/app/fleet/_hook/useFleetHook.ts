@@ -168,12 +168,6 @@ const useFleetHook = (options?: UseFleetHookOptions) => {
                     variant: "ghost"
                 },
                 {
-                    id: "supprimer",
-                    label: "Supprimer",
-                    variant: "destructive",
-                    onClick: (fleet) => options?.onDeleteFleet?.(fleet),
-                },
-                {
                     id: "debug_mode",
                     label: "Mode débogage",
                     variant: "vaBlue",

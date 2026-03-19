@@ -19,15 +19,36 @@ import { useDashboardHook } from "./_hook/useDashboardHook";
 import NotificationBand from "@/components/display/NotificationBand";
 import ExpiredSubsList from "./_components/_sub_components/ExpiredSubs";
 import InnactiveFleetList from "./_components/_sub_components/InactiveFleet";
+import PeriodSelector from "@/components/elements/PeriodSelector";
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { Loader } from "lucide-react";
 
 export default function DashboardPage() {
 
+
+    const {
+        fleetBandContent,
+        expiredSubscriptions,
+        inactiveFleets,
+        subscriptionsBandContent,
+        globalFilters,
+        setGlobalFilters,
+        currencies,
+        isloadingCurrencies
+    } = useDashboardHook();
+    const {
+        chartLabels,
+        chartValues,
+        currency,
+        totalRevenus,
+        variation,
+        localFilters,
+        setLocalFilters,
+        isLoadingRevenusChartData
+    } = useDashboardRevenusEvolution(globalFilters);
     const { fleets } = useDashboardFleetMap()
-
-    const { chartLabels, chartValues, currency, totalRevenus, variation } = useDashboardRevenusEvolution();
-
     const { chartData } = useDashboarRevenusBySource();
-    const { fleetBandContent, expiredSubscriptions, inactiveFleets, subscriptionsBandContent } = useDashboardHook();
+
     return (
         <div>
             <Crumb
@@ -41,6 +62,40 @@ export default function DashboardPage() {
             <PageTitle
                 page_title={"Dashboard"}
                 withSelect={false}
+                end_component={<PeriodSelector defaultPeriod="current_month" onChange={(dateRange) => { setGlobalFilters({ ...globalFilters, dateRange }) }} />}
+                close_component={
+                    <div className="flex items-center gap-2">
+                        <Select defaultValue="all" value={globalFilters?.profileType} onValueChange={(value) => setGlobalFilters({ ...globalFilters, profileType: value as "particulier" | "professionnel" | undefined })}>
+                            <SelectTrigger className="bg-vaDarkBlue text-vaMainBlue">
+                                <SelectValue placeholder="Filtrer par profil" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">Tous</SelectItem>
+                                <SelectItem value="particulier">Entrepreneur</SelectItem>
+                                <SelectItem value="professionnel">Professionnel</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <Select value={globalFilters?.currency} onValueChange={(value) => setGlobalFilters({ ...globalFilters, currency: value })}>
+                            <SelectTrigger className="bg-vaDarkBlue text-vaMainBlue">
+                                <SelectValue placeholder="Devise" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {
+                                    isloadingCurrencies && (
+                                        <div className="flex items-center justify-center p-4 gap-2">
+                                            <Loader className="animate-spin" /> <span className="text-sm text-gray-500">Chargement des devises...</span>
+                                        </div>
+                                    )
+                                }
+                                {currencies?.map((currency) => (
+                                    <SelectItem key={currency.id} value={currency.id}>
+                                        {currency.name}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </div>
+                }
             />
 
 
@@ -51,21 +106,33 @@ export default function DashboardPage() {
                 <NotificationBand content={fleetBandContent} children={<InnactiveFleetList fleets={inactiveFleets} />} dialogTitle={`Flottes inactives (${inactiveFleets.length})`} variant="error" />
             }
 
-            <HeadSection />
+            <HeadSection globalFilters={globalFilters} />
 
 
 
             <div className={"mt-8 grid grid-cols-12 gap-6"}>
-                <div className="col-span-12">
+                <div className="col-span-12 space-y-6">
                     {/* <div className={" 2xl:col-span-5 "}>
                     <AbonnEvolution/>
                 </div> */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-5 gap-4 ">
                         <div className="lg:col-span-2 xl:col-span-3">
-                            <RevenueChart chartLabels={chartLabels} chartValues={chartValues} currency={currency} totalRevenus={totalRevenus} variation={variation} />
+                            <RevenueChart
+                                chartLabels={chartLabels}
+                                chartValues={chartValues}
+                                currency={currency}
+                                totalRevenus={totalRevenus}
+                                variation={variation}
+                                setLocalFilters={setLocalFilters}
+                                localFilters={localFilters}
+                                isLoading={isLoadingRevenusChartData}
+                            />
                         </div>
                         <div className="xl:col-span-2">
-                            <RevenueBySourceChart data={chartData} currency={currency} />
+                            <RevenueBySourceChart
+                                data={chartData}
+                                currency={currency}
+                            />
                         </div>
                     </div>
                     <div className={""}>

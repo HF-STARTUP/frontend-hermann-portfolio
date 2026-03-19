@@ -174,9 +174,10 @@ const formatString = 'yyyy-MM-dd';
 export const parsedDate = (dateString: string | undefined) => dateString ? parse(dateString, formatString, new Date()) : new Date();
 
 export const toQueriesString = (baseUri: string, params: any) => {
+    if (!params) return baseUri;
 
     const queryString = Object.entries(params)
-        .filter(([, value]) => value !== undefined)
+        .filter(([, value]) => value !== undefined && value !== null && value !== 'all' )
         .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value as string)}`)
         .join('&');
 
