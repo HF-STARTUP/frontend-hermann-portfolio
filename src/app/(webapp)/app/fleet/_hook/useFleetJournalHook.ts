@@ -1,35 +1,21 @@
-import { JournalItem } from "../components/detailSections/Journal";
+import { useGetFleetJournal } from "@/hooks/admin/useFleetHook";
+import FleetJournalModel from "@/model/ADMIN/FleetJournalModel";
+import React from "react";
 
-export default function fleetJournalHook (){
+export default function useFleetJournalHook(fleetId?: string) {
+    const [page, setPage] = React.useState(1);
+    
 
-  const  journals: JournalItem[] = [
-        {
-            label: "Compte créé par le propriétaire Amadou Diallo",
-            date: "15 Jan. 2024 à 15h30"
-        },
-        {
-            label: "Utilisation de code démo DEMO-AB-VTC fournit par le commercial Jean Daniel",
-            date: "15 Jan. 2024 à 15h30"
-        },
-        {
-            label: "Premier véhicule ajouté (AD-234 - Suzuki Dziré Noire)",
-            date: "15 Jan. 2024 à 15h30"
-        },
-        {
-            label: "Premier chauffeur ajouté (Takam Jean Paul)",
-            date: "15 Jan. 2024 à 15h30"
-        },
-        {
-            label: "Premier encaissement effectué (Takam Jean Paul - 24 000 XOF)",
-            date: "15 Jan. 2024 à 15h30"            
-        },
-        {
-            label: "Premier entretien ajouté (Vidange - AD234 - Suzuki Dziré Noire)",
-            date: "15 Jan. 2024 à 15h30"
-        }
-    ]
+    
+    const { data: fleetJournalData, isLoading } = useGetFleetJournal(
+        fleetId ?? "",
+        page,
+        10
+    );
 
-    return{
-        journals
-    }
+    return {
+        journals: fleetJournalData?.journals,
+        isLoadingFleetJournal: isLoading,
+        page,
+    };
 }

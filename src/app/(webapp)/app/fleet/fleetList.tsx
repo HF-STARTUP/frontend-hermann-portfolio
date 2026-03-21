@@ -2,7 +2,7 @@
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
-import { LuChevronDown, LuFilter, LuPlus, LuSearch } from "react-icons/lu"
+import { LuFilter, LuPlus, LuSearch } from "react-icons/lu"
 import KpiGrid from "@/components/display/Kpi"
 import { DataTable } from "@/components/display/CustomTableDisplay"
 import useFleetHook from "@/app/(webapp)/app/fleet/_hook/useFleetHook"
@@ -14,9 +14,11 @@ import FleetFromDialog from "./components/_dialogs/FleetFormDialog"
 import FleetDetailsSheet from "./components/_dialogs/FleetDetailsSheet"
 import { DeleteFleetDialog } from "./components/_dialogs/utils/ConfirmFleetDelete"
 import { SuspendFleetDialog } from "./components/_dialogs/utils/SuspendFleetDialog"
+import { PageTitle } from "@/components/ui/custom/PageTitle"
+import PeriodSelector from "@/components/elements/PeriodSelector"
 
 export const FleetList = () => {
-    const [detailsSheet, setDetailsSheet] = useState<{ isOpen: boolean; fleetId: string | null }>({ isOpen: false, fleetId: null })
+    const [detailsSheet, setDetailsSheet] = useState<{ isOpen: boolean; fleet: any | null }>({ isOpen: false, fleet: null })
     const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; fleetId: string | null; fleetName: string | null }>({
         isOpen: false,
         fleetId: null,
@@ -36,9 +38,24 @@ export const FleetList = () => {
         rowActions,
         pagination,
         handleSearchChange,
-        handleAbonTypeFilter,
+        handleSubscriptionNameFilter,
+        handleTypeFilter,
+        handleStatusFilter,
+        handleSortChange,
+        handleRecentFirstChange,
+        handleOldestFirstChange,
+        handleVehiclesCountMinChange,
+        handleVehiclesCountMaxChange,
+        handleDriversCountMinChange,
+        handleDriversCountMaxChange,
+        handleTransactionsAmountMinChange,
+        handleTransactionsAmountMaxChange,
+        handleFirstActionsChange,
+        handleDateRangeChange,
+        resetFilters,
+        hasActiveFilters,
     } = useFleetHook({
-        onViewFleet: (fleet) => setDetailsSheet({ isOpen: true, fleetId: fleet.id }),
+        onViewFleet: (fleet) => setDetailsSheet({ isOpen: true, fleet }),
         onSuspendFleet: (fleet) =>
             setSuspendDialog({ isOpen: true, fleetId: fleet.id, fleetName: fleet.name ?? "" }),
         onDeleteFleet: (fleet) =>
@@ -49,6 +66,16 @@ export const FleetList = () => {
     const [isCreateFleetOpen, setIsCreateFleetOpen] = useState(false)
     return (
         <div className="flex flex-col space-y-6">
+            <PageTitle
+                page_title={"Flottes"}
+                end_component={
+                    <PeriodSelector
+                        onChange={(dateRange) => handleDateRangeChange(dateRange ?? {})}
+                        defaultPeriod={'current_month'}
+                    />
+                }
+                withSelect={false}
+            />
             <KpiGrid items={KpiItems} />
             <div className="text-[#000000] font-bold text-xl">
                 Liste des flottes ({fleets.length})
@@ -68,58 +95,54 @@ export const FleetList = () => {
                             />
                         </div>
                     </div>
-                    <Select>
+                    <Select value={filterState.type} onValueChange={(value) => handleTypeFilter(value)}>
                         <SelectTrigger className="w-44 min-w-fit h-12 border-[#E9EAEC] text-[#A3AED0] border bg-white text-sm rounded-xl">
                             <SelectValue placeholder="Selectionner le type" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">Tous les types</SelectItem>
+                            <SelectItem value="particulier">Entrepreneur</SelectItem>
                             <SelectItem value="professionnel">Professionnel</SelectItem>
-                            <SelectItem value="entrepreneur">Entrepreneur</SelectItem>
                         </SelectContent>
                     </Select>
 
                     <Select
-                        value={filterState.abonType}
-                        onValueChange={(value) => handleAbonTypeFilter(value)}
+                        value={filterState.subscriptionName}
+                        onValueChange={(value) => handleSubscriptionNameFilter(value)}
                     >
                         <SelectTrigger className="w-44 min-w-fit h-12 border-[#E9EAEC] text-[#A3AED0] border bg-white text-sm rounded-xl">
                             <SelectValue placeholder="Selectionner le plan" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">Tous les plans</SelectItem>
-                            <SelectItem value="essentiel">Essentiel</SelectItem>
-                            <SelectItem value="performance">Performance</SelectItem>
-                            <SelectItem value="croissance">Croissance</SelectItem>
-                            <SelectItem value="elite">Elite</SelectItem>
+                            <SelectItem value="none">Tous les plans</SelectItem>
+                            <SelectItem value="essentiel_entrepreneur">Essentiel Entrepreneur</SelectItem>
+                            <SelectItem value="starter_entrepreneur">Starter Entrepreneur</SelectItem>
+                            <SelectItem value="premium_entrepreneur">Premium Entrepreneur</SelectItem>
+                            <SelectItem value="essentiel_entreprise">Essentiel Entreprise</SelectItem>
+                            <SelectItem value="premium_entreprise">Premium Entreprise</SelectItem>
                         </SelectContent>
                     </Select>
 
-                    <Select>
+                    <Select value={filterState.status} onValueChange={(value) => handleStatusFilter(value)}>
                         <SelectTrigger className="w-44 min-w-fit h-12 border-[#E9EAEC] text-[#A3AED0] border bg-white text-sm rounded-xl">
                             <SelectValue placeholder="Selectionner le statut" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">Tous les statuts</SelectItem>
                             <SelectItem value="active">Actif</SelectItem>
+                            <SelectItem value="new">Nouveau</SelectItem>
                             <SelectItem value="inactive">Inactif</SelectItem>
-                            <SelectItem value="suspended">Suspendu</SelectItem>
-                            <SelectItem value="deleted">Supprimé</SelectItem>
+                            <SelectItem value="locked">Verrouillé</SelectItem>
+                            <SelectItem value="deactivated">Désactivé</SelectItem>
+                            <SelectItem value="gps_configuration_pending">Configuration GPS en attente</SelectItem>
                         </SelectContent>
                     </Select>
 
-                    <Select>
+                    <Select value={filterState.sort} onValueChange={(value) => handleSortChange(value as "recent" | "oldest")}>
                         <SelectTrigger className="w-44 min-w-fit h-12 border-[#E9EAEC] text-[#A3AED0] border bg-white text-sm rounded-xl">
                             <SelectValue placeholder="Trier par" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="all">Tous les champs</SelectItem>
-                            <SelectItem value="name">Nom</SelectItem>
-                            <SelectItem value="owner">Propriétaire</SelectItem>
-                            <SelectItem value="subscription">Plan</SelectItem>
-                            <SelectItem value="status">Statut</SelectItem>
-                            <SelectItem value="created_at">Date de création</SelectItem>
-                            <SelectItem value="updated_at">Date de mise à jour</SelectItem>
+                            <SelectItem value="recent">Plus récent d'abord</SelectItem>
+                            <SelectItem value="oldest">Plus ancien d'abord</SelectItem>
                         </SelectContent>
                     </Select>
                 </div>
@@ -132,6 +155,11 @@ export const FleetList = () => {
                         <LuFilter className="w-4 h-4 mr-2" />
                         Filtre avancé
                     </Button>
+                    {hasActiveFilters && (
+                        <Button size="xl" variant="outline" className="rounded-2xl" onClick={resetFilters}>
+                            Réinitialiser les filtres
+                        </Button>
+                    )}
                     <Select>
                         <SelectTrigger variant="mainBlueOutline" leftIcon={<AnchorIcon className="size-4 mr-2" />}>
                             <SelectValue placeholder="Exporter" />
@@ -142,7 +170,7 @@ export const FleetList = () => {
                             <SelectItem value="pdf">PDF</SelectItem>
                         </SelectContent>
                     </Select>
-                
+
                 </div>
 
             </div>
@@ -154,17 +182,31 @@ export const FleetList = () => {
                     pagination={pagination}
                     isLoading={isLoading}
                     rowActions={rowActions}
-                    onRowClick={(fleet) => setDetailsSheet({ isOpen: true, fleetId: fleet.id })}
+                    onRowClick={(fleet) => setDetailsSheet({ isOpen: true, fleet })}
                 />
             </div>
-            <AdvancedFiltersDialog isOpen={isAdvancedFiltersOpen} onClose={() => setIsAdvancedFiltersOpen(false)} />
+            <AdvancedFiltersDialog
+                isOpen={isAdvancedFiltersOpen}
+                onClose={() => setIsAdvancedFiltersOpen(false)}
+                filterState={filterState}
+                onRecentFirstChange={handleRecentFirstChange}
+                onOldestFirstChange={handleOldestFirstChange}
+                onVehiclesCountMinChange={handleVehiclesCountMinChange}
+                onVehiclesCountMaxChange={handleVehiclesCountMaxChange}
+                onDriversCountMinChange={handleDriversCountMinChange}
+                onDriversCountMaxChange={handleDriversCountMaxChange}
+                onTransactionsAmountMinChange={handleTransactionsAmountMinChange}
+                onTransactionsAmountMaxChange={handleTransactionsAmountMaxChange}
+                onFirstActionsChange={handleFirstActionsChange}
+                onResetFilters={resetFilters}
+            />
             <FleetFromDialog isOpen={isCreateFleetOpen} onClose={() => setIsCreateFleetOpen(false)} action="create" />
             <FleetDetailsSheet
                 isOpen={detailsSheet.isOpen}
-                onClose={() => setDetailsSheet({ isOpen: false, fleetId: null })}
-                fleetId={detailsSheet.fleetId ?? ""}
-                onEdit={() => {}}
-                onDelete={() => {}}
+                onClose={() => setDetailsSheet({ isOpen: false, fleet: null })}
+                fleet={detailsSheet.fleet}
+                onEdit={() => { }}
+                onDelete={() => { }}
             />
             <DeleteFleetDialog
                 isOpen={deleteDialog.isOpen}

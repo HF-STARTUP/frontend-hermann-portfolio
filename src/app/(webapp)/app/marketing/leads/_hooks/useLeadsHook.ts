@@ -1,13 +1,14 @@
 import { KpiItem } from "@/components/display/Kpi";
 import { formatNumber } from "@/lib/utils";
-import React, { useMemo } from "react";
-import { Megaphone, Users2 } from "lucide-react";
+import React, { useMemo, useState } from "react";
+import { Users2 } from "lucide-react";
 import { TbCashBanknote } from "react-icons/tb";
 import { useGetActiveCurrency } from "@/hooks/__globlal/useGlobalHook";
 import { PiMegaphone } from "react-icons/pi";
 import { LeadItem } from "../../campagnes/_hook/useCampagneLeadsHook";
 import { Column } from "@/components/display/CustomTableDisplay";
 import Badge from "@/components/display/Badge";
+import { CashAltIcon } from "@/components/ui/__icons";
 
 
 export const useLeadsHook = () => {
@@ -31,7 +32,7 @@ export const useLeadsHook = () => {
       variant: "light-blue",
     },
     {
-      icon: React.createElement(TbCashBanknote),
+      icon: React.createElement(CashAltIcon),
       title: "Valeur pipeline",
       value: formatNumber(54000000),
       unit: currency,
@@ -58,10 +59,11 @@ export const useLeadsHook = () => {
         initials: "HF",
         name: "Hermann Fomo",
         email: "hermann.f@gmail.com",
-        phoneNum: "+237 678987654"
+        phoneNum: "+237 678 76 54 34",
       },
       status: "qualified",
-      company: "Yango Transport DLA"
+      company: "ZETA Fleet",
+      currentStep: "converted"
     },
     {
       chanel: "WhatsApp",
@@ -71,15 +73,25 @@ export const useLeadsHook = () => {
         initials: "SD",
         name: "Samuel Dogmo",
         email: "sam.dogmo@gmail.com",
+        phoneNum: "+237 678 76 54 34",
       },
       status: "converted",
+      company: "ZETA Fleet",
+      currentStep: "lost"
     },
     {
       chanel: "Google",
       commercialName: "Cédric Fossuo",
       date: "24/02/2026",
-      lead: { initials: "MK", name: "Marie Kenne", email: "m.kenne@yahoo.fr" },
+      lead: { 
+        initials: "MK",
+        name: "Marie Kenne", 
+        email: "m.kenne@yahoo.fr", 
+        phoneNum: "+237 678 76 54 34",
+       },      
       status: "contacted",
+      company: "ZETA Fleet",
+      currentStep: "demo_planed"
     },
     {
       chanel: "Instagram",
@@ -89,15 +101,25 @@ export const useLeadsHook = () => {
         initials: "BT",
         name: "Blaise Tamo",
         email: "b.tamo@outlook.com",
+        phoneNum: "+237 678 76 54 34",
       },
       status: "lost",
+      company: "ZETA Fleet",
+      currentStep: "new"
     },
     {
       chanel: "Facebook",
       commercialName: "Alice Nono",
       date: "25/02/2026",
-      lead: { initials: "YN", name: "Yvonne Ngue", email: "yvonne.n@firm.ci" },
+      lead: { 
+        initials: "YN", 
+        name: "Yvonne Ngue", 
+        email: "yvonne.n@firm.ci", 
+        phoneNum: "+237 678 76 54 34", 
+      },      
       status: "qualified",
+      company: "ZETA Fleet",
+      currentStep: "demo_planed"
     },
     {
       chanel: "LinkedIn",
@@ -107,15 +129,25 @@ export const useLeadsHook = () => {
         initials: "PP",
         name: "Paul Pierre",
         email: "p.pierre@tech-solutions.cm",
+        phoneNum: "+237 678 76 54 34",
       },
       status: "contacted",
+      company: "ZETA Fleet",
+      currentStep: "converted"
     },
     {
       chanel: "WhatsApp",
       commercialName: "Jean Kameni",
       date: "26/02/2026",
-      lead: { initials: "FK", name: "Franck Kuate", email: "f.kuate@pme.net" },
+      lead: { 
+        initials: "FK", 
+        name: "Franck Kuate", 
+        email: "f.kuate@pme.net", 
+        phoneNum: "+237 678 76 54 34", 
+      },      
       status: "converted",
+      company: "ZETA Fleet",
+      currentStep: "lost"
     },
     {
       chanel: "Google",
@@ -125,22 +157,39 @@ export const useLeadsHook = () => {
         initials: "CM",
         name: "Chantal Mvondo",
         email: "chantal.m@service.cm",
+        phoneNum: "+237 678 76 54 34",
       },
       status: "qualified",
+      company: "ZETA Fleet",
+      currentStep: "contacted"
     },
     {
       chanel: "Instagram",
       commercialName: "Cédric Fossuo",
       date: "27/02/2026",
-      lead: { initials: "RT", name: "Raoul Tagne", email: "raoul.t@auto.cm" },
+      lead: { 
+        initials: "RT", 
+        name: "Raoul Tagne", 
+        email: "raoul.t@auto.cm", 
+        phoneNum: "+237 678 76 54 34", 
+      },      
       status: "contacted",
+      company: "ZETA Fleet",
+      currentStep: "contacted"
     },
     {
       chanel: "Facebook",
       commercialName: "Jean Kameni",
       date: "28/02/2026",
-      lead: { initials: "LS", name: "Luc Sadi", email: "l.sadi@btp.org" },
+      lead: { 
+        initials: "LS", 
+        name: "Luc Sadi", 
+        email: "l.sadi@btp.org", 
+        phoneNum: "+237 678 76 54 34", 
+      },      
       status: "lost",
+      company: "ZETA Fleet",
+      currentStep: "lost"
     },
     {
       chanel: "LinkedIn",
@@ -150,8 +199,11 @@ export const useLeadsHook = () => {
         initials: "JA",
         name: "Julie Abena",
         email: "j.abena@marketing.com",
+        phoneNum: "+237 678 76 54 34",
       },
       status: "converted",
+      company: "ZETA Fleet",
+      currentStep: "converted"
     },
     {
       chanel: "WhatsApp",
@@ -161,8 +213,11 @@ export const useLeadsHook = () => {
         initials: "EN",
         name: "Eric Ndoumbe",
         email: "e.ndoumbe@it-dev.com",
+        phoneNum: "+237 678 76 54 34",
       },
       status: "qualified",
+      company: "ZETA Fleet",
+      currentStep: "new"
     },
     {
       chanel: "Google",
@@ -172,15 +227,25 @@ export const useLeadsHook = () => {
         initials: "PT",
         name: "Patrice Tagne",
         email: "p.tagne@finances.cm",
+        phoneNum: "+237 678 76 54 34",
       },
       status: "contacted",
+      company: "ZETA Fleet",
+      currentStep: "contacted"
     },
     {
       chanel: "Instagram",
       commercialName: "Alice Nono",
       date: "03/03/2026",
-      lead: { initials: "OM", name: "Odile Mayo", email: "odile.m@retail.net" },
+      lead: { 
+        initials: "OM", 
+        name: "Odile Mayo", 
+        email: "odile.m@retail.net",        
+        phoneNum: "+237 678 76 54 34",
+       },
       status: "qualified",
+      company: "ZETA Fleet",
+      currentStep: "new"
     },
     {
       chanel: "Facebook",
@@ -190,17 +255,36 @@ export const useLeadsHook = () => {
         initials: "BB",
         name: "Boris Bella",
         email: "b.bella@startup.io",
+        phoneNum: "+237 678 76 54 34",
       },
       status: "converted",
+      company: "ZETA Fleet",
+      currentStep: "proposition"
     },
   ];
+
+
+  const newLeads: LeadItem[] = leadsList
+    .filter((l) => l.currentStep === "new")
+
+  const contactedLeads: LeadItem[] = leadsList
+    .filter((l) => l.currentStep === "contacted")
+
+  const demoPlanedLeads: LeadItem[] = leadsList
+    .filter((l) => l.currentStep === "demo_planed")
+  const propositionLeads: LeadItem[] = leadsList
+    .filter((l) => l.currentStep === "proposition")
+  const convertedLeads: LeadItem[] = leadsList
+    .filter((l) => l.currentStep === "converted")
+  const lostLeads: LeadItem[] = leadsList
+    .filter((l) => l.currentStep === "lost")
 
   const paginationMeta = useMemo(
     () => ({
       totalRecords: leadsList.length ?? 0,
       totalPages: 1,
       currentPage: 1,
-      itemPerPage: 10,
+      itemPerPage: 20,
     }),
     [leadsList.length],
   );
@@ -209,10 +293,10 @@ export const useLeadsHook = () => {
     () => ({
       currentPage: paginationMeta.currentPage,
       totalPages: Math.max(1, paginationMeta.totalPages),
-      onPageChange: () => {},
+      onPageChange: () => { },
       totalEntries: paginationMeta.totalRecords,
       pageSize: 10,
-      onPageSizeChange: () => {},
+      onPageSizeChange: () => { },
     }),
     [paginationMeta],
   );
@@ -233,16 +317,16 @@ export const useLeadsHook = () => {
       },
       {
         header: "Numéro de téléphone",
-        accessor: (item) => item.lead.phoneNum?? "-"
+        accessor: (item) => item.lead.phoneNum ?? "-"
       },
       {
         header: "Entreprise",
-        accessor: (item) => item.company?? "-"
+        accessor: (item) => item.company ?? "-"
       },
       {
         header: "Source",
         accessor: (item) => item.chanel,
-      },    
+      },
       {
         header: "Commercial assigné",
         accessor: (item) => item.commercialName,
@@ -255,10 +339,35 @@ export const useLeadsHook = () => {
     [],
   );
 
+
+  const [selectedLead, setSelectedLead]  = useState<LeadItem>()
+  const [isLeadDetailOpenned, setIsLeadDetailOpenned ]  =useState(false)
+
+  const handleViewLead=(lead: LeadItem)=>{
+    setSelectedLead(lead);
+    setIsLeadDetailOpenned(true)
+  }
+
   return {
     kpiItems,
     tableColumns,
     leadsList,
     pagination,
+
+    currency,
+
+    newLeads,
+    contactedLeads,
+    demoPlanedLeads,
+    propositionLeads,
+    convertedLeads,
+    lostLeads,
+
+    selectedLead,
+    setSelectedLead,
+    isLeadDetailOpenned,
+    setIsLeadDetailOpenned,
+
+    handleViewLead
   };
 };

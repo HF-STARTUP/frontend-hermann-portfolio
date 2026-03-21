@@ -3,6 +3,7 @@ import { Column } from "@/components/display/CustomTableDisplay";
 import React, { useMemo } from "react";
 
 export type LeadStatus = "qualified" | "converted" | "contacted" | "lost";
+export type LeadStep = "new" | "demo_planed" | "proposition" | LeadStatus
 
 export interface LeadItem {
   lead: {
@@ -16,7 +17,7 @@ export interface LeadItem {
   commercialName: string;
   status: LeadStatus;
   company?: string;
-  
+  currentStep: LeadStep; 
 }
 
 export const useCampagneLeadsHook = () => {
@@ -31,6 +32,7 @@ export const useCampagneLeadsHook = () => {
         email: "hermann.f@gmail.com",
       },
       status: "qualified",
+      currentStep: "converted"
     },
     {
       chanel: "WhatsApp",
@@ -42,6 +44,7 @@ export const useCampagneLeadsHook = () => {
         email: "sam.dogmo@gmail.com",
       },
       status: "converted",
+      currentStep: "lost"
     },
     {
       chanel: "Google",
@@ -49,6 +52,7 @@ export const useCampagneLeadsHook = () => {
       date: "24/02/2026",
       lead: { initials: "MK", name: "Marie Kenne", email: "m.kenne@yahoo.fr" },
       status: "contacted",
+      currentStep: "demo_planed"
     },
     {
       chanel: "Instagram",
@@ -60,6 +64,7 @@ export const useCampagneLeadsHook = () => {
         email: "b.tamo@outlook.com",
       },
       status: "lost",
+      currentStep: "new"
     },
     {
       chanel: "Facebook",
@@ -67,6 +72,7 @@ export const useCampagneLeadsHook = () => {
       date: "25/02/2026",
       lead: { initials: "YN", name: "Yvonne Ngue", email: "yvonne.n@firm.ci" },
       status: "qualified",
+      currentStep: "demo_planed"
     },
     {
       chanel: "LinkedIn",
@@ -78,6 +84,7 @@ export const useCampagneLeadsHook = () => {
         email: "p.pierre@tech-solutions.cm",
       },
       status: "contacted",
+      currentStep: "converted"
     },
     {
       chanel: "WhatsApp",
@@ -85,6 +92,7 @@ export const useCampagneLeadsHook = () => {
       date: "26/02/2026",
       lead: { initials: "FK", name: "Franck Kuate", email: "f.kuate@pme.net" },
       status: "converted",
+      currentStep:"lost"
     },
     {
       chanel: "Google",
@@ -96,6 +104,7 @@ export const useCampagneLeadsHook = () => {
         email: "chantal.m@service.cm",
       },
       status: "qualified",
+      currentStep: "contacted"
     },
     {
       chanel: "Instagram",
@@ -103,6 +112,7 @@ export const useCampagneLeadsHook = () => {
       date: "27/02/2026",
       lead: { initials: "RT", name: "Raoul Tagne", email: "raoul.t@auto.cm" },
       status: "contacted",
+      currentStep:"contacted"
     },
     {
       chanel: "Facebook",
@@ -110,6 +120,7 @@ export const useCampagneLeadsHook = () => {
       date: "28/02/2026",
       lead: { initials: "LS", name: "Luc Sadi", email: "l.sadi@btp.org" },
       status: "lost",
+      currentStep:"lost"
     },
     {
       chanel: "LinkedIn",
@@ -121,6 +132,7 @@ export const useCampagneLeadsHook = () => {
         email: "j.abena@marketing.com",
       },
       status: "converted",
+      currentStep: "converted"
     },
     {
       chanel: "WhatsApp",
@@ -132,6 +144,7 @@ export const useCampagneLeadsHook = () => {
         email: "e.ndoumbe@it-dev.com",
       },
       status: "qualified",
+      currentStep: "new"
     },
     {
       chanel: "Google",
@@ -143,6 +156,7 @@ export const useCampagneLeadsHook = () => {
         email: "p.tagne@finances.cm",
       },
       status: "contacted",
+      currentStep: "contacted"
     },
     {
       chanel: "Instagram",
@@ -150,6 +164,7 @@ export const useCampagneLeadsHook = () => {
       date: "03/03/2026",
       lead: { initials: "OM", name: "Odile Mayo", email: "odile.m@retail.net" },
       status: "qualified",
+      currentStep: "new"
     },
     {
       chanel: "Facebook",
@@ -161,6 +176,7 @@ export const useCampagneLeadsHook = () => {
         email: "b.bella@startup.io",
       },
       status: "converted",
+      currentStep: "converted"
     },
   ];
 

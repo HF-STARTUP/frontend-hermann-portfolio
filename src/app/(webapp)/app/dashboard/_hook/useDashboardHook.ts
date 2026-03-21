@@ -62,6 +62,7 @@ export const useDashboardHook = () => {
 
     const [globalFilters, setGlobalFilters] = useState<DashboardGlobalFilters>()
     const {data: currencies, isLoading: isloadingCurrencies} = useGetCurrenciesList()
+    // const {} = useGetCities()
     return {
         expiredSubscriptions,
         inactiveFleets,

@@ -1,15 +1,20 @@
 import { KpiItem } from "@/components/display/Kpi"
-import { Eye, StretchHorizontal } from "lucide-react"
+import { Crown, Eye, StretchHorizontal } from "lucide-react"
 import React, { useCallback, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
 import { useGetFleetsList } from "@/hooks/admin/useFleetHook"
 import { FleetModel } from "@/model/ADMIN/fleet"
 import { Column, RowAction } from "@/components/display/CustomTableDisplay"
-import { AbonStatusBadge, SubscriptionBadge } from "../components/_sub_components/badges"
+import Badge from "@/components/display/Badge"
+
+export type SubscriptionStatus = "active" | "inactive" | "deleted" | "suspended"
 
 export interface FilterState {
     searchTerm: string
-    abonType: string
+    subscriptionName: string
+    type: string
+    status: string
+    sort: "recent" | "oldest"
     dateRange: Date[] | undefined
     createdFrom?: Date
     createdTo?: Date
@@ -19,11 +24,17 @@ export interface FilterState {
     vehiclesCountMax?: number
     driversCountMin?: number
     driversCountMax?: number
+    transactionsAmountMin?: number
+    transactionsAmountMax?: number
+    firstActions: string[]
 }
 
 const initialFilterState: FilterState = {
     searchTerm: "",
-    abonType: "all",
+    subscriptionName: "none",
+    type: "particulier",
+    status: "active",
+    sort: "recent",
     dateRange: undefined,
     createdFrom: undefined,
     createdTo: undefined,
@@ -33,6 +44,9 @@ const initialFilterState: FilterState = {
     vehiclesCountMax: undefined,
     driversCountMin: undefined,
     driversCountMax: undefined,
+    transactionsAmountMin: undefined,
+    transactionsAmountMax: undefined,
+    firstActions: [],
 }
 
 export interface UseFleetHookOptions {
@@ -55,8 +69,17 @@ const useFleetHook = (options?: UseFleetHookOptions) => {
         if (filterState.searchTerm.trim()) {
             params.name = filterState.searchTerm.trim()
         }
-        if (filterState.abonType !== "all") {
-            params.subscription_name = filterState.abonType
+        if (filterState.type !== "particulier") {
+            params.type = filterState.type
+        }
+        if (filterState.status !== "active") {
+            params.status = filterState.status
+        }
+        if (filterState.subscriptionName !== "none") {
+            params.subscription_name = filterState.subscriptionName
+        }
+        if (filterState.sort) {
+            params.sort = filterState.sort
         }
         if (filterState.createdFrom) {
             params.created_from = filterState.createdFrom.toISOString()
@@ -81,6 +104,15 @@ const useFleetHook = (options?: UseFleetHookOptions) => {
         }
         if (filterState.driversCountMax !== undefined && filterState.driversCountMax !== null) {
             params.drivers_count_max = filterState.driversCountMax
+        }
+        if (filterState.transactionsAmountMin !== undefined && filterState.transactionsAmountMin !== null) {
+            params.transactions_amount_min = filterState.transactionsAmountMin
+        }
+        if (filterState.transactionsAmountMax !== undefined && filterState.transactionsAmountMax !== null) {
+            params.transactions_amount_max = filterState.transactionsAmountMax
+        }
+        if (filterState.firstActions.length > 0) {
+            params.first_actions = filterState.firstActions.join(",")
         }
         return params
     }, [page, itemPerPage, filterState])
@@ -128,13 +160,13 @@ const useFleetHook = (options?: UseFleetHookOptions) => {
                 header: "Propriétaire",
                 accessor: (item) => item.ownerName ?? "-",
             },
-            {
-                header: "Type",
-                accessor: () => "-",
-            },
+            // {
+            //     header: "Type",
+            //     accessor: (item) => item.suscription_name,
+            // },
             {
                 header: "Plan actif",
-                accessor: (item) => React.createElement(SubscriptionBadge, { name: item.suscription_name ?? "-" }),
+                accessor: (item) => item.suscription_name? React.createElement(Badge, { type: item.suscription_name, icon: React.createElement(Crown) }): "Aucun abonnement actif",
             },
             {
                 header: "Montant",
@@ -146,7 +178,7 @@ const useFleetHook = (options?: UseFleetHookOptions) => {
             },
             {
                 header: "Statut",
-                accessor: (item) => (React.createElement(AbonStatusBadge, { status: item.statusDisplay === "Actif" ? "Active" : "Désactivé" })),
+                accessor: (item) => (React.createElement(Badge, { type: item.statusDisplay as SubscriptionStatus })),
             },
         ],
         []
@@ -194,8 +226,59 @@ const useFleetHook = (options?: UseFleetHookOptions) => {
         setPage(1)
     }
 
-    const handleAbonTypeFilter = (abonType: string) => {
-        setFilterState((prev) => ({ ...prev, abonType }))
+    const handleSubscriptionNameFilter = (subscriptionName: string) => {
+        setFilterState((prev) => ({ ...prev, subscriptionName }))
+        setPage(1)
+    }
+
+    const handleTypeFilter = (type: string) => {
+        setFilterState((prev) => ({ ...prev, type }))
+        setPage(1)
+    }
+
+    const handleStatusFilter = (status: string) => {
+        setFilterState((prev) => ({ ...prev, status }))
+        setPage(1)
+    }
+
+    const handleSortChange = (sort: "recent" | "oldest") => {
+        setFilterState((prev) => ({ ...prev, sort }))
+        setPage(1)
+    }
+
+    const handleRecentFirstChange = (isChecked: boolean) => {
+        if (isChecked) {
+            setFilterState((prev) => ({ ...prev, sort: "recent" }))
+        }
+        setPage(1)
+    }
+
+    const handleOldestFirstChange = (isChecked: boolean) => {
+        if (isChecked) {
+            setFilterState((prev) => ({ ...prev, sort: "oldest" }))
+        }
+        setPage(1)
+    }
+
+    const handleTransactionsAmountMinChange = (value: string) => {
+        const num = value === "" ? undefined : parseFloat(value)
+        setFilterState((prev) => ({ ...prev, transactionsAmountMin: num }))
+        setPage(1)
+    }
+
+    const handleTransactionsAmountMaxChange = (value: string) => {
+        const num = value === "" ? undefined : parseFloat(value)
+        setFilterState((prev) => ({ ...prev, transactionsAmountMax: num }))
+        setPage(1)
+    }
+
+    const handleFirstActionsChange = (firstAction: string, isChecked: boolean) => {
+        setFilterState((prev) => ({
+            ...prev,
+            firstActions: isChecked
+                ? [...prev.firstActions, firstAction]
+                : prev.firstActions.filter((e) => e !== firstAction),
+        }))
         setPage(1)
     }
 
@@ -206,6 +289,16 @@ const useFleetHook = (options?: UseFleetHookOptions) => {
 
     const handleCreatedToChange = (date: Date | undefined) => {
         setFilterState((prev) => ({ ...prev, createdTo: date }))
+        setPage(1)
+    }
+
+    const handleDateRangeChange = (dateRange: { from?: Date; to?: Date }) => {
+        setFilterState((prev) => ({
+            ...prev,
+            createdFrom: dateRange.from,
+            createdTo: dateRange.to,
+            dateRange: dateRange.from && dateRange.to ? [dateRange.from, dateRange.to] : undefined,
+        }))
         setPage(1)
     }
 
@@ -247,7 +340,10 @@ const useFleetHook = (options?: UseFleetHookOptions) => {
         () =>
             !!(
                 filterState.searchTerm ||
-                filterState.abonType !== "all" ||
+                filterState.subscriptionName !== "none" ||
+                filterState.type !== "particulier" ||
+                filterState.status !== "active" ||
+                filterState.sort !== "recent" ||
                 filterState.dateRange ||
                 filterState.createdFrom ||
                 filterState.createdTo ||
@@ -256,7 +352,10 @@ const useFleetHook = (options?: UseFleetHookOptions) => {
                 filterState.vehiclesCountMin !== undefined ||
                 filterState.vehiclesCountMax !== undefined ||
                 filterState.driversCountMin !== undefined ||
-                filterState.driversCountMax !== undefined
+                filterState.driversCountMax !== undefined ||
+                filterState.transactionsAmountMin !== undefined ||
+                filterState.transactionsAmountMax !== undefined ||
+                filterState.firstActions.length > 0
             ),
         [filterState]
     )
@@ -299,7 +398,7 @@ const useFleetHook = (options?: UseFleetHookOptions) => {
             variation: "down",
             hint: "-10% vs mois précédent",
         },
-    ]
+    ]    
 
     return {
         KpiItems,
@@ -312,9 +411,18 @@ const useFleetHook = (options?: UseFleetHookOptions) => {
         rowActions,
         pagination,
         handleSearchChange,
-        handleAbonTypeFilter,
+        handleSubscriptionNameFilter,
+        handleTypeFilter,
+        handleStatusFilter,
+        handleSortChange,
+        handleRecentFirstChange,
+        handleOldestFirstChange,
+        handleTransactionsAmountMinChange,
+        handleTransactionsAmountMaxChange,
+        handleFirstActionsChange,
         handleCreatedFromChange,
         handleCreatedToChange,
+        handleDateRangeChange,
         handleStartDateChange,
         handleEndDateChange,
         handleVehiclesCountMinChange,

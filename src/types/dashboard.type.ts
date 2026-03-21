@@ -3,11 +3,13 @@ export type PeriodType = "day" | "week" | "month" | "year";
 export interface DashboardParams {
     start_date?: string;
     end_date?: string;
-    city_id?: number;
+    city_id?: number | string;
     country_id?: number;
     currency_id?: number;
     account_type?: "particulier" | "professionnel" | "all";
     group_by?: PeriodType;
+    page?: number;
+    itemPerPage?: number;
 }
 
 export interface PaginationResponse {
@@ -29,6 +31,7 @@ export interface TrendData {
 export interface RevenueData {
     totalSubscriptions: TrendData;
     totalCommission: TrendData;
+    marketingCost: TrendData;
 }
 
 export interface FleetData {
@@ -59,10 +62,18 @@ export interface RevenueSeriesItem {
     commissionAmount: number;
 }
 
+export interface RevenueBreakdownItem {
+    category: string;
+    amount: number;
+    percentage: number;
+}
+
 export interface RevenueChartData {
     series: RevenueSeriesItem[];
     totalRevenue: number;
-    breakdown: any[];
+    previousPeriodTotal: number;
+    percentChange: number;
+    breakdown: RevenueBreakdownItem[];
 }
 
 
@@ -77,7 +88,7 @@ export interface BestFleetItem {
     city: string;
     city_id: number;
     vehicleCount: number;
-    /** Peut être null si aucun abonnement n'est actif */
+    
     subscriptionName: string | null;
     totalSubscriptionAmount: number;
     flowIn: number;

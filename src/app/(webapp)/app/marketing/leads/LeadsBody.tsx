@@ -11,10 +11,37 @@ import { LuSearch } from "react-icons/lu"
 import { Input } from "@/components/ui/input"
 import { DateRangePicker } from "@/components/ui/custom/date-range-picker"
 import { DataTable } from "@/components/display/CustomTableDisplay"
+import LeadKanbanGrid from "./_components/LeadsKanbanGrid"
+import { Button } from "@/components/ui/button"
+import { AffectLeadsDialog } from "./_components/dialogs/LeadsAffectDialog"
+import { LeadDetailsSheet } from "./_components/dialogs/LeadsDetailsSheet"
 
 const LeadsBody = () => {
     const [viewType, setViewType] = useState<'table' | 'kanban'>('table')
-    const { kpiItems, leadsList, pagination, tableColumns } = useLeadsHook()
+    const {
+        kpiItems,
+        leadsList,
+        pagination,
+        tableColumns,
+
+        contactedLeads,
+        convertedLeads,
+        demoPlanedLeads,
+        lostLeads,
+        newLeads,
+        propositionLeads,
+
+        currency,
+        selectedLead,
+        setSelectedLead,
+        isLeadDetailOpenned,
+        setIsLeadDetailOpenned,
+
+        handleViewLead
+
+    } = useLeadsHook()
+
+    const [isAffectOpenned, setIsAffectOpenned] = useState(false)
     return (
         <div className="space-y-6">
             <PageTitle page_title="Leads & Conversations" withSelect={false} />
@@ -40,6 +67,7 @@ const LeadsBody = () => {
             </div>
             {/* Filters */}
             <div className="filters flex items-center gap-4 flex-wrap w-full">
+                <div className="filters flex items-center gap-4 flex-wrap w-full">
                     <div className="search">
                         <div className="search-input relative flex items-center bg-white p-2 rounded-xl">
                             <Input
@@ -97,15 +125,30 @@ const LeadsBody = () => {
                     </Select>
 
                     <DateRangePicker placeholder="FIlter par date" />
-                   
+
+
                 </div>
+                <div className="flex items-center justify-end w-full">
+                    <Button variant={"mainBlueOutline"} className="float-right" onClick={() => setIsAffectOpenned(true)}>
+                        Affecter des leads
+                    </Button>
+                </div>
+            </div>
             {/* Leads List; Kanban/ Table */}
 
             {
                 viewType == "table" &&
-                <DataTable columns={tableColumns} data={leadsList} pagination={pagination} />
+                <DataTable columns={tableColumns} data={leadsList} pagination={pagination} onRowClick={(item)=>handleViewLead(item)} />
             }
 
+
+            {
+                viewType == "kanban" &&
+                <LeadKanbanGrid contacted={contactedLeads} converted={convertedLeads} demoPlaned={demoPlanedLeads} lost={lostLeads} newLeads={newLeads} propositon={propositionLeads} currency={currency} />
+            }
+
+            <AffectLeadsDialog isOpenned={isAffectOpenned} onClose={() => setIsAffectOpenned(false)} />
+            <LeadDetailsSheet isOpenned={isLeadDetailOpenned} onClose={()=>setIsLeadDetailOpenned(false)} lead={selectedLead} />
         </div>
     )
 }

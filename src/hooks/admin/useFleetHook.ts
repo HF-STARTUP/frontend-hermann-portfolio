@@ -1,9 +1,9 @@
-import {useQuery} from "@tanstack/react-query";
-import {useMutationProvider, useQueryProvider} from "@/hooks/hooksProvider";
-import {useGetParkID} from "@/hooks/__globlal/useGlobalHook";
-import {useRouter} from "next/navigation";
-import React, {useMemo} from "react";
-import {toIsoDate} from "@/services/Service";
+import { useQuery } from "@tanstack/react-query";
+import { useMutationProvider, useQueryProvider } from "@/hooks/hooksProvider";
+import { useGetParkID } from "@/hooks/__globlal/useGlobalHook";
+import { useRouter } from "next/navigation";
+import React, { useMemo } from "react";
+import { toIsoDate } from "@/services/Service";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import FleetService, {
     FleetApiPath,
@@ -16,7 +16,7 @@ import FleetService, {
 
 export const useGetSubscriptionPlanRevenus = (inputs: SubscriptionPlanRevenusInputs) => {
     const currency_id = AuthManagerGuard.getCurrency
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.SubscriptionPlanRevenus, inputs, currency_id],
         queryFn: () => FleetService.getSubscriptionPlanRevenus(inputs),
     })
@@ -32,19 +32,19 @@ export const useGetProfitableList = (inputs: ProfitableListInputs) => {
     const fleetType = AuthManagerGuard.getEnabledFleetType
     const currency = AuthManagerGuard.getCurrency
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.ProfitableList, inputs, enable_city_id, fleetType, currency],
         queryFn: () => FleetService.getProfitableList(inputs),
     })
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 export const useGetFleetByCity = (inputs: FleetByCityInputs) => {
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [inputs, FleetApiPath.FleetByCity],
         queryFn: () => FleetService.getFleetByCity(inputs),
     })
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 export const useGetOperatorsRevenus = (inputs: OperatorRevenusInputs) => {
@@ -52,7 +52,7 @@ export const useGetOperatorsRevenus = (inputs: OperatorRevenusInputs) => {
     const fleetType = AuthManagerGuard.getEnabledFleetType
     const currency = AuthManagerGuard.getCurrency
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.OperatorRevenus, enable_city_id, fleetType, currency],
         queryFn: () => FleetService.getOratorsRevenus({
             currency_id: currency,
@@ -60,23 +60,23 @@ export const useGetOperatorsRevenus = (inputs: OperatorRevenusInputs) => {
             ...inputs
         }),
     })
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 export const useGetCurrenciesList = () => {
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.Currency],
         queryFn: () => FleetService.getCurrencies(),
     })
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
-export const useGetFleetsList = (params: GetFleetByCityIDParams = {page: 1, itemPerPage: 1}) => {
+export const useGetFleetsList = (params: GetFleetByCityIDParams = { page: 1, itemPerPage: 1 }) => {
 
     const enable_city_id = AuthManagerGuard.getEnabledCity
     const fleetType = AuthManagerGuard.getEnabledFleetType
 
-    const {isLoading, data, isSuccess, isFetching, isRefetching} = useQuery({
+    const { isLoading, data, isSuccess, isFetching, isRefetching } = useQuery({
         queryKey: [FleetApiPath.GetFleetByCityID, enable_city_id, fleetType, params],
         queryFn: () => FleetService.GetFleetByCityID({
             ...params,
@@ -86,46 +86,46 @@ export const useGetFleetsList = (params: GetFleetByCityIDParams = {page: 1, item
         enabled: !!enable_city_id && !!fleetType
     })
 
-    return {isLoading, data, isFetching, isRefetching}
+    return { isLoading, data, isFetching, isRefetching }
 }
 
 export const useGetFleetAdmin = () => {
 
-    const {parkID} = useGetParkID()
+    const { parkID } = useGetParkID()
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.GetAdminByCityID, parkID],
-        queryFn: () => FleetService.getAdminsOnFleet({park_id: parkID}),
+        queryFn: () => FleetService.getAdminsOnFleet({ park_id: parkID }),
         enabled: !!parkID
     })
 
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 export const useGetSubscriptionHistoryOnFleet = () => {
 
-    const {parkID} = useGetParkID()
+    const { parkID } = useGetParkID()
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.ActiveSubscriptionList, parkID],
-        queryFn: () => FleetService.getActiveSubscriptionList({park_id: parkID}),
+        queryFn: () => FleetService.getActiveSubscriptionList({ park_id: parkID }),
         enabled: !!parkID
     });
 
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 export const useGetActiveSubscriptionOnFleet = () => {
 
-    const {parkID} = useGetParkID()
+    const { parkID } = useGetParkID()
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.ActiveSubscription, parkID],
-        queryFn: () => FleetService.getActiveSubscription({parkID}),
+        queryFn: () => FleetService.getActiveSubscription({ parkID }),
         enabled: !!parkID
     });
 
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 export const useGetFleetDetails = () => {
@@ -134,7 +134,7 @@ export const useGetFleetDetails = () => {
     const fleetType = AuthManagerGuard.getEnabledFleetType
 
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.FleetDetails, enable_city_id, fleetType],
         queryFn: () => FleetService.getFleetDetails({
             fleetID: AuthManagerGuard.getEnabledCity as string,
@@ -143,20 +143,20 @@ export const useGetFleetDetails = () => {
         enabled: !!enable_city_id
     });
 
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 export const useGetFleetProfilesVehiclesDetails = () => {
 
-    const {parkID} = useGetParkID()
+    const { parkID } = useGetParkID()
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.FleetVehiclesAndProfiles, parkID],
-        queryFn: () => FleetService.getFleetVehiclesAndProfilesDetails({fleetID: parkID}),
+        queryFn: () => FleetService.getFleetVehiclesAndProfilesDetails({ fleetID: parkID }),
         enabled: !!parkID
     });
 
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 export const useGetFleetStats = () => {
@@ -164,7 +164,7 @@ export const useGetFleetStats = () => {
     const cityID = AuthManagerGuard.getEnabledCity
     const fleetType = AuthManagerGuard.getEnabledFleetType
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.FleetStats, cityID, fleetType],
         queryFn: () => FleetService.getFleetStats({
             fleetID: AuthManagerGuard.getEnabledCity as string,
@@ -173,46 +173,46 @@ export const useGetFleetStats = () => {
         enabled: !!cityID
     });
 
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 export const useGetSpecificFleetStats = () => {
 
-    const {parkID} = useGetParkID()
+    const { parkID } = useGetParkID()
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.SpecificFleetStat, parkID],
-        queryFn: () => FleetService.getSpecificFleetStat({fleetID: parkID as string}),
+        queryFn: () => FleetService.getSpecificFleetStat({ fleetID: parkID as string }),
         enabled: !!parkID
     });
 
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 //Fleet Graph
 export const useGetCourseEvolution = (graphType: string) => {
-    const {parkID} = useGetParkID()
+    const { parkID } = useGetParkID()
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.CourseEvolution, parkID, graphType],
-        queryFn: () => FleetService.getCourseEvolution({fleetID: parkID as string, graphType: graphType}),
+        queryFn: () => FleetService.getCourseEvolution({ fleetID: parkID as string, graphType: graphType }),
         enabled: !!parkID
     });
 
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
-export const useGetActiveFleet = ()=> {
-    const {parkID} = useGetParkID()
+export const useGetActiveFleet = () => {
+    const { parkID } = useGetParkID()
 
 
-    const {data: data, isLoading} = useGetFleetsList({
+    const { data: data, isLoading } = useGetFleetsList({
         page: 1,
         itemPerPage: 1,
     })
 
-    const activeFleet = useMemo(()=> {
-        const activeFleet = data?.fleets?.find(f=>f.id == parkID)
+    const activeFleet = useMemo(() => {
+        const activeFleet = data?.fleets?.find(f => f.id == parkID)
         return activeFleet
     }, [data, parkID])
 
@@ -224,21 +224,21 @@ export const useGetActiveFleet = ()=> {
 }
 
 export const useGetRevenusEvolution = (graphType: string) => {
-    const {parkID} = useGetParkID()
+    const { parkID } = useGetParkID()
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.RevenusEvolution, parkID, graphType],
-        queryFn: () => FleetService.getRevenusEvolution({fleetID: parkID as string, graphType: graphType}),
+        queryFn: () => FleetService.getRevenusEvolution({ fleetID: parkID as string, graphType: graphType }),
         enabled: !!parkID
     });
 
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 export const useGetEntretienEvolution = (graphType: string) => {
-    const {parkID} = useGetParkID()
+    const { parkID } = useGetParkID()
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.EntretienEvolution, parkID, graphType],
         queryFn: () => FleetService.getEntretienEvolution({
             fleetID: parkID as string,
@@ -248,7 +248,7 @@ export const useGetEntretienEvolution = (graphType: string) => {
         enabled: !!parkID
     });
 
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 
@@ -258,7 +258,7 @@ export const useGetParkStats = () => {
     const type = AuthManagerGuard.getEnabledFleetType as string
     const currency = AuthManagerGuard.getCurrency
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.ParkStats, cityID, currency, type],
         queryFn: () => FleetService.getParkStats({
             cityID: AuthManagerGuard.getEnabledCity as string,
@@ -268,14 +268,14 @@ export const useGetParkStats = () => {
         enabled: !!AuthManagerGuard.getEnabledCity
     });
 
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 export const useGetBestAndLestOnCity = () => {
     const cityID = AuthManagerGuard.getEnabledCity
     const type = AuthManagerGuard.getEnabledFleetType as string
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.BestAndLeastOnCity, cityID, type],
         queryFn: () => FleetService.getBestAndLestOnCity({
             city_id: AuthManagerGuard.getEnabledCity as string,
@@ -284,14 +284,14 @@ export const useGetBestAndLestOnCity = () => {
         enabled: !!cityID
     })
 
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 export const useGetDashboardActivities = (start_date: Date, end_date: Date) => {
     const cityID = AuthManagerGuard.getEnabledCity as string
     const type = AuthManagerGuard.getEnabledFleetType as string
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.DashboardActivities, cityID, type, start_date, end_date],
         queryFn: () => FleetService.getDashboardActivities({
             city_id: AuthManagerGuard.getEnabledCity as string,
@@ -302,14 +302,14 @@ export const useGetDashboardActivities = (start_date: Date, end_date: Date) => {
         enabled: !!cityID
     })
 
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 export const useGetDashboardSubscriptionEvolution = (graphType: string) => {
     const cityID = AuthManagerGuard.getEnabledCity
     const fleetType = AuthManagerGuard.getEnabledFleetType as string
 
-    const {isLoading, data} = useQueryProvider({
+    const { isLoading, data } = useQueryProvider({
         queryKey: [FleetApiPath.DashboardSubscriptionEvolution, cityID, fleetType, graphType],
         queryFn: () => FleetService.getDashboardSubscriptionEvolution({
             cityID: AuthManagerGuard.getEnabledCity as string,
@@ -319,7 +319,7 @@ export const useGetDashboardSubscriptionEvolution = (graphType: string) => {
         enabled: !!cityID
     })
 
-    return {isLoading, data}
+    return { isLoading, data }
 }
 
 export const useActiveSubscription = () => {
@@ -404,4 +404,50 @@ export const useSuspendSubscription = () => {
         onSuspendSubscription,
     }
 
+}
+
+
+
+
+
+/////////////////////////////////////////////////////////////
+
+export const useGetFleetOverview = (fleetId: string) => {
+    const { isLoading, data } = useQueryProvider({
+        queryKey: [FleetApiPath.GetFleetOverview, fleetId],
+        queryFn: () => FleetService.getFleetOverview(fleetId),
+        enabled: !!fleetId
+    })
+
+    return {
+        isLoading,
+        data
+    }
+}
+
+
+export const useGetFleetProfile = (fleetId: string) => {
+    const { isLoading, data } = useQueryProvider({
+        queryKey: [FleetApiPath.GetFleetProfile, fleetId],
+        queryFn: () => FleetService.getFleetProfile(fleetId),
+        enabled: !!fleetId
+    })
+
+    return {
+        data,
+        isLoading
+    }
+}
+
+export const useGetFleetJournal = (fleetId: string, page?:number, itemPerPage?:number) => {
+    const { isLoading, data } = useQueryProvider({
+        queryKey: [FleetApiPath.GetFleetJournal, fleetId],
+        queryFn: () => FleetService.getFleetJournal(fleetId, page, itemPerPage),
+        enabled: !!fleetId
+    })
+
+    return {
+        data,
+        isLoading
+    }
 }

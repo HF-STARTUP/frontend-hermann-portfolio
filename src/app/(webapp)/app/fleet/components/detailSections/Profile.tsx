@@ -27,12 +27,12 @@ export function DetailRowShimmer() {
     )
 }
 
-export function DetailRowList({ rows, isLoading }: { rows: DetailRowProps[], isLoading?: boolean }) {
+export function DetailRowList({ rows, isLoading, title="Détails du profil", onEdit }: { rows: DetailRowProps[], isLoading?: boolean, title?: string, onEdit?:()=>void  }) {
 
     if (isLoading) {
         return (
             <div className="flex flex-col gap-4 border border-[#E5E7EB] rounded-2xl p-4">
-                <div className="mb-2 text-xl font-semibold">Détails du profil</div>
+                <div className="mb-2 text-xl font-semibold">{title}</div>
                 <DetailRowShimmer />
                 <DetailRowShimmer />
                 <DetailRowShimmer />
@@ -52,8 +52,8 @@ export function DetailRowList({ rows, isLoading }: { rows: DetailRowProps[], isL
     return (
         <div className="flex flex-col gap-4 border border-[#E5E7EB] rounded-2xl p-4">
             <div className="mb-2 text-xl font-semibold flex items-center justify-between w-full">
-                Détails du profil
-                <Button variant="ghost" size="icon" className="text-vaLightGray">
+                {title}
+                <Button variant="ghost" size="icon" className="text-vaLightGray" onClick={onEdit}>
                     <Edit size={24} />
                 </Button>
             </div>

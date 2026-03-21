@@ -19,9 +19,12 @@ import { useGetActiveCurrency } from "@/hooks/__globlal/useGlobalHook";
 import { RevenueData } from "../_components/RevenusBySource";
 import { useCountries } from "@/hooks/location/useCountry/useCountry";
 import { DashboardGlobalFilters } from "./useDashboardHook";
-import { useGetDashboardRevenueChartData } from "@/hooks/dashboard/useDashboard";
+import { useGetDashboardBestFleets, useGetDashboardRevenueChartData } from "@/hooks/dashboard/useDashboard";
 import { group } from "console";
 import { DashboardParams, PeriodType } from "@/types/dashboard.type";
+import BestFleetModel from "@/model/dashboard/BestFleetsModel";
+import { useUserProfile } from "@/hooks/__form/auth/useUserProfile";
+import { searchAndFilter } from "@/model/Model";
 
 // Abonnements – Evolution
 
@@ -80,22 +83,112 @@ export const useDashboardPaymentMethods = () => {
 
 // Meilleures flottes
 
-export const useDashboardBestFleet = () => {
+export interface BestFleetFilters {
+  ville?: string;
+}
 
-  const {currency} = useGetActiveCurrency()
 
-  const { data, isLoading } = useGetProfitableList({
-    type: AuthManagerGuard.getEnabledFleetType as string,
-    city_id: String(AuthManagerGuard.getEnabledCity),
-    currency_id: AuthManagerGuard.getCurrency,
+export const useDashboardBestFleet = (globalFilters?: DashboardGlobalFilters) => {
+  const { data: userProfileData } = useUserProfile();
+  
+  const [bestFleetsLocalFilters, setBestFleetsLocalFilters] = React.useState<BestFleetFilters>({
+    ville: String(AuthManagerGuard.getEnabledCity),
   });
+  
+  const { currency } = useGetActiveCurrency();
+
+  const [page, setPage] = React.useState(1);
+  const [fleets, setFleets] = React.useState<BestFleetModel[]>([]);
+  const [filterCityToken, setFilterCityToken] = React.useState("");
+  
+  const sentinelRef = React.useRef<HTMLDivElement | null>(null);
+  const pageRef = React.useRef(1);
+
+  const queryParams = React.useMemo<DashboardParams>(() => ({
+    account_type: globalFilters?.profileType,
+    start_date: globalFilters?.dateRange?.from?.toISOString(),
+    end_date: globalFilters?.dateRange?.to?.toISOString(),      
+    currency_id: globalFilters?.currency as number,
+    page,
+    itemPerPage: 10,
+    city_id: bestFleetsLocalFilters.ville !== "all" ? String(bestFleetsLocalFilters.ville) : undefined,
+  }), [globalFilters, bestFleetsLocalFilters, page]);
+
+  const { data, isLoading } = useGetDashboardBestFleets(queryParams);
+
+  const hasNextPage = React.useMemo(() => {
+    if (!data) return false;
+    return page < data.totalPages;
+  }, [data, page]);
+
+  React.useEffect(() => {
+    if (data?.fleets) {
+      if (page === 1) {
+        setFleets(data.fleets);
+      } else {
+        setFleets((prev) => {
+          const existingIds = new Set(prev.map(f => f.id));
+          const newUniqueFleets = data.fleets.filter(f => !existingIds.has(f.id));
+          return [...prev, ...newUniqueFleets];
+        });
+      }
+    }
+  }, [data?.fleets, page]);
+
+  React.useEffect(() => {
+    pageRef.current = 1;
+    setPage(1);
+    setFleets([]);
+  }, [globalFilters, bestFleetsLocalFilters]);
+
+  React.useEffect(() => {
+    const sentinel = sentinelRef.current;
+    if (!sentinel) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && hasNextPage) {
+          const nextPage = pageRef.current + 1;
+          pageRef.current = nextPage;
+          setPage(nextPage);
+        }else{
+          return;
+        }
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(sentinel);
+    return () => observer.disconnect();
+  }, [fleets.length]); 
+
+  const cityFiltered = React.useMemo(() => {
+    if (!filterCityToken || filterCityToken.trim() === "") return userProfileData?.listPark;
+    if (userProfileData) {
+      const filteredCities = searchAndFilter(userProfileData.listPark, filterCityToken, ["name"]);
+      const activeCity = AuthManagerGuard.getEnabledCity ?? String(userProfileData.listPark[0].id);
+      const cityEnabled = userProfileData.listPark.find((d) => String(d.id) === activeCity) ?? userProfileData.listPark[0];
+      const filteredDataContainActiveElement = filteredCities.find((d) => String(d.id) === activeCity);
+      return !filteredDataContainActiveElement ? [cityEnabled, ...filteredCities] : filteredCities;
+    }
+  }, [filterCityToken, userProfileData]);
 
   return {
-    fleetData: data,
+    fleetData: fleets,
     isLoading,
-    currency
+    currency,
+    bestFleetsLocalFilters,
+    setBestFleetsLocalFilters,
+    filterCityToken,
+    setFilterCityToken,
+    sentinelRef,
+    hasNextPage,
+    cityFiltered,
+    page
   };
 };
+
+
 
 // Evolution des courses
 
@@ -312,12 +405,14 @@ export const useDashboardRevenusEvolution = (globalFilters?:DashboardGlobalFilte
     variation: "up" | "down" | "constant";
     amount: string;
   } = {
-    amount: `${formatNumber(820000)} ${currency}`,
-    percent: "+17.8 %",
-    variation: "down",
+    amount: `${chartData?.previousTotal} ${currency}`,
+    percent: chartData?.percentChange ?? "",
+    variation: chartData?.variation??"constant",
   };
 
   const totalRevenus = chartData?.total || "0";
+
+  const revenusBySource: RevenueData[] = chartData?.breakdown??[];
 
   return {
     chartLabels,
@@ -327,31 +422,7 @@ export const useDashboardRevenusEvolution = (globalFilters?:DashboardGlobalFilte
     currency,
     localFilters, 
     setLocalFilters,
-    isLoadingRevenusChartData
-  };
-};
-
-export const useDashboarRevenusBySource = () => {
-  const chartData: RevenueData[] = [
-    {
-      name: "Abonnements",
-      value: 8920000,
-    },
-    {
-      name: "Commission sur transaction",
-      value: 5720000,
-    },
-    {
-      name: "API",
-      value: 1700000,
-    },
-    {
-      name: "Autres",
-      value: 625000,
-    },
-  ];
-
-  return {
-    chartData,
+    isLoadingRevenusChartData,
+    revenusBySource
   };
 };

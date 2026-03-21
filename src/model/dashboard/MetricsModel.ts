@@ -23,8 +23,10 @@ class DashboardMetrics extends Model {
         return this._instance.revenue.totalSubscriptions.label;
     }
 
-    get isRevenueUp() {
-        return this.revenueTrend >= 0;
+    get revenueVariation(): "up" | "down" | "stable" {
+        if (this.revenueTrend > 0) return "up";
+        if (this.revenueTrend < 0) return "down";
+        return "stable";
     }
 
     // --- CARTE 2: FLOTTES ---
@@ -44,8 +46,10 @@ class DashboardMetrics extends Model {
         return this._instance.fleets.activeCount.percentChange;
     }
 
-    get isFleetsUp() {
-        return this.fleetsTrend >= 0;
+    get fleetsVariation(): "up" | "down" | "stable" {
+        if (this.fleetsTrend > 0) return "up";
+        if (this.fleetsTrend < 0) return "down";
+        return "stable";
     }
 
     // --- CARTE 3: ABONNEMENTS ---
@@ -65,14 +69,32 @@ class DashboardMetrics extends Model {
         return this._instance.subscriptions.payingCount.percentChange;
     }
 
-    get isSubscriptionsUp() {
-        return this.subscriptionsTrend >= 0;
+    get subscriptionVariation(): "up" | "down" | "stable" {
+        if (this.subscriptionsTrend > 0) return "up";
+        if (this.subscriptionsTrend < 0) return "down";
+        return "stable";
     }
 
     // --- CARTE 4: AUTRES STATS (OU MARKETING) ---
-    // Note: Si ton JSON ne contient pas encore le marketing, 
-    // on utilise les autres compteurs dispos dans ton interface.
-    
+
+    get marketingCost() {
+        return formatNumber(this._instance.revenue.marketingCost.current);
+    }
+
+    get marketingTrend() {
+        return this._instance.revenue.marketingCost.percentChange;
+    }
+
+    get marketingLabel() {
+        return this._instance.revenue.marketingCost.label;
+    }
+
+    get maketingVariation(): "up" | "down" | "stable" {
+        if (this.marketingTrend > 0) return "up";
+        if (this.marketingTrend < 0) return "down";
+        return "stable";
+    }
+
     get expiringCount() {
         return this._instance.expiringSubscriptionsCount;
     }

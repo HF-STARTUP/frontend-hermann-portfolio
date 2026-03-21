@@ -22,6 +22,36 @@ abstract class Model {
         }
     }
 
+  protected formatDateTime(date: string): string {
+    if (!date) return "";
+
+    const dateObj = new Date(date);
+    
+    if (isNaN(dateObj.getTime())) return date;
+
+    const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+    });
+
+    const timeFormatter = new Intl.DateTimeFormat('fr-FR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+
+    const formattedDate = dateFormatter.format(dateObj).replace('.', '');
+    const formattedTime = timeFormatter.format(dateObj).replace(':', 'h');
+
+    const parts = formattedDate.split(' ');
+    if (parts[1]) {
+        parts[1] = parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
+    }
+
+    return `${parts.join(' ')} à ${formattedTime}`;
+}
+
     public getDifferenceInDays(dateLeft: Date, dateRight: Date): number {
         return differenceInDays(dateLeft, dateRight);
     }

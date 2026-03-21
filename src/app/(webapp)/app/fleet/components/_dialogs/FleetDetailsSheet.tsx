@@ -1,12 +1,10 @@
 import { DialogMainBody } from "@/components/display/DialogMainBody";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Calendar, MoreVertical, User } from "lucide-react";
-import Image from "next/image";
-import { AbonStatusBadge, SubscriptionBadge } from "../_sub_components/badges";
+import { Calendar, Crown, MoreVertical, User } from "lucide-react";
 import { useFleetDetailsHook } from "../../_hook/useFleetDetailsHook";
 import FleetKpiGrid from "../_sub_components/fleetDetailKpi";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DetailRowList } from "../detailSections/Profile";
 import SubscriptionContent from "../detailSections/Subscription";
@@ -15,38 +13,50 @@ import fleetJournalHook from "../../_hook/useFleetJournalHook";
 import JournalList from "../detailSections/Journal";
 import { DeleteFleetDialog } from "./utils/ConfirmFleetDelete";
 import { SuspendFleetDialog } from "./utils/SuspendFleetDialog";
+import { FleetModel } from "@/model/ADMIN/fleet";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import Badge from "@/components/display/Badge";
+import { getAvatarColor, getAvatarInitials } from "@/lib/initials.avatar.util";
+
 
 export default function FleetDetailsSheet({
     isOpen,
     onClose,
-    fleetId,
+    fleet,
     onEdit,
     onDelete,
 }: {
     isOpen: boolean;
     onClose: () => void;
-    fleetId: string;
+    fleet: FleetModel | null;
     onEdit: (fleetId: string) => void;
     onDelete: (fleetId: string) => void;
 }) {
-    const { journals } = fleetJournalHook();
-    const { KpiItems, ProfileItems } = useFleetDetailsHook();
+    const { 
+        journals, 
+        isLoadingFleetJournal, 
+        sentinelRef, 
+        isFetching ,
+        page
+    } = fleetJournalHook(fleet?.id);
+
+
+    const { 
+        KpiItems, 
+        ProfileItems, 
+        isLoadingFleetOverview, 
+        isLoadingFleetProfile 
+    } = useFleetDetailsHook(fleet?.id);
+    
     const [activeTab, setActiveTab] = useState<string>("profile");
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const [isSuspendOpen, setIsSuspendOpen] = useState(false);
-
-    const fleetName = useMemo(
-        () =>
-            ProfileItems.find((item) => item.label === "Nom de la flotte")?.value ??
-            "Cette flotte",
-        [ProfileItems]
-    );
+    if (!fleet) return null;
 
     return (
         <Sheet open={isOpen} onOpenChange={onClose} bgType="whited">
@@ -54,33 +64,32 @@ export default function FleetDetailsSheet({
                 <SheetHeader className="pb-4">
                     <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3">
-                            <div className="size-16 rounded-xl overflow-hidden bg-vaLightGray/70 flex items-center justify-center">
-                                <Image
-                                    src="https://urbandrivers.taxi/_next/image?url=%2Fassets%2Fwhited-logo.png&w=2048&q=75"
-                                    alt="Logo de la flotte"
-                                    width={100}
-                                    height={100}
-                                    className="w-full h-auto object-contain"
-                                />
+                            <div
+                                className={`size-16 rounded-xl flex items-center justify-center font-bold text-white text-lg ${getAvatarColor(
+                                    fleet.name
+                                )}`}
+                            >
+                                {getAvatarInitials(fleet.name)}
                             </div>
                             <div className="h-16 flex flex-col justify-between gap-1">
                                 <h2 className="text-xl font-semibold text-[#0A0A0A]">
-                                    {fleetName}
+                                    {fleet.name} {fleet.id}
                                 </h2>
                                 <div className="flex items-center gap-2 text-xs text-vaLightGray">
                                     <User size={18} />
-                                    <span>Amadou Diallo</span>
+                                    <span>{fleet.ownerName}</span>
                                 </div>
                                 <div className="flex items-center gap-2 text-xs text-vaLightGray">
                                     <Calendar size={18} />
-                                    <span>Ajouté le 15 Jan 2025 à 15h00</span>
+                                    <span>Ajouté le {fleet.created_at}</span>
                                 </div>
                             </div>
                         </div>
                         <div className="flex flex-col items-end gap-3">
                             <div className="flex items-center gap-4">
-                                <SubscriptionBadge name="ESSENTIEL" />
-                                <AbonStatusBadge status="Active" />
+
+                                {fleet.suscription_name && <Badge type={fleet.suscription_name} icon={<Crown />} />}
+                                <Badge type={fleet.statusDisplay} />
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
                                         <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -114,7 +123,7 @@ export default function FleetDetailsSheet({
                 </SheetHeader>
                 <DialogMainBody className="flex-1 max-h-[calc(100dvh-100px)]">
                     <div className="space-y-6 py-4">
-                        <FleetKpiGrid kpiItems={KpiItems} />
+                        <FleetKpiGrid kpiItems={KpiItems} isLoading={isLoadingFleetOverview} />
                         <Tabs
                             value={activeTab}
                             onValueChange={setActiveTab}
@@ -127,19 +136,19 @@ export default function FleetDetailsSheet({
                                 <TabsTrigger value="journal">Journal</TabsTrigger>
                             </TabsList>
                         </Tabs>
-                        {activeTab === "profile" && <DetailRowList rows={ProfileItems} />}
+                        {activeTab === "profile" && <DetailRowList rows={ProfileItems} isLoading={isLoadingFleetProfile} />}
                         {activeTab === "subscription" && <SubscriptionContent />}
                         {activeTab === "transactions" && <TransactionsContent />}
                         {activeTab === "journal" && (
-                            <JournalList items={journals} isLoading={false} />
+                            <JournalList items={journals} isLoading={isLoadingFleetJournal} sentinelRef={sentinelRef} isFetching={isFetching} page={page} />
                         )}
                     </div>
                 </DialogMainBody>
                 <DeleteFleetDialog
                     isOpen={isDeleteOpen}
                     onClose={() => setIsDeleteOpen(false)}
-                    fleetId={fleetId}
-                    fleetName={fleetName}
+                    fleetId={fleet.id}
+                    fleetName={fleet.name}
                     onConfirm={(id) => {
                         onDelete(id);
                     }}
@@ -147,8 +156,8 @@ export default function FleetDetailsSheet({
                 <SuspendFleetDialog
                     isOpen={isSuspendOpen}
                     onClose={() => setIsSuspendOpen(false)}
-                    fleetId={fleetId}
-                    fleetName={fleetName}
+                    fleetId={fleet.id}
+                    fleetName={fleet.name}
                     onConfirm={(id) => {
                         onEdit(id);
                     }}

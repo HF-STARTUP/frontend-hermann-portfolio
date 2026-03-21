@@ -23,3 +23,16 @@ export function useGetDashboardRevenueChartData(params?: DashboardParams) {
     })
     return {data, isLoading};
 }
+
+
+
+// Get Dashboard Best Fleets
+export function useGetDashboardBestFleets(params?: DashboardParams) {
+
+    const {data, isLoading} = useQuery({
+        queryKey: [DashBoardApiRoutes.GetBestFleets, params],
+        queryFn: () => DashboardService.getBestFleets(params),
+    })
+
+    return {data, isLoading};
+}

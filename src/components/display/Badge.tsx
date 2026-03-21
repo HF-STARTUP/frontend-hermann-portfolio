@@ -1,11 +1,12 @@
-import { LeadStatus } from "@/app/(webapp)/app/marketing/campagnes/_hook/useCampagneLeadsHook";
+import { SubscriptionStatus } from "@/app/(webapp)/app/fleet/_hook/useFleetHook";
+import { LeadStatus, LeadStep } from "@/app/(webapp)/app/marketing/campagnes/_hook/useCampagneLeadsHook";
 import { CampagneStatus } from "@/app/(webapp)/app/marketing/campagnes/_hook/useCampagnesHook";
 import { PackageType, ProfileStatus } from "@/app/(webapp)/app/subscriptions/_hooks/usePackageList";
 import { ReactNode } from "react";
 
 export type BadgeVariant = 'green' | "orange" | "red" | "purple" | "blue" | "light-blue" | "default"
 
-export type BadgeType = LeadStatus | CampagneStatus | PackageType | ProfileStatus
+export type BadgeType = LeadStatus | CampagneStatus | PackageType | ProfileStatus | SubscriptionStatus | LeadStep
 
 export const getBadgeVariantClasses = (variant: BadgeVariant): string => {
     switch (variant) {
@@ -55,7 +56,18 @@ export const getBadgeText = (type?: BadgeType) => {
             return "Actif";
         case "suspended":
             return "Suspendu"
-
+        case "inactive":
+            return "Inactif";
+        case "deleted":
+            return "Supprimé";
+        case "suspended":
+            return "Suspendu";
+        case "demo_planed":
+            return "Démo planifiée";
+        case "new":
+            return "Nouveau";
+        case "proposition":
+            return "Proposition";
         default:
             return "Inconnu";
     }
@@ -87,8 +99,18 @@ export const getBadgeVariant = (type?: BadgeType): BadgeVariant => {
             return "blue"
         case "active":
             return "green";
+        case "inactive":
+            return "orange";
+        case "deleted":
+            return "red";            
         case "suspended":
-            return "default"
+            return "default";
+        case "demo_planed":
+            return "orange";
+        case "new":
+            return "light-blue";
+        case "proposition":
+            return "purple"
 
         default:
             return "default";

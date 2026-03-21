@@ -1,3 +1,4 @@
+import { PackageType } from "@/app/(webapp)/app/subscriptions/_hooks/usePackageList";
 import Model from "@/model/Model";
 import {
     AdminOnFleetResponseType,
@@ -5,7 +6,7 @@ import {
     FleetResponseType,
     Info,
     Subscription
-} from "@/types/admin/fleet";
+} from "@/types/admin/fleet.type";
 import {formatDistanceToNow} from "date-fns";
 
 
@@ -66,8 +67,8 @@ export class FleetModel extends Model {
         return (this._instance.subscription_amount ? this._instance.subscription_amount + " " : 0 + " ") + this._instance.currency
     }
 
-    get suscription_name() {
-        return this._instance.subscription ?? "Aucun abonnement actif"
+    get suscription_name(): PackageType | undefined {
+        return this._instance.subscription?this._instance.subscription.toUpperCase() as PackageType:undefined;
     }
 
     get hasActiveSubscription() {
@@ -79,7 +80,7 @@ export class FleetModel extends Model {
     }
 
     get statusDisplay() {
-        return this.hasActiveSubscription ? "Actif" : "Inactif";
+        return this.hasActiveSubscription ? "active" : "inactive";
     }
 }
 

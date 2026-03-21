@@ -1,3 +1,5 @@
+import { PaginationResponse } from "../dashboard.type";
+
 export type FleetListResponseType = {
     id: string;
     name?: string;
@@ -193,4 +195,80 @@ export interface ProfitableListResponseType {
     vehicle_number: number;
     flux: number;
     currency: string;
+}
+
+
+
+//////////////////////////////////////////////////
+
+
+// Fleet overview interfaces
+
+export interface MetricGrowth {
+    current_month: number;
+    last_month: number;
+    delta_percent: number;
+}
+
+export interface MetricCount {
+    count: number;
+}
+
+export interface FleetOverviewData {
+    revenue: MetricGrowth;
+    vehicles: MetricCount;
+    drivers: MetricCount;
+    transactions: MetricGrowth;
+}
+
+
+// Fleet profile details interfaces
+export interface FleetOwner {
+    first_name: string;
+    last_name: string;
+}
+
+export interface FleetProfileData {
+    id: string;
+    fleet_id: string;
+    fleet_name: string;
+    created_at: string;
+    account_type: string;
+    country: string;
+    country_code: string;
+    city: string;
+    currency: string;
+    owner: FleetOwner;
+    owner_email: string;
+    owner_phone: string;
+}
+
+
+// Fleet journal interfaces
+
+export interface FleetJournalVehicle {
+    id: string;
+    registration_number: string;
+    brand: string;
+    model: string;
+}
+
+export interface FleetJournalDriver {
+    id: string;
+    first_name: string;
+    last_name: string;
+}
+
+export interface FleetJournalItem {
+    id: string;
+    created_at: string;
+    caused_event: string;
+    title: string;
+    description: string;
+    vehicle: FleetJournalVehicle | null;
+    driver: FleetJournalDriver | null;
+}
+
+export interface FleetJournalData extends PaginationResponse{
+    data: FleetJournalItem[];
 }

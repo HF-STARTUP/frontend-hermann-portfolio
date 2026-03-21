@@ -8,7 +8,7 @@ import { Trash2 } from "lucide-react";
 interface DeleteFleetDialogProps {
     isOpen: boolean;
     onClose: () => void;
-    fleetName: string;
+    fleetName?: string;
     fleetId: string;
     onConfirm?: (fleetId: string) => void;
 }

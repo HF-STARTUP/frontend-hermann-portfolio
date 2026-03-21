@@ -59,7 +59,9 @@ const RevenueChart = (
         localFilters,
         isLoading
     }: {
-        chartLabels: string[], chartValues: number[], variation: {
+        chartLabels: string[],
+        chartValues: number[], 
+        variation: {
             percent: string;
             variation: "up" | "down" | "constant";
             amount: string
@@ -139,7 +141,7 @@ const RevenueChart = (
             </div>
             {/* Chart */}
             {isLoading ? <ChartShimmer /> :
-                <div className="h-[23rem]">
+                <div className="h-[28rem]">
                     <div className="mb-8 flex flex-col gap-1">
                         <span className="text-3xl font-bold text-black">
                             {totalRevenus} <span className="text-sm">{currency}</span>
@@ -151,10 +153,13 @@ const RevenueChart = (
                                 {variation.variation === 'down' && <TrendingDown className="size-3" />}
                                 {variation.variation === 'constant' && <Minus className="size-3" />}
                                 {variation.percent} ({variation.amount})
-                            </div> vs mois précédent
+                            </div> vs période précédente
                         </span>
                     </div>
-                    <Bar data={data} options={options} />
+                    <div className="h-[20rem]">
+                        <Bar data={data} options={options} />
+                    </div>
+
                 </div>
             }
 

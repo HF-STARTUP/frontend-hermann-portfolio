@@ -8,7 +8,7 @@ import { CircleOff, PauseCircle } from "lucide-react";
 interface SuspendFleetDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  fleetName: string;
+  fleetName?: string;
   fleetId: string;
   onConfirm?: (fleetId: string) => void;
 }

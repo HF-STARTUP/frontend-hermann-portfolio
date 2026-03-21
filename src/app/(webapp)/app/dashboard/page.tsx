@@ -4,7 +4,6 @@ import { PageTitle } from "@/components/ui/custom/PageTitle";
 import { HeadSection } from "@/app/(webapp)/app/dashboard/_components/head/headSection";
 import {
     // AbonnEvolution,
-    BestFleet,
     // SouscriptionPartition
 } from "@/app/(webapp)/app/dashboard/_components/abonEvolution/abonnEvolution";
 import { useDashboardFleetMap } from "@/app/(webapp)/app/dashboard/_hook/useDashboardFleetMap";
@@ -13,7 +12,7 @@ import FleetMap from "@/app/(webapp)/app/dashboard/_components/news/fleet-map";
 import PaymentMethods from "@/app/(webapp)/app/dashboard/_components/news/paymentMethods";
 import { Activities } from "@/app/(webapp)/app/dashboard/_components/activities/acctivities";
 import RevenueChart from "./_components/RevenusDiagram";
-import { useDashboardRevenusEvolution, useDashboarRevenusBySource } from "./_hook/useDashboardSectionsHooks";
+import { useDashboardRevenusEvolution } from "./_hook/useDashboardSectionsHooks";
 import RevenueBySourceChart from "./_components/RevenusBySource";
 import { useDashboardHook } from "./_hook/useDashboardHook";
 import NotificationBand from "@/components/display/NotificationBand";
@@ -22,6 +21,7 @@ import InnactiveFleetList from "./_components/_sub_components/InactiveFleet";
 import PeriodSelector from "@/components/elements/PeriodSelector";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Loader } from "lucide-react";
+import { BestFleet } from "./_components/BestFleetsSection";
 
 export default function DashboardPage() {
 
@@ -44,10 +44,11 @@ export default function DashboardPage() {
         variation,
         localFilters,
         setLocalFilters,
-        isLoadingRevenusChartData
+        isLoadingRevenusChartData,
+        revenusBySource
     } = useDashboardRevenusEvolution(globalFilters);
+    
     const { fleets } = useDashboardFleetMap()
-    const { chartData } = useDashboarRevenusBySource();
 
     return (
         <div>
@@ -130,8 +131,11 @@ export default function DashboardPage() {
                         </div>
                         <div className="xl:col-span-2">
                             <RevenueBySourceChart
-                                data={chartData}
+                                data={revenusBySource}
+                                totalRevenus={totalRevenus}
                                 currency={currency}
+                                chartValues={chartValues}
+                                isLoading={isLoadingRevenusChartData}
                             />
                         </div>
                     </div>
@@ -144,7 +148,7 @@ export default function DashboardPage() {
                             </div>
 
                             <div className={"xl:col-span-2"}>
-                                <BestFleet />
+                                <BestFleet globalFilters={globalFilters}  />
                             </div>
                         </div>
                         {/*<Activities/>*/}

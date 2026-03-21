@@ -187,48 +187,39 @@ export const toQueriesString = (baseUri: string, params: any) => {
 }
 
 export function formatNumber(input: string | number | undefined): string {
-    // Si `input` est falsy (undefined, null, chaîne vide...), on renvoie "0"
     if (!input) {
         return "0";
     }
 
     let numericValue: number;
 
-    // Si c'est déjà un nombre, on l'assigne directement
     if (typeof input === "number") {
         numericValue = input;
     } else {
-        // Sinon, on essaie de parser la chaîne de caractères
         const parsed = parseFloat(input.trim());
-        // Si la valeur n'est pas un nombre, on renvoie "0"
         if (isNaN(parsed)) {
             return "0";
         }
         numericValue = parsed;
     }
 
-    // On vérifie le nombre de décimales présent dans la chaîne d'origine
-    // (par exemple "12.3456" => decimalPart.length === 4)
-    const decimalPart = numericValue.toString().split(".")[1];
-    // Si la partie décimale a plus de 2 chiffres, on garde 2 décimales,
-    // sinon on arrondit à 0 décimale
-    const decimals = decimalPart && decimalPart.length > 2 ? 2 : 0;
-
-    // On arrondit le nombre au format désiré
-    const fixedStr = numericValue.toFixed(decimals);
-
-    // Séparation partie entière et partie décimale
+    const fixedStr = numericValue.toFixed(2);
     const [intPart, decPart] = fixedStr.split(".");
 
-    // Ajout de la virgule de séparation tous les trois chiffres
     const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-    // Si on a une partie décimale, on la réassemble
-    // Sinon on renvoie juste la partie entière formatée
-    return decPart ? `${formattedInt}.${decPart}` : formattedInt;
+    // 👇 afficher les décimales seulement si ≠ "00"
+    if (decPart && decPart !== "00") {
+        return `${formattedInt}.${decPart}`;
+    }
+
+    return formattedInt;
 }
 
 export enum ConnexionMode {
     Staging = "staging",
     Production = "production",
 }
+
+
+

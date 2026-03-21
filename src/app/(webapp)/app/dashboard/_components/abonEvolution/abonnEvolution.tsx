@@ -4,7 +4,6 @@ import { CustomChartLineUtils3 } from "@/app/(protected)/dashboard/_components/_
 import React, { useMemo, useState } from "react";
 import {
     useDashboardAbonnEvolution,
-    useDashboardBestFleet,
     useDashboardCashEvolution,
     useDashboardCourseEvolution,
     useDashboardEntretienEvolution
@@ -392,103 +391,6 @@ export const SouscriptionPartition = () => {
     )
 }
 */
-
-export const BestFleet = () => {
-
-    const { fleetData, isLoading, currency } = useDashboardBestFleet()
-
-    const [ville, setVille] = useState<string | undefined>()
-    const [type, setType] = useState<string | undefined>()
-
-    return (
-        <div className={"flex flex-col bg-white p-6 rounded-2xl h-fit max-w-full"}>
-            <div className={"flex flex-col items-start justify-between"}>
-                <div className="flex items-center justify-between w-full">
-                    <p className="text-2xl font-bold text-vaTextPrimary">Meilleures flottes</p>
-                    <div className="flex items-center gap-2">
-                        <Select value={ville} defaultValue="1">
-                            <SelectTrigger className="bg-vaLightGray/10 border-none rounded-xl text-vaTextPrimary px-4 font-semibold">
-                                <SelectValue placeholder="Ville"></SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="1">Douala</SelectItem>
-                                <SelectItem value="2">Yaounde</SelectItem>
-                                <SelectItem value="3">Coccody</SelectItem>
-                                <SelectItem value="4">Kinshassa</SelectItem>
-                                <SelectItem value="5">San Pedro</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <Select value={type} defaultValue="1">
-                            <SelectTrigger className="bg-vaLightGray/10 border-none rounded-xl text-vaTextPrimary px-4 font-semibold">
-                                <SelectValue placeholder="type"></SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="1">Particulier</SelectItem>
-                                <SelectItem value="2">Professionnel</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
-                
-
-                <div className="w-full">
-                    {fleetData && <div className="space-y-6 pt-6 w-full">
-                        <div className="w-full">
-                            {/* Fleet Items & Header Container */}
-                            {!isLoading && fleetData && fleetData.length == 0 && (
-                                <div>
-                                    <EmptyData message={"Aucune donnée pour le moment"} />
-                                </div>
-                            )}
-
-                            {fleetData && fleetData.length ? (
-                                <div className="w-full">
-                                    {/* Scrollable Area - Hauteur conservée à 33.5rem */}
-                                    <div className={"h-full max-h-[39rem] overflow-x-auto overflow-y-auto w-full custom-scrollbar"}>
-
-                                        {/* Conteneur interne avec largeur mini pour le scroll horizontal sur mobile */}
-                                        <div className="w-full min-w-[750px]">
-
-                                            {/* Header (placé ici pour scroller avec le contenu) */}
-                                            <div className="grid grid-cols-4 gap-4 border-b border-vaGray pb-4 text-base font-normal text-vaTextPrimary sticky top-0 bg-white z-[5]">
-                                                <div className="">Flotte</div>
-                                                <div className="">Type</div>
-                                                <div className="">Nombres de véhicules</div>
-                                                <div className="">Flux financiers</div>
-                                            </div>
-
-                                            {/* Fleet Items */}
-                                            {fleetData.map((fleet) => (
-                                                <div
-                                                    key={fleet.id}
-                                                    className="grid grid-cols-4 w-full py-4 text-sm text-black font-medium gap-4 items-center"
-                                                >
-                                                    <div className="w-full">
-                                                        {fleet.park_name}
-                                                    </div>
-                                                    <div className="w-full">
-                                                        {fleet.type}
-                                                    </div>
-                                                    <div className="w-full">
-                                                        {fleet.vehicle_number}
-                                                    </div>
-                                                    <div className="w-full">
-                                                        {fleet.flux} {currency}
-                                                    </div>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            ) : <span></span>}
-                        </div>
-                    </div>}
-                </div>
-                {isLoading && <Loading className={"h-[150px]"} />}
-            </div>
-        </div>
-    )
-}
 
 
 interface DataPoint {
