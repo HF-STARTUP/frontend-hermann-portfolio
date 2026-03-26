@@ -54,10 +54,11 @@ export interface AdminAccessType {
 export type AddAdminInput = {
     email: string
     phone: string
-    city_id: string
-    access: AdminAccessType[]
+    cities_id: number[]
     first_name: string
     last_name: string
+    role_id: string
+    // password?: string
 }
 
 export type AddAdminOnCityInput = {
@@ -83,7 +84,9 @@ export const AddAdminInputSchema = Joi.object<AddAdminInput>({
     phone: _JoiConfig.phoneRequired,
     first_name: _JoiConfig.strRequired,
     last_name: _JoiConfig.strRequired,
-    city_id: _JoiConfig.strOptionnal,
+    cities_id: Joi.array().items(Joi.number()).required(),
+    role_id: _JoiConfig.strRequired,
+    // password: _JoiConfig.strRequired
 })
 
 

@@ -6,9 +6,7 @@ import { getAvatarColor, getAvatarInitials } from "@/lib/initials.avatar.util";
 import Badge from "@/components/display/Badge";
 import { DialogMainBody } from "@/components/display/DialogMainBody";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import CardTitle from "@/components/ui/custom/CardTitle";
-import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import React, { useState } from "react";
 import { DetailRowList, DetailRowProps } from "@/app/(webapp)/app/fleet/components/detailSections/Profile";
 
 export const LeadDetailsSheet = ({ isOpenned, onClose, lead }: { isOpenned: boolean, onClose: () => void, lead?: LeadItem }) => {
@@ -43,6 +41,7 @@ export const LeadDetailsSheet = ({ isOpenned, onClose, lead }: { isOpenned: bool
             value: lead?.commercialName
         },
     ]
+    const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
     return (
         <Sheet open={isOpenned} onOpenChange={onClose}>
             <SheetContent variant={"2xl"}>
@@ -72,7 +71,7 @@ export const LeadDetailsSheet = ({ isOpenned, onClose, lead }: { isOpenned: bool
                         <Badge type={lead?.currentStep} />
                     </div>
                 </SheetHeader>
-                <DialogMainBody className="space-y-6 min-h-[calc(100dvh-120px)]">
+                <DialogMainBody className="space-y-6 min-h-[calc(100dvh-120px)]" ref={scrollContainerRef}>
                     <Tabs>
                         <TabsList className="grid grid-cols-4">
                             <TabsTrigger value="details">Détails</TabsTrigger>

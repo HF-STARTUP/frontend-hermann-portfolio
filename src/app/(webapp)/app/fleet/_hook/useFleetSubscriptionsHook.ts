@@ -1,128 +1,91 @@
 import { Column } from "@/components/display/CustomTableDisplay";
 import { useGetActiveCurrency } from "@/hooks/__globlal/useGlobalHook";
-import React, { useMemo } from "react";
-import { AbonStatusBadge, SubscriptionBadge } from "../components/_sub_components/badges";
+import React, { useMemo, useState } from "react";
+import {
+  useGetActiveSubscriptionOnFleet,
+  useGetSubscriptionHistoryOnFleet,
+} from "@/hooks/admin/useFleetHook";
+import Badge from "@/components/display/Badge";
+import { PackageType } from "../../subscriptions/_hooks/usePackageList";
+import { Crown } from "lucide-react";
+import { FleetSubscriptionParams, SubscriptionStatus } from "@/types/admin/fleet.type";
+import { DateRange } from "react-day-picker";
+import { toIsoDate } from "@/services/Service";
 
 export interface SubscriptionRow {
   date: string;
-  plan: string;
+  plan: PackageType;
   amount: number;
   period: "monthly" | "yearly";
   paymentMethod: {
     name: string;
     icon: string;
   };
-  status: "using" | "paid" | "expired";
+  status: SubscriptionStatus;
 }
 
-export const useFleetSubscriptionsHook = () => {
+export const useFleetSubscriptionsHook = (fleetId?: string) => {
   const { currency } = useGetActiveCurrency();
+  
+  const [dateRange, setDateRange] = useState<DateRange>();
+  const [page, setPage] = useState(1);
+  const [itemPerPage, setItemPerPage] = useState(10);
 
-  const subscriptions: SubscriptionRow[] = [
-    {
-      date: "22 Fév.2026 à 10:00",
-      plan: "ESSENTIEL",
-      amount: 100,
-      period: "monthly",
+  const queryParams = useMemo<FleetSubscriptionParams>(() => {
+    return {
+      start_date: toIsoDate(dateRange?.from),
+      end_date: toIsoDate(dateRange?.to),
+      page: page,
+      itemPerPage: itemPerPage
+    };
+  }, [dateRange, page, itemPerPage]);
+
+  const { data: fleetSubscriptions, isLoading: isLoadingFleetSubscriptions } =
+    useGetSubscriptionHistoryOnFleet(queryParams, fleetId);
+
+  const { data: activeSubscription, isLoading: isLoadingActiveSubscription } =
+    useGetActiveSubscriptionOnFleet(fleetId);
+
+  const subscriptions: SubscriptionRow[] = useMemo(() => {
+    return fleetSubscriptions?.subscriptions.map((subs) => ({
+      amount: subs.amount ?? 0,
+      date: subs.startDate ?? "",
       paymentMethod: {
-        name: "Wave",
         icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI3wzGW2Od0fwu9d0nGua0cme_mSiKlz2u4A&s",
+        name: subs.paymentMethod,
       },
-      status: "using",
-    },
-    {
-      date: "22 Fév.2026 à 10:00",
-      plan: "ESSENTIEL",
-      amount: 100,
-      period: "monthly",
-      paymentMethod: {
-        name: "Wave",
-        icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI3wzGW2Od0fwu9d0nGua0cme_mSiKlz2u4A&s",
-      },
-      status: "paid",
-    },
-    {
-      date: "22 Fév.2026 à 10:00",
-      plan: "ESSENTIEL",
-      amount: 100,
-      period: "monthly",
-      paymentMethod: {
-        name: "Wave",
-        icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI3wzGW2Od0fwu9d0nGua0cme_mSiKlz2u4A&s",
-      },
-      status: "expired",
-    },
-    {
-      date: "22 Fév.2026 à 10:00",
-      plan: "ESSENTIEL",
-      amount: 100,
-      period: "monthly",
-      paymentMethod: {
-        name: "Wave",
-        icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI3wzGW2Od0fwu9d0nGua0cme_mSiKlz2u4A&s",
-      },
-      status: "expired",
-    },
-    {
-      date: "22 Fév.2026 à 10:00",
-      plan: "ESSENTIEL",
-      amount: 100,
-      period: "monthly",
-      paymentMethod: {
-        name: "Wave",
-        icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI3wzGW2Od0fwu9d0nGua0cme_mSiKlz2u4A&s",
-      },
-      status: "using",
-    },
-    {
-      date: "22 Fév.2026 à 10:00",
-      plan: "ESSENTIEL",
-      amount: 100,
-      period: "monthly",
-      paymentMethod: {
-        name: "Wave",
-        icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI3wzGW2Od0fwu9d0nGua0cme_mSiKlz2u4A&s",
-      },
-      status: "paid",
-    },
-    {
-      date: "22 Fév.2026 à 10:00",
-      plan: "ESSENTIEL",
-      amount: 100,
-      period: "monthly",
-      paymentMethod: {
-        name: "Wave",
-        icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI3wzGW2Od0fwu9d0nGua0cme_mSiKlz2u4A&s",
-      },
-      status: "expired",
-    },
-  ];
+      period: subs.subscriptionPlan as "monthly" | "yearly",
+      plan: subs.subscription.name as PackageType,
+      status: subs.status,
+    })) ?? [];
+  }, [fleetSubscriptions]);
 
   const paginationMeta = useMemo(
     () => ({
-      totalRecords: subscriptions.length ?? 0,
-      totalPages: 1,
-      currentPage: 1,
-      itemPerPage: 10,
+      totalRecords: fleetSubscriptions?.totalRecords ?? 0,
+      totalPages: fleetSubscriptions?.totalPages ?? 1,
+      currentPage: fleetSubscriptions?.currentPage ?? page,
+      itemPerPage: fleetSubscriptions?.itemPerPage ?? itemPerPage,
     }),
-    [subscriptions.length],
+    [fleetSubscriptions, page, itemPerPage]
   );
 
   const pagination = useMemo(
     () => ({
       currentPage: paginationMeta.currentPage,
       totalPages: Math.max(1, paginationMeta.totalPages),
-      onPageChange: () => {},
+      onPageChange: setPage,
       totalEntries: paginationMeta.totalRecords,
-      pageSize: 10,
-      onPageSizeChange: () => {},
+      pageSize: itemPerPage,
+      onPageSizeChange: (size: number) => {
+        setItemPerPage(size);
+        setPage(1);
+      },
     }),
-    [paginationMeta],
+    [paginationMeta, itemPerPage]
   );
 
-  const tableColumns: Column<SubscriptionRow>[] = useMemo<
-    Column<SubscriptionRow>[]
-  >(
+  const tableColumns: Column<SubscriptionRow>[] = useMemo<Column<SubscriptionRow>[]>(
     () => [
       {
         header: "Date",
@@ -130,38 +93,48 @@ export const useFleetSubscriptionsHook = () => {
       },
       {
         header: "Plan",
-        accessor: (item) => React.createElement(SubscriptionBadge, { name: item.plan ?? "-" }),
+        accessor: (item) =>
+          React.createElement(Badge, {
+            type: item.plan,
+            icon: React.createElement(Crown, { size: 14 }),
+          }),
       },
       {
         header: "Prix",
         accessor: (item) =>
-          `${item.amount} ${currency} / ${item.period == "monthly" ? "mois" : "an"}`,
+          `${item.amount} ${currency} / ${item.period === "monthly" ? "mois" : "an"}`,
       },
       {
         header: "Moyen de paiement",
         accessor: (item) =>
           React.createElement(
             "div",
-            { style: { display: "flex", alignItems: "center", gap: "10px" } },
+            { style: { display: "flex", alignItems: "center", gap: "8px" } },
             React.createElement("img", {
               src: item.paymentMethod.icon,
-              alt: "logo",
-              style: { width: "30px" },
+              alt: item.paymentMethod.name,
+              style: { width: "24px", height: "24px", objectFit: "contain" },
             }),
-            React.createElement("label", null, item.paymentMethod.name),
+            React.createElement("span", null, item.paymentMethod.name),
           ),
       },
       {
         header: "Statut",
-        accessor: (item) => (React.createElement(AbonStatusBadge, { status: item.status === "using" ? "Active" : item.status === "paid" ? "Payé" : "Expiré" })),
+        accessor: (item) => React.createElement(Badge, { type: item.status }),
       },
     ],
-    [],
+    [currency]
   );
 
   return {
     subscriptions,
     tableColumns,
     pagination,
+    paginationMeta,
+    isLoadingFleetSubscriptions,
+    activeSubscription,
+    isLoadingActiveSubscription,
+    dateRange,
+    setDateRange
   };
 };

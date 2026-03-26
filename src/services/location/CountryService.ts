@@ -1,50 +1,47 @@
-import {
-  CityType,
-  CountryType,
-  GetCountryResponseType,
-} from "@/types/location/location.type";
 import Country from "@/model/location/Country";
-import { getBaseApiPath } from "@/utils/const/envVars";
+import Service from "@/services/Service";
+import { toQueriesString } from "@/lib/utils";
+import { CountryType } from "@/types/location/location.type";
 
-const apiPath = getBaseApiPath();
-
-export const FleetCityPath = `${apiPath}/location/cities/park?itemPerPage=5000&page=1`;
-
-export class CountryService {
-  private countryApiPath = "/location/country";
-
-  constructor() {
-    this.fetchCountries = this.fetchCountries.bind(this);
-  }
-
-  private get getFullCountryApiPath() {
-    return `${apiPath}/${this.countryApiPath}`;
-  }
-
-  async fetchCountries(inputs?: { fleet?: boolean }): Promise<Country[]> {
-    const response: Response = await fetch(
-      `${this.getFullCountryApiPath}${inputs?.fleet ? "?fleet=true" : ""}`,
-    );
-
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-    const getCountriesData: GetCountryResponseType = await response.json();
-    const countriesParsed: CountryType[] = getCountriesData.data;
-
-    return Country.toCountries(countriesParsed);
-  }
-
-  async fetchFleetCities(): Promise<CityType[]> {
-    const response: Response = await fetch(FleetCityPath);
-
-    if (!response.ok) {
-      throw new Error("Network response was not ok");
-    }
-
-    const getCountriesData = await response.json();
-    const citiesParsed: { data: CityType[] } = getCountriesData.data;
-
-    return citiesParsed.data;
-  }
+export interface GetCountryParams {
+    phone_code?: string;
+    iso_code?: string;
+    fleet?: boolean;
 }
+
+export enum CountryApiPath {
+    GetCountries = "/location/country",
+}
+
+export class CountryService extends Service {
+    private static instance: CountryService = new CountryService();
+
+    private constructor() {
+        super();
+    }
+
+    public static getInstance(): CountryService {
+        return CountryService.instance;
+    }
+
+    public static async fetchCountries(params?: GetCountryParams): Promise<Country[]> {
+        const uri = toQueriesString(CountryApiPath.GetCountries, params);
+
+        const response = await CountryService.getInstance().execHttpRequest<CountryType[]>({
+            url: uri,
+            method: CountryService.getInstance().httpMethods.get,
+        });
+
+        const countriesRaw = response || [];
+
+        return Country.toCountries(countriesRaw);
+    }
+
+    static invalidateCountries() {
+        return CountryService.getInstance().queryClient.invalidateQueries({
+            queryKey: [CountryApiPath.GetCountries],
+        });
+    }
+}
+
+export default CountryService;

@@ -9,6 +9,8 @@ import {
     FleetOverviewData,
     FleetProfileData,
     FleetResponseType,
+    FleetSubscriptionParams,
+    FleetSubscriptionsResponseData,
     ParkDetailsResponseType,
     ProfitableListResponseType,
     RevenusEvolution
@@ -190,18 +192,21 @@ class FleetService extends Service {
         return AdminOnFleetModel.fromArray(data)
     }
 
-    public static async getActiveSubscriptionList({ park_id }: { park_id: string }): Promise<AbonResponseModel[]> {
+    public static async getActiveSubscriptionList(params: FleetSubscriptionParams, park_id?: string){
+        const url = toQueriesString( FleetApiPath.ActiveSubscriptionList + "/" + park_id, params)
 
-        const uri = FleetApiPath.ActiveSubscriptionList + "/" + park_id
+        const response = await FleetService.getInstance().execHttpRequest<FleetSubscriptionsResponseData>({
+            url: url,
+            method: FleetService.getInstance().httpMethods.get,
+        })
 
-        const abonnList = await FleetService.makeRequest<ResponseWithPagination<FleetResponseType[]>>(
-            uri,
-            'GET',
-            undefined,
-            true
-        )
-
-        return AbonResponseModel.fromArray(abonnList.data)
+        return {
+            subscriptions: AbonResponseModel.fromArray(response.data),
+            totalPages: response.totalPages,
+            totalRecords: response.totalRecords,
+            currentPage: response.currentPage,
+            itemPerPage: response.itemPerPage
+        }
 
     }
 
@@ -209,7 +214,7 @@ class FleetService extends Service {
         return FleetService.getInstance().queryClient.invalidateQueries({ queryKey: [FleetApiPath.ActiveSubscription] })
     }
 
-    public static async getActiveSubscription({ parkID }: { parkID: string }): Promise<AbonResponseModel> {
+    public static async getActiveSubscription({ parkID }: { parkID?: string }): Promise<AbonResponseModel> {
 
         const uri = FleetApiPath.ActiveSubscription + "/" + parkID
 
@@ -270,7 +275,6 @@ class FleetService extends Service {
         subscriptionID: string
     }) {
 
-        console.log(`Exec request: ${parkID}, ==> ${subscriptionID}`)
 
         const uri = FleetApiPath.ActivateSubscription
 

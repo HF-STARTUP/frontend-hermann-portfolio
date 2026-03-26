@@ -177,7 +177,13 @@ export const toQueriesString = (baseUri: string, params: any) => {
     if (!params) return baseUri;
 
     const queryString = Object.entries(params)
-        .filter(([, value]) => value !== undefined && value !== null && value !== 'all' )
+        .filter(([, value]) => 
+            value !== undefined && 
+        value !== null && 
+        value !== 'all' && 
+        value !== '' && 
+        !(typeof value === 'number' && isNaN(value))
+    )
         .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value as string)}`)
         .join('&');
 

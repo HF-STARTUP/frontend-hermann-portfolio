@@ -11,7 +11,6 @@ import { joiResolver } from "@hookform/resolvers/joi";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import notify from "@/utils/func/notification";
 import AppLogo from "@/components/app/AppLogo";
-import BtnBase from "@/components/elements/BtnBase";
 import { AdminAccountStatus } from "@/types/__form/profile.type";
 import { useGetCurrenciesList } from "@/hooks/admin/useFleetHook";
 import { Button } from "@/components/ui/button";
@@ -50,7 +49,7 @@ export default function LoginPage() {
     useEffect(() => {
         if (!$login.isError && $login.isSuccess && $login.data) {
             const loginData = $login.data
-            const isDeactivated = loginData.status === AdminAccountStatus.Deactivated
+            const isDeactivated = loginData.status === "deactivated"
 
             if (isDeactivated) {
                 $router.push(`/redirect/unauthorized`)

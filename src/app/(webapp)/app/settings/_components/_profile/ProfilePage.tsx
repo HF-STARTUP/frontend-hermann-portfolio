@@ -92,26 +92,7 @@ const PersonalInfosForm = () => {
             onSubmit={handleSubmit(onSubmit)}
         >
             <AdminPageTitle withMb={true}>Modifier le profil</AdminPageTitle>
-            <FormGroup adminForm={true} className={`mb-[56px]`}>
-
-                {/*<div className={`relative w-fit`}>*/}
-                {/*    <Avatar src={imgUri} h={108} w={108}/>*/}
-                {/*    <input*/}
-                {/*        id={chooseAvatarInputID} type="file"*/}
-                {/*        accept={'image'}*/}
-                {/*        className={`hidden`}*/}
-                {/*        onChange={e => onSelectAvatar(e.target.files)}*/}
-                {/*    />*/}
-                {/*    <label htmlFor={chooseAvatarInputID}>*/}
-                {/*        <div*/}
-                {/*            className={`size-[38.85px] rounded-full bg-white flex justify-center items-center text-text-body absolute bottom-0 right-[-15px] */}
-                {/*    transition ease-in duration-200*/}
-                {/*    cursor-pointer hover:text-blue-primary`}>*/}
-                {/*            <EditIcon/>*/}
-                {/*        </div>*/}
-                {/*    </label>*/}
-                {/*</div>*/}
-
+            <FormGroup adminForm={true} className={`mb-[56px]`}>               
                 <Stack>
                     <TextField
                         label={'Nom de famille'}

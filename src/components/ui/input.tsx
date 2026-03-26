@@ -155,8 +155,8 @@ const Input = React.forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>
                                     )}>
                                     {!_isPasswordInput && rightIcon}
                                     {_isPasswordInput && (
-                                        <button type={"button"} onClick={onTogglePasswordViewMode}>
-                                            {!passwordMasked ? <EyeOffIcon/> : <EyeIcon/>}
+                                        <button type={"button"} className="text-vaTextPrimary" onClick={onTogglePasswordViewMode}>
+                                            {!passwordMasked ? <EyeOffIcon size={20} /> : <EyeIcon size={20} />}
                                         </button>
                                     )}
                                 </div>

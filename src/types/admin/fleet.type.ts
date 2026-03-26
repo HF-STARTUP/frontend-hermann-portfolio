@@ -1,3 +1,4 @@
+import { PackageType } from "@/app/(webapp)/app/subscriptions/_hooks/usePackageList";
 import { PaginationResponse } from "../dashboard.type";
 
 export type FleetListResponseType = {
@@ -44,18 +45,90 @@ export type AdminOnFleetResponseType = {
     ets_logo: string;
 }
 
+export interface FleetSubscriptionTransaction {
+    id: string;
+    transaction_type: string;
+    course_id: string | null;
+    subscription_account_id: string;
+    payment_method: string;
+    invoice_id: string | null;
+    collect_type: string;
+    status: "success" | "pending" | "failed" | string;
+    subscription_end_date: string; // ISO Date string
+    yango_recipe: any | null;
+    subscription_number_vehicle_upgrage: number | null;
+    amount: number;
+    sold_before: number | null;
+    sold_after: number | null;
+    fees: number;
+    commission: number;
+    park_id: string | null;
+    operator_id: string;
+    withdraw_on_park_id: string | null;
+    withdraw_on_driver_id: string | null;
+    payer_phone_number: string | null;
+    driver_profile_id: string | null;
+    vehicle_id: string | null;
+    owner_profile_id: string;
+    profile_who_perform_withdraw_id: string | null;
+    profile_who_perform_credit_id: string | null;
+    reason: string | null;
+    external_references: any | null;
+    external_flw_references: any | null;
+    from_recuring_payment: boolean;
+    vtc_withdraw_on_caisse_id: string | null;
+    account_reference_id: string | null;
+    bank_reference: string | null;
+    objective_date: string | null;
+    objective: any | null;
+    created_at: string; // ISO Date string
+    update_at: string;  // ISO Date string
+    subscriptionId: string | null;
+    recipe_id: string | null;
+    caisse_id: string | null;
+    compte_id: string | null;
+    compte_source_id: string | null;
+    caisse_source_id: string | null;
+    compte_receive_id: string | null;
+    caisse_receive_id: string | null;
+    confirme_operation_id: string | null;
+    supplier_id: string | null;
+    manager_profile_id: string | null;
+    vehicle_owner_id: string | null;
+    promo_code_id: string | null;
+  }
+export type SubscriptionStatus  = "using" | "paid" | "expired" | "active" | "inactive" | "deleted" | "suspended"
 export type FleetResponseType = {
     id: string;
     start_date: Date;
     end_date: Date;
     is_active: boolean;
-    subscription_plan: null;
+    subscription_plan: string;
     vehicle_number: null;
-    offer: string;
+    offer: SubscriptionStatus;
     renew: boolean;
     amount: null;
     subscription?: Subscription;
     info: Info;
+    transactions: FleetSubscriptionTransaction[];
+    status : SubscriptionStatus;
+    subscriptionType: string
+}
+
+export interface FleetSubscriptionsResponseData extends PaginationResponse {
+    data: FleetResponseType[]
+}
+
+export type PaymentMethodsType = "intern"|"wave"|"flutterwave"|"paystack"|"google"| "apple"|"cash"
+
+export interface FleetSubscriptionParams{
+    itemPerPage?: number;
+    page?: number;
+    type?: PackageType;
+    method?: PaymentMethodsType;
+    plan?: "monthly" | "yearly";
+    start_date?: string;
+    end_date?: string
 }
 
 export type Info = {

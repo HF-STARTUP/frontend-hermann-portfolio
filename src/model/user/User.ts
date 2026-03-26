@@ -1,107 +1,116 @@
 import Model from "@/model/Model";
-import {AdminProfileResponseType} from "@/types/__form/profile.type";
-import {ACCESS_TYPE} from "@/services/admin/settings/settingsService";
+import {
+  AdminAccountStatus,
+  AdminProfileResponseType,
+} from "@/types/__form/profile.type";
+import { ACCESS_TYPE } from "@/services/admin/settings/settingsService";
 
 class UserProfile extends Model {
+  public _instance: AdminProfileResponseType;
 
-    public _instance: AdminProfileResponseType
+  constructor(userProfileData: AdminProfileResponseType) {
+    super();
+    this._instance = userProfileData;
+  }
 
-    constructor(userProfileData: AdminProfileResponseType) {
-        super();
-        this._instance = userProfileData
-    }
+  static fromArray(datas: AdminProfileResponseType[]): UserProfile[] {
+    return datas.map((data) => new UserProfile(data));
+  }
 
-    static fromArray(datas: AdminProfileResponseType[]): UserProfile[] {
-        return datas.map(data => new UserProfile(data));
-    }
+  get status(): AdminAccountStatus {
+    return this._instance.status;
+  }
 
-    get userID() {
-        return this._instance.id;
-    }
+  get user() {
+    return this._instance.user;
+  }
 
-    get profileUserID() {
-        return this._instance.user.id;
-    }
+  get userID() {
+    return this._instance.id;
+  }
 
-    get cities() {
-        return this._instance.admin_on_city
-    }
+  get profileUserID() {
+    return this._instance.user.id;
+  }
 
-    get username() {
-        return this._instance.last_name + " " + this._instance.first_name
-    }
+  get cities() {
+    return this._instance.admin_on_city;
+  }
 
-    get roles() {
-        return this._instance.admin_on_city[0].permissions
-    }
+  get username() {
+    return this._instance.last_name + " " + this._instance.first_name;
+  }
 
-    get readRoles() {
-        return this._instance?.admin_on_city[0]?.permissions ?? []
-    }
+  get roles() {
+    return this._instance.roles;
+  }
 
-    get writeRoles() {
-        return this._instance?.admin_on_city[0]?.permissions.filter(p => p.onglet.access === ACCESS_TYPE.WRITE) ?? []
-    }
+  get role(){
+    return this.roles[0]
+  }
 
-    get listPark() {
-        return this._instance.admin_on_city
-    }
+  get roleName():string {
+    return this._instance.roles[0] ?this._instance.roles[0].name
+      .replace(/_/g, " ")
+      .replace(/\b\w/g, (l) => l.toUpperCase()):"-";
+  }
 
-    get defaultPark() {
-        const default_park = this._instance.admin_on_city[0]
-        return default_park
-    }
+  get listPark() {
+    return this._instance.admin_on_city;
+  }
 
-    get getID() {
-        return this._instance.id
-    }
+  get defaultPark() {
+    const default_park = this._instance.admin_on_city[0];
+    return default_park;
+  }
 
-    get getOrganisationName() {
-        return ''
-    }
+  get getID() {
+    return this._instance.id;
+  }
 
-    get getOrganisationLogo() {
-        return ''
-    }
+  get getOrganisationName() {
+    return "";
+  }
 
-    get firstName() {
-        return this._instance.first_name
-    }
+  get getOrganisationLogo() {
+    return "";
+  }
 
-    get lastName() {
-        return this._instance.last_name
-    }
+  get firstName() {
+    return this._instance.first_name;
+  }
 
-    get getUsername() {
-        return this._instance.first_name
-    }
+  get lastName() {
+    return this._instance.last_name;
+  }
 
+  get getUsername() {
+    return `${this._instance.first_name} ${this._instance.last_name}`;
+  }
 
-    get isGranted() {
-        return false
-    }
+  get isGranted() {
+    return false;
+  }
 
-    get parks() {
-        return []
-    }
+  get parks() {
+    return [];
+  }
 
-    get getActiveCurrency() {
-        return ""
-    }
+  get getActiveCurrency() {
+    return "";
+  }
 
+  get getActiveRegion() {
+    return "Unknow";
+  }
 
-    get getActiveRegion() {
-        return "Unknow"
-    }
+  get getUserFirstRegionCurrency() {
+    return "Unknow";
+  }
 
-    get getUserFirstRegionCurrency() {
-        return "Unknow"
-    }
-
-    get getCurrencyObj() {
-        return "Unknow"
-    }
-
+  get getCurrencyObj() {
+    return "Unknow";
+  }
 }
 
-export default UserProfile
+export default UserProfile;

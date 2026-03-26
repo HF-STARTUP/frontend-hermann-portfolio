@@ -135,7 +135,7 @@ export const FieldDate: React.FC<TextFieldProps> = ({ label, placeholder, size, 
     )
 }
 
-export const TextArea: React.FC<TextFieldProps> = ({ label, register, className, placeholder, size, ...props }) => {
+export const TextArea: React.FC<TextFieldProps> = ({ label, register, className, placeholder, size, required, ...props }) => {
 
 
     const $pathName = usePathname()
@@ -149,7 +149,7 @@ export const TextArea: React.FC<TextFieldProps> = ({ label, register, className,
         <div className={`flex-col justify-start items-start gap-2 inline-flex w-full`}>
             <label
                 className={`${'text-sm leading-[24.57px] tracking-[-2%] font-medium'}`}
-                htmlFor={fielID}> {label}</label>
+                htmlFor={fielID}> {label} {required && <span className="text-vaRed">*</span>} </label>
             <textarea
                 id={fielID}
                 className={cn("bg-transparent border border-solid border-neutral-300/60 text-neutral-700 rounded-2xl  resize-none w-full p-2",

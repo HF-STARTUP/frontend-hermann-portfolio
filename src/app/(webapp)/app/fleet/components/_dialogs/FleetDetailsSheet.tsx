@@ -4,7 +4,7 @@ import { Calendar, Crown, MoreVertical, User } from "lucide-react";
 import { useFleetDetailsHook } from "../../_hook/useFleetDetailsHook";
 import FleetKpiGrid from "../_sub_components/fleetDetailKpi";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DetailRowList } from "../detailSections/Profile";
 import SubscriptionContent from "../detailSections/Subscription";
@@ -37,22 +37,23 @@ export default function FleetDetailsSheet({
     onEdit: (fleetId: string) => void;
     onDelete: (fleetId: string) => void;
 }) {
-    const { 
-        journals, 
-        isLoadingFleetJournal, 
-        sentinelRef, 
-        isFetching ,
-        page
-    } = fleetJournalHook(fleet?.id);
 
+    const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
+    const {
+        journals,
+        isLoadingFleetJournal,
+        setSentinelRef,
+        page,
+        isFetchingFleetJournal
+    } = fleetJournalHook(fleet?.id, scrollContainerRef);
 
-    const { 
-        KpiItems, 
-        ProfileItems, 
-        isLoadingFleetOverview, 
-        isLoadingFleetProfile 
+    const {
+        KpiItems,
+        ProfileItems,
+        isLoadingFleetOverview,
+        isLoadingFleetProfile
     } = useFleetDetailsHook(fleet?.id);
-    
+
     const [activeTab, setActiveTab] = useState<string>("profile");
     const [isDeleteOpen, setIsDeleteOpen] = useState(false);
     const [isSuspendOpen, setIsSuspendOpen] = useState(false);
@@ -65,15 +66,16 @@ export default function FleetDetailsSheet({
                     <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3">
                             <div
-                                className={`size-16 rounded-xl flex items-center justify-center font-bold text-white text-lg ${getAvatarColor(
+                                className={`size-20 rounded-xl flex items-center justify-center font-bold text-white text-3xl ${getAvatarColor(
                                     fleet.name
                                 )}`}
                             >
                                 {getAvatarInitials(fleet.name)}
                             </div>
-                            <div className="h-16 flex flex-col justify-between gap-1">
+                            <div className="h-20 flex flex-col justify-between gap-1">
                                 <h2 className="text-xl font-semibold text-[#0A0A0A]">
-                                    {fleet.name} {fleet.id}
+                                    {fleet.name} 
+                                    {/* {fleet.id} */}
                                 </h2>
                                 <div className="flex items-center gap-2 text-xs text-vaLightGray">
                                     <User size={18} />
@@ -121,7 +123,7 @@ export default function FleetDetailsSheet({
                         </div>
                     </div>
                 </SheetHeader>
-                <DialogMainBody className="flex-1 max-h-[calc(100dvh-100px)]">
+                <DialogMainBody className="flex-1 max-h-[calc(100dvh-100px)]" ref={scrollContainerRef}>
                     <div className="space-y-6 py-4">
                         <FleetKpiGrid kpiItems={KpiItems} isLoading={isLoadingFleetOverview} />
                         <Tabs
@@ -137,10 +139,16 @@ export default function FleetDetailsSheet({
                             </TabsList>
                         </Tabs>
                         {activeTab === "profile" && <DetailRowList rows={ProfileItems} isLoading={isLoadingFleetProfile} />}
-                        {activeTab === "subscription" && <SubscriptionContent />}
+                        {activeTab === "subscription" && <SubscriptionContent fleetId={fleet.id} />}
                         {activeTab === "transactions" && <TransactionsContent />}
                         {activeTab === "journal" && (
-                            <JournalList items={journals} isLoading={isLoadingFleetJournal} sentinelRef={sentinelRef} isFetching={isFetching} page={page} />
+                           <JournalList 
+                           items={journals} 
+                           isLoading={isLoadingFleetJournal} 
+                           setSentinelRef={setSentinelRef} // Passer la callback
+                           isFetching={isFetchingFleetJournal} 
+                           page={page} 
+                         />
                         )}
                     </div>
                 </DialogMainBody>

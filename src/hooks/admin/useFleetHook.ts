@@ -13,6 +13,7 @@ import FleetService, {
     SubscriptionPlanRevenusInputs,
     GetFleetByCityIDParams
 } from "@/services/admin/fleet/fleetService";
+import { FleetSubscriptionParams } from "@/types/admin/fleet.type";
 
 export const useGetSubscriptionPlanRevenus = (inputs: SubscriptionPlanRevenusInputs) => {
     const currency_id = AuthManagerGuard.getCurrency
@@ -102,27 +103,25 @@ export const useGetFleetAdmin = () => {
     return { isLoading, data }
 }
 
-export const useGetSubscriptionHistoryOnFleet = () => {
+export const useGetSubscriptionHistoryOnFleet = (params: FleetSubscriptionParams, park_id?: string) => {
 
-    const { parkID } = useGetParkID()
 
     const { isLoading, data } = useQueryProvider({
-        queryKey: [FleetApiPath.ActiveSubscriptionList, parkID],
-        queryFn: () => FleetService.getActiveSubscriptionList({ park_id: parkID }),
-        enabled: !!parkID
+        queryKey: [FleetApiPath.ActiveSubscriptionList, params, park_id],
+        queryFn: () => FleetService.getActiveSubscriptionList(params, park_id),
+        enabled: !!park_id
     });
 
     return { isLoading, data }
 }
 
-export const useGetActiveSubscriptionOnFleet = () => {
-
-    const { parkID } = useGetParkID()
+export const useGetActiveSubscriptionOnFleet = (fleetID?:string) => {
+    
 
     const { isLoading, data } = useQueryProvider({
-        queryKey: [FleetApiPath.ActiveSubscription, parkID],
-        queryFn: () => FleetService.getActiveSubscription({ parkID }),
-        enabled: !!parkID
+        queryKey: [FleetApiPath.ActiveSubscription, fleetID],
+        queryFn: () => FleetService.getActiveSubscription({ parkID: fleetID }),
+        enabled: !!fleetID
     });
 
     return { isLoading, data }
@@ -441,7 +440,7 @@ export const useGetFleetProfile = (fleetId: string) => {
 
 export const useGetFleetJournal = (fleetId: string, page?:number, itemPerPage?:number) => {
     const { isLoading, data } = useQueryProvider({
-        queryKey: [FleetApiPath.GetFleetJournal, fleetId],
+        queryKey: [FleetApiPath.GetFleetJournal, fleetId, page],
         queryFn: () => FleetService.getFleetJournal(fleetId, page, itemPerPage),
         enabled: !!fleetId
     })

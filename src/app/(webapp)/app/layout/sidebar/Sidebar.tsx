@@ -41,7 +41,7 @@ export const Sidebar = () => {
         <motion.div
             className={cn(
                 "lg:w-[290px] bg-vaPrimary/95 md:bg-vaPrimary backdrop-blur-md border-t border-white text-white lg:h-[100vh] lg:pt-[100px] lg:px-0 lg:flex lg:flex-col lg:gap-[20px] fixed z-40 lg:justify-start lg:items-start",
-                "w-[100%] lg:ml-0 lg:mb-0 lg:rounded-none h-[60px] bottom-0 flex items-center justify-around px-[7px] gap-1"
+                "w-[100%] lg:ml-0 lg:mb-0 lg:rounded-none h-[60px] bottom-0 flex items-center justify-around px-[7px] gap-1 overflow-y-auto custom-scrollbar"
             )}
         // initial={{y: 0}} // Position initiale
         // animate={{y: isVisible ? 0 : 60}} // 60px vers le bas pour masquer, 0 pour montrer

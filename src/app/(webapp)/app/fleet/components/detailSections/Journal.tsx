@@ -36,38 +36,39 @@ export function JournalShimmer() {
 interface JournalListProps {
     isLoading: boolean;
     items: FleetJournalModel[];
-    sentinelRef: React.RefObject<HTMLDivElement>;
+    setSentinelRef: (node: HTMLDivElement | null) => void; // Type modifié
     isFetching: boolean;
-    page?:number;
-}
+    page?: number;
+  }
 
-export default function JournalList({
+  export default function JournalList({
     isLoading,
     items,
-    sentinelRef,
+    setSentinelRef, // Maintenant c'est une callback
     isFetching,
     page
-}: JournalListProps) {
-    
+  }: JournalListProps) {
     if (isLoading && items.length === 0) {
-        return <JournalShimmer />;
+      return <JournalShimmer />;
     }
-
+  
     return (
-        <div className="flex flex-col p-4 w-full">
-            <div className="flex flex-col">
-                {items.map((item, index) => (
-                    <JournalRow item={item} key={item.id || index} />
-                ))}
-            </div>
-
-            {isFetching && (
-                <div className="mt-4">
-                    <JournalShimmer />
-                </div>
-            )}
-                {page}
-            <div ref={sentinelRef} className="h-2 w-full" />
+      <div className="flex flex-col p-4 w-full">
+        <div className="flex flex-col">
+          {items.map((item, index) => (
+            <JournalRow item={item} key={item.id || index} />
+          ))}
         </div>
+  
+        {isFetching && (
+          <div className="mt-4">
+            <JournalShimmer />
+          </div>
+        )}
+        
+        {/* {page} */}
+        
+        <div ref={setSentinelRef} className="h-1 w-full" />
+      </div>
     );
-}
+  }

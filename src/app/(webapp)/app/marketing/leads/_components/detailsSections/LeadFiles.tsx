@@ -10,5 +10,9 @@ export interface LeadFileItem{
 }
 
 export const LeadFileRow = ({leadFile}:{leadFile: LeadFileItem})=>{
-
+    return(
+        <div className="p-4">
+            
+        </div>
+    )
 }

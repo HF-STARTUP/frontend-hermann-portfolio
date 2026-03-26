@@ -151,7 +151,7 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
                 onValueChange={(new_city_id) => {
                     const selected = data?.listPark.find((lp) => lp.id == +new_city_id)
                     AuthManagerGuard.setEnabledCityID(+new_city_id)
-                    AuthManagerGuard.setCurrency(selected?.currency)
+                    AuthManagerGuard.setCurrency(selected?.name)
                     if ($path.includes("tickets")) window.location.reload()
                     queryClient.invalidateQueries()
                     if ($params.hasOwnProperty("fleetID")) $router.push("/app/fleet")
@@ -178,6 +178,9 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
 
 const UserOption: React.FC = () => {
     const { data, isLoading } = useUserProfile()
+    const [isLogoutOpenned, setIsLogoutOpenned] = useState(false)
+
+
     if (isLoading || !data) return null;
 
     return (
@@ -240,12 +243,11 @@ const UserOption: React.FC = () => {
                         </div>
                     </div>
                     <div className="p-4">
-                        <SignOutAction>
-                            <div className="flex text-vaRed items-center gap-3 cursor-pointer">
-                                <LogOut className="size-5" />
-                                <p className="text-sm font-medium">Déconnexion</p>
-                            </div>
-                        </SignOutAction>
+                        <div className="flex text-vaRed items-center gap-3 cursor-pointer" onClick={()=>setIsLogoutOpenned(true)}>
+                            <LogOut className="size-5" />
+                            <p className="text-sm font-medium">Déconnexion</p>
+                        </div>
+                        <SignOutAction isOpen={isLogoutOpenned} onClose={()=>setIsLogoutOpenned(false)}  />
                     </div>
                 </DropdownMenuContent>
             </DropdownMenu>

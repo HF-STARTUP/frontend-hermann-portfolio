@@ -6,8 +6,8 @@ import { useGetFleetsList } from "@/hooks/admin/useFleetHook"
 import { FleetModel } from "@/model/ADMIN/fleet"
 import { Column, RowAction } from "@/components/display/CustomTableDisplay"
 import Badge from "@/components/display/Badge"
+import { SubscriptionStatus } from "@/types/admin/fleet.type"
 
-export type SubscriptionStatus = "active" | "inactive" | "deleted" | "suspended"
 
 export interface FilterState {
     searchTerm: string
