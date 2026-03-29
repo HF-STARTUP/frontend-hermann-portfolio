@@ -44,9 +44,10 @@ export const RoleCard = ({ item, onEdit }: { item: RootRoleModel, onEdit: (item:
                     </div>
                 </div>
 
+               { item.isModifiable &&
                 <Button variant={"ghost"} size="icon" className="text-vaTextPrimary" onClick={() => onEdit(item)}>
                     <Edit size={16} />
-                </Button>
+                </Button>}
             </div>
             <p className="text-sm text-vaTextPrimary line-clamp-2" title={moduleNames.join(', ')}>
                 {moduleNames.length > 0 ? moduleNames.join(', ') : "Aucun module"}

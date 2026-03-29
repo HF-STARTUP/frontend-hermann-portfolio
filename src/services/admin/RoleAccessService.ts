@@ -6,7 +6,9 @@ import ModulePermissionGroupModel from "@/model/ADMIN/PermissionsModel";
 
 export enum RoleApiPath {
     GetRoles = '/root/roles',
-    GetGroupedPermissions = '/root/permission-catalog'
+    GetRole = '/root/roles/{id}',
+    GetGroupedPermissions = '/root/permission-catalog', 
+    EditRole = "/root/roles/{id}/update"
 }
 
 class RoleService extends Service {
@@ -32,6 +34,21 @@ class RoleService extends Service {
         });
 
         return RootRoleModel.toArrays(response);
+    }
+
+
+    /**
+     * Récupère les donnees d'un rôle
+     */
+    public static async getRoleData(roleId: string) {
+        const uri = toQueriesString(RoleApiPath.GetRole.replace("{id}", roleId), {});
+
+        const response = await RoleService.getInstance().execHttpRequest<RootRoleData>({
+            url: uri,
+            method: RoleService.getInstance().httpMethods.get,
+        });
+
+        return new RootRoleModel(response);
     }
 
      /**
@@ -72,6 +89,14 @@ class RoleService extends Service {
      public static async createNewRole(formData: CreateRolePayload) {
         return await RoleService.getInstance().execHttpRequest({
             url: RoleApiPath.GetRoles,
+            method: RoleService.getInstance().httpMethods.post,
+            body: formData,
+        });
+    }
+
+    public static async updateRole(roleId: string, formData: CreateRolePayload) {
+        return await RoleService.getInstance().execHttpRequest({
+            url: RoleApiPath.EditRole.replace("{id}", roleId),
             method: RoleService.getInstance().httpMethods.post,
             body: formData,
         });

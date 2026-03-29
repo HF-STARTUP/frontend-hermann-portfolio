@@ -29,7 +29,8 @@ export interface RootRoleData {
   created_at: string;
   updated_at: string;
   rootRoleAccesses: RootRoleAccess[];
-  users_count: number
+  users_count: number,
+  permission_keys?: [string]
 }
 
 // /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

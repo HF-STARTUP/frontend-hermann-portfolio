@@ -3,14 +3,16 @@ import { DialogMainBody } from "@/components/display/DialogMainBody";
 import { TextArea } from "@/components/form/TextField";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
+import { useDeleteFleet } from "@/hooks/admin/useFleetHook";
+import notify from "@/utils/func/notification";
+import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 
 interface DeleteFleetDialogProps {
     isOpen: boolean;
     onClose: () => void;
     fleetName?: string;
-    fleetId: string;
-    onConfirm?: (fleetId: string) => void;
+    fleetId?: string;
 }
 
 export function DeleteFleetDialog({
@@ -18,11 +20,29 @@ export function DeleteFleetDialog({
     onClose,
     fleetName,
     fleetId,
-    onConfirm,
 }: DeleteFleetDialogProps) {
+    const { error, isError, isSuccess, loading, onDeleteFleet } = useDeleteFleet();
+    const [reason, setReason] = useState("");
+
+    useEffect(() => {
+        if (!isOpen) {
+            setReason("");
+        }
+    }, [isOpen]);
+
+    useEffect(() => {
+        if (isSuccess) {
+            onClose();
+        }
+    }, [isSuccess]);
+
     const handleConfirm = () => {
-        onConfirm?.(fleetId);
-        onClose();
+        if (fleetId) {
+            onDeleteFleet({
+                park_id: fleetId,
+                reason: reason
+            });
+        }
     };
 
     return (
@@ -40,11 +60,14 @@ export function DeleteFleetDialog({
                             Êtes-vous sûr de vouloir supprimer la flotte <span className="font-bold">{fleetName}</span> ? Cette action est
                             irréversible.
                         </div>
-                        <div className="flex flex-col">
-                            <label className="text-xl font-semibold text-vaTextPrimary">
-                                Motif
-                            </label>
-                            <TextArea className="rounded-2xl" />
+                        <div className="flex flex-col gap-2">                          
+                            <TextArea 
+                            label="Motif de suppression"
+                                className="rounded-2xl" 
+                                placeholder="Veuillez indiquer le motif de la suppression..."
+                                value={reason}
+                                onChange={(e) => setReason(e.target.value)}
+                            />
                         </div>
                     </div>
                 </DialogMainBody>
@@ -53,7 +76,11 @@ export function DeleteFleetDialog({
                         <Button variant="outline" onClick={onClose}>
                             Annuler
                         </Button>
-                        <Button variant="destructive" onClick={handleConfirm}>
+                        <Button 
+                            variant="destructive" 
+                            onClick={handleConfirm} 
+                            loading={loading}
+                        >
                             Confirmer
                         </Button>
                     </div>

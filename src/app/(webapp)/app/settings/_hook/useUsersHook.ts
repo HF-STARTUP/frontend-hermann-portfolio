@@ -94,6 +94,7 @@ export const useUsersHook = () => {
 
 
   const handleAdd = ()=>{
+    setSelectedUser(undefined)
     setFormAction("add");
     setIsFormVisible(true)
   }

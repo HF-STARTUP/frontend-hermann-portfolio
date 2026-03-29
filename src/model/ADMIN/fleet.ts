@@ -28,6 +28,10 @@ export class FleetModel extends Model {
         return this._instance.id
     }
 
+    get logo(){
+        return this.getFleetImage(this._instance.logo)
+    }
+
     get name() {
         return this._instance.name
     }
@@ -81,7 +85,7 @@ export class FleetModel extends Model {
     }
 
     get statusDisplay() {
-        return this.hasActiveSubscription ? "active" : "inactive";
+        return this._instance.status;
     }
 }
 

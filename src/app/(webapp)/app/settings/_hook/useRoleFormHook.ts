@@ -1,21 +1,46 @@
 import {
   useCreateRole,
   useGetGroupedPermissions,
+  useGetRole,
+  useUpdateRole,
 } from "@/hooks/admin/useRoleAccess";
 import { CreateRolePayload } from "@/types/admin/role-access.type";
 import notify from "@/utils/func/notification";
 import { useState, useEffect, useMemo } from "react";
 
 export const useRoleForm = (roleId?: number) => {
-  const { data: modules, isLoading: isLoadingModules } = useGetGroupedPermissions();
+  const { data: modules, isLoading: isLoadingModules } =
+    useGetGroupedPermissions();
 
-  const { 
-    onCreateRole, 
-    isSuccess, 
-    isError, 
+  const { data: selectedRole, isLoading: isLoadingSelected } = useGetRole(
+    roleId??0 > 0?String(roleId):undefined
+  );
+
+  useEffect(() => {
+    if (selectedRole) {
+      setFormData({
+        name: selectedRole.displayName,
+        description: selectedRole.description,
+        permission_keys: selectedRole.permissionsList || [],
+      });
+
+    }
+  }, [selectedRole, modules]);
+  const {
+    onCreateRole,
+    isSuccess,
+    isError,
     error,
-    loading: isCreatingRole
+    loading: isCreatingRole,
   } = useCreateRole();
+
+  const {
+    error: updateError,
+    isError: isUpdateError,
+    isSuccess: isUpdateSuccess,
+    loading: isUpdating,
+    onUpdateRole,
+  } = useUpdateRole(roleId??0 > 0?String(roleId):undefined);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -37,26 +62,28 @@ export const useRoleForm = (roleId?: number) => {
   }, [isSuccess]);
 
   const createRolePayload: CreateRolePayload = useMemo(() => {
-    const allCatalogueKeys = modules?.flatMap(m => [
-      m.moduleName, 
-      ...m.permissions.map(p => p.key)
-    ]) || [];
-  
-    const allAccessIds = modules
-      ?.flatMap((m) => m.permissions)
-      .flatMap((p) =>
-        p.mappedAccesses.map((ma) => ({
-          access_id: ma.access_id,
-          type: ma.type,
-        }))
-      ) || [];
-  
+    const allCatalogueKeys =
+      modules?.flatMap((m) => [
+        m.moduleName,
+        ...m.permissions.map((p) => p.key),
+      ]) || [];
+
+    const allAccessIds =
+      modules
+        ?.flatMap((m) => m.permissions)
+        .flatMap((p) =>
+          p.mappedAccesses.map((ma) => ({
+            access_id: ma.access_id,
+            type: ma.type,
+          })),
+        ) || [];
+
     return {
       name: formData.name,
       description: formData.description,
       permission_keys: fullAccess ? allCatalogueKeys : formData.permission_keys,
-      access: fullAccess 
-        ? allAccessIds 
+      access: fullAccess
+        ? allAccessIds
         : (modules || [])
             .flatMap((m) => m.permissions)
             .filter((p) => formData.permission_keys.includes(p.key))
@@ -64,7 +91,7 @@ export const useRoleForm = (roleId?: number) => {
               p.mappedAccesses.map((ma) => ({
                 access_id: ma.access_id,
                 type: ma.type,
-              }))
+              })),
             ),
     };
   }, [formData, fullAccess, modules]);
@@ -91,8 +118,19 @@ export const useRoleForm = (roleId?: number) => {
     }
 
     if (isError) {
-      console.error(error)
+      console.error(error);
       notify(error?.message || "Une erreur est survenue", "error");
+    }
+  };
+
+  const handleUpdateRole = () => {
+    if (handleValidateForm()) {
+      onUpdateRole(createRolePayload);
+    }
+
+    if (isUpdateError) {
+      console.error(updateError);
+      notify(updateError?.message || "Une erreur est survenue", "error");
     }
   };
 
@@ -100,16 +138,18 @@ export const useRoleForm = (roleId?: number) => {
     // Data & Loading
     modules,
     isLoadingModules,
-    isSubmitting: isCreatingRole,
-    isSuccess,
-    
+    isSubmitting: isCreatingRole || isUpdating,
+    isSuccess: isSuccess || isUpdateSuccess,
+    isLoadingSelected,
+
     // States
     formData,
     setFormData,
     fullAccess,
     setFullAccess,
-    
+
     // Actions
     handleAddRole,
+    handleUpdateRole,
   };
 };

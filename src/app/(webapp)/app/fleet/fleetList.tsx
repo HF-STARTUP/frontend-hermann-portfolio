@@ -16,69 +16,75 @@ import { DeleteFleetDialog } from "./components/_dialogs/utils/ConfirmFleetDelet
 import { SuspendFleetDialog } from "./components/_dialogs/utils/SuspendFleetDialog"
 import { PageTitle } from "@/components/ui/custom/PageTitle"
 import PeriodSelector from "@/components/elements/PeriodSelector"
+import { FleetType, FleetStatus, SubscriptionName, SortOrder } from "@/types/admin/fleet.type"
+import { toIsoDate } from "@/services/Service"
+import { PiFunnelX } from "react-icons/pi"
+import { FleetStatusMap, FleetTypeMap, SortOrderMap, SubscriptionNameMap, SubscriptionStatusMap } from "./utils"
 
 export const FleetList = () => {
-    const [detailsSheet, setDetailsSheet] = useState<{ isOpen: boolean; fleet: any | null }>({ isOpen: false, fleet: null })
-    const [deleteDialog, setDeleteDialog] = useState<{ isOpen: boolean; fleetId: string | null; fleetName: string | null }>({
-        isOpen: false,
-        fleetId: null,
-        fleetName: null,
-    })
-    const [suspendDialog, setSuspendDialog] = useState<{ isOpen: boolean; fleetId: string | null; fleetName: string | null }>({
-        isOpen: false,
-        fleetId: null,
-        fleetName: null,
-    })
     const {
         KpiItems,
+        isLoadingKpi,
         fleets,
         isLoading,
-        filterState,
+        isFetching,
+
+        fleetFilters,
+        resetFilters,
+        setFleetFilters,
+        updateFilter,
+
         tableColumns,
         rowActions,
         pagination,
-        handleSearchChange,
-        handleSubscriptionNameFilter,
-        handleTypeFilter,
-        handleStatusFilter,
-        handleSortChange,
-        handleRecentFirstChange,
-        handleOldestFirstChange,
-        handleVehiclesCountMinChange,
-        handleVehiclesCountMaxChange,
-        handleDriversCountMinChange,
-        handleDriversCountMaxChange,
-        handleTransactionsAmountMinChange,
-        handleTransactionsAmountMaxChange,
-        handleFirstActionsChange,
-        handleDateRangeChange,
-        resetFilters,
         hasActiveFilters,
-    } = useFleetHook({
-        onViewFleet: (fleet) => setDetailsSheet({ isOpen: true, fleet }),
-        onSuspendFleet: (fleet) =>
-            setSuspendDialog({ isOpen: true, fleetId: fleet.id, fleetName: fleet.name ?? "" }),
-        onDeleteFleet: (fleet) =>
-            setDeleteDialog({ isOpen: true, fleetId: fleet.id, fleetName: fleet.name ?? "" }),
-    })
+
+        handleAdd,
+        handleEdit,
+        handleDebudMode,
+        handleDelete,
+        handleSuspend,
+        handleView,
+
+        isSuspendVisible,
+        isDebugVisible,
+        isDeleteVisible,
+        isFormVisible,
+        isDetailsVisible,
+        selectedFleet,
+        formAction,
+
+        setIsSuspendVisible,
+        setIsDebugVisible,
+        setIsDeleteVisible,
+        setIsFormVisible,
+        setSelectedFleet,
+        setFormAction,
+        setIsDetailsVisible,
+    } = useFleetHook()
 
     const [isAdvancedFiltersOpen, setIsAdvancedFiltersOpen] = useState(false)
     const [isCreateFleetOpen, setIsCreateFleetOpen] = useState(false)
+
+    const handleSortChange = (value: SortOrder) => {
+        updateFilter("sort", value)
+    }
+
     return (
         <div className="flex flex-col space-y-6">
             <PageTitle
                 page_title={"Flottes"}
                 end_component={
                     <PeriodSelector
-                        onChange={(dateRange) => handleDateRangeChange(dateRange ?? {})}
+                        onChange={(dateRange) => { updateFilter("created_from", toIsoDate(dateRange?.from)); updateFilter("created_to", toIsoDate(dateRange?.to)) }}
                         defaultPeriod={'current_month'}
                     />
                 }
                 withSelect={false}
             />
-            <KpiGrid items={KpiItems} />
+            <KpiGrid items={KpiItems} isLoading={isLoadingKpi} />
             <div className="text-[#000000] font-bold text-xl">
-                Liste des flottes ({fleets.length})
+                Liste des flottes ({pagination.totalEntries})
             </div>
 
             <div className="flex justify-between items-end flex-wrap gap-4">
@@ -87,79 +93,98 @@ export const FleetList = () => {
                         <div className="search-input relative flex items-center bg-white p-2 rounded-xl">
                             <Input
                                 placeholder="Recherche par nom ou proprietaire..."
-                                value={filterState.searchTerm}
-                                onChange={(e) => handleSearchChange(e.target.value)}
+                                value={fleetFilters.name || ""}
+                                onChange={(e) => updateFilter("name", e.target.value)}
                                 type="search"
                                 className="pl-9 h-10 w-80 bg-[#F4F7FE] border-none text-sm"
                                 leftIcon={<LuSearch className="text-vaTextPrimary" />}
                             />
                         </div>
                     </div>
-                    <Select value={filterState.type} onValueChange={(value) => handleTypeFilter(value)}>
+                    <Select
+                        value={fleetFilters.type}
+                        onValueChange={(value) => updateFilter("type", value as FleetType)}
+                        defaultValue="all"
+                    >
                         <SelectTrigger className="w-44 min-w-fit h-12 border-[#E9EAEC] text-[#A3AED0] border bg-white text-sm rounded-xl">
                             <SelectValue placeholder="Selectionner le type" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="particulier">Entrepreneur</SelectItem>
-                            <SelectItem value="professionnel">Professionnel</SelectItem>
+                            <SelectItem value="all">Tous les types</SelectItem>
+                            {Object.entries(FleetTypeMap).map(([value, label]) => (
+                                <SelectItem key={value} value={value}>
+                                    {label}
+                                </SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
 
                     <Select
-                        value={filterState.subscriptionName}
-                        onValueChange={(value) => handleSubscriptionNameFilter(value)}
+                        value={fleetFilters.subscription_name}
+                        onValueChange={(value) => updateFilter("subscription_name", value as SubscriptionName)}
+                        defaultValue="all"
                     >
                         <SelectTrigger className="w-44 min-w-fit h-12 border-[#E9EAEC] text-[#A3AED0] border bg-white text-sm rounded-xl">
                             <SelectValue placeholder="Selectionner le plan" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="none">Tous les plans</SelectItem>
-                            <SelectItem value="essentiel_entrepreneur">Essentiel Entrepreneur</SelectItem>
-                            <SelectItem value="starter_entrepreneur">Starter Entrepreneur</SelectItem>
-                            <SelectItem value="premium_entrepreneur">Premium Entrepreneur</SelectItem>
-                            <SelectItem value="essentiel_entreprise">Essentiel Entreprise</SelectItem>
-                            <SelectItem value="premium_entreprise">Premium Entreprise</SelectItem>
+                            <SelectItem value="all">Tous les plans</SelectItem>
+                            {Object.entries(SubscriptionNameMap).map(([value, label]) => (
+                                <SelectItem key={value} value={value}>
+                                    {label}
+                                </SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
 
-                    <Select value={filterState.status} onValueChange={(value) => handleStatusFilter(value)}>
+                    <Select
+                        value={fleetFilters.status}
+                        onValueChange={(value) => updateFilter("status", value as FleetStatus)}
+                        defaultValue="all"
+                    >
                         <SelectTrigger className="w-44 min-w-fit h-12 border-[#E9EAEC] text-[#A3AED0] border bg-white text-sm rounded-xl">
                             <SelectValue placeholder="Selectionner le statut" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="active">Actif</SelectItem>
-                            <SelectItem value="new">Nouveau</SelectItem>
-                            <SelectItem value="inactive">Inactif</SelectItem>
-                            <SelectItem value="locked">Verrouillé</SelectItem>
-                            <SelectItem value="deactivated">Désactivé</SelectItem>
-                            <SelectItem value="gps_configuration_pending">Configuration GPS en attente</SelectItem>
+                        <SelectItem value="all">Tous les statuts</SelectItem>
+                            {Object.entries(FleetStatusMap).map(([value, label]) => (
+                                <SelectItem key={value} value={value}>
+                                    {label}
+                                </SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
 
-                    <Select value={filterState.sort} onValueChange={(value) => handleSortChange(value as "recent" | "oldest")}>
+                    <Select
+                        value={fleetFilters.sort}
+                        onValueChange={(value) => handleSortChange(value as SortOrder)}
+                        defaultValue="recent"
+                    >
                         <SelectTrigger className="w-44 min-w-fit h-12 border-[#E9EAEC] text-[#A3AED0] border bg-white text-sm rounded-xl">
                             <SelectValue placeholder="Trier par" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="recent">Plus récent d'abord</SelectItem>
-                            <SelectItem value="oldest">Plus ancien d'abord</SelectItem>
+                        {Object.entries(SortOrderMap).map(([value, label]) => (
+                                <SelectItem key={value} value={value}>
+                                    {label}
+                                </SelectItem>
+                            ))}
                         </SelectContent>
                     </Select>
+                    <Button size="icon" variant="ghost" className="text-vaTextPrimary" title="Filtres avances" onClick={() => setIsAdvancedFiltersOpen(true)}>
+                        <LuFilter size={32} />
+                    </Button>
+                    {hasActiveFilters && (
+                        <Button size="icon" variant="ghost" onClick={resetFilters}>
+                            <PiFunnelX size={32} className="text-vaRed" />
+                        </Button>
+                    )}
                 </div>
                 <div className="flex justify-end items-center gap-4 flex-wrap ml-auto">
                     <Button size="xl" variant="mainBlue" className="rounded-2xl" onClick={() => setIsCreateFleetOpen(true)}>
                         <LuPlus className="w-4 h-4 mr-2" />
                         Ajouter une flotte
                     </Button>
-                    <Button size="xl" variant="mainBlue" className="rounded-2xl" onClick={() => setIsAdvancedFiltersOpen(true)}>
-                        <LuFilter className="w-4 h-4 mr-2" />
-                        Filtre avancé
-                    </Button>
-                    {hasActiveFilters && (
-                        <Button size="xl" variant="outline" className="rounded-2xl" onClick={resetFilters}>
-                            Réinitialiser les filtres
-                        </Button>
-                    )}
                     <Select>
                         <SelectTrigger variant="mainBlueOutline" leftIcon={<AnchorIcon className="size-4 mr-2" />}>
                             <SelectValue placeholder="Exporter" />
@@ -182,53 +207,35 @@ export const FleetList = () => {
                     pagination={pagination}
                     isLoading={isLoading}
                     rowActions={rowActions}
-                    onRowClick={(fleet) => setDetailsSheet({ isOpen: true, fleet })}
+                    onRowClick={(fleet) => handleView(fleet)}
                 />
             </div>
             <AdvancedFiltersDialog
                 isOpen={isAdvancedFiltersOpen}
                 onClose={() => setIsAdvancedFiltersOpen(false)}
-                filterState={filterState}
-                onRecentFirstChange={handleRecentFirstChange}
-                onOldestFirstChange={handleOldestFirstChange}
-                onVehiclesCountMinChange={handleVehiclesCountMinChange}
-                onVehiclesCountMaxChange={handleVehiclesCountMaxChange}
-                onDriversCountMinChange={handleDriversCountMinChange}
-                onDriversCountMaxChange={handleDriversCountMaxChange}
-                onTransactionsAmountMinChange={handleTransactionsAmountMinChange}
-                onTransactionsAmountMaxChange={handleTransactionsAmountMaxChange}
-                onFirstActionsChange={handleFirstActionsChange}
-                onResetFilters={resetFilters}
+                filterState={fleetFilters}
+                updateFilter={updateFilter}
+                resetFilters={resetFilters}
             />
             <FleetFromDialog isOpen={isCreateFleetOpen} onClose={() => setIsCreateFleetOpen(false)} action="create" />
             <FleetDetailsSheet
-                isOpen={detailsSheet.isOpen}
-                onClose={() => setDetailsSheet({ isOpen: false, fleet: null })}
-                fleet={detailsSheet.fleet}
-                onEdit={() => { }}
-                onDelete={() => { }}
+                isOpen={isDetailsVisible}
+                onClose={() => { setIsDetailsVisible(false); setSelectedFleet(undefined) }}
+                fleet={selectedFleet ?? null}
+                onEdit={(fleet) => handleEdit(fleet)}
+                onDelete={(fleet) => handleDelete(fleet)}
             />
             <DeleteFleetDialog
-                isOpen={deleteDialog.isOpen}
-                onClose={() =>
-                    setDeleteDialog({ isOpen: false, fleetId: null, fleetName: null })
-                }
-                fleetId={deleteDialog.fleetId ?? ""}
-                fleetName={deleteDialog.fleetName ?? ""}
-                onConfirm={(id) => {
-                    // TODO: call delete API with id then refresh list
-                }}
+                isOpen={isDeleteVisible}
+                onClose={() => { setIsDeleteVisible(false); setSelectedFleet(undefined) }}
+                fleetId={selectedFleet?.id}
+                fleetName={selectedFleet?.name}
             />
             <SuspendFleetDialog
-                isOpen={suspendDialog.isOpen}
-                onClose={() =>
-                    setSuspendDialog({ isOpen: false, fleetId: null, fleetName: null })
-                }
-                fleetId={suspendDialog.fleetId ?? ""}
-                fleetName={suspendDialog.fleetName ?? ""}
-                onConfirm={(id) => {
-                    // TODO: call suspend API with id then refresh list
-                }}
+                isOpen={isSuspendVisible}
+                onClose={() => { setIsSuspendVisible(false), setSelectedFleet(undefined) }}
+                fleetId={selectedFleet?.id}
+                fleetName={selectedFleet?.name}
             />
         </div>
     )

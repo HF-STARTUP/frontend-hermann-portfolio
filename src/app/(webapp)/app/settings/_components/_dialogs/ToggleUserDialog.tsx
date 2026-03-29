@@ -6,6 +6,7 @@ import { PageSubTitle } from "@/components/ui/custom/PageTitle";
 import UserProfile from "@/model/user/User";
 import { UserRoundCheck, UserRoundX } from "lucide-react";
 import { useDeactivateOrActivateAdmin } from "@/hooks/admin/useSettingsHook";
+import { useEffect } from "react";
 
 interface UserToggleProps {
     isOpenned: boolean;
@@ -20,8 +21,13 @@ export const UserToggleDialog = ({ isOpenned, onClose, userId, action = "enable"
 
     const handleToggleStatus = (id: string)=>{
         onToggleStatus(id);
-        onClose()       
     }
+
+    useEffect(() => {
+        if (isSuccess) {
+            onClose()
+        }
+    }, [isSuccess]);
 
     return (
         <Dialog open={isOpenned}>

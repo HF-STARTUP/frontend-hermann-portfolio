@@ -35,6 +35,7 @@ export const useUsersFormHook = (userId?: string) => {
     phone: "",
     role_id: "",
     cities_id: [],
+    password: ""
   });
 
   useEffect(() => {
@@ -46,6 +47,7 @@ export const useUsersFormHook = (userId?: string) => {
         phone: userData.user.phone.slice(3),
         role_id: String(userData.role ? userData.role.id : undefined),
         cities_id: userData.cities.map((c) => c.id),
+        password: userData.password
       });
     }
   }, [userData]);
@@ -59,6 +61,7 @@ export const useUsersFormHook = (userId?: string) => {
         phone: "",
         role_id: "",
         cities_id: [],
+        password: ""
       });
     }
   }, [isSuccess]);
@@ -91,10 +94,10 @@ export const useUsersFormHook = (userId?: string) => {
       notify("Veuillez sélectionner au moins une ville", "error");
       return false;
     }
-    // if (formData.password !== undefined && !formData.password.trim()) {
-    //   notify("Veuillez entrer un mot de passe", "error");
-    //   return false;
-    // }
+    if (formData.password !== undefined && !formData.password.trim()) {
+      notify("Veuillez entrer un mot de passe", "error");
+      return false;
+    }
     return true;
   };
 

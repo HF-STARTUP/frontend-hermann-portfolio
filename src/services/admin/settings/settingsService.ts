@@ -48,14 +48,19 @@ class SettingsService extends Service {
     }
 
     public static async updateAdmin(id: string, formData: AddAdminInput) {
+        const processedData = {
+            ...formData,
+            cities_id: JSON.stringify(formData.cities_id),
+        };
+        
         return await SettingsService.getInstance().execHttpRequest<CourseResponseType>({
             url: `${SettingsApiPath.createAdmin}/${id}`,
             method: SettingsService.getInstance().httpMethods.update,
-            body: formData,
+            body: processedData,
         });
     }
 
-    public static async createNewAdmin(formData: AddAdminInput) {
+    public static async createNewAdmin(formData: AddAdminInput) {        
         return await SettingsService.getInstance().execHttpRequest<CourseResponseType>({
             url: SettingsApiPath.createAdmin,
             method: SettingsService.getInstance().httpMethods.post,

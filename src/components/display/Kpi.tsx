@@ -5,11 +5,13 @@ import { cloneElement } from 'react';
 
 export type CardVariant = 'green' | 'red' | 'orange' | 'yellow' | 'blue' | 'light-blue' | 'light-green' | 'purple' |'default' ;
 
+export type KpiVariation = 'up' | 'down' | 'stable';
+
 export interface KpiItem {
     icon: ReactNode;
     title: string;
     value?: string | number;
-    variation?: 'up' | 'down' | 'stable';
+    variation?: KpiVariation;
     variant?: CardVariant,
     className?: string;
     border?: boolean;

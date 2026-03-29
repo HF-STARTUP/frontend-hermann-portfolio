@@ -5,52 +5,149 @@ import { Input } from "@/components/ui/input"
 import { useGetActiveCurrency } from "@/hooks/__globlal/useGlobalHook"
 import { DialogMainBody } from "@/components/display/DialogMainBody"
 import { DialogFooter } from "@/components/display/DialogFooter"
-import { FilterState } from "@/app/(webapp)/app/fleet/_hook/useFleetHook"
+import { GetFleetsParams, FirstAction } from "@/types/admin/fleet.type"
+import { useState, useEffect } from "react"
+import { FirstActionMap } from "../../utils"
 
 interface AdvancedFiltersDialogProps {
   isOpen: boolean
   onClose: () => void
-  filterState: FilterState
-  onRecentFirstChange: (checked: boolean) => void
-  onOldestFirstChange: (checked: boolean) => void
-  onVehiclesCountMinChange: (value: string) => void
-  onVehiclesCountMaxChange: (value: string) => void
-  onDriversCountMinChange: (value: string) => void
-  onDriversCountMaxChange: (value: string) => void
-  onTransactionsAmountMinChange: (value: string) => void
-  onTransactionsAmountMaxChange: (value: string) => void
-  onFirstActionsChange: (action: string, checked: boolean) => void
-  onResetFilters: () => void
+  filterState: GetFleetsParams
+  updateFilter: <K extends keyof GetFleetsParams>(key: K, value: GetFleetsParams[K]) => void
+  resetFilters: () => void
 }
 
 export const AdvancedFiltersDialog = ({
   isOpen,
   onClose,
   filterState,
-  onRecentFirstChange,
-  onOldestFirstChange,
-  onVehiclesCountMinChange,
-  onVehiclesCountMaxChange,
-  onDriversCountMinChange,
-  onDriversCountMaxChange,
-  onTransactionsAmountMinChange,
-  onTransactionsAmountMaxChange,
-  onFirstActionsChange,
-  onResetFilters,
+  updateFilter,
+  resetFilters,
 }: AdvancedFiltersDialogProps) => {
   const { currency } = useGetActiveCurrency()
 
-  const handleReset = () => {
-    onResetFilters()
+  const [tempFilters, setTempFilters] = useState<Partial<GetFleetsParams>>({})
+
+  useEffect(() => {
+    if (isOpen) {
+      setTempFilters({
+        sort: filterState.sort,
+        drivers_count_min: filterState.drivers_count_min,
+        drivers_count_max: filterState.drivers_count_max,
+        vehicles_count_min: filterState.vehicles_count_min,
+        vehicles_count_max: filterState.vehicles_count_max,
+        transactions_amount_min: filterState.transactions_amount_min,
+        transactions_amount_max: filterState.transactions_amount_max,
+        first_actions: [...(filterState.first_actions || [])],
+      })
+    }
+  }, [isOpen, filterState])
+
+  // Handlers pour les filtres temporaires
+  const onRecentFirstChange = (checked: boolean) => {
+    if (checked) {
+      setTempFilters((prev) => ({ ...prev, sort: "recent" }))
+    } else if (tempFilters.sort === "recent") {
+      setTempFilters((prev) => ({ ...prev, sort: undefined }))
+    }
+  }
+
+  const onOldestFirstChange = (checked: boolean) => {
+    if (checked) {
+      setTempFilters((prev) => ({ ...prev, sort: "oldest" }))
+    } else if (tempFilters.sort === "oldest") {
+      setTempFilters((prev) => ({ ...prev, sort: undefined }))
+    }
+  }
+
+  const onDriversCountMinChange = (value: string) => {
+    setTempFilters((prev) => ({
+      ...prev,
+      drivers_count_min: value ? Number(value) : undefined,
+    }))
+  }
+
+  const onDriversCountMaxChange = (value: string) => {
+    setTempFilters((prev) => ({
+      ...prev,
+      drivers_count_max: value ? Number(value) : undefined,
+    }))
+  }
+
+  const onVehiclesCountMinChange = (value: string) => {
+    setTempFilters((prev) => ({
+      ...prev,
+      vehicles_count_min: value ? Number(value) : undefined,
+    }))
+  }
+
+  const onVehiclesCountMaxChange = (value: string) => {
+    setTempFilters((prev) => ({
+      ...prev,
+      vehicles_count_max: value ? Number(value) : undefined,
+    }))
+  }
+
+  const onTransactionsAmountMinChange = (value: string) => {
+    setTempFilters((prev) => ({
+      ...prev,
+      transactions_amount_min: value ? Number(value) : undefined,
+    }))
+  }
+
+  const onTransactionsAmountMaxChange = (value: string) => {
+    setTempFilters((prev) => ({
+      ...prev,
+      transactions_amount_max: value ? Number(value) : undefined,
+    }))
+  }
+
+  const onFirstActionsChange = (action: FirstAction, checked: boolean) => {
+    setTempFilters((prev) => {
+      const currentActions = prev.first_actions || []
+      if (checked) {
+        return { ...prev, first_actions: [...currentActions, action] }
+      } else {
+        return { ...prev, first_actions: currentActions.filter((a) => a !== action) }
+      }
+    })
+  }
+
+  // Appliquer les filtres (appliquer localement via updateFilter)
+  const handleApply = () => {
+    // Appliquer chaque filtre modifié
+    Object.entries(tempFilters).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        updateFilter(key as keyof GetFleetsParams, value)
+      } else {
+        // Si la valeur est undefined, on supprime le filtre
+        updateFilter(key as keyof GetFleetsParams, undefined as any)
+      }
+    })
     onClose()
   }
 
-  const handleApply = () => {
+  // Réinitialiser les filtres locaux uniquement (pas ceux du hook)
+  const handleLocalReset = () => {
+    setTempFilters({
+      sort: undefined,
+      drivers_count_min: undefined,
+      drivers_count_max: undefined,
+      vehicles_count_min: undefined,
+      vehicles_count_max: undefined,
+      transactions_amount_min: undefined,
+      transactions_amount_max: undefined,
+      first_actions: [],
+    })
+  }
+
+  // Fermer le dialogue sans appliquer les changements
+  const handleClose = () => {
     onClose()
   }
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose} bgType="blured">
+    <Dialog open={isOpen} onOpenChange={handleClose} bgType="blured">
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Filtrer et trier</DialogTitle>
@@ -61,23 +158,25 @@ export const AdvancedFiltersDialog = ({
             <div className="options pl-4 flex flex-col gap-3 font-medium">
               <label
                 htmlFor="recent"
-                className="option flex items-center cursor-pointer gap-2 justify-center w-full border rounded-full p-2 text-sm"
+                className={`option flex items-center cursor-pointer gap-2 justify-center w-full border rounded-full p-2 text-sm ${tempFilters.sort === "recent"?"bg-vaDarkBlue":""}`}
               >
                 <Checkbox
                   id="recent"
-                  checked={filterState.sort === "recent"}
-                  onCheckedChange={(checked) => onRecentFirstChange(checked as boolean)}
+                  checked={tempFilters.sort === "recent"}
+                  onCheckedChange={onRecentFirstChange}
+                  className="hidden"
                 />
                 <span>Plus récent d'abord</span>
               </label>
               <label
                 htmlFor="oldest"
-                className="option flex items-center cursor-pointer gap-2 justify-center w-full border rounded-full p-2 text-sm"
+                className={`option flex items-center cursor-pointer gap-2 justify-center w-full border rounded-full p-2 text-sm ${tempFilters.sort === "oldest"?"bg-vaDarkBlue":""}`}
               >
                 <Checkbox
                   id="oldest"
-                  checked={filterState.sort === "oldest"}
-                  onCheckedChange={(checked) => onOldestFirstChange(checked as boolean)}
+                  checked={tempFilters.sort === "oldest"}
+                  onCheckedChange={onOldestFirstChange}
+                  className="hidden"
                 />
                 <span>Plus ancien d'abord</span>
               </label>
@@ -93,13 +192,13 @@ export const AdvancedFiltersDialog = ({
                   <Input
                     type="number"
                     placeholder="min"
-                    value={filterState.driversCountMin ?? ""}
+                    value={tempFilters.drivers_count_min ?? ""}
                     onChange={(e) => onDriversCountMinChange(e.target.value)}
                   />
                   <Input
                     type="number"
                     placeholder="max"
-                    value={filterState.driversCountMax ?? ""}
+                    value={tempFilters.drivers_count_max ?? ""}
                     onChange={(e) => onDriversCountMaxChange(e.target.value)}
                   />
                 </div>
@@ -110,13 +209,13 @@ export const AdvancedFiltersDialog = ({
                   <Input
                     type="number"
                     placeholder="min"
-                    value={filterState.vehiclesCountMin ?? ""}
+                    value={tempFilters.vehicles_count_min ?? ""}
                     onChange={(e) => onVehiclesCountMinChange(e.target.value)}
                   />
                   <Input
                     type="number"
                     placeholder="max"
-                    value={filterState.vehiclesCountMax ?? ""}
+                    value={tempFilters.vehicles_count_max ?? ""}
                     onChange={(e) => onVehiclesCountMaxChange(e.target.value)}
                   />
                 </div>
@@ -127,13 +226,13 @@ export const AdvancedFiltersDialog = ({
                   <Input
                     type="number"
                     placeholder={`min (${currency})`}
-                    value={filterState.transactionsAmountMin ?? ""}
+                    value={tempFilters.transactions_amount_min ?? ""}
                     onChange={(e) => onTransactionsAmountMinChange(e.target.value)}
                   />
                   <Input
                     type="number"
                     placeholder={`max (${currency})`}
-                    value={filterState.transactionsAmountMax ?? ""}
+                    value={tempFilters.transactions_amount_max ?? ""}
                     onChange={(e) => onTransactionsAmountMaxChange(e.target.value)}
                   />
                 </div>
@@ -145,79 +244,23 @@ export const AdvancedFiltersDialog = ({
             <div className="title font-semibold text-[#000B20]">Type d'événement</div>
             <div className="desc text-vaLightGray">Premières actions uniquement</div>
             <div className="options pl-4 flex flex-col gap-3 text-sm font-medium text-[#364153]">
-              <div className="option flex gap-2 items-center cursor-pointer">
-                <Checkbox
-                  id="first-action-1"
-                  checked={filterState.firstActions.includes("promo_code_used")}
-                  onCheckedChange={(checked) => onFirstActionsChange("promo_code_used", checked as boolean)}
-                />
-                <label htmlFor="first-action-1" className="cursor-pointer">
-                  Utilisation de code promo
-                </label>
-              </div>
-              <div className="option flex gap-2 items-center cursor-pointer">
-                <Checkbox
-                  id="first-action-2"
-                  checked={filterState.firstActions.includes("first_vehicle_added")}
-                  onCheckedChange={(checked) =>
-                    onFirstActionsChange("first_vehicle_added", checked as boolean)
-                  }
-                />
-                <label htmlFor="first-action-2" className="cursor-pointer">
-                  Premier véhicule ajouté
-                </label>
-              </div>
-              <div className="option flex gap-2 items-center cursor-pointer">
-                <Checkbox
-                  id="first-action-3"
-                  checked={filterState.firstActions.includes("first_driver_added")}
-                  onCheckedChange={(checked) =>
-                    onFirstActionsChange("first_driver_added", checked as boolean)
-                  }
-                />
-                <label htmlFor="first-action-3" className="cursor-pointer">
-                  Premier chauffeur ajouté
-                </label>
-              </div>
-              <div className="option flex gap-2 items-center cursor-pointer">
-                <Checkbox
-                  id="first-action-4"
-                  checked={filterState.firstActions.includes("first_collection")}
-                  onCheckedChange={(checked) =>
-                    onFirstActionsChange("first_collection", checked as boolean)
-                  }
-                />
-                <label htmlFor="first-action-4" className="cursor-pointer">
-                  Premier encaissement effectué
-                </label>
-              </div>
-              <div className="option flex gap-2 items-center cursor-pointer">
-                <Checkbox
-                  id="first-action-5"
-                  checked={filterState.firstActions.includes("first_maintenance")}
-                  onCheckedChange={(checked) =>
-                    onFirstActionsChange("first_maintenance", checked as boolean)
-                  }
-                />
-                <label htmlFor="first-action-5" className="cursor-pointer">
-                  Premier entretien ajouté
-                </label>
-              </div>
-              <div className="option flex gap-2 items-center cursor-pointer">
-                <Checkbox
-                  id="first-action-6"
-                  checked={filterState.firstActions.includes("first_checkup")}
-                  onCheckedChange={(checked) => onFirstActionsChange("first_checkup", checked as boolean)}
-                />
-                <label htmlFor="first-action-6" className="cursor-pointer">
-                  Premier check-up effectué
-                </label>
-              </div>
+              {Object.entries(FirstActionMap).map(([action, label]) => (
+                <div className="option flex gap-2 items-center cursor-pointer" key={action}>
+                  <Checkbox
+                    id={`first-action-${action}`}
+                    checked={tempFilters.first_actions?.includes(action as FirstAction)}
+                    onCheckedChange={(checked) => onFirstActionsChange(action as FirstAction, checked as boolean)}
+                  />
+                  <label htmlFor={`first-action-${action}`} className="cursor-pointer">
+                    {label}
+                  </label>
+                </div>
+              ))}
             </div>
           </div>
         </DialogMainBody>
         <DialogFooter className="grid grid-cols-2 gap-3">
-          <Button variant={"outline"} onClick={handleReset}>
+          <Button variant={"outline"} onClick={handleLocalReset}>
             Réinitialiser
           </Button>
           <Button variant={"mainBlue"} onClick={handleApply}>

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import Badge from "@/components/display/Badge";
 import { getAvatarColor, getAvatarInitials } from "@/lib/initials.avatar.util";
+import Image from "next/image";
 
 
 export default function FleetDetailsSheet({
@@ -34,8 +35,8 @@ export default function FleetDetailsSheet({
     isOpen: boolean;
     onClose: () => void;
     fleet: FleetModel | null;
-    onEdit: (fleetId: string) => void;
-    onDelete: (fleetId: string) => void;
+    onEdit: (fleet: FleetModel) => void;
+    onDelete: (fleet: FleetModel) => void;
 }) {
 
     const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
@@ -66,11 +67,17 @@ export default function FleetDetailsSheet({
                     <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3">
                             <div
-                                className={`size-20 rounded-xl flex items-center justify-center font-bold text-white text-3xl ${getAvatarColor(
+                                className={`size-20 rounded-xl flex items-center justify-center font-bold text-white text-3xl overflow-hidden ${getAvatarColor(
                                     fleet.name
                                 )}`}
                             >
-                                {getAvatarInitials(fleet.name)}
+                                <Image 
+                                    src={fleet.logo}
+                                    alt={fleet.name || ""}
+                                    width={400}
+                                    height={400}
+                                    className="size-full object-cover"
+                                />
                             </div>
                             <div className="h-20 flex flex-col justify-between gap-1">
                                 <h2 className="text-xl font-semibold text-[#0A0A0A]">
@@ -90,7 +97,10 @@ export default function FleetDetailsSheet({
                         <div className="flex flex-col items-end gap-3">
                             <div className="flex items-center gap-4">
 
-                                {fleet.suscription_name && <Badge type={fleet.suscription_name} icon={<Crown />} />}
+                                {fleet.suscription_name &&
+                                 <Badge type={fleet.suscription_name} icon={<Crown />} isPackage>
+                                    {fleet.suscription_name}
+                                </Badge>}
                                 <Badge type={fleet.statusDisplay} />
                                 <DropdownMenu>
                                     <DropdownMenuTrigger asChild>
@@ -140,7 +150,7 @@ export default function FleetDetailsSheet({
                         </Tabs>
                         {activeTab === "profile" && <DetailRowList rows={ProfileItems} isLoading={isLoadingFleetProfile} />}
                         {activeTab === "subscription" && <SubscriptionContent fleetId={fleet.id} />}
-                        {activeTab === "transactions" && <TransactionsContent />}
+                        {activeTab === "transactions" && <TransactionsContent fleetId={fleet.id} />}
                         {activeTab === "journal" && (
                            <JournalList 
                            items={journals} 
@@ -156,19 +166,13 @@ export default function FleetDetailsSheet({
                     isOpen={isDeleteOpen}
                     onClose={() => setIsDeleteOpen(false)}
                     fleetId={fleet.id}
-                    fleetName={fleet.name}
-                    onConfirm={(id) => {
-                        onDelete(id);
-                    }}
+                    fleetName={fleet.name}                   
                 />
                 <SuspendFleetDialog
                     isOpen={isSuspendOpen}
                     onClose={() => setIsSuspendOpen(false)}
                     fleetId={fleet.id}
-                    fleetName={fleet.name}
-                    onConfirm={(id) => {
-                        onEdit(id);
-                    }}
+                    fleetName={fleet.name}                 
                 />
             </SheetContent>
         </Sheet>

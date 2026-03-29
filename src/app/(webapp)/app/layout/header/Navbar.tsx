@@ -28,6 +28,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/compon
 import Link from "next/link";
 import { Switch } from "@/components/ui/switch";
 import { useGetCurrenciesList } from "@/hooks/admin/useFleetHook";
+import { SwitchLoggingMode } from "./SwitchLogingModeDialog";
 
 export const Navbar = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -68,14 +69,14 @@ export const Navbar = () => {
                         className="bg-white/15 backdrop-blur-2xl border border-vaTexttext-vaTextPrimary text-white rounded-2xl placeholder:text-white/70 text-sm w-full min-w-72 pr-1 pl-10"
                         leftIcon={<Search className="text-white size-5" />}
                     />
-                </div>             
+                </div>
             </div>
 
             <div className="flex items-center gap-1 lg:gap-4 shrink-0">
                 {/* Loupe de recherche : Visible sur Mobile et Tablette (jusqu'à xl) */}
-                <Button 
-                    variant="ghost" 
-                    size="icon" 
+                <Button
+                    variant="ghost"
+                    size="icon"
                     className="xl:hidden text-white hover:bg-white/10"
                     onClick={() => setIsSearchOpen(true)}
                 >
@@ -100,7 +101,7 @@ const MobileExtraMenu = () => {
                     <p className="text-[10px] text-vaTextPrimary font-bold tracking-widest">Localisation</p>
                     <CitySelector isMobile />
                 </div>
-                
+
                 <div className="space-y-2">
                     <p className="text-[10px] text-vaTextPrimary font-bold tracking-widest">Statistiques (Mobile)</p>
                     <div className="grid grid-cols-2 gap-2">
@@ -146,28 +147,34 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
     }, [filterCityToken, data])
 
     return (
-        <div className={cn("w-full", !isMobile && "hidden md:block md:w-[130px] lg:w-[180px]")}>            
+        <div className={cn("w-full", !isMobile && "hidden md:block md:w-[130px] lg:w-[180px]")}>
             <Select
                 onValueChange={(new_city_id) => {
                     const selected = data?.listPark.find((lp) => lp.id == +new_city_id)
-                    AuthManagerGuard.setEnabledCityID(+new_city_id)
-                    AuthManagerGuard.setCurrency(selected?.name)
-                    if ($path.includes("tickets")) window.location.reload()
+                    AuthManagerGuard.setEnabledCityID(new_city_id)
+                    AuthManagerGuard.setCurrency(selected?.currency)
                     queryClient.invalidateQueries()
                     if ($params.hasOwnProperty("fleetID")) $router.push("/app/fleet")
                 }}
-                defaultValue={AuthManagerGuard.getEnabledCity ?? String(data?.listPark[0]?.id)}
+                defaultValue={AuthManagerGuard.getEnabledCity}
                 onOpenChange={setSelectOpen}
                 open={selectOpen}
             >
                 <SelectTrigger className="bg-white/10 border border-vaTexttext-vaTextPrimary rounded-xl text-white h-9 lg:h-11 px-2 overflow-hidden" leftIcon={<MapPin className="size-4 mr-1 shrink-0" />}>
-                    <SelectValue placeholder="Ville" />
+                    <SelectValue placeholder="Sélectionnez une ville" />
                 </SelectTrigger>
                 <SelectContent className="z-[100]">
                     <SelectGroup>
-                        <SelectLabel>Ville</SelectLabel>
+                        <SelectLabel>
+                            <p className="text-xs">
+                                NB : <span className="text-xs font-normal text-vaTextPrimary"> La ville sélectionnée affecte les statistiques affichées</span>
+                            </p>
+                        </SelectLabel>
+                    </SelectGroup>
+                    <SelectGroup>
+                        <SelectLabel>Sélectionnez une ville</SelectLabel>
                         <div className="px-2 mb-2"><Input placeholder="Rechercher..." value={filterCityToken} onChange={(e) => setFilterCityToken(e.target.value)} onClick={(e) => e.stopPropagation()} /></div>
-                        <SelectItem value="999999">Tous</SelectItem>
+                        <SelectItem value="all">Toutes les villes</SelectItem>
                         {cityFiltered?.map((item) => (<SelectItem key={item.id} value={String(item.id)}>{item.name}</SelectItem>))}
                     </SelectGroup>
                 </SelectContent>
@@ -179,25 +186,26 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
 const UserOption: React.FC = () => {
     const { data, isLoading } = useUserProfile()
     const [isLogoutOpenned, setIsLogoutOpenned] = useState(false)
+    const [isSwitchOpenned, setIsSwitchOpenned] = useState(false)
 
 
     if (isLoading || !data) return null;
 
     return (
         <div className="flex gap-4 items-center">
-               {/* Statistiques : VISIBLES SUR TABLETTE ET DESKTOP (md:flex) */}
-               <div className="hidden md:flex items-center gap-2 lg:gap-6 shrink-0">
-                    <div className="bg-white/10 px-2 py-1 rounded-xl flex items-center border border-vaTexttext-vaTextPrimary">
-                        <div className="flex flex-col text-vaLightGray pl-1 pr-3 border-r border-white/30">
-                            <p className="font-normal text-[9px] lg:text-sm tracking-tighter">Transactions du jour</p>
-                            <p className="font-bold text-xs lg:text-lg text-white">122</p>
-                        </div>
-                        <div className="flex flex-col text-vaLightGray pr-1 pl-3">
-                            <p className="font-normal text-[9px] lg:text-sm tracking-tighter">Revenus du jour</p>
-                            <p className="font-bold text-xs lg:text-lg text-vaOrange whitespace-nowrap">2.4M XOF</p>
-                        </div>
+            {/* Statistiques : VISIBLES SUR TABLETTE ET DESKTOP (md:flex) */}
+            <div className="hidden md:flex items-center gap-2 lg:gap-6 shrink-0">
+                <div className="bg-white/10 px-2 py-1 rounded-xl flex items-center border border-vaTexttext-vaTextPrimary">
+                    <div className="flex flex-col text-vaLightGray pl-1 pr-3 border-r border-white/30">
+                        <p className="font-normal text-[9px] lg:text-sm tracking-tighter">Transactions du jour</p>
+                        <p className="font-bold text-xs lg:text-lg text-white">122</p>
+                    </div>
+                    <div className="flex flex-col text-vaLightGray pr-1 pl-3">
+                        <p className="font-normal text-[9px] lg:text-sm tracking-tighter">Revenus du jour</p>
+                        <p className="font-bold text-xs lg:text-lg text-vaOrange whitespace-nowrap">2.4M XOF</p>
                     </div>
                 </div>
+            </div>
             <CitySelector />
 
             <div className="relative shrink-0">
@@ -211,13 +219,15 @@ const UserOption: React.FC = () => {
 
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                    <div className="py-1 lg:pl-4 lg:border-l border-vaTextPrimary flex items-center gap-2 cursor-pointer hover:bg-white/10 lg:rounded-full lg:rounded-r-full lg:rounded-l-none transition-all">
+                    <div className="py-1 lg:pl-4 p-1 lg:border-l border-vaTextPrimary flex items-center gap-2 cursor-pointer hover:bg-white/10 rounded-full lg:rounded-r-full lg:rounded-l-none transition-all">
                         <div className="size-8 lg:size-11 rounded-full bg-vaYellow overflow-hidden ring-2 ring-white/20 shrink-0">
                             <Image src={data.getOrganisationLogo} alt={data.getUsername} width={48} height={48} className="size-full object-cover" />
                         </div>
                         <div className="hidden sm:flex flex-col text-white max-w-[80px] lg:max-w-none gap-1">
-                            <p className="text-lg font-bold leading-tight truncate">{data.username}</p>
-                            <p className="text-xs text-vaTextPrimary">Admin</p>
+                            <p className="text-lg font-bold leading-tight truncate" title={data.getUsername} >{data.getUsername}</p>
+                            <p className="text-xs text-vaLightGray truncate" title={ data?.roleName }>
+                                { data?.roleName }
+                            </p>
                         </div>
                         <ChevronDown className="hidden md:block size-4 text-vaTextPrimary shrink-0" />
                     </div>
@@ -228,33 +238,43 @@ const UserOption: React.FC = () => {
                         <p className="text-xs text-vaTextPrimary truncate">{data._instance.user.email}</p>
                     </div>
                     <div className="flex flex-col border-b p-4 gap-4">
-                        <Link href={"#"} className="flex items-center gap-2 hover:opacity-70">
+                        <Link href={"/app/settings"} className="flex items-center gap-2 hover:opacity-70">
                             <User className="size-5 text-vaLightGray" />
                             <p className="text-sm font-medium text-vaTextPrimary">Mon profil</p>
                         </Link>
-                        <Link href={"#"} className="flex items-center gap-2 hover:opacity-70">
+                        <Link href={"/app/settings"} className="flex items-center gap-2 hover:opacity-70">
                             <Settings className="size-5 text-vaLightGray" />
                             <p className="text-sm font-medium text-vaTextPrimary">Paramètres</p>
                         </Link>
                         <div className="flex items-center gap-2">
-                            <Switch className="data-[state=checked]:bg-vaLightGreen" />
-                            <span className="text-vaTextPrimary text-base">Production</span>
-                            <Badge variant="green" className="text-[10px]">PROD</Badge>
+                            <Switch
+                                className="data-[state=checked]:bg-vaLightGreen"
+                                onClick={()=>setIsSwitchOpenned(true)}
+                                checked={AuthManagerGuard.getConnexionMode === ConnexionMode.Production}
+                            />
+                            <span className="text-vaTextPrimary text-base">
+                                {AuthManagerGuard.getConnexionMode === ConnexionMode.Staging ? "Staging" : "Production"}
+                            </span>
+                            <Badge
+                                variant={AuthManagerGuard.getConnexionMode === ConnexionMode.Staging ? "orange" : "green"}
+                            >
+                                {AuthManagerGuard.getConnexionMode}
+                            </Badge>
                         </div>
+                        <SwitchLoggingMode
+                            isOpenned={isSwitchOpenned}
+                            onClose={() => setIsSwitchOpenned(false)}
+                        />
                     </div>
                     <div className="p-4">
-                        <div className="flex text-vaRed items-center gap-3 cursor-pointer" onClick={()=>setIsLogoutOpenned(true)}>
+                        <div className="flex text-vaRed items-center gap-3 cursor-pointer" onClick={() => setIsLogoutOpenned(true)}>
                             <LogOut className="size-5" />
                             <p className="text-sm font-medium">Déconnexion</p>
                         </div>
-                        <SignOutAction isOpen={isLogoutOpenned} onClose={()=>setIsLogoutOpenned(false)}  />
+                        <SignOutAction isOpen={isLogoutOpenned} onClose={() => setIsLogoutOpenned(false)} />
                     </div>
                 </DropdownMenuContent>
-            </DropdownMenu>
-
-            <Badge variant="default" className=" bg-white/15 text-white whitespace-nowrap">
-                {AuthManagerGuard.getConnexionMode === ConnexionMode.Staging ? "Staging" : "Prod"}
-            </Badge>
+            </DropdownMenu>          
         </div>
     )
 }

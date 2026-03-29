@@ -66,7 +66,7 @@ class AuthManagerGuard {
         Cookies.set(TOKEN_KEYS.transaction_id, id)
     }
 
-    static setEnabledCityID(id: number) {
+    static setEnabledCityID(id: number | string) {
         Cookies.set(TOKEN_KEYS.enabled_city_id, String(id), COOKIES_CONFIG)
     }
 

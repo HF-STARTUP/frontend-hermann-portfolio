@@ -7,9 +7,7 @@ import { EmptyData } from "@/components/box/PageNetworkState";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const PREDEFINED_COLORS = [
-  '#2563eb', '#10b981'
-];
+const PREDEFINED_COLORS = ['#2563eb', '#10b981'];
 
 export interface RevenueData {
   category: string;
@@ -31,24 +29,14 @@ const RevenueBySourceChart = ({
   isLoading?: boolean  
 }) => {
 
-  const { labels, values, colors, isEmpty } = useMemo(() => {
-    const currentValues = data.map(d => Number(d.amount));
-    const isDataEmpty = !data || data.length === 0 || currentValues.every(v => v === 0);
-
-    return {
-      labels: data.map(d => d.category),
-      values: currentValues,
-      colors: data.map((_, i) => PREDEFINED_COLORS[i % PREDEFINED_COLORS.length]),
-      isEmpty: isDataEmpty
-    };
-  }, [data]);
+  const labels = data.map(d => d.category);
 
   const chartData = {
-    labels: labels,
+    labels,
     datasets: [
       {
-        data: values,
-        backgroundColor: colors,
+        data: chartValues,
+        backgroundColor: PREDEFINED_COLORS,
         borderWidth: 0,
         borderRadius: 15,
         spacing: 10,
@@ -63,7 +51,6 @@ const RevenueBySourceChart = ({
     plugins: {
       legend: { display: false },
       tooltip: {
-        enabled: !isEmpty,
         backgroundColor: '#1e293b',
         padding: 12,
         borderRadius: 10,
@@ -82,7 +69,7 @@ const RevenueBySourceChart = ({
           </div>
         </div>
         <div className="mt-8 space-y-4">
-          {[1, 2, 3].map((i) => (
+          {[1, 2].map((i) => (
             <div key={i} className="flex justify-between items-center">
               <div className="flex items-center gap-3">
                 <div className="w-3 h-3 rounded-full bg-gray-200" />
@@ -100,7 +87,7 @@ const RevenueBySourceChart = ({
     <div className="bg-white p-6 rounded-2xl h-full flex flex-col">
       <h2 className="text-2xl font-semibold text-vaTextPrimary mb-6">Revenus par source</h2>
       
-      {isEmpty ? (
+      {!isLoading && !data.length ? (
         <div className="flex-1 flex items-center justify-center py-10">
           <EmptyData message="Aucun revenu enregistré" description="Aucune source de revenu n'a ete trouver" />
         </div>
@@ -116,13 +103,13 @@ const RevenueBySourceChart = ({
             </div>
           </div>
 
-          <div className="mt-8 space-y-4 overflow-y-auto max-h-40 custom-scrollbar pr-2">
+          <div className="mt-8 space-y-4">
             {data.map((item, index) => (
               <div key={index} className="flex items-center justify-between group">
                 <div className="flex items-center gap-3">
                   <div 
                     className="w-3 h-3 rounded-full" 
-                    style={{ backgroundColor: colors[index] }} 
+                    style={{ backgroundColor: PREDEFINED_COLORS[index] }} 
                   />
                   <span className="text-vaLightGray font-semibold text-lg">
                     {item.category}

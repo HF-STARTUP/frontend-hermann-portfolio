@@ -4,16 +4,29 @@ import {
     BestDiverAndVehicleResponseType,
     CarburantEvolution,
     DashboardBestAndLeastProfilableResponseType,
+    FleetByCityInputs,
     FleetJournalData,
     FleetListResponseType,
     FleetOverviewData,
     FleetProfileData,
+    FleetRegisterFormData,
     FleetResponseType,
+    FleetsKpiData,
     FleetSubscriptionParams,
     FleetSubscriptionsResponseData,
+    GetFleetsParams,
+    OperatorRevenueResponse,
+    OperatorRevenusInputs,
     ParkDetailsResponseType,
+    ProfitableListInputs,
     ProfitableListResponseType,
-    RevenusEvolution
+    RevenusEvolution,
+    SubscriptionPlanRevenusInputs,
+    SuspendFleetData,
+    TransactionHistoryData,
+    TransactionHistoryItem,
+    TransactionHistoryParams,
+    TransactionKpiData
 } from "@/types/admin/fleet.type";
 import { AbonResponseModel, AdminOnFleetModel, FleetModel, ParkStatResponseType } from "@/model/ADMIN/fleet";
 import { ResponseWithPagination } from "@/types/generic";
@@ -24,6 +37,10 @@ import { FleetByCityResponseType, RevenusRepartitionResponseType } from "@/types
 import FleetOverview from "@/model/ADMIN/FleetOverview";
 import FleetProfileDetail from "@/model/ADMIN/FleetProfile";
 import FleetJournalModel from "@/model/ADMIN/FleetJournalModel";
+import TransactionKpiModel from "@/model/ADMIN/FleetTransactionsKpi";
+import TransactionHistoryModel from "@/model/ADMIN/TransactionHistory";
+import { DashboardParams } from "@/types/dashboard.type";
+import FleetsKpiModel from "@/model/ADMIN/FleetsKpi";
 
 export enum FleetApiPath {
     GetFleetByCityID = '/park/by',
@@ -51,61 +68,15 @@ export enum FleetApiPath {
     GetFleetOverview = "/admin/fleets/{park_id}/overview",
     GetFleetProfile = "/admin/fleets/{park_id}/profile",
     GetFleetJournal = "/admin/fleets/{park_id}/journal",
-}
-
-export type GetFleetByCityIDParams = {
-    city_id?: string;
-    type?: string;
-    page?: number;
-    itemPerPage?: number;
-    limit?: number;
-    // Filtres de recherche et dates
-    name?: string;
-    subscription_name?: string;
-    created_from?: string; // ISO datetime
-    created_to?: string; // ISO datetime
-    start_date?: string; // ISO datetime
-    end_date?: string; // ISO datetime
-    // Filtres de compteurs
-    vehicles_count_min?: number;
-    vehicles_count_max?: number;
-    drivers_count_min?: number;
-    drivers_count_max?: number;
-}
-
-export type OperatorRevenusInputs = {
-    start_date: string
-    end_date: string
-    currency_id?: string
-    type?: string
-    city_id?: string
-}
-
-export type FleetByCityInputs = {
-    country_id?: string
+    GetFleetTransactions = "/park/admin/transactions",
+    GetFleetTransactionsKpi = "/admin/fleets/{park_id}/transactions-kpis",
+    CreateFleet = "/register",
+    GetFleetsKpi = "/admin-dashboard/fleets/kpis",
+    SuspendFleet = "/admin/suspend-park",
+    DeleteFleet = "/admin/deactivate-park"
 }
 
 
-export type SubscriptionPlanRevenusInputs = {
-    start_date: string
-    end_date: string
-    currency_id?: string
-}
-
-export type ProfitableListInputs = {
-    type: string
-    city_id: string
-    currency_id?: string
-}
-
-export interface OperatorRevenueResponse {
-    operator_id: string;
-    operator_name: string;
-    country_name: string;
-    total_amount: number;
-    currency: string;
-    path?: string
-}
 class FleetService extends Service {
     private static instance: FleetService = new FleetService();
 
@@ -161,9 +132,20 @@ class FleetService extends Service {
         return FleetService.getInstance().queryClient.invalidateQueries({ queryKey: [FleetApiPath.GetFleetByCityID] });
     }
 
-    public static async GetFleetByCityID({ city_id, ...params }: GetFleetByCityIDParams) {
+    public static async createNewFleet(formData: FleetRegisterFormData) {
+        return await FleetService.getInstance().execHttpRequest({
+            url: FleetApiPath.CreateFleet,
+            method: FleetService.getInstance().httpMethods.post,
+            body: formData,
+            toFormdata: true
+        });
+    }
 
-        const uri = toQueriesString(FleetApiPath.GetFleetByCityID + "/" + city_id, params)
+    public static async GetFleetByCityID(params: GetFleetsParams) {
+
+        const baseUri = FleetApiPath.GetFleetByCityID + (params.city_id && params.city_id!=="all"?`/${params.city_id}`:"")
+
+        const uri = toQueriesString(baseUri, params)
 
         const { data, ...meta } = await FleetService.makeRequest<ResponseWithPagination<FleetListResponseType[]>>(
             uri,
@@ -528,5 +510,77 @@ class FleetService extends Service {
     static invalidateFleetJournal() {
         return FleetService.getInstance().queryClient.invalidateQueries({ queryKey: [FleetApiPath.GetFleetJournal] })
     }
+
+
+    // get fleet transactions history Kpi
+     public static async getFleetTransactionsKpi(fleetId?: string, params?: {start_date?: string, end_date?: string}) {
+        const url = toQueriesString(FleetApiPath.GetFleetTransactionsKpi.replace("{park_id}", fleetId??""), params)
+
+        const response = await FleetService.getInstance().execHttpRequest<TransactionKpiData>({
+            url: url,
+            method: FleetService.getInstance().httpMethods.get,
+        });
+
+        return TransactionKpiModel.fromData(response)
+    }
+
+    // Invalidate fleet journal query
+    static invalidateTransactionsKpi() {
+        return FleetService.getInstance().queryClient.invalidateQueries({ queryKey: [FleetApiPath.GetFleetTransactionsKpi] })
+    }
+
+    // get fleet transactions data
+    public static async getFleetTransactions(params: TransactionHistoryParams) {
+        const url = toQueriesString(FleetApiPath.GetFleetTransactions, params)
+
+        const response = await FleetService.getInstance().execHttpRequest<TransactionHistoryData>({
+            url: url,
+            method: FleetService.getInstance().httpMethods.get,
+        });
+
+        return {
+            transaction: TransactionHistoryModel.toArray(response.data),
+            totalPages: response.totalPages,
+            totalRecords: response.totalRecords,
+            currentPage: response.currentPage,
+            itemPerPage: response.itemPerPage
+        }
+    }
+
+    // Invalidate fleet transactions query
+    static invalidateFleetTransactions() {
+        return FleetService.getInstance().queryClient.invalidateQueries({ queryKey: [FleetApiPath.GetFleetTransactions] })
+    }
+
+    // get fleet transactions history Kpi
+    public static async getFleetsKpi(params: DashboardParams) {
+        const url = toQueriesString(FleetApiPath.GetFleetsKpi, params)
+
+        const response = await FleetService.getInstance().execHttpRequest<FleetsKpiData>({
+            url: url,
+            method: FleetService.getInstance().httpMethods.get,
+        });
+
+        return new FleetsKpiModel(response)
+    }
+
+
+
+    public static async suspendFleet(formData: SuspendFleetData) {
+        return await FleetService.getInstance().execHttpRequest({
+            url: FleetApiPath.SuspendFleet,
+            method: FleetService.getInstance().httpMethods.post,
+            body: formData,
+        });
+    }
+
+    public static async deleteFleet(formData: SuspendFleetData) {
+        return await FleetService.getInstance().execHttpRequest({
+            url: FleetApiPath.DeleteFleet,
+            method: FleetService.getInstance().httpMethods.post,
+            body: formData,
+        });
+    }
+
 }
 export default FleetService;

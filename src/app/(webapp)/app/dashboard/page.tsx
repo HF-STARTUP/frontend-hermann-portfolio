@@ -9,8 +9,6 @@ import {
 import { useDashboardFleetMap } from "@/app/(webapp)/app/dashboard/_hook/useDashboardFleetMap";
 import React from "react";
 import FleetMap from "@/app/(webapp)/app/dashboard/_components/news/fleet-map";
-import PaymentMethods from "@/app/(webapp)/app/dashboard/_components/news/paymentMethods";
-import { Activities } from "@/app/(webapp)/app/dashboard/_components/activities/acctivities";
 import RevenueChart from "./_components/RevenusDiagram";
 import { useDashboardRevenusEvolution } from "./_hook/useDashboardSectionsHooks";
 import RevenueBySourceChart from "./_components/RevenusBySource";
@@ -34,7 +32,9 @@ export default function DashboardPage() {
         globalFilters,
         setGlobalFilters,
         currencies,
-        isloadingCurrencies
+        isloadingCurrencies,
+        totalExpiring,
+        totalInactives
     } = useDashboardHook();
     const {
         chartLabels,
@@ -100,11 +100,11 @@ export default function DashboardPage() {
             />
 
 
-            {expiredSubscriptions.length &&
-                <NotificationBand content={subscriptionsBandContent} children={<ExpiredSubsList subs={expiredSubscriptions} />} dialogTitle={`Abonnements expirant bientôt (${expiredSubscriptions.length})`} variant="error" />
+            {expiredSubscriptions?.length &&
+                <NotificationBand content={subscriptionsBandContent} children={<ExpiredSubsList subs={expiredSubscriptions} />} dialogTitle={`Abonnements expirant bientôt (${totalExpiring})`} variant="error" />
             }
-            {inactiveFleets.length &&
-                <NotificationBand content={fleetBandContent} children={<InnactiveFleetList fleets={inactiveFleets} />} dialogTitle={`Flottes inactives (${inactiveFleets.length})`} variant="error" />
+            {inactiveFleets?.length &&
+                <NotificationBand content={fleetBandContent} children={<InnactiveFleetList fleets={inactiveFleets} />} dialogTitle={`Flottes inactives (${totalInactives})`} variant="error" />
             }
 
             <HeadSection globalFilters={globalFilters} />

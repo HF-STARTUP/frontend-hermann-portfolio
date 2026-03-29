@@ -12,15 +12,15 @@ class DashboardMetrics extends Model {
 
     // --- CARTE 1: REVENUS ---
     get revenueAmount() {
-        return formatNumber(this._instance.revenue.totalSubscriptions.current);
+        return formatNumber(this._instance?.revenue?.totalSubscriptions?.current ?? 0);
     }
 
     get revenueTrend() {
-        return this._instance.revenue.totalSubscriptions.percentChange;
+        return this._instance?.revenue?.totalSubscriptions?.percentChange ?? 0;
     }
 
     get revenueTrendLabel() {
-        return this._instance.revenue.totalSubscriptions.label;
+        return this._instance?.revenue?.totalSubscriptions?.label ?? "";
     }
 
     get revenueVariation(): "up" | "down" | "stable" {
@@ -31,11 +31,11 @@ class DashboardMetrics extends Model {
 
     // --- CARTE 2: FLOTTES ---
     get fleetsCurrent() {
-        return this._instance.fleets.activeCount.current;
+        return this._instance?.fleets?.activeCount?.current ?? 0;
     }
 
     get fleetsTotal() {
-        return this._instance.fleets.totalCount.current;
+        return this._instance?.fleets?.totalCount?.current ?? 0;
     }
 
     get fleetsRatio() {
@@ -43,7 +43,7 @@ class DashboardMetrics extends Model {
     }
 
     get fleetsTrend() {
-        return this._instance.fleets.activeCount.percentChange;
+        return this._instance?.fleets?.activeCount?.percentChange ?? 0;
     }
 
     get fleetsVariation(): "up" | "down" | "stable" {
@@ -54,11 +54,11 @@ class DashboardMetrics extends Model {
 
     // --- CARTE 3: ABONNEMENTS ---
     get subscriptionsCurrent() {
-        return this._instance.subscriptions.payingCount.current;
+        return this._instance?.subscriptions?.payingCount?.current ?? 0;
     }
 
     get subscriptionsTotal() {
-        return this._instance.subscriptions.totalCount.current;
+        return this._instance?.subscriptions?.totalCount?.current ?? 0;
     }
 
     get subscriptionsRatio() {
@@ -66,7 +66,7 @@ class DashboardMetrics extends Model {
     }
 
     get subscriptionsTrend() {
-        return this._instance.subscriptions.payingCount.percentChange;
+        return this._instance?.subscriptions?.payingCount?.percentChange ?? 0;
     }
 
     get subscriptionVariation(): "up" | "down" | "stable" {
@@ -76,31 +76,30 @@ class DashboardMetrics extends Model {
     }
 
     // --- CARTE 4: AUTRES STATS (OU MARKETING) ---
-
     get marketingCost() {
-        return formatNumber(this._instance.revenue.marketingCost.current);
+        return formatNumber(this._instance?.revenue?.marketingCost?.current ?? 0);
     }
 
     get marketingTrend() {
-        return this._instance.revenue.marketingCost.percentChange;
+        return this._instance?.revenue?.marketingCost?.percentChange ?? 0;
     }
 
     get marketingLabel() {
-        return this._instance.revenue.marketingCost.label;
+        return this._instance?.revenue?.marketingCost?.label ?? "";
     }
 
-    get maketingVariation(): "up" | "down" | "stable" {
+    get marketingVariation(): "up" | "down" | "stable" {
         if (this.marketingTrend > 0) return "up";
         if (this.marketingTrend < 0) return "down";
         return "stable";
     }
 
     get expiringCount() {
-        return this._instance.expiringSubscriptionsCount;
+        return this._instance?.expiringSubscriptionsCount ?? 0;
     }
 
     get inactiveFleetsCount() {
-        return this._instance.inactiveFleetsCount30Days;
+        return this._instance?.inactiveFleetsCount30Days ?? 0;
     }
 
     // --- HELPERS DE COULEUR ---

@@ -102,7 +102,7 @@ export const UserFormDialog = ({ isOpenned, onClose, userId, action = "add" }: U
                         type="password"
                         label="Mot de passe"
                         placeholder="Indiquer un mot de passe"
-                        // onChange={(e) => handleChange("password", e.target.value)}
+                        onChange={(e) => handleChange("password", e.target.value)}
                         required
                     />
 

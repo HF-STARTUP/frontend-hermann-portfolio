@@ -16,7 +16,7 @@ class DashboardRevenueChart extends Model {
     }
 
     get values(): number[] {
-        return this._instance.series.map(item => item.amount)??[];
+        return this._instance.breakdown.map(item => item.amount)??[];
     }
 
     get total(): string {
@@ -28,7 +28,7 @@ class DashboardRevenueChart extends Model {
     }
 
     get percentChange(): string {
-        return `${this._instance.percentChange.toFixed(2)}%`;
+        return `${this._instance.percentChange?this._instance.percentChange.toFixed(2):0}%`;
     }
 
     get variation (): 'up' | 'down' | 'constant' {

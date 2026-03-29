@@ -2,7 +2,7 @@ import {useMutationProvider, useQueryProvider} from "@/hooks/hooksProvider";
 import SubscriptionService, {SubscriptionApiPath} from "@/services/suscription/SubscriptionService";
 import {useGetMyPosition} from "@/hooks/__globlal/useGlobalHook";
 
-export const usGetSubscriptionPacks = (country_code: string) => {
+export const usGetSubscriptionPacks = (country_code?: string) => {
     return useQueryProvider({
         queryFn: () => SubscriptionService.getSubscriptions({country_code}),
         queryKey: [SubscriptionApiPath.GetSubscriptionPacks, country_code],

@@ -9,20 +9,23 @@ import { Search, ShieldAlert } from "lucide-react"
 import { useRoleForm } from "../../_hook/useRoleFormHook"
 import { PermissionAccordion } from "../ModulePermissions"
 import { useEffect } from "react"
+import Loading from "@/components/ui/Loader"
 
 export const AddRoleDialog = ({ isOpenned, onClose, action = "add", roleId }: { isOpenned: boolean, onClose: () => void, action?: "add" | "edit", roleId?: number }) => {
-    const { 
-        modules, 
-        isLoadingModules, 
-        formData, 
-        setFormData, 
-        fullAccess, 
+    const {
+        modules,
+        isLoadingModules,
+        formData,
+        setFormData,
+        fullAccess,
         setFullAccess,
         handleAddRole,
         isSubmitting,
-        isSuccess
+        isSuccess,
+        handleUpdateRole,
+        isLoadingSelected
     } = useRoleForm(roleId)
-    
+
     useEffect(() => {
         if (isSuccess) {
             onClose()
@@ -35,20 +38,20 @@ export const AddRoleDialog = ({ isOpenned, onClose, action = "add", roleId }: { 
                 <DialogHeader>
                     <DialogTitle> {action == "add" ? "Créer un rôle" : "Modifier un rôle"} </DialogTitle>
                 </DialogHeader>
-                <DialogMainBody>
-                    <Input 
-                        type="text" 
-                        label="Nom du rôle" 
-                        placeholder="Entrer le nom du role..." 
-                        required 
+                {isLoadingSelected ? <Loading /> : <DialogMainBody>
+                    <Input
+                        type="text"
+                        label="Nom du rôle"
+                        placeholder="Entrer le nom du role..."
+                        required
                         value={formData.name}
                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     />
 
-                    <TextArea 
-                        label="Description" 
-                        placeholder="Décrivez les responsabilités de ce rôle..." 
-                        required 
+                    <TextArea
+                        label="Description"
+                        placeholder="Décrivez les responsabilités de ce rôle..."
+                        required
                         value={formData.description}
                         onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     />
@@ -59,19 +62,19 @@ export const AddRoleDialog = ({ isOpenned, onClose, action = "add", roleId }: { 
                             <div className="flex items-center justify-center gap-2 bg-vaLightGray/10 px-2 py-1 font-medium rounded-lg w-fit text-sm">
                                 <ShieldAlert size={16} />
                                 <p>Accès total système</p>
-                                <Switch 
-                                    checked={fullAccess} 
-                                    onCheckedChange={setFullAccess} 
-                                    className="scale-75 data-[state=checked]:bg-vaLightGreen" 
+                                <Switch
+                                    checked={fullAccess}
+                                    onCheckedChange={setFullAccess}
+                                    className="scale-75 data-[state=checked]:bg-vaLightGreen"
                                 />
                             </div>
                         </div>
 
-                        <Input 
-                            type="search" 
-                            className="h-8 text-sm" 
-                            leftIcon={<Search className="size-4 text-vaTextPrimary" />} 
-                            placeholder="Filtrer les permissions..." 
+                        <Input
+                            type="search"
+                            className="h-8 text-sm"
+                            leftIcon={<Search className="size-4 text-vaTextPrimary" />}
+                            placeholder="Filtrer les permissions..."
                         />
 
                         {isLoadingModules ? (
@@ -82,8 +85,8 @@ export const AddRoleDialog = ({ isOpenned, onClose, action = "add", roleId }: { 
                                     module={mod}
                                     key={index}
                                     selectedIds={formData.permission_keys}
-                                    onSelectionChange={(newIds) => setFormData({ 
-                                        ...formData, 
+                                    onSelectionChange={(newIds) => setFormData({
+                                        ...formData,
                                         permission_keys: newIds
                                     })}
                                     fullAccess={fullAccess}
@@ -91,16 +94,16 @@ export const AddRoleDialog = ({ isOpenned, onClose, action = "add", roleId }: { 
                             ))
                         )}
                     </div>
-                </DialogMainBody>
+                </DialogMainBody>}
 
                 <DialogFooter className="grid grid-cols-2 gap-4">
                     <Button variant={"outline"} onClick={onClose} fullWidth>
                         Annuler
                     </Button>
-                    <Button 
-                        variant={"mainBlue"} 
+                    <Button
+                        variant={"mainBlue"}
                         fullWidth
-                        onClick={()=>handleAddRole()}
+                        onClick={action == "add" ? () => handleAddRole() : () => handleUpdateRole()}
                         loading={isSubmitting}
                     >
                         Enregistrer

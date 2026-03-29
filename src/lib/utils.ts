@@ -1,55 +1,55 @@
-import {type ClassValue, clsx} from "clsx"
-import {twMerge} from "tailwind-merge"
-import {animate} from 'framer-motion';
-import {endOfMonth, format, parse, startOfMonth, subMonths} from "date-fns";
-import {fr} from "date-fns/locale";
-
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { animate } from "framer-motion";
+import { endOfMonth, format, parse, startOfMonth, subMonths } from "date-fns";
+import { fr } from "date-fns/locale";
+export const imageBaseUrl = `https://s3.us-west-2.amazonaws.com/images.vtccontrol.com`;
 
 export function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs))
+  return twMerge(clsx(inputs));
 }
 
-
 export function setDateToTime(date?: Date, time?: string) {
-    if (!(date instanceof Date) || typeof time !== 'string') {
-        throw new Error('Invalid input: date must be a Date object and time must be a string');
-    }
+  if (!(date instanceof Date) || typeof time !== "string") {
+    throw new Error(
+      "Invalid input: date must be a Date object and time must be a string",
+    );
+  }
 
-    const [hours, minutes] = time.split(':');
+  const [hours, minutes] = time.split(":");
 
-    if (isNaN(parseInt(hours)) || isNaN(parseInt(minutes))) {
-        throw new Error('Invalid time format');
-    }
+  if (isNaN(parseInt(hours)) || isNaN(parseInt(minutes))) {
+    throw new Error("Invalid time format");
+  }
 
-    date.setHours(parseInt(hours));
-    date.setMinutes(parseInt(minutes));
-    date.setSeconds(0);
-    date.setMilliseconds(0);
+  date.setHours(parseInt(hours));
+  date.setMinutes(parseInt(minutes));
+  date.setSeconds(0);
+  date.setMilliseconds(0);
 
-    return date;
+  return date;
 }
 
 export const scrollToBottom = (element: HTMLElement) => {
-    const scrollHeight = element.scrollHeight;
-    const height = element.clientHeight;
-    const maxScrollTop = scrollHeight - height;
+  const scrollHeight = element.scrollHeight;
+  const height = element.clientHeight;
+  const maxScrollTop = scrollHeight - height;
 
-    animate(element.scrollTop, maxScrollTop, {
-        type: "tween",
-        duration: 0.5,
-        ease: "easeInOut",
-        onUpdate: (value: number) => {
-            element.scrollTop = value;
-        }
-    });
+  animate(element.scrollTop, maxScrollTop, {
+    type: "tween",
+    duration: 0.5,
+    ease: "easeInOut",
+    onUpdate: (value: number) => {
+      element.scrollTop = value;
+    },
+  });
 };
 
-
 export type DateWithPreviewsDateType = {
-    startCurrentMonth: string;
-    endCurrentMonth: string;
-    startPreviousMonth: string;
-    endPreviousMonth: string;
+  startCurrentMonth: string;
+  endCurrentMonth: string;
+  startPreviousMonth: string;
+  endPreviousMonth: string;
 };
 
 /**
@@ -58,8 +58,8 @@ export type DateWithPreviewsDateType = {
  * @returns The adjusted date at midnight.
  */
 function setToMidnight(date: Date): Date {
-    date.setHours(0, 0, 0, 0);
-    return date;
+  date.setHours(0, 0, 0, 0);
+  return date;
 }
 
 /**
@@ -68,28 +68,30 @@ function setToMidnight(date: Date): Date {
  * @param year The year number
  * @returns An object containing the start and end dates for the current and previous months, formatted as strings.
  */
-export function getMonthDates(monthNumber: number, year: number): DateWithPreviewsDateType {
-    // Create a date object for the first day of the given month and year.
-    const date = new Date(year, monthNumber - 1, 1);
-    setToMidnight(date);
+export function getMonthDates(
+  monthNumber: number,
+  year: number,
+): DateWithPreviewsDateType {
+  // Create a date object for the first day of the given month and year.
+  const date = new Date(year, monthNumber - 1, 1);
+  setToMidnight(date);
 
-    // Get the start and end of the current month.
-    const startCurrentMonth = setToMidnight(startOfMonth(date));
-    const endCurrentMonth = setToMidnight(endOfMonth(date));
+  // Get the start and end of the current month.
+  const startCurrentMonth = setToMidnight(startOfMonth(date));
+  const endCurrentMonth = setToMidnight(endOfMonth(date));
 
-    // Get the start and end of the previous month.
-    const startPreviousMonth = setToMidnight(startOfMonth(subMonths(date, 1)));
-    const endPreviousMonth = setToMidnight(endOfMonth(subMonths(date, 1)));
+  // Get the start and end of the previous month.
+  const startPreviousMonth = setToMidnight(startOfMonth(subMonths(date, 1)));
+  const endPreviousMonth = setToMidnight(endOfMonth(subMonths(date, 1)));
 
-    // Format dates to ISO string with timezone correction
-    return {
-        startCurrentMonth: format(startCurrentMonth, "yyyy-MM-dd'T'HH:mm:ss"),
-        endCurrentMonth: format(endCurrentMonth, "yyyy-MM-dd'T'HH:mm:ss"),
-        startPreviousMonth: format(startPreviousMonth, "yyyy-MM-dd'T'HH:mm:ss"),
-        endPreviousMonth: format(endPreviousMonth, "yyyy-MM-dd'T'HH:mm:ss")
-    };
+  // Format dates to ISO string with timezone correction
+  return {
+    startCurrentMonth: format(startCurrentMonth, "yyyy-MM-dd'T'HH:mm:ss"),
+    endCurrentMonth: format(endCurrentMonth, "yyyy-MM-dd'T'HH:mm:ss"),
+    startPreviousMonth: format(startPreviousMonth, "yyyy-MM-dd'T'HH:mm:ss"),
+    endPreviousMonth: format(endPreviousMonth, "yyyy-MM-dd'T'HH:mm:ss"),
+  };
 }
-
 
 /**
  * Get the previous month and year in the format "Month Year".
@@ -97,15 +99,18 @@ export function getMonthDates(monthNumber: number, year: number): DateWithPrevie
  * @param year The year number
  * @returns A string representing the previous month and year in the format "Month Year".
  */
-export function getPreviousMonthYear(monthNumber: number, year: number): string {
-    // Create a date object for the first day of the given month and year.
-    const date = new Date(year, monthNumber - 1, 1);
+export function getPreviousMonthYear(
+  monthNumber: number,
+  year: number,
+): string {
+  // Create a date object for the first day of the given month and year.
+  const date = new Date(year, monthNumber - 1, 1);
 
-    // Subtract one month.
-    const previousMonthDate = subMonths(date, 1);
+  // Subtract one month.
+  const previousMonthDate = subMonths(date, 1);
 
-    // Format and return the month and year in the desired format.
-    return format(previousMonthDate, "MMMM yyyy", {locale: fr}); // Assume using French locale
+  // Format and return the month and year in the desired format.
+  return format(previousMonthDate, "MMMM yyyy", { locale: fr }); // Assume using French locale
 }
 
 /**
@@ -113,13 +118,12 @@ export function getPreviousMonthYear(monthNumber: number, year: number): string 
  * @returns An object containing the current month and year.
  */
 export function getCurrentMonthYear() {
-    const currentDate = new Date();
-    const month = currentDate.getMonth() + 1; // getMonth() retourne un mois de 0 (janvier) à 11 (décembre)
-    const year = currentDate.getFullYear();
+  const currentDate = new Date();
+  const month = currentDate.getMonth() + 1; // getMonth() retourne un mois de 0 (janvier) à 11 (décembre)
+  const year = currentDate.getFullYear();
 
-    return {month, year};
+  return { month, year };
 }
-
 
 /**
  * Get the specified month and year in the format "MMMM yyyy".
@@ -127,105 +131,121 @@ export function getCurrentMonthYear() {
  * @param year The year number
  * @returns A string representing the specified month and year in the format "MMMM yyyy".
  */
-export function getSpecifiedMonthYear(monthNumber: number, year: number): string {
-    // Create a date object for the first day of the given month and year.
-    const date = new Date(year, monthNumber - 1, 1);
+export function getSpecifiedMonthYear(
+  monthNumber: number,
+  year: number,
+): string {
+  // Create a date object for the first day of the given month and year.
+  const date = new Date(year, monthNumber - 1, 1);
 
-    // Format and return the month and year in the desired format.
-    return format(date, "MMMM yyyy", {locale: fr});
+  // Format and return the month and year in the desired format.
+  return format(date, "MMMM yyyy", { locale: fr });
 }
 
 export const formatDateToFormDate = (date: Date): Date => {
-    if (!date) return '' as unknown as Date; // Retourne une chaîne vide si la date n'est pas définie
+  if (!date) return "" as unknown as Date; // Retourne une chaîne vide si la date n'est pas définie
 
-    const d = new Date(date);
-    let month = '' + (d.getMonth() + 1);
-    let day = '' + d.getDate();
-    let year = d.getFullYear();
+  const d = new Date(date);
+  let month = "" + (d.getMonth() + 1);
+  let day = "" + d.getDate();
+  let year = d.getFullYear();
 
-    if (month.length < 2)
-        month = '0' + month;
-    if (day.length < 2)
-        day = '0' + day;
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
 
-    return [year, month, day].join('-') as unknown as Date;
+  return [year, month, day].join("-") as unknown as Date;
 };
 
 export function parseDaysOff(input: string) {
-    const match = input.match(/"\[([\d,]*)\]"/);
-    if (!match) return [];
+  const match = input.match(/"\[([\d,]*)\]"/);
+  if (!match) return [];
 
-    const daysOffString = match[1];
+  const daysOffString = match[1];
 
-    const daysOffArray = daysOffString.split(',').map(Number);
+  const daysOffArray = daysOffString.split(",").map(Number);
 
-    return daysOffArray;
+  return daysOffArray;
 }
 
 export function getDayDate(): string {
-    const maintenant = new Date();
-    return format(maintenant, 'eee dd MMMM yyyy', {locale: fr});
+  const maintenant = new Date();
+  return format(maintenant, "eee dd MMMM yyyy", { locale: fr });
 }
-
 
 // Définir le format attendu de la chaîne de date
-const formatString = 'yyyy-MM-dd';
+const formatString = "yyyy-MM-dd";
 
-export const parsedDate = (dateString: string | undefined) => dateString ? parse(dateString, formatString, new Date()) : new Date();
+export const parsedDate = (dateString: string | undefined) =>
+  dateString ? parse(dateString, formatString, new Date()) : new Date();
 
 export const toQueriesString = (baseUri: string, params: any) => {
-    if (!params) return baseUri;
+  if (!params) return baseUri;
 
-    const queryString = Object.entries(params)
-        .filter(([, value]) => 
-            value !== undefined && 
-        value !== null && 
-        value !== 'all' && 
-        value !== '' && 
-        !(typeof value === 'number' && isNaN(value))
-    )
-        .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value as string)}`)
-        .join('&');
+  const queryParts: string[] = [];
 
-    const url = `${baseUri}${queryString ? `?${queryString}` : ''}`;
+  Object.entries(params).forEach(([key, value]) => {
+    if (value === undefined || value === null) return;
+    if (value == "all" || value == "") return;
+    if (typeof value === "number" && isNaN(value)) return;
 
-    return url
-}
+    if (Array.isArray(value)) {
+      const filteredValues = value.filter(
+        (v) => v !== undefined && v !== null && v !== "",
+      );
+      filteredValues.forEach((item) => {
+        queryParts.push(
+          `${encodeURIComponent(key)}=${encodeURIComponent(item)}`,
+        );
+      });
+    } else {
+      // Gérer les valeurs simples
+      queryParts.push(
+        `${encodeURIComponent(key)}=${encodeURIComponent(value as string)}`,
+      );
+    }
+  });
+
+  const queryString = queryParts.join("&");
+  const url = `${baseUri}${queryString ? `?${queryString}` : ""}`;
+
+  return url;
+};
 
 export function formatNumber(input: string | number | undefined): string {
-    if (!input) {
-        return "0";
+  if (!input) {
+    return "0";
+  }
+
+  let numericValue: number;
+
+  if (typeof input === "number") {
+    numericValue = input;
+  } else {
+    const parsed = parseFloat(input.trim());
+    if (isNaN(parsed)) {
+      return "0";
     }
+    numericValue = parsed;
+  }
 
-    let numericValue: number;
+  const fixedStr = numericValue.toFixed(2);
+  const [intPart, decPart] = fixedStr.split(".");
 
-    if (typeof input === "number") {
-        numericValue = input;
-    } else {
-        const parsed = parseFloat(input.trim());
-        if (isNaN(parsed)) {
-            return "0";
-        }
-        numericValue = parsed;
-    }
+  const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-    const fixedStr = numericValue.toFixed(2);
-    const [intPart, decPart] = fixedStr.split(".");
+  // 👇 afficher les décimales seulement si ≠ "00"
+  if (decPart && decPart !== "00") {
+    return `${formattedInt}.${decPart}`;
+  }
 
-    const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-
-    // 👇 afficher les décimales seulement si ≠ "00"
-    if (decPart && decPart !== "00") {
-        return `${formattedInt}.${decPart}`;
-    }
-
-    return formattedInt;
+  return formattedInt;
 }
+
+export const resolveImage = (path: string | undefined | null) => {
+  return `${imageBaseUrl}/${path}`;
+};
 
 export enum ConnexionMode {
-    Staging = "staging",
-    Production = "production",
+  Staging = "staging",
+  Production = "production",
 }
-
-
-

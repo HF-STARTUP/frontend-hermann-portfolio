@@ -102,6 +102,10 @@ class FleetProfileDetail extends Model {
     get countryCode(): string {
         return this._instance.country_code;
     }
+
+    get logo(){
+        return this.getFleetImage(this._instance.logo)
+    }
 }
 
 export default FleetProfileDetail;

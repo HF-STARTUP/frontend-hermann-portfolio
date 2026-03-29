@@ -12,6 +12,7 @@ import SettingsService, {SettingsApiPath} from "@/services/admin/settings/settin
 import LoginService from "@/services/__form/auth/LoginService";
 import {useMutationProvider, useQueryProvider} from "@/hooks/hooksProvider";
 import { GetAdminsParams } from "@/types/__form/profile.type";
+import RoleService from "@/services/admin/RoleAccessService";
 
 export const useUpdateProfile = () => {
 
@@ -134,7 +135,7 @@ export const useUpdateAdmin = (id?: string) => {
         successMessage: "Admin mis à jour avec succès.",
     });
 
-    const onUpdateAdmin = (data: AddAdminInput) => {
+    const onUpdateAdmin = (data: AddAdminInput) => {      
         if (!id) {
             console.error("Impossible de mettre à jour : l'ID est manquant");
             return;
@@ -145,6 +146,7 @@ export const useUpdateAdmin = (id?: string) => {
     React.useEffect(() => {
         if (isSuccess && data) {
             void SettingsService.refreshAdmins()
+            void RoleService.invalidRolesList()
         }
     }, [isSuccess, data])
 
@@ -180,6 +182,7 @@ export const useCreateAdmin = () => {
     React.useEffect(() => {
         if (isSuccess && data) {
             void SettingsService.refreshAdmins()
+            void RoleService.invalidRolesList()
         }
     }, [isSuccess, data])
 
@@ -291,7 +294,7 @@ export const useDeactivateOrActivateAdmin = () => {
 }
 
 
-export const useDeleteFleet = () => {
+export const useDefinitiveDeleteFleet = () => {
 
     const {
         data,

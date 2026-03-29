@@ -30,9 +30,6 @@ class RootRoleAccessModel extends Model {
         return this._instance.root_access.name??"";
     }
 
-    get typeLabel(): string {
-        return this._instance.access_type === "read" ? "Lecture" : "Écriture";
-    }
 
     get createdAt(): string {
         return this.formatDateTime(this._instance.created_at);
@@ -51,9 +48,14 @@ class RootRoleModel extends Model {
         if (!datas) return [];
         return datas.map((data) => new RootRoleModel(data));
     }
+    
 
     get id(): number {
         return this._instance.id;
+    }
+
+    get permissionsList(){
+        return this._instance.permission_keys
     }
 
     get userCount(){

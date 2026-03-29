@@ -394,7 +394,7 @@ export function DataTable<T extends Record<string, any>>({
                                 columns={columns.length + (hasActions ? 1 : 0)} 
                             />
                         ) : data.length === 0 ? (
-                            <EmptyData message={emptyMessage} />
+                            <EmptyData message={emptyMessage} className="bg-transparent" />
                         ) : (
                             data.map((row, index) => (
                                 <TableRow

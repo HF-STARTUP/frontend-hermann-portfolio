@@ -93,7 +93,7 @@ class SubscriptionService extends Service {
         // )
     }
 
-    public static async getSubscriptions({country_code}: { country_code: string }): Promise<SubscriptionModel[]> {
+    public static async getSubscriptions({country_code}: { country_code?: string }): Promise<SubscriptionModel[]> {
 
         const uri = SubscriptionApiPath.GetSubscriptionPacks + (country_code)
 

@@ -1,29 +1,40 @@
 import { StretchHorizontal } from "lucide-react";
-import { InactiveFleet } from "../../_hook/useDashboardHook";
 import { EmptyData } from "@/components/box/PageNetworkState";
+import InactiveFleetModel from "@/model/dashboard/InactiveFleets";
+import Image from "next/image";
 
-export function InnactiveFleetRow({ fleet }: { fleet: InactiveFleet }) {
+export function InnactiveFleetRow({ fleet }: { fleet: InactiveFleetModel }) {
     return (
-        <div className="p-4 rounded-2xl w-full bg-vaRed/5 border border-vaRed/40 flex items-center gap-4">
-            <div className="rounded-full p-4 size-20 bg-vaRed/10 text-vaRed flex items-center justify-center">
-                <StretchHorizontal strokeWidth={2} className="size-8" />
-            </div>
-            <div className="detail flex flex-col justify-between min-h-24">
-                <p className="text-black font-semibold text-lg">
+        <div className="p-2 rounded-2xl w-full bg-vaRed/5 border border-vaRed/20 flex items-center gap-4">
+            {fleet.fleetLogo ?
+                <div className="rounded-full size-14 bg-vaRed/10 text-vaRed flex items-center justify-center overflow-hidden">
+                    <Image
+                        src={fleet.fleetLogo}
+                        alt={fleet.fleetName}
+                        width={500}
+                        height={500}
+                        className="size-full object-cover"
+                    />
+                </div>
+                : <div className="rounded-full p-4 size-14 bg-vaRed/10 text-vaRed flex items-center justify-center">
+                    <StretchHorizontal strokeWidth={2} className="size-8" />
+                </div>}
+            <div className="detail flex flex-col justify-between min-h-14">
+                <p className="text-black font-semibold text-base">
                     {fleet.fleetName}
                 </p>
                 <p className="text-vaTextPrimary font-normal text-sm">
-                Dernière activité : {fleet.lastActivityAt}
+                    Dernière activité : {fleet.lastActivityDay}
                 </p>
                 <p className="text-vaRed font-medium text-sm">
-                    {fleet.inactiveDays}
+                    {fleet.inactiveDays} jours d'inactivité
                 </p>
             </div>
         </div>
     )
 }
 
-const InnactiveFleetList = ({ fleets }: { fleets?: InactiveFleet[] }) => {
+const InnactiveFleetList = ({ fleets }: { fleets?: InactiveFleetModel[] }) => {
     if (!fleets?.length || !fleets) {
         return (
             <EmptyData message="Vous etes a jours !!!" description="Aucun abonnements n'expire bientot." />

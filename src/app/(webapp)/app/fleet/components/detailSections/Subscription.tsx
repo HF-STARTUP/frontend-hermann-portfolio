@@ -33,7 +33,9 @@ export default function SubscriptionContent({ fleetId }: { fleetId?: string }) {
                 {isLoadingActiveSubscription ? <ActivePlanSkeleton /> : !isLoadingActiveSubscription && activeSubscription?.id ?
                     <div className="">
                         <div className="p-4 border border-[#E5E7EB] bg-[#F9FAFB] rounded-2xl flex flex-col gap-4">
-                            <Badge type={activeSubscription?.subscription.name as PackageType} icon={<Crown />} />
+                            <Badge type={activeSubscription?.subscription.name as PackageType} isPackage={true} icon={<Crown />} >
+                                { activeSubscription.subscription.name }
+                            </Badge>
                             <p className="text-sm text-[#4A5565]">
                                 Actif depuis le {activeSubscription?.startDate} et expire le {activeSubscription?.endDate}
                             </p>

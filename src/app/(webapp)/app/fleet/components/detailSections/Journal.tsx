@@ -1,3 +1,4 @@
+import { EmptyData } from "@/components/box/PageNetworkState";
 import FleetJournalModel from "@/model/ADMIN/FleetJournalModel";
 import React from "react";
 
@@ -50,6 +51,10 @@ interface JournalListProps {
   }: JournalListProps) {
     if (isLoading && items.length === 0) {
       return <JournalShimmer />;
+    }
+
+    if (!isLoading && items.length === 0) {
+      return <EmptyData message="Aucun evenement n'a ete trouve" />;
     }
   
     return (

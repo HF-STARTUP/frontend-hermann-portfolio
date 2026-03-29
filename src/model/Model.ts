@@ -1,92 +1,103 @@
-import {differenceInDays, format, formatDistanceToNow} from "date-fns";
-import {fr} from "date-fns/locale";
+import { differenceInDays, format, formatDistanceToNow } from "date-fns";
+import { fr } from "date-fns/locale";
 
-export const imageBaseUrl = `https://s3.us-west-2.amazonaws.com/images.vtccontrol.com`
+export const imageBaseUrl = `https://s3.us-west-2.amazonaws.com/images.vtccontrol.com`;
 
 abstract class Model {
+  protected resolveImage(path: string | undefined | null) {
+    return `${imageBaseUrl}/${path}`;
+  }
 
-    protected resolveImage(path: string | undefined | null) {
-        return `${imageBaseUrl}/${path}`
+  protected toDate(date: Date, dateFormat: string = "dd/MM/yyyy ") {
+    return date ? formatDistanceToNow(date, { locale: fr }) : "-";
+  }
+
+  protected formatDate(date: Date, dateFormat: string = "dd/MM/yyyy"): string {
+    try {
+      return format(date, dateFormat);
+    } catch (e) {
+      return "";
     }
+  }
 
-    protected toDate(date: Date, dateFormat: string = 'dd/MM/yyyy ') {
-        return date ? formatDistanceToNow(date, {locale: fr}) : "-"
-    }
+  protected getAdminImage(path?: string | null) {
+    return path ? this.resolveImage(path) : "/assets/admin-default-image.png";
+  }
 
-    protected formatDate(date: Date, dateFormat: string = 'dd/MM/yyyy'): string {
-
-        try {
-            return format(date, dateFormat);
-        } catch (e) {
-            return ""
-        }
-    }
+  protected getFleetImage(path?: string | null) {
+    return path ? this.resolveImage(path) : "/assets/default-fleet-logo.png";
+  }
 
   protected formatDateTime(date: string): string {
     if (!date) return "";
 
     const dateObj = new Date(date);
-    
+
     if (isNaN(dateObj.getTime())) return date;
 
-    const dateFormatter = new Intl.DateTimeFormat('fr-FR', {
-        day: 'numeric',
-        month: 'short',
-        year: 'numeric',
+    const dateFormatter = new Intl.DateTimeFormat("fr-FR", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
     });
 
-    const timeFormatter = new Intl.DateTimeFormat('fr-FR', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false
+    const timeFormatter = new Intl.DateTimeFormat("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
     });
 
-    const formattedDate = dateFormatter.format(dateObj).replace('.', '');
-    const formattedTime = timeFormatter.format(dateObj).replace(':', 'h');
+    const formattedDate = dateFormatter.format(dateObj).replace(".", "");
+    const formattedTime = timeFormatter.format(dateObj).replace(":", "h");
 
-    const parts = formattedDate.split(' ');
+    const parts = formattedDate.split(" ");
     if (parts[1]) {
-        parts[1] = parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
+      parts[1] = parts[1].charAt(0).toUpperCase() + parts[1].slice(1);
     }
 
-    return `${parts.join(' ')} à ${formattedTime}`;
+    return `${parts.join(" ")} à ${formattedTime}`;
+  }
+
+  public getDifferenceInDays(dateLeft: Date, dateRight: Date): number {
+    return differenceInDays(dateLeft, dateRight);
+  }
+
+  protected capitalizeFirstLetter(sentence: string | undefined): string {
+    if (sentence) {
+      return sentence.charAt(0).toUpperCase() + sentence.slice(1);
+    }
+    return sentence ?? "";
+  }
+
+  protected arroundNumb(nombre: number): string {
+    const partieEntiere: number = Math.floor(nombre);
+    const partieDecimal: string = (nombre - Math.floor(nombre))
+      .toFixed(2)
+      .substring(1);
+    return partieEntiere.toString() + partieDecimal;
+  }
 }
-
-    public getDifferenceInDays(dateLeft: Date, dateRight: Date): number {
-        return differenceInDays(dateLeft, dateRight);
-    }
-
-    protected capitalizeFirstLetter(sentence: string | undefined): string {
-        if (sentence) {
-            return sentence.charAt(0).toUpperCase() + sentence.slice(1);
-        }
-        return sentence ?? '';
-    }
-
-    protected arroundNumb(nombre: number): string {
-        const partieEntiere: number = Math.floor(nombre);
-        const partieDecimal: string = (nombre - Math.floor(nombre)).toFixed(2).substring(1);
-        return partieEntiere.toString() + partieDecimal;
-    }
-}
-
 
 type DataItem = {
-    [key: string]: any;
+  [key: string]: any;
 };
 
-export function searchAndFilter<T extends DataItem>(data: T[], searchTerm: string, keys: (keyof T)[]): T[] {
-    const lowercasedSearchTerm = searchTerm.toLowerCase();
+export function searchAndFilter<T extends DataItem>(
+  data: T[],
+  searchTerm: string,
+  keys: (keyof T)[],
+): T[] {
+  const lowercasedSearchTerm = searchTerm.toLowerCase();
 
-    return data.filter(item =>
-        keys.some(key => {
-            const value = item[key];
-            if (typeof value === 'string') {
-                return value.toLowerCase().includes(lowercasedSearchTerm);
-            }
-            return false;
-        })
-    );
+  return data.filter((item) =>
+    keys.some((key) => {
+      const value = item[key];
+      if (typeof value === "string") {
+        return value.toLowerCase().includes(lowercasedSearchTerm);
+      }
+      return false;
+    }),
+  );
 }
 
-export default Model
+export default Model;

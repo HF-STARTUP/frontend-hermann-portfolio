@@ -3,7 +3,6 @@ import {
   AdminAccountStatus,
   AdminProfileResponseType,
 } from "@/types/__form/profile.type";
-import { ACCESS_TYPE } from "@/services/admin/settings/settingsService";
 
 class UserProfile extends Model {
   public _instance: AdminProfileResponseType;
@@ -18,54 +17,64 @@ class UserProfile extends Model {
   }
 
   get status(): AdminAccountStatus {
-    return this._instance.status;
+    return this._instance?.status ?? "inactive";
   }
 
   get user() {
-    return this._instance.user;
+    return this._instance?.user ?? {};
+  }
+
+  get password() {
+    return this._instance?.password ?? "";
   }
 
   get userID() {
-    return this._instance.id;
+    return this._instance?.id ?? "";
   }
 
   get profileUserID() {
-    return this._instance.user.id;
+    return this._instance?.user?.id ?? "";
   }
 
   get cities() {
-    return this._instance.admin_on_city;
+    return this._instance?.admin_on_city ?? [];
   }
 
   get username() {
-    return this._instance.last_name + " " + this._instance.first_name;
+    const lastName = this._instance?.last_name ?? "";
+    const firstName = this._instance?.first_name ?? "";
+    return lastName + " " + firstName;
   }
 
   get roles() {
-    return this._instance.roles;
+    return this._instance?.roles ?? [];
   }
 
-  get role(){
-    return this.roles[0]
+  get role() {
+    return this.roles[0] ?? null;
   }
 
-  get roleName():string {
-    return this._instance.roles[0] ?this._instance.roles[0].name
-      .replace(/_/g, " ")
-      .replace(/\b\w/g, (l) => l.toUpperCase()):"-";
+  get roleName(): string {
+    const role = this._instance?.roles?.[0];
+    if (role?.name) {
+      return role.name
+        .replace(/_/g, " ")
+        .replace(/\b\w/g, (l) => l.toUpperCase());
+    }
+    return "Admin";
   }
 
   get listPark() {
-    return this._instance.admin_on_city;
+    return this._instance?.admin_on_city ?? [];
   }
 
   get defaultPark() {
-    const default_park = this._instance.admin_on_city[0];
-    return default_park;
+    const default_park = this._instance?.admin_on_city?.[0];
+    return default_park ?? null;
   }
 
   get getID() {
-    return this._instance.id;
+    return this._instance?.id ?? "";
   }
 
   get getOrganisationName() {
@@ -73,19 +82,25 @@ class UserProfile extends Model {
   }
 
   get getOrganisationLogo() {
-    return "";
+    const imagePath = this._instance?.Image?.path;
+    if (imagePath) {
+      return this.getAdminImage(this.resolveImage(imagePath));
+    }
+    return this.getAdminImage();
   }
 
   get firstName() {
-    return this._instance.first_name;
+    return this._instance?.first_name ?? "";
   }
 
   get lastName() {
-    return this._instance.last_name;
+    return this._instance?.last_name ?? "";
   }
 
   get getUsername() {
-    return `${this._instance.first_name} ${this._instance.last_name}`;
+    const firstName = this._instance?.first_name ?? "";
+    const lastName = this._instance?.last_name ?? "";
+    return `${firstName} ${lastName}`;
   }
 
   get isGranted() {

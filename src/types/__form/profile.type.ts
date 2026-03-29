@@ -80,12 +80,18 @@ export type AdminProfileResponseType = {
   first_name: string;
   last_name: string;
   desactivate_at?: string | null;
+  Image?: {
+    name: string,
+    path: string,
+  };
   status: AdminAccountStatus;
   user: User;
   roles: RoleType[];
+  password: string;
   admin_on_city: {
     id: number;
     name: string;
+    currency: string
   }[];
 };
 

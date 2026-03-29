@@ -28,7 +28,7 @@ export const getKpiVariantColor = (variant?: KpiVariant): string =>{
 
 export interface FleetKpiCardProps {
     title: string;
-    value: string;
+    value: string | number;
     variation?: 'up' | 'down' | 'stable';
     variant?: KpiVariant;
     hint?: string;

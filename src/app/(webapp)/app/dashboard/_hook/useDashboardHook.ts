@@ -1,5 +1,9 @@
 import { NotificationBandContent } from "@/components/display/NotificationBand";
 import { useGetCurrenciesList } from "@/hooks/admin/useFleetHook";
+import { useGetExpiringSubs, useGetInactiveFleets } from "@/hooks/dashboard/useDashboard";
+import { toIsoDate } from "@/services/Service";
+import { FleetType } from "@/types/admin/fleet.type";
+import { ExpiringSubscriptionsParams } from "@/types/dashboard.type";
 import { useState } from "react";
 import { DateRange } from "react-day-picker";
 
@@ -18,60 +22,49 @@ export interface InactiveFleet {
 export interface DashboardGlobalFilters {
     dateRange?: DateRange;
     currency?: string | number;
-    profileType?: "particulier" | "professionnel" | "all";
+    profileType?: FleetType;
 }
 
 export const useDashboardHook = () => {
-    const expiredSubscriptions: SubscriptionExpiredSoon[] = [
-        { expiredAt: "05 Mars 2026", fleetName: "LogiCam Unit", remainingDays: "1 jour restant" },
-        { expiredAt: "07 Mars 2026", fleetName: "Express Douala", remainingDays: "3 jours restants" },
-        { expiredAt: "10 Mars 2026", fleetName: "Bafoussam Trans", remainingDays: "6 jours restants" },
-        { expiredAt: "12 Mars 2026", fleetName: "Coastal Fleet", remainingDays: "8 jours restants" },
-        { expiredAt: "15 Mars 2026", fleetName: "Urban Move", remainingDays: "11 jours restants" },
-        { expiredAt: "18 Mars 2026", fleetName: "Kribi Logistics", remainingDays: "14 jours restants" },
-        { expiredAt: "20 Mars 2026", fleetName: "Mountain Riders", remainingDays: "16 jours restants" },
-        { expiredAt: "22 Mars 2026", fleetName: "Sahel Express", remainingDays: "18 jours restants" },
-        { expiredAt: "25 Mars 2026", fleetName: "Global Cargo", remainingDays: "21 jours restants" },
-        { expiredAt: "30 Mars 2026", fleetName: "Prime Delivery", remainingDays: "26 jours restants" }
-    ];
+    const [globalFilters, setGlobalFilters] = useState<DashboardGlobalFilters>()
 
-    const inactiveFleets: InactiveFleet[] = [
-        { lastActivityAt: "01 Mars 2026", fleetName: "Fleet Alpha", inactiveDays: "3 jours d'inactivité" },
-        { lastActivityAt: "28 Février 2026", fleetName: "Beta Logistics", inactiveDays: "4 jours d'inactivité" },
-        { lastActivityAt: "25 Février 2026", fleetName: "Rapid Service", inactiveDays: "7 jours d'inactivité" },
-        { lastActivityAt: "20 Février 2026", fleetName: "Garoua Trans", inactiveDays: "12 jours d'inactivité" },
-        { lastActivityAt: "15 Février 2026", fleetName: "Oceanic Way", inactiveDays: "17 jours d'inactivité" },
-        { lastActivityAt: "10 Février 2026", fleetName: "Yaoundé Express", inactiveDays: "22 jours d'inactivité" },
-        { lastActivityAt: "05 Février 2026", fleetName: "Truck Flow", inactiveDays: "27 jours d'inactivité" },
-        { lastActivityAt: "01 Février 2026", fleetName: "Eco Moving", inactiveDays: "31 jours d'inactivité" },
-        { lastActivityAt: "20 Janvier 2026", fleetName: "Sky Freight", inactiveDays: "43 jours d'inactivité" },
-        { lastActivityAt: "01 Janvier 2026", fleetName: "Old Guard Fleet", inactiveDays: "62 jours d'inactivité" }
-    ];
+    const [queryParams, setQueryParams]= useState<ExpiringSubscriptionsParams>(
+        {
+            start_date: toIsoDate(globalFilters?.dateRange?.from),
+            end_date: toIsoDate(globalFilters?.dateRange?.to),
+            itemPerPage: 100,
+            page: 1,
+            account_type: globalFilters?.profileType
+        }
+    )
+    const {data: expiringSubs, isLoading: isLoadingExpiringSubs} = useGetExpiringSubs(queryParams)   
+    const {data: inactiveFleetsData, isLoading: isLoadingInactiveFleets} = useGetInactiveFleets(queryParams)     
 
     const subscriptionsBandContent: NotificationBandContent = {
-        label: `${expiredSubscriptions.length} abonnements expirent dans 7 jours`,
-        details: `${expiredSubscriptions.map((subs) => subs.fleetName).join(', ')
+        label: `${expiringSubs?.totalRecords} abonnements expirent dans 7 jours max`,
+        details: `${expiringSubs?.subscriptions.map((subs) => subs.fleetName).join(', ')
             }`
     }
 
     const fleetBandContent: NotificationBandContent = {
-        label: `${inactiveFleets.length} flottes sont inactives depuis 30 jours`,
-        details: `${inactiveFleets.map((fleet) => fleet.fleetName).join(', ')
+        label: `${inactiveFleetsData?.totalRecords} flottes sont inactives depuis au moins 7 jours`,
+        details: `${inactiveFleetsData?.fleets?.map((fleet) => fleet.fleetName).join(', ')
             }`
     }
 
-    const [globalFilters, setGlobalFilters] = useState<DashboardGlobalFilters>()
     const {data: currencies, isLoading: isloadingCurrencies} = useGetCurrenciesList()
     // const {} = useGetCities()
     return {
-        expiredSubscriptions,
-        inactiveFleets,
+        expiredSubscriptions: expiringSubs?.subscriptions,
+        inactiveFleets: inactiveFleetsData?.fleets,
         subscriptionsBandContent,
         fleetBandContent,
         globalFilters,
         setGlobalFilters,
         currencies,
-        isloadingCurrencies
+        isloadingCurrencies,
+        totalExpiring: expiringSubs?.totalRecords,
+        totalInactives: inactiveFleetsData?.totalRecords
     }
 
 }

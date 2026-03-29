@@ -97,7 +97,8 @@ export const useFleetSubscriptionsHook = (fleetId?: string) => {
           React.createElement(Badge, {
             type: item.plan,
             icon: React.createElement(Crown, { size: 14 }),
-          }),
+            isPackage: true
+          }, item.plan),
       },
       {
         header: "Prix",

@@ -4,7 +4,7 @@ import { formatNumber } from "@/lib/utils";
 import { Crown } from "lucide-react";
 import React, { useCallback, useMemo, useState } from "react";
 
-export type PackageType = "PERFORMANCE" | "ELITE" | "CROISSANCE" | "ESSENTIEL";
+export type PackageType = "PERFORMANCE" | "ELITE" | "CROISSANCE" | "ESSENTIEL" | "ESSENTIEL ENTREPRENEUR" | "PREMIUM ENTREPRISE" | "STARTER ENTREPRISE" ;
 export type ProfileType = "ENTREPRENEUR" | "PROFESSIONNEL";
 export type ProfileStatus = "active" | "suspended";
 
