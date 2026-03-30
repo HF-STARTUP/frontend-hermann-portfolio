@@ -63,6 +63,8 @@ export const SubscriptionStatusMap: Record<SubscriptionStatus, string> = {
   inactive: "Inactif",
   deleted: "Supprimé",
   suspended: "Suspendu",
+  failed: "Echec",
+  free: "Gratuit"
 };
 
 export const SortOrderMap: Record<SortOrder, string> = {

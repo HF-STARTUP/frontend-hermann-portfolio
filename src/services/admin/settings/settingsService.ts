@@ -75,7 +75,7 @@ class SettingsService extends Service {
     public static async deactivateActivate({ id }: { id: string }) {
         return await SettingsService.getInstance().execHttpRequest<CourseResponseType>({
             url: `${SettingsApiPath.DeactivateActiveAdmin}/${id}`,
-            method: SettingsService.getInstance().httpMethods.get,
+            method: SettingsService.getInstance().httpMethods.update,
         });
     }
 

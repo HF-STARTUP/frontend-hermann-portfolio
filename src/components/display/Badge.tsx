@@ -1,5 +1,6 @@
 import { LeadStatus, LeadStep } from "@/app/(webapp)/app/marketing/campagnes/_hook/useCampagneLeadsHook";
 import { CampagneStatus } from "@/app/(webapp)/app/marketing/campagnes/_hook/useCampagnesHook";
+import { CustomerStatus } from "@/app/(webapp)/app/marketing/pipeline/_hooks/usePipelineHook";
 import { PackageType, ProfileStatus } from "@/app/(webapp)/app/subscriptions/_hooks/usePackageList";
 import { AdminAccountStatus } from "@/types/__form/profile.type";
 import { FleetStatus, SubscriptionStatus } from "@/types/admin/fleet.type";
@@ -8,7 +9,7 @@ import { ReactNode } from "react";
 
 export type BadgeVariant = 'green' | "orange" | "red" | "purple" | "blue" | "light-blue" | "default"
 
-export type BadgeType = LeadStatus | CampagneStatus | PackageType | ProfileStatus | SubscriptionStatus | LeadStep | AdminAccountStatus | RootAccessType | FleetStatus
+export type BadgeType = LeadStatus | CampagneStatus | PackageType | ProfileStatus | SubscriptionStatus | LeadStep | AdminAccountStatus | RootAccessType | FleetStatus | CustomerStatus
 
 export const getBadgeVariantClasses = (variant: BadgeVariant): string => {
     switch (variant) {
@@ -104,6 +105,14 @@ export const getBadgeText = (type?: BadgeType) => {
             return "GPS Conf"
         case "locked":
             return "Suspendue"
+        case "lead_converted":
+            return "Lead Converti"
+        case "onboarding":
+            return "Onboarding"
+        case "risked":
+            return "A risque"
+        case "stable":
+            return "Stable"
         default:
             return "Inconnu";
     }
@@ -181,6 +190,14 @@ export const getBadgeVariant = (type?: BadgeType): BadgeVariant => {
             return "purple"
         case "locked":
             return "purple"
+        case "lead_converted":
+            return "purple"
+        case "onboarding":
+            return "blue"
+        case "risked":
+            return "red"
+        case "stable":
+            return "light-blue"
 
         default:
             return "default";
@@ -195,7 +212,7 @@ const Badge = ({ variant, type, icon, children, className, iconOnly, isPackage }
                     {icon}
                 </span>
             )}
-            {type && <span title={isPackage && (getBadgeText(type) !== "Inconnu") ? getBadgeText(type) : ""}> {isPackage && (getBadgeText(type) !== "Inconnu") ? getBadgeText(type) : children} </span>}
+            {(type && isPackage) && <span title={(getBadgeText(type) !== "Inconnu") ? getBadgeText(type) : ""}> {(getBadgeText(type) !== "Inconnu") ? getBadgeText(type) : children} </span>}
 
             {(type && !isPackage) && <span title={getBadgeText(type)}> {getBadgeText(type)} </span>}
 

@@ -95,15 +95,11 @@ const PersonalInfosForm = () => {
             <FormGroup adminForm={true} className={`mb-[56px]`}>               
                 <Stack>
                     <TextField
-                        label={'Nom de famille'}
+                        label={'Nom complet'}
                         register={register("last_name")}
                         errors={errors}
                     />
-                    <TextField
-                        label={'Prénom'}
-                        register={register("first_name")}
-                        errors={errors}
-                    />
+                 
                 </Stack>
                 <Stack>
                     <TextField
