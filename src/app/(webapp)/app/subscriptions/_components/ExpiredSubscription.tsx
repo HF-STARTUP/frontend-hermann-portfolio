@@ -10,77 +10,121 @@ import {
     Legend,
     Tooltip,
     Filler,
-    ChartOptions,
-    ChartData,
-    // Ajout du type spécifique pour les datasets mixtes
-    ChartDataset
 } from 'chart.js';
 import { Circle } from "lucide-react";
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import Loading from "@/components/ui/Loader";
+import { Dispatch, SetStateAction } from "react";
 
 ChartJS.register(
     LinearScale, CategoryScale, BarElement,
     PointElement, LineElement, Legend, Tooltip, Filler
 );
-const ExpiredSubscriptions = () => {
 
-    // 1. On utilise le type "bar" pour le composant maître, 
-    // mais on autorise les datasets à être de n'importe quel type compatible
+interface ExpiredSubscriptionsProps {
+    labels?: string[];
+    expiredData?: number[];
+    renewalData?: number[];
+    isLoading?: boolean;
+    groupBy?: "day" | "week";
+    setGroupBy: Dispatch<SetStateAction<"day" | "week">>; 
+}
+
+const ExpiredSubscriptions = ({ 
+    labels, 
+    expiredData, 
+    renewalData, 
+    isLoading,
+    groupBy,
+    setGroupBy 
+}: ExpiredSubscriptionsProps) => {
+
     const data = {
-        labels: ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
+        labels: labels,
         datasets: [
             {
-                type: 'bar',
+                type: 'bar' as const,
                 label: 'Renouvellements',
-                data: [20, 23, 21, 4, 12, 22, 30],
+                data: renewalData,
                 backgroundColor: '#018bfb',
-                borderRadius: 10,
-                barPercentage: 0.9,
+                borderRadius: 6,
+                barPercentage: 0.6,
+                categoryPercentage: 0.5,
             },
             {
-                type: 'bar',
+                type: 'bar' as const,
                 label: 'Abonnements expirés',
-                data: [10, 13, 11, 14, 2, 12, 10],
+                data: expiredData,
                 backgroundColor: '#2554ae',
-                borderRadius: 10,
-                barPercentage: 0.9,
+                borderRadius: 6,
+                barPercentage: 0.6,
+                categoryPercentage: 0.5,
             },
         ],
     };
 
-    const options: any = {
+    const options = {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
             legend: { display: false },
-            tooltip: { mode: 'index', intersect: false },
+            tooltip: { mode: 'index' as const, intersect: false },
         },
         scales: {
-            x: { grid: { display: false }, ticks: { color: '#6b7280' } },
+            x: { grid: { display: false }, ticks: { color: '#94a3b8' } },
             y: {
-                grid: { display: false },
-                ticks: { color: '#6b7280' },
+                beginAtZero: true,
+                grid: { color: '#f3f4f6', drawTicks: false },
+                border: { display: false },
+                ticks: { color: '#94a3b8', stepSize: 1 },
             },
         },
     };
+
     return (
-        <div className="rounded-2xl bg-white p-6 flex flex-col space-y-6">
-            <CardTitle title="Renouvellements Vs Abonnements expirés" />
-            <div className="h-80">
-                <Chart type="bar" data={data as any} options={options} />
+        <div className="rounded-2xl bg-white p-6 flex flex-col space-y-6 h-full border border-slate-100">
+            <div className="flex items-center justify-between">
+                <CardTitle title="Renouvellements Vs Abonnements expirés" />
+                
+                {/* onValueChange de Radix/Shadcn renvoie une string.
+                   On doit la caster en "day" | "week" pour que le Dispatch l'accepte.
+                */}
+                <Select 
+                    value={groupBy} 
+                    onValueChange={(value: "day" | "week") => setGroupBy(value)}
+                >
+                    <SelectTrigger className="w-[150px] bg-vaDarkBlue text-vaMainBlue font-semibold border-none outline-none">
+                        <SelectValue placeholder="Grouper par" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="day">Par jour</SelectItem>
+                        <SelectItem value="week">Par semaine</SelectItem>
+                    </SelectContent>
+                </Select>
             </div>
-            <div className="legend flex items-center gap-4 flex-wrap justify-center">
+
+            <div className="h-80 relative">
+                {isLoading ? (
+                    <div className="absolute inset-0 flex items-center justify-center bg-white/60 z-10">
+                        <Loading />
+                    </div>
+                ) : (
+                    <Chart type="bar" data={data} options={options as any} />
+                )}
+            </div>
+
+            <div className="legend flex items-center gap-6 flex-wrap justify-center pt-2">
                 <div className="flex items-center gap-2">
-                    <Circle className="size-4 text-vaBlue fill-current" />
-                    <p className="font-semibold text-lg text-vaTextPrimary">Renouvellements</p>
+                    <Circle className="size-3 text-[#018bfb] fill-current" />
+                    <p className="font-semibold text-sm text-vaTextPrimary">Renouvellements</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Circle className="size-4 text-vaMainBlue fill-current" />
-                    <p className="font-semibold text-lg text-vaTextPrimary">Abonnements expirés</p>
+                    <Circle className="size-3 text-[#2554ae] fill-current" />
+                    <p className="font-semibold text-sm text-vaTextPrimary">Abonnements expirés</p>
                 </div>
             </div>
         </div>
     )
 }
 
-export default ExpiredSubscriptions
+export default ExpiredSubscriptions;

@@ -1,6 +1,7 @@
 import {useMutationProvider, useQueryProvider} from "@/hooks/hooksProvider";
 import SubscriptionService, {SubscriptionApiPath} from "@/services/suscription/SubscriptionService";
 import {useGetMyPosition} from "@/hooks/__globlal/useGlobalHook";
+import { GetSubscriptionsPricingParams } from "@/types/subscription.types";
 
 export const usGetSubscriptionPacks = (country_code?: string) => {
     return useQueryProvider({
@@ -51,4 +52,49 @@ export const useCheckActiveSubscription = () => {
     })
 }
 
+
+export const useGetAllSubscriptions = (params?: GetSubscriptionsPricingParams) => {
+    return useQueryProvider({
+        queryFn: () => SubscriptionService.getAllSubscriptions(params),
+        queryKey: [SubscriptionApiPath.GetAllSubscriptionsPackages, params],
+    })
+}
+
+export const useGetAllSubscriptionsKpis = (params?: GetSubscriptionsPricingParams) => {
+    return useQueryProvider({
+        queryFn: () => SubscriptionService.getAllSubscriptionsKpi(params),
+        queryKey: [SubscriptionApiPath.GetAllSubscriptionsPackagesKpis, params],
+    })
+}
+
+export const useGetAllSubscriptionsEvolution = (params?: GetSubscriptionsPricingParams) => {
+    return useQueryProvider({
+        queryFn: () => SubscriptionService.getAllSubscriptionsEvolution(params),
+        queryKey: [SubscriptionApiPath.GetAllSubscriptionsEvolution, params],
+    })
+}
+
+
+export const useGetRenewalsVsExpired = (params?: GetSubscriptionsPricingParams) => {
+    return useQueryProvider({
+        queryFn: () => SubscriptionService.getRenewalVsExpired(params),
+        queryKey: [SubscriptionApiPath.GetRenewalVsExpired, params],
+    })
+}
+
+export const useGetSubsByPayments = (params?: GetSubscriptionsPricingParams) => {
+    return useQueryProvider({
+        queryFn: () => SubscriptionService.getSubsByPaymentMethods(params),
+        queryKey: [SubscriptionApiPath.GetSubsByPaymentMethods, params],
+    })
+}
+
+
+export const useGetSubscription = (subsId?: string) => {
+    return useQueryProvider({
+        queryFn: () => SubscriptionService.getSubsData(subsId),
+        queryKey: [SubscriptionApiPath.GetSubscription, subsId],
+        enabled: !!subsId,
+    })
+}
 

@@ -1,9 +1,23 @@
 import { KpiItem } from "@/components/display/Kpi";
-import React from "react";
+import React, { useMemo } from "react";
 import { Crown, Users } from "lucide-react";
 import { formatNumber } from "@/lib/utils";
+import { useGetAllSubscriptionsKpis } from "@/hooks/subscription/useSubscription";
+import { useGetActiveCurrency } from "@/hooks/__globlal/useGlobalHook";
+import { GetSubscriptionsPricingParams } from "@/types/subscription.types";
 
-export const useSubscriptionsHook = () => {
+export const useSubscriptionsHook = (globalFilters?: GetSubscriptionsPricingParams) => {
+  const { currency } = useGetActiveCurrency()
+
+  const apiParams: GetSubscriptionsPricingParams = useMemo(() => {
+    return {
+      start_date: globalFilters?.start_date,
+      end_date: globalFilters?.end_date,
+      city_id: globalFilters?.city_id,
+      account_type: globalFilters?.account_type
+    };
+  }, [globalFilters]);
+  const {data: kpiData, isLoading: isLoadingKpi} = useGetAllSubscriptionsKpis(apiParams)
   const kpiItems: KpiItem[] = [
     {
       icon: React.createElement(Users),
@@ -12,13 +26,13 @@ export const useSubscriptionsHook = () => {
       items: [
         {
           label: "Abonnements",
-          value: formatNumber(546000),
-          unit: "XOF",
+          value: kpiData?.totalSubs??0,
+          unit: currency,
         },
         {
           label: "Réabonnements",
-          value: formatNumber(546000),
-          unit: "XOF",
+          value: kpiData?.totalResubs??0,
+          unit: currency,
         },
       ],
     },
@@ -26,39 +40,29 @@ export const useSubscriptionsHook = () => {
         icon: React.createElement(Users),
         title: "Montant abonnement par profil",
         variant: "light-blue",
-        items: [
-          {
-            label: "Entrepreneurs",
-            value: formatNumber(546000),
-            unit: "XOF",
-          },
-          {
-            label: "Professionnel",
-            value: formatNumber(546000),
-            unit: "XOF",
-          },
-        ],
+        items: kpiData?.byProfileAmount
       },
       {
         icon: React.createElement(Crown),
         title: "Abonnements actifs",
         variant: "green",
-        value: "54/123",
-        variation: "up",
-        hint:"+8.5% vs mois précédent"
+        value: kpiData?.subsRatio,
+        variation: kpiData?.activeSubsVariation,
+        hint: kpiData?.activeSubsLabel
       },
       {
         icon: React.createElement(Crown),
         title: "Nouveaux abonnés",
         variant: "light-blue",
-        value: "54",
-        variation: "up",
-        hint:"+8.5% vs mois précédent"
+        value: kpiData?.newSubscribersCount,
+        variation: kpiData?.newSubscribersVariation,
+        hint: kpiData?.newSubscribersLabel
       },
   ];
 
 
   return {
-    kpiItems
+    kpiItems,
+    isLoadingKpi
   }
 };

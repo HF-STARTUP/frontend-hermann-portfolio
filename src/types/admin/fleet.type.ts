@@ -3,7 +3,7 @@ import { PaginationResponse } from "../dashboard.type";
 
 
 // Get fleets params
-export type FleetType = "particulier" | "professionnel";
+export type FleetType = "particulier" | "professionnel" | "all";
 
 export type ParkType = "fleet_vtc" | "fleet";
 

@@ -1,6 +1,5 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet"
 import { Calendar, Crown, MoreVertical } from "lucide-react"
-import { PackageItem } from "../../_hooks/usePackageList"
 import Badge from "@/components/display/Badge"
 import { Button } from "@/components/ui/button"
 import { formatNumber } from "@/lib/utils"
@@ -11,10 +10,10 @@ import { PackageDescription } from "../_detail_sections/PackageDescription"
 import { PackagePricing } from "../_detail_sections/PackagePricing"
 import { PackageFeatures } from "../_detail_sections/PackageFeatures"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { Dropdown } from "flowbite"
+import { AllSubscriptionsModel } from "@/model/subscription/AllSubscriptionsModel"
 import { cn } from "@/utils/ui/cn"
 
-const SubscriptionDetailsSheet = ({ isOpenned, onClose, packageId, packageData, onDelete, onEdit, onSuspend }: { isOpenned: boolean, onClose: () => void, packageId: string, packageData?: PackageItem | null, onDelete: ()=>void, onEdit: ()=>void, onSuspend: ()=>void }) => {
+const SubscriptionDetailsSheet = ({ isOpenned, onClose, packageId, packageData, onDelete, onEdit, onSuspend }: { isOpenned: boolean, onClose: () => void, packageId: string, packageData?: AllSubscriptionsModel | null, onDelete: ()=>void, onEdit: ()=>void, onSuspend: ()=>void }) => {
     const [activeTab, setActiveTab] = useState("desc");
     return (
         <Sheet open={isOpenned} onOpenChange={onClose} bgType="whited">
@@ -22,12 +21,12 @@ const SubscriptionDetailsSheet = ({ isOpenned, onClose, packageId, packageData, 
                 <SheetHeader>
                     <div className="w-full flex items-center justify-between">
                         <div className="flex items-center gap-4">
-                            <div className="size-12 rounded-lg bg-vaBlue/10 text-vaBlue flex items-center justify-center">
+                            <div className="size-12 rounded-lg bg-vaBlue/10 text-vaBlue flex items-center justify-center shrink-0">
                                 <Crown />
                             </div>
                             <div className="h-12 flex flex-col justify-between">
                                 <SheetTitle>
-                                    {packageData?.packageName || "Détails du package"}
+                                    {packageData?.name || "Détails du package"} { packageId }
                                 </SheetTitle>
                                 <div className="flex items-center gap-2 text-sm text-vaLightGray">
                                     <Calendar className="size-4" />
@@ -96,7 +95,7 @@ const SubscriptionDetailsSheet = ({ isOpenned, onClose, packageId, packageData, 
                     }
                     {
                         activeTab === "tarif" && (
-                            <PackagePricing />
+                            <PackagePricing packageId={packageData?.id} />
                         )
                     }
                     {

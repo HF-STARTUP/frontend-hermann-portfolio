@@ -1,201 +1,104 @@
 import Badge from "@/components/display/Badge";
 import { Column, RowAction } from "@/components/display/CustomTableDisplay";
+import AuthManagerGuard from "@/guard/AuthManagerGuard";
+import { useGetActiveCurrency } from "@/hooks/__globlal/useGlobalHook";
+import { useGetAllSubscriptions } from "@/hooks/subscription/useSubscription";
 import { formatNumber } from "@/lib/utils";
+import { AllSubscriptionsModel } from "@/model/subscription/AllSubscriptionsModel";
+import { toIsoDate } from "@/services/Service";
+import { GetSubscriptionsPricingParams } from "@/types/subscription.types";
 import { Crown } from "lucide-react";
-import React, { useCallback, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { DateRange } from "react-day-picker";
 
-export type PackageType = "PERFORMANCE" | "ELITE" | "CROISSANCE" | "ESSENTIEL" | "ESSENTIEL ENTREPRENEUR" | "PREMIUM ENTREPRISE" | "STARTER ENTREPRISE" ;
+export type PackageType =
+  | "PERFORMANCE"
+  | "ELITE"
+  | "CROISSANCE"
+  | "ESSENTIEL"
+  | "ESSENTIEL ENTREPRENEUR"
+  | "PREMIUM ENTREPRISE"
+  | "STARTER ENTREPRISE";
 export type ProfileType = "ENTREPRENEUR" | "PROFESSIONNEL";
 export type ProfileStatus = "active" | "suspended";
 
-export interface PackageItem {
-  createdAt: string;
-  createdBy: string;
-  packageName: PackageType;
-  profileType: ProfileType;
-  cost: number;
-  maxVehiclesNumber: number;
-  maxDriversNumber: number;
-  status: ProfileStatus;
-}
+const now = new Date();
+
+const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
+
+const lastDay = new Date(
+  now.getFullYear(),
+  now.getMonth() + 1,
+  0,
+  23,
+  59,
+  59,
+  999,
+);
 
 export const usePackagesList = () => {
-  const packagesList: PackageItem[] = [
-    {
-      createdAt: "12 Jan 2026",
-      createdBy: "Admin Alpha",
-      packageName: "ESSENTIEL",
-      profileType: "ENTREPRENEUR",
-      cost: 15000,
-      maxVehiclesNumber: 2,
-      maxDriversNumber: 2,
-      status: "active",
-    },
-    {
-      createdAt: "15 Jan 2026",
-      createdBy: "Admin Alpha",
-      packageName: "CROISSANCE",
-      profileType: "ENTREPRENEUR",
-      cost: 45000,
-      maxVehiclesNumber: 5,
-      maxDriversNumber: 10,
-      status: "active",
-    },
-    {
-      createdAt: "20 Jan 2026",
-      createdBy: "System",
-      packageName: "PERFORMANCE",
-      profileType: "PROFESSIONNEL",
-      cost: 120000,
-      maxVehiclesNumber: 25,
-      maxDriversNumber: 50,
-      status: "active",
-    },
-    {
-      createdAt: "01 Feb 2026",
-      createdBy: "Admin Beta",
-      packageName: "ELITE",
-      profileType: "PROFESSIONNEL",
-      cost: 250000,
-      maxVehiclesNumber: 100,
-      maxDriversNumber: 200,
-      status: "active",
-    },
-    {
-      createdAt: "05 Feb 2026",
-      createdBy: "Admin Alpha",
-      packageName: "ESSENTIEL",
-      profileType: "ENTREPRENEUR",
-      cost: 15000,
-      maxVehiclesNumber: 2,
-      maxDriversNumber: 2,
-      status: "suspended",
-    },
-    {
-      createdAt: "10 Feb 2026",
-      createdBy: "Admin Beta",
-      packageName: "CROISSANCE",
-      profileType: "PROFESSIONNEL",
-      cost: 55000,
-      maxVehiclesNumber: 10,
-      maxDriversNumber: 15,
-      status: "active",
-    },
-    {
-      createdAt: "14 Feb 2026",
-      createdBy: "System",
-      packageName: "PERFORMANCE",
-      profileType: "ENTREPRENEUR",
-      cost: 110000,
-      maxVehiclesNumber: 20,
-      maxDriversNumber: 40,
-      status: "active",
-    },
-    {
-      createdAt: "20 Feb 2026",
-      createdBy: "Admin Alpha",
-      packageName: "ELITE",
-      profileType: "ENTREPRENEUR",
-      cost: 230000,
-      maxVehiclesNumber: 80,
-      maxDriversNumber: 150,
-      status: "suspended",
-    },
-    {
-      createdAt: "01 Mar 2026",
-      createdBy: "Admin Beta",
-      packageName: "ESSENTIEL",
-      profileType: "PROFESSIONNEL",
-      cost: 20000,
-      maxVehiclesNumber: 3,
-      maxDriversNumber: 3,
-      status: "active",
-    },
-    {
-      createdAt: "05 Mar 2026",
-      createdBy: "System",
-      packageName: "CROISSANCE",
-      profileType: "ENTREPRENEUR",
-      cost: 45000,
-      maxVehiclesNumber: 5,
-      maxDriversNumber: 10,
-      status: "active",
-    },
-    {
-      createdAt: "10 Mar 2026",
-      createdBy: "Admin Alpha",
-      packageName: "PERFORMANCE",
-      profileType: "PROFESSIONNEL",
-      cost: 125000,
-      maxVehiclesNumber: 30,
-      maxDriversNumber: 60,
-      status: "active",
-    },
-    {
-      createdAt: "12 Mar 2026",
-      createdBy: "Admin Beta",
-      packageName: "ELITE",
-      profileType: "PROFESSIONNEL",
-      cost: 300000,
-      maxVehiclesNumber: 150,
-      maxDriversNumber: 300,
-      status: "active",
-    },
-    {
-      createdAt: "13 Mar 2026",
-      createdBy: "Admin Alpha",
-      packageName: "ESSENTIEL",
-      profileType: "ENTREPRENEUR",
-      cost: 15000,
-      maxVehiclesNumber: 2,
-      maxDriversNumber: 2,
-      status: "active",
-    },
-    {
-      createdAt: "14 Mar 2026",
-      createdBy: "System",
-      packageName: "CROISSANCE",
-      profileType: "PROFESSIONNEL",
-      cost: 60000,
-      maxVehiclesNumber: 12,
-      maxDriversNumber: 20,
-      status: "active",
-    },
-    {
-      createdAt: "15 Mar 2026",
-      createdBy: "Admin Beta",
-      packageName: "PERFORMANCE",
-      profileType: "ENTREPRENEUR",
-      cost: 115000,
-      maxVehiclesNumber: 22,
-      maxDriversNumber: 45,
-      status: "suspended",
-    },
-  ];
+  const { currency } = useGetActiveCurrency();
+  const [page, setPage] = useState(1);
+  const [itemPerPage, setItemPerPage] = useState(20);
+
+  const [packagesFilters, setPackagesFilters] =
+    useState<GetSubscriptionsPricingParams>({
+      search: "",
+      status: "",
+      account_type: "",
+      start_date: toIsoDate(firstDay),
+      end_date: toIsoDate(lastDay),
+      city_id: AuthManagerGuard.getEnabledCity,
+    });
+
+  useEffect(() => {
+    setPage(1);
+  }, [packagesFilters, itemPerPage]);
+
+  const apiParams: GetSubscriptionsPricingParams = useMemo(() => {
+    return {
+      search: packagesFilters.search,
+      account_type: packagesFilters.account_type,
+      status: packagesFilters.status,
+      itemPerPage,
+      page,
+    };
+  }, [page, itemPerPage, packagesFilters]);
+  const { data: packagesData, isLoading: isLoadingPackages } =
+    useGetAllSubscriptions(apiParams);
+
+  const packagesList = useMemo(
+    () => packagesData?.packages ?? [],
+    [packagesData],
+  );
+
   const paginationMeta = useMemo(
     () => ({
-      totalRecords: packagesList.length ?? 0,
-      totalPages: 1,
-      currentPage: 1,
-      itemPerPage: 10,
+      totalRecords: packagesData?.totalRecords ?? 0,
+      totalPages: packagesData?.totalPages ?? 1,
+      currentPage: packagesData?.currentPage ?? page,
+      itemPerPage: packagesData?.itemPerPage ?? itemPerPage,
     }),
-    [packagesList.length],
+    [packagesData, page, itemPerPage],
   );
 
   const pagination = useMemo(
     () => ({
       currentPage: paginationMeta.currentPage,
       totalPages: Math.max(1, paginationMeta.totalPages),
-      onPageChange: () => { },
+      onPageChange: setPage,
       totalEntries: paginationMeta.totalRecords,
-      pageSize: 10,
-      onPageSizeChange: () => { },
+      pageSize: itemPerPage,
+      onPageSizeChange: (size: number) => {
+        setItemPerPage(size);
+        setPage(1);
+      },
     }),
-    [paginationMeta],
+    [paginationMeta, itemPerPage],
   );
 
-  const tableColumns: Column<PackageItem>[] = useMemo<
-    Column<PackageItem>[]
+  const tableColumns: Column<AllSubscriptionsModel>[] = useMemo<
+    Column<AllSubscriptionsModel>[]
   >(
     () => [
       {
@@ -204,27 +107,36 @@ export const usePackagesList = () => {
       },
       {
         header: "Ajouté par",
-        accessor: (item) => item.createdBy,
+        accessor: (item) => item.userName,
       },
       {
         header: "Package",
-        accessor: (item) => React.createElement(Badge, { type: item.packageName, icon: React.createElement(Crown) }),
+        accessor: (item) =>
+          React.createElement(
+            Badge,
+            {
+              type: item.name as PackageType,
+              icon: React.createElement(Crown),
+              isPackage: true,
+            },
+            item.name,
+          ),
       },
       {
         header: "Profil",
-        accessor: (item) => item.profileType
+        accessor: (item) => item.profile,
       },
       {
         header: "Prix",
-        accessor: (item) => `${formatNumber(item.cost)} XOF`,
+        accessor: (item) => `${item.amount} ${currency}`,
       },
       {
         header: "Véhicules",
-        accessor: (item) => `1-${item.maxVehiclesNumber} Véhicules`
+        accessor: (item) => item.vehicleNumberLabel,
       },
       {
         header: "Chauffeurs",
-        accessor: (item) => `Jusqu'a ${item.maxVehiclesNumber}`
+        accessor: (item) => item.driverNumberLabel,
       },
       {
         header: "Statut",
@@ -234,16 +146,16 @@ export const usePackagesList = () => {
     [],
   );
 
-  const [selectedPackage, setSelectedPackage] = React.useState<PackageItem | null>(null);
+  const [selectedPackage, setSelectedPackage] =
+    React.useState<AllSubscriptionsModel | null>(null);
   const [isDetailsSheetOpen, setIsDetailsSheetOpen] = React.useState(false);
 
-  const handleViewPackage = (item: PackageItem) => {
+  const handleViewPackage = (item: AllSubscriptionsModel) => {
     setSelectedPackage(item);
     setIsDetailsSheetOpen(true);
-  }
+  };
   const [action, setAction] = useState<"add" | "edit">("add");
   const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
-
 
   const [isSupendVisible, setIsSuspendVisible] = useState(false);
   const [isDeleteVisible, setIsDeleteVisible] = useState(false);
@@ -258,12 +170,12 @@ export const usePackagesList = () => {
     setIsFormDialogOpen(true);
   };
 
-  const onSuspendPack = (pack: PackageItem) => { };
-  const onDeletePack = (Pack: PackageItem) => { };
+  const onSuspendPack = (pack: AllSubscriptionsModel) => {};
+  const onDeletePack = (Pack: AllSubscriptionsModel) => {};
 
   const rowActions = useCallback(
-    (item: PackageItem): RowAction<PackageItem>[] => {
-      const actions: RowAction<PackageItem>[] = [
+    (item: AllSubscriptionsModel): RowAction<AllSubscriptionsModel>[] => {
+      const actions: RowAction<AllSubscriptionsModel>[] = [
         {
           id: "edit",
           label: "Modifier",
@@ -274,13 +186,17 @@ export const usePackagesList = () => {
           id: "supend",
           label: "Suspendre",
           variant: "ghost",
-          onClick: (Pack) => { setIsSuspendVisible(true) },
+          onClick: (Pack) => {
+            setIsSuspendVisible(true);
+          },
         },
         {
           id: "supprimer",
           label: "Supprimer",
           variant: "destructive",
-          onClick: (Pack) => { setIsDeleteVisible(true) },
+          onClick: (Pack) => {
+            setIsDeleteVisible(true);
+          },
         },
       ];
       return actions;
@@ -288,14 +204,14 @@ export const usePackagesList = () => {
     [onSuspendPack, onDeletePack],
   );
 
-  return { 
+  return {
     packagesList,
-    tableColumns, 
-    pagination, 
-    selectedPackage, 
-    isDetailsSheetOpen, 
-    handleViewPackage, 
-    setIsDetailsSheetOpen, 
+    tableColumns,
+    pagination,
+    selectedPackage,
+    isDetailsSheetOpen,
+    handleViewPackage,
+    setIsDetailsSheetOpen,
     rowActions,
     isSupendVisible,
     isDeleteVisible,
@@ -306,6 +222,10 @@ export const usePackagesList = () => {
     action,
     setAction,
     handleAdd,
-    handleEdit
+    handleEdit,
+    isLoadingPackages,
+    packagesFilters,
+    setPackagesFilters,
+    totalRecords: packagesData?.totalRecords,
   };
 };

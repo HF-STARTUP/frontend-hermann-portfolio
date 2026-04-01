@@ -4,37 +4,41 @@ import React from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import CardTitle from "@/components/ui/custom/CardTitle";
-import { formatNumber } from "@/lib/utils";
+import { useSubsByPaymentsHook } from "../_hooks/useByPaymentsHook";
+import { useGetActiveCurrency } from "@/hooks/__globlal/useGlobalHook";
+import { GetSubscriptionsPricingParams } from "@/types/subscription.types";
+import { PaymentMethodStatModel } from "@/model/subscription/SubsByPaymentMethods";
+import Loading from "@/components/ui/Loader";
+import { EmptyData } from "@/components/box/PageNetworkState";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// --- Interfaces ---
 
-interface PaymentMethod {
-  label: string;
-  amount: string;
-  percentage: number;
-  color: string;
-}
+const CHART_COLORS = [
+  "#018bfb", "#ff9900", "#6d00fb", "#00a757",
+  "#ef4444", "#f59e0b", "#06b6d4", "#8b5cf6"
+];
 
 interface RepartitionProps {
   title?: string;
-  methods?: PaymentMethod[];
+  globalFilters?: GetSubscriptionsPricingParams;
 }
 
-// --- Sous-composant Interne ---
 
-const PaymentMethodItem = ({ 
-  label, 
-  amount, 
-  percentage, 
-  color 
-}: PaymentMethod) => {
+
+interface PaymentMethodItemProps {
+  method: PaymentMethodStatModel;
+  color: string;
+}
+
+const PaymentMethodItem = ({ method, color }: PaymentMethodItemProps) => {
+  const percentage = method.percentage;
+
   const data = {
     datasets: [
       {
         data: [percentage, 100 - percentage],
-        backgroundColor: [color, "#e5e7eb"], // Gris clair tailwind (gray-200)
+        backgroundColor: [color, "#e5e7eb"],
         borderWidth: 0,
         borderRadius: 10,
         cutout: "65%",
@@ -51,6 +55,8 @@ const PaymentMethodItem = ({
     },
   };
 
+  const { currency } = useGetActiveCurrency();
+
   return (
     <div className="flex flex-col items-center space-y-4">
       {/* Graphique avec texte central */}
@@ -65,36 +71,43 @@ const PaymentMethodItem = ({
 
       {/* Libellés */}
       <div className="text-center">
-        <p className="text-vaTextPrimary font-medium">{label}</p>
+        <p className="text-vaTextPrimary font-medium capitalize">{method.paymentMethod}</p>
         <p className="text-lg font-bold text-black">
-          {amount} <span className="text-xs font-semibold">XOF</span>
+          {method.amount} <span className="text-xs font-semibold">{currency}</span>
         </p>
       </div>
     </div>
   );
 };
 
-// --- Composant Principal ---
+
 
 const RepartitionByPaymentMethods = ({
   title = "Répartition des abonnements par moyen de paiement",
-  methods = [
-    { label: "Wave", amount: formatNumber(1338750), percentage: 46, color: "#1e40af" },
-    { label: "Mobile Money", amount: formatNumber(1041250), percentage: 35, color: "#22c55e" },
-    { label: "Carte visa", amount: formatNumber(595000), percentage: 20, color: "#f97316" },
-  ],
+  globalFilters
 }: RepartitionProps) => {
+  const { data, isLoading } = useSubsByPaymentsHook(globalFilters);
+
   return (
-    <div className="bg-white rounded-2xl p-6">
+    <div className="bg-white rounded-2xl p-6 h-full">
       <CardTitle title={title} />
-      
-      <div className="mt-8 flex flex-wrap justify-around items-end gap-8">
-        {methods.map((method, index) => (
-          <PaymentMethodItem 
-            key={`${method.label}-${index}`} 
-            {...method} 
-          />
-        ))}
+
+      <div className="mt-8 flex flex-wrap justify-around items-end gap-8 relative min-h-[200px]">
+        {isLoading ? (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Loading />
+          </div>
+        ) : data?.stats && data.stats.length > 0 ? (
+          data.stats.map((method, index) => (
+            <PaymentMethodItem
+              key={index}
+              method={method}
+              color={CHART_COLORS[index % CHART_COLORS.length]}
+            />
+          ))
+        ) : (
+         <EmptyData message="Aucune donnée disponible" />
+        )}
       </div>
     </div>
   );

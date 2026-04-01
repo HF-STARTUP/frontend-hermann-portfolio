@@ -1,5 +1,5 @@
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { Building, Building2, Calendar, Edit } from "lucide-react";
+import { Building, Calendar } from "lucide-react";
 import { cn } from "@/utils/ui/cn";
 import { getAvatarColor, getAvatarInitials } from "@/lib/initials.avatar.util";
 import Badge from "@/components/display/Badge";
@@ -8,6 +8,11 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import React, { useState } from "react";
 import { DetailRowList, DetailRowProps } from "@/app/(webapp)/app/fleet/components/detailSections/Profile";
 import { CustomerItem } from "../_hooks/usePipelineHook";
+import { FilesListSection } from "./FileListSection";
+import { useFilesHook } from "../_hooks/useFilesHook";
+import CommentsList from "./CustomerComment";
+import HistoryList from "./CustomerHistory";
+import { useHistoryHook } from "../_hooks/useHistoryHook";
 
 export const CustomerDetailsSheet = ({ isOpenned, onClose, customer }: { isOpenned: boolean, onClose: () => void, customer?: CustomerItem }) => {
     const [activeTab, setActiveTab] = useState<"details" |
@@ -41,6 +46,8 @@ export const CustomerDetailsSheet = ({ isOpenned, onClose, customer }: { isOpenn
             value: customer?.assignedCommercial
         },
     ]
+    const { files } = useFilesHook()
+    const { historyData } = useHistoryHook()
     const scrollContainerRef = React.useRef<HTMLDivElement | null>(null);
     return (
         <Sheet open={isOpenned} onOpenChange={onClose}>
@@ -72,7 +79,10 @@ export const CustomerDetailsSheet = ({ isOpenned, onClose, customer }: { isOpenn
                     </div>
                 </SheetHeader>
                 <DialogMainBody className="space-y-6 min-h-[calc(100dvh-120px)]" ref={scrollContainerRef}>
-                    <Tabs>
+                    <Tabs onValueChange={(value) => setActiveTab(value as "details" |
+                        "files" |
+                        "comments" |
+                        "history")} value={activeTab}>
                         <TabsList className="grid grid-cols-4">
                             <TabsTrigger value="details">Détails</TabsTrigger>
                             <TabsTrigger value="files">Fichiers</TabsTrigger>
@@ -80,7 +90,10 @@ export const CustomerDetailsSheet = ({ isOpenned, onClose, customer }: { isOpenn
                             <TabsTrigger value="history">Historique</TabsTrigger>
                         </TabsList>
                     </Tabs>
-                    {activeTab === "details" && <DetailRowList rows={profileItems} title="Informations générales" onEdit={()=>{alert("modification ")}} />}
+                    {activeTab === "details" && <DetailRowList rows={profileItems} title="Informations générales" onEdit={() => { alert("modification ") }} />}
+                    {activeTab === "files" && <FilesListSection files={files} />}
+                    {activeTab === "comments" && <CommentsList />}
+                    {activeTab === "history" && <HistoryList isLoading={false} items={historyData} />}
 
                 </DialogMainBody>
             </SheetContent>
