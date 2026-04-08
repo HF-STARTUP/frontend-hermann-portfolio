@@ -8,15 +8,17 @@ import {
     UpdateProfileInput
 } from "@/schema/ADMIN/settings.schema";
 import UserProfile from "@/model/user/User";
-import {AdminProfileResponseType} from "@/types/__form/profile.type";
+import {AdminProfileResponseType, AdminResponseData, GetAdminsParams} from "@/types/__form/profile.type";
+import { toQueriesString } from "@/lib/utils";
 
 export enum SettingsApiPath {
     UpdateProfile = '/profile',
     AdminList = '/root',
+    AdminData = '/root/{profile_id}',
     UpdatePassword = '/admin-reset-password',
     DeleteFleet = '/root/delete-park',
     AdminAccess = '/access-root',
-    createAdmin = '/root/create-admin-on-city',
+    createAdmin = '/root/users',
     AddAdminOnCity = '/root/add-admin-on-city',
     DeactivateActiveAdmin = "/root/deactivate-activate",
     RemoveAdminOnCity = "/root/remove-admin-on-city",
@@ -45,16 +47,36 @@ class SettingsService extends Service {
         return SettingsService.instance;
     }
 
-    public static async createNewAdmin(formData: AddAdminInput) {
-        return await SettingsService.makeRequest(SettingsApiPath.createAdmin, 'POST', formData);
+    public static async updateAdmin(id: string, formData: AddAdminInput) {
+        const processedData = {
+            ...formData,
+            cities_id: JSON.stringify(formData.cities_id),
+        };
+        
+        return await SettingsService.getInstance().execHttpRequest<CourseResponseType>({
+            url: `${SettingsApiPath.createAdmin}/${id}`,
+            method: SettingsService.getInstance().httpMethods.update,
+            body: processedData,
+        });
+    }
+
+    public static async createNewAdmin(formData: AddAdminInput) {        
+        return await SettingsService.getInstance().execHttpRequest<CourseResponseType>({
+            url: SettingsApiPath.createAdmin,
+            method: SettingsService.getInstance().httpMethods.post,
+            body: formData,
+        });
     }
 
     public static async updateProfile({id: profile_id, ...formData}: UpdateProfileInput) {
         return await SettingsService.makeRequest<CourseResponseType>(SettingsApiPath.UpdateProfile + "/" + profile_id, 'PUT', formData)
     }
 
-    public static async deactivateActivate({id}: { id: string }) {
-        return await SettingsService.makeRequest<CourseResponseType>(SettingsApiPath.DeactivateActiveAdmin + "/" + id, 'GET')
+    public static async deactivateActivate({ id }: { id: string }) {
+        return await SettingsService.getInstance().execHttpRequest<CourseResponseType>({
+            url: `${SettingsApiPath.DeactivateActiveAdmin}/${id}`,
+            method: SettingsService.getInstance().httpMethods.update,
+        });
     }
 
     public static async updatePassword({old_password, new_password, email}: UpdatePasswordInput) {
@@ -70,11 +92,24 @@ class SettingsService extends Service {
         return await SettingsService.makeRequest<RoleType[]>(uri, 'GET')
     }
 
-    public static async getAdminList(): Promise<UserProfile[]> {
-        const uri = SettingsApiPath.AdminList
-        const list = await SettingsService.makeRequest<AdminProfileResponseType[]>(uri, 'GET')
+    public static async getAdminList(params: GetAdminsParams) {
+        const uri = toQueriesString(SettingsApiPath.AdminList, params)
+        const response = await SettingsService.makeRequest<AdminResponseData>(uri, 'GET')
 
-        return UserProfile.fromArray(list)
+        return {
+            admins: UserProfile.fromArray(response.data),
+            totalPages: response.totalPages,
+            totalRecords: response.totalRecords,
+            currentPage: response.currentPage,
+            itemPerPage: response.itemPerPage
+        }
+    }
+
+    public static async getAdmin(id?: string) {
+        const uri = toQueriesString(SettingsApiPath.AdminData.replace("{profile_id}", id??""), {})
+        const response = await SettingsService.makeRequest<AdminProfileResponseType>(uri, 'GET')
+
+        return new UserProfile(response)
     }
 
     static refreshAdmins() {

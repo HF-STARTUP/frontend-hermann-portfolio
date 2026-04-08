@@ -1,13 +1,14 @@
 "use client"
 
-import React, {useEffect, useState} from "react";
-import {DashboardIcon, InfoIcon, LayoutListIcon, SettingIcon} from "@/components/ui/__icons";
-import {cn} from "@/lib/utils";
+import React, { useEffect, useState } from "react";
+import { DashboardIcon, InfoIcon, LayoutListIcon, SettingIcon } from "@/components/ui/__icons";
+import { cn } from "@/lib/utils";
 import Link from "next/link";
-import {usePathname} from "next/navigation";
-import {CreditCardIcon, Megaphone, ChevronDown, Tag, Users, ArrowRightLeft, MegaphoneIcon} from "lucide-react";
-import {motion, AnimatePresence} from 'framer-motion';
+import { usePathname } from "next/navigation";
+import { CreditCardIcon, Megaphone, ChevronDown, Tag, Users, ArrowRightLeft, MegaphoneIcon, Crown } from "lucide-react";
+import { motion, AnimatePresence } from 'framer-motion';
 import { LuMegaphone } from "react-icons/lu";
+import { PiMegaphone } from "react-icons/pi";
 
 export const Sidebar = () => {
 
@@ -40,22 +41,21 @@ export const Sidebar = () => {
         <motion.div
             className={cn(
                 "lg:w-[290px] bg-vaPrimary/95 md:bg-vaPrimary backdrop-blur-md border-t border-white text-white lg:h-[100vh] lg:pt-[100px] lg:px-0 lg:flex lg:flex-col lg:gap-[20px] fixed z-40 lg:justify-start lg:items-start",
-                "w-[100%] lg:ml-0 lg:mb-0 lg:rounded-none h-[60px] bottom-0 flex items-center justify-around px-[7px] gap-1"
+                "w-[100%] lg:ml-0 lg:mb-0 lg:rounded-none h-[60px] bottom-0 flex items-center justify-around px-[7px] gap-1 overflow-y-auto custom-scrollbar"
             )}
-            // initial={{y: 0}} // Position initiale
-            // animate={{y: isVisible ? 0 : 60}} // 60px vers le bas pour masquer, 0 pour montrer
-            // transition={{type: "spring", stiffness: 300, damping: 30}} // Animation fluide avec effet ressort
+        // initial={{y: 0}} // Position initiale
+        // animate={{y: isVisible ? 0 : 60}} // 60px vers le bas pour masquer, 0 pour montrer
+        // transition={{type: "spring", stiffness: 300, damping: 30}} // Animation fluide avec effet ressort
         >
             <SidebarItem
                 label={`Dashboard`}
-                icon={<DashboardIcon/>}
+                icon={<DashboardIcon />}
                 to={`/app/dashboard`}
             />
             <SidebarItem
                 label={"Flottes"}
-                icon={<LayoutListIcon/>}
+                icon={<LayoutListIcon />}
                 to={"/app/fleet"}
-
             />
             {/*<SidebarItem*/}
             {/*    label={"Géolocalisation"}*/}
@@ -67,15 +67,22 @@ export const Sidebar = () => {
                 icon={<ArrowRightLeft className="rotate-45" />}
                 to={"/app/transactions"}
             />
+
             <SidebarItem
+                label={"Abonnements"}
+                icon={<Crown />}
+                to={"/app/subscriptions"}
+            />
+
+            {/* <SidebarItem
                 label={"Tickets de réclamations"}
                 icon={<InfoIcon/>}
                 to={"/app/tickets"}
-            />
+            /> */}
             <SidebarItemWithSubmenu
                 label={"Marketing & Campagnes"}
-                icon={<MegaphoneIcon className="w-6 h-6" />}
-                to = {"/app/marketing/dashboard"}
+                icon={<PiMegaphone className="w-6 h-6 -scale-x-100" />}
+                to={"/app/marketing/dashboard"}
                 subItems={[
                     { label: "Campagnes", to: "/app/marketing/campagnes" },
                     { label: "Leads & Conversations", to: "/app/marketing/leads" },
@@ -86,10 +93,10 @@ export const Sidebar = () => {
             />
             <SidebarItem
                 label={"Paramètres"}
-                icon={<SettingIcon/>}
+                icon={<SettingIcon />}
                 to={"/app/settings"}
             />
-            
+
         </motion.div>
     )
 }
@@ -98,7 +105,7 @@ const SidebarItem: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     label: string,
     icon: React.ReactNode,
     to?: string
-}> = ({label, icon, to}) => {
+}> = ({ label, icon, to }) => {
 
     const cur_path = usePathname()
     const isActive = cur_path === to
@@ -132,13 +139,13 @@ const SidebarItemWithSubmenu: React.FC<{
     icon: React.ReactNode
     subItems: SubItem[]
     to?: string
-}> = ({label, icon, subItems, to}) => {
+}> = ({ label, icon, subItems, to }) => {
     const [isOpen, setIsOpen] = useState(false)
     const cur_path = usePathname()
     const isActive = subItems.some(item => cur_path === item.to || cur_path.startsWith(item.to + '/'))
 
     return (
-        <Link href={to??"#"} className="w-full">
+        <Link href={to ?? "#"} className="w-full">
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className={cn(
@@ -151,14 +158,14 @@ const SidebarItemWithSubmenu: React.FC<{
                     <div>{icon}</div>
                     <div className="hidden lg:flex">{label}</div>
                 </div>
-                <ChevronDown 
+                <ChevronDown
                     className={cn(
                         "hidden lg:block w-4 h-4 transition-transform duration-200",
                         isOpen && "rotate-180"
-                    )} 
+                    )}
                 />
             </button>
-            
+
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -170,8 +177,8 @@ const SidebarItemWithSubmenu: React.FC<{
                     >
                         <div className="flex flex-col gap-1 pl-[44px] py-2">
                             {subItems.map((item) => (
-                                <Link 
-                                    key={item.to} 
+                                <Link
+                                    key={item.to}
                                     href={item.to}
                                     className={cn(
                                         "flex items-center gap-3 py-2 px-3 rounded-md text-sm hover:bg-white/10 transition-colors",
@@ -186,7 +193,7 @@ const SidebarItemWithSubmenu: React.FC<{
                     </motion.div>
                 )}
             </AnimatePresence>
-            
+
             {/* Mobile submenu - affiche en modal/popup sur mobile */}
             <AnimatePresence>
                 {isOpen && (
@@ -197,8 +204,8 @@ const SidebarItemWithSubmenu: React.FC<{
                         className="lg:hidden absolute bottom-[70px] left-1/2 -translate-x-1/2 bg-vaPrimary rounded-lg shadow-lg border border-white/20 p-2 min-w-[180px]"
                     >
                         {subItems.map((item) => (
-                            <Link 
-                                key={item.to} 
+                            <Link
+                                key={item.to}
                                 href={item.to}
                                 onClick={() => setIsOpen(false)}
                                 className={cn(

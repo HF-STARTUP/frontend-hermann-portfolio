@@ -6,24 +6,28 @@ import { DateRange } from "react-day-picker";
 import { useFleetTransactions } from "../../_hook/useFleetTransactions";
 import FleetKpiGrid from "../_sub_components/fleetDetailKpi";
 import { DataTable } from "@/components/display/CustomTableDisplay";
+import PeriodSelector from "@/components/elements/PeriodSelector";
 
-export default function TransactionsContent() {
-    const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
-
-    const { pagination, transactionKpi, tableColumns, transactions } = useFleetTransactions()
+export default function TransactionsContent({ fleetId }:{fleetId?: string}) {    
+    const { 
+        pagination, 
+        transactionKpi, 
+        tableColumns, 
+        transactions,
+        isLoadingKpi,
+        dateRange,
+        setDateRange,
+        isLoadingTransactions
+    } = useFleetTransactions(fleetId)
 
     return (
         <div className="space-y-6">
-            <div className="text-xl font-semibold flex items-center justify-between">
+            <div className="text-xl font-semibold flex items-center justify-between flex-wrap gap-4">
                 Historique des transactions
                 <div className="filters flex items-center gap-2">
-                    <DateRangePicker
-                        dateRange={dateRange}
-                        onDateRangeChange={setDateRange}
-                        onApply={() => {
-                            setDateRange;
-                        }}
-                        className="w-fit text-xs rounded-xl"
+                    <PeriodSelector 
+                        defaultPeriod={"current_month"}
+                        onChange={(dateRange)=>setDateRange(dateRange)}
                     />
                     <Select>
                         <SelectTrigger variant="mainBlueOutline" leftIcon={<AnchorIcon className="size-4 mr-2" />}>
@@ -37,11 +41,12 @@ export default function TransactionsContent() {
                     </Select>
                 </div>
             </div>
-            <FleetKpiGrid className="!grid-cols-4" kpiItems={transactionKpi} />
+            <FleetKpiGrid className="!grid-cols-4" kpiItems={transactionKpi} isLoading={isLoadingKpi} />
             <DataTable 
                 columns={tableColumns}
                 data={transactions}
                 pagination={pagination}
+                isLoading={isLoadingTransactions}
             />
         </div>
     )

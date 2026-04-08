@@ -11,6 +11,8 @@ import {
 import SettingsService, {SettingsApiPath} from "@/services/admin/settings/settingsService";
 import LoginService from "@/services/__form/auth/LoginService";
 import {useMutationProvider, useQueryProvider} from "@/hooks/hooksProvider";
+import { GetAdminsParams } from "@/types/__form/profile.type";
+import RoleService from "@/services/admin/RoleAccessService";
 
 export const useUpdateProfile = () => {
 
@@ -99,15 +101,64 @@ export const useGetAdminAccess = () => {
     return {isLoading, data};
 };
 
-export const useGetAdminList = () => {
+export const useGetAdminList = (params: GetAdminsParams) => {
 
     const {isLoading, data} = useQueryProvider({
-        queryKey: [SettingsApiPath.AdminList],
-        queryFn: () => SettingsService.getAdminList(),
+        queryKey: [SettingsApiPath.AdminList, params],
+        queryFn: () => SettingsService.getAdminList(params),
     });
 
     return {isLoading, data};
 };
+
+export const useGetAdmin = (id?: string) => {    
+    const {isLoading, data} = useQueryProvider({
+        queryKey: [SettingsApiPath.AdminData, id],
+        queryFn: () => SettingsService.getAdmin(id),
+        enabled: !!id
+    });
+
+    return {isLoading, data};
+};
+
+export const useUpdateAdmin = (id?: string) => {
+
+    const {
+        data,
+        loading,
+        isSuccess,
+        isError,
+        error,
+        handleMutation,
+    } = useMutationProvider({
+        mutationFn: (data: AddAdminInput) => SettingsService.updateAdmin(id!, data),
+        successMessage: "Admin mis à jour avec succès.",
+    });
+
+    const onUpdateAdmin = (data: AddAdminInput) => {      
+        if (!id) {
+            console.error("Impossible de mettre à jour : l'ID est manquant");
+            return;
+        }
+        handleMutation(data)
+    }
+
+    React.useEffect(() => {
+        if (isSuccess && data) {
+            void SettingsService.refreshAdmins()
+            void RoleService.invalidRolesList()
+        }
+    }, [isSuccess, data])
+
+    return {
+        data,
+        loading,
+        isSuccess,
+        isError,
+        error,
+        onUpdateAdmin,        
+    }
+}
 
 
 export const useCreateAdmin = () => {
@@ -117,10 +168,11 @@ export const useCreateAdmin = () => {
         loading,
         isSuccess,
         isError,
+        error,
         handleMutation,
     } = useMutationProvider({
         mutationFn: SettingsService.createNewAdmin,
-        successMessage: "Admin ajouté.",
+        successMessage: "Admin ajouté avec succès.",
     });
 
     const onCreateAdmin = (data: AddAdminInput) => {
@@ -128,8 +180,9 @@ export const useCreateAdmin = () => {
     }
 
     React.useEffect(() => {
-        if (data && isSuccess) {
+        if (isSuccess && data) {
             void SettingsService.refreshAdmins()
+            void RoleService.invalidRolesList()
         }
     }, [isSuccess, data])
 
@@ -137,9 +190,10 @@ export const useCreateAdmin = () => {
         data,
         loading,
         isSuccess,
-        onCreateAdmin,
+        isError,
+        error,
+        onCreateAdmin,        
     }
-
 }
 
 export const useAddAdminOnCity = () => {
@@ -240,7 +294,7 @@ export const useDeactivateOrActivateAdmin = () => {
 }
 
 
-export const useDeleteFleet = () => {
+export const useDefinitiveDeleteFleet = () => {
 
     const {
         data,

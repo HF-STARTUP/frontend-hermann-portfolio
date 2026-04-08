@@ -12,13 +12,13 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-import {AddAdminDialog} from "@/app/(webapp)/app/settings/profile/actions/addAdmin/AddAdminDialog";
+import {AddAdminDialog} from "@/app/(webapp)/app/settings/_components/_profile/actions/addAdmin/AddAdminDialog";
 import {useDeactivateOrActivateAdmin, useGetAdminList, useRemoveAdminOnCity} from "@/hooks/admin/useSettingsHook";
 import UserProfile from "@/model/user/User";
 import Loading from "@/components/ui/Loader";
 import {AdminAccountStatus} from "@/types/__form/profile.type";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
-import {SetCityToAdminDialog} from "@/app/(webapp)/app/settings/profile/actions/addAdmin/AddCityOnAdmin";
+import {SetCityToAdminDialog} from "@/app/(webapp)/app/settings/_components/_profile/actions/addAdmin/AddCityOnAdmin";
 import {AiFillDelete} from "react-icons/ai";
 import {
     Dialog,
@@ -47,7 +47,7 @@ const UsersPage: React.FC = () => {
                     }}
                     withMb={true}
                 >
-                    Administrateurs({admins?.length ?? "-"})
+                    Administrateurs({admins?.admins?.length ?? "-"})
                 </AdminPageTitle>
                 <AdminUsers/>
                 <AddAdminDialog isOpen={isOpen} setIsOpen={v => setIsOpen(v)}/>
@@ -58,29 +58,29 @@ const UsersPage: React.FC = () => {
 
 const AdminUsers: React.FC = () => {
 
-    const {data: admins, isLoading} = useGetAdminList()
+    const {data: adminsData, isLoading} = useGetAdminList()
 
     if (isLoading) {
 
         return <Loading/>
     }
 
-    if (admins && admins.length) {
+    if (adminsData && adminsData.admins.length) {
         return (
             <div className={`flex gap-[9px] flex-col w-full`}>
                 {
-                    admins
+                    adminsData.admins
                         .sort((a, b) => {
                             const statusA = a._instance.status;
                             const statusB = b._instance.status;
 
                             if (statusA === statusB) return 0;
 
-                            if (statusA === AdminAccountStatus.Deactivated && statusB !== AdminAccountStatus.Deactivated) {
+                            if (statusA === "deactivated" && statusB !== "deactivated") {
                                 return 1;
                             }
 
-                            if (statusB === AdminAccountStatus.Deactivated && statusA !== AdminAccountStatus.Deactivated) {
+                            if (statusB === "deactivated" && statusA !== "deactivated") {
                                 return -1;
                             }
 
@@ -102,7 +102,7 @@ const OneAdminUser: React.FC<{ user: UserProfile }> = ({user}) => {
     const [isOpen, setIsOpen] = React.useState(false)
     const [modifyCityIsOpen, setModifyCityIsOpen] = React.useState(false)
 
-    const isDeactivated = user._instance.status === AdminAccountStatus.Deactivated
+    const isDeactivated = user._instance.status == "deactivated"
     const isLoggedAdmin = AuthManagerGuard.getProfileID === user.getID
 
     return (

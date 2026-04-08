@@ -1,26 +1,17 @@
 "use client"
 
 import React from "react";
-import KpiGrid, { KpiShimmerGrid } from "@/components/display/Kpi";
 import { useDashboardKpis } from "@/app/(webapp)/app/dashboard/_hook/useDashboardKpis";
+import KpiGrid from "@/components/display/Kpi";
+import { DashboardGlobalFilters } from "../../_hook/useDashboardHook";
 
-export const HeadSection = () => {
-    const {kpis, isLoading} = useDashboardKpis()
-
-    if (isLoading && !kpis.length) {
-        return (
-            <KpiShimmerGrid count={4}/>
-        )
-    }
-
-    if (!kpis.length) {
-        return null
-    }
+export const HeadSection = ({globalFilters}:{globalFilters?: DashboardGlobalFilters}) => {
+    const {kpiItems, isLoading} = useDashboardKpis(globalFilters)
 
     return (
         <div className={"grid grid-cols-12 gap-[24px]"}>
             <div className={"col-span-12 2xl:col-span-12"}>
-                <KpiGrid items={kpis}/>
+                <KpiGrid items={kpiItems} isLoading={isLoading} />
             </div>
         </div>
     )

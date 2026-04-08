@@ -4,18 +4,43 @@ import {
     BestDiverAndVehicleResponseType,
     CarburantEvolution,
     DashboardBestAndLeastProfilableResponseType,
+    FleetByCityInputs,
+    FleetJournalData,
     FleetListResponseType,
+    FleetOverviewData,
+    FleetProfileData,
+    FleetRegisterFormData,
     FleetResponseType,
+    FleetsKpiData,
+    FleetSubscriptionParams,
+    FleetSubscriptionsResponseData,
+    GetFleetsParams,
+    OperatorRevenueResponse,
+    OperatorRevenusInputs,
     ParkDetailsResponseType,
+    ProfitableListInputs,
     ProfitableListResponseType,
-    RevenusEvolution
-} from "@/types/admin/fleet";
-import {AbonResponseModel, AdminOnFleetModel, FleetModel, ParkStatResponseType} from "@/model/ADMIN/fleet";
-import {ResponseWithPagination} from "@/types/generic";
-import {endOfDay, format, startOfDay} from "date-fns";
+    RevenusEvolution,
+    SubscriptionPlanRevenusInputs,
+    SuspendFleetData,
+    TransactionHistoryData,
+    TransactionHistoryItem,
+    TransactionHistoryParams,
+    TransactionKpiData
+} from "@/types/admin/fleet.type";
+import { AbonResponseModel, AdminOnFleetModel, FleetModel, ParkStatResponseType } from "@/model/ADMIN/fleet";
+import { ResponseWithPagination } from "@/types/generic";
+import { endOfDay, format, startOfDay } from "date-fns";
 import { toQueriesString } from "@/lib/utils";
-import {CurencyResponseType} from "@/types/vehicule.type";
-import {FleetByCityResponseType, RevenusRepartitionResponseType} from "@/types/dashboard.schedule.type";
+import { CurencyResponseType } from "@/types/vehicule.type";
+import { FleetByCityResponseType, RevenusRepartitionResponseType } from "@/types/dashboard.schedule.type";
+import FleetOverview from "@/model/ADMIN/FleetOverview";
+import FleetProfileDetail from "@/model/ADMIN/FleetProfile";
+import FleetJournalModel from "@/model/ADMIN/FleetJournalModel";
+import TransactionKpiModel from "@/model/ADMIN/FleetTransactionsKpi";
+import TransactionHistoryModel from "@/model/ADMIN/TransactionHistory";
+import { DashboardParams } from "@/types/dashboard.type";
+import FleetsKpiModel from "@/model/ADMIN/FleetsKpi";
 
 export enum FleetApiPath {
     GetFleetByCityID = '/park/by',
@@ -39,62 +64,19 @@ export enum FleetApiPath {
     OperatorRevenus = "/dashboard/operator-revenue",
     FleetByCity = "/dashboard/fleet-by-city",
     SubscriptionPlanRevenus = "/dashboard/subscription-plan-revenue",
-    ProfitableList = "/dashboard/city/park/profitable-list"
-}
-
-export type GetFleetByCityIDParams = {
-    city_id?: string;
-    type?: string;
-    page?: number;
-    itemPerPage?: number;
-    limit?: number;
-    // Filtres de recherche et dates
-    name?: string;
-    subscription_name?: string;
-    created_from?: string; // ISO datetime
-    created_to?: string; // ISO datetime
-    start_date?: string; // ISO datetime
-    end_date?: string; // ISO datetime
-    // Filtres de compteurs
-    vehicles_count_min?: number;
-    vehicles_count_max?: number;
-    drivers_count_min?: number;
-    drivers_count_max?: number;
-}
-
-export type OperatorRevenusInputs = {
-    start_date: string
-    end_date: string
-    currency_id?: string
-    type?: string
-    city_id?: string
-}
-
-export type FleetByCityInputs = {
-    country_id?: string
+    ProfitableList = "/dashboard/city/park/profitable-list",
+    GetFleetOverview = "/admin/fleets/{park_id}/overview",
+    GetFleetProfile = "/admin/fleets/{park_id}/profile",
+    GetFleetJournal = "/admin/fleets/{park_id}/journal",
+    GetFleetTransactions = "/park/admin/transactions",
+    GetFleetTransactionsKpi = "/admin/fleets/{park_id}/transactions-kpis",
+    CreateFleet = "/register",
+    GetFleetsKpi = "/admin-dashboard/fleets/kpis",
+    SuspendFleet = "/admin/suspend-park",
+    DeleteFleet = "/admin/deactivate-park"
 }
 
 
-export type SubscriptionPlanRevenusInputs = {
-    start_date: string
-    end_date: string
-    currency_id?: string
-}
-
-export type ProfitableListInputs = {
-    type: string
-    city_id: string
-    currency_id?: string
-}
-
-export interface OperatorRevenueResponse {
-    operator_id: string;
-    operator_name: string;
-    country_name: string;
-    total_amount: number;
-    currency: string;
-    path?: string
-}
 class FleetService extends Service {
     private static instance: FleetService = new FleetService();
 
@@ -147,14 +129,25 @@ class FleetService extends Service {
     }
 
     static invalidFleets() {
-        return FleetService.getInstance().queryClient.invalidateQueries({queryKey: [FleetApiPath.GetFleetByCityID]});
+        return FleetService.getInstance().queryClient.invalidateQueries({ queryKey: [FleetApiPath.GetFleetByCityID] });
     }
 
-    public static async GetFleetByCityID({city_id, ...params}: GetFleetByCityIDParams) {
-       
-        const uri = toQueriesString(FleetApiPath.GetFleetByCityID + "/" + city_id, params)
-      
-        const {data, ...meta} = await FleetService.makeRequest<ResponseWithPagination<FleetListResponseType[]>>(
+    public static async createNewFleet(formData: FleetRegisterFormData) {
+        return await FleetService.getInstance().execHttpRequest({
+            url: FleetApiPath.CreateFleet,
+            method: FleetService.getInstance().httpMethods.post,
+            body: formData,
+            toFormdata: true
+        });
+    }
+
+    public static async GetFleetByCityID(params: GetFleetsParams) {
+
+        const baseUri = FleetApiPath.GetFleetByCityID + (params.city_id && params.city_id!=="all"?`/${params.city_id}`:"")
+
+        const uri = toQueriesString(baseUri, params)
+
+        const { data, ...meta } = await FleetService.makeRequest<ResponseWithPagination<FleetListResponseType[]>>(
             uri,
             'GET',
             undefined,
@@ -167,7 +160,7 @@ class FleetService extends Service {
         }
     }
 
-    public static async getAdminsOnFleet({park_id}: { park_id: string }): Promise<AdminOnFleetModel[]> {
+    public static async getAdminsOnFleet({ park_id }: { park_id: string }): Promise<AdminOnFleetModel[]> {
 
         const uri = FleetApiPath.GetAdminByCityID + "/" + park_id
 
@@ -181,26 +174,29 @@ class FleetService extends Service {
         return AdminOnFleetModel.fromArray(data)
     }
 
-    public static async getActiveSubscriptionList({park_id}: { park_id: string }): Promise<AbonResponseModel[]> {
+    public static async getActiveSubscriptionList(params: FleetSubscriptionParams, park_id?: string){
+        const url = toQueriesString( FleetApiPath.ActiveSubscriptionList + "/" + park_id, params)
 
-        const uri = FleetApiPath.ActiveSubscriptionList + "/" + park_id
+        const response = await FleetService.getInstance().execHttpRequest<FleetSubscriptionsResponseData>({
+            url: url,
+            method: FleetService.getInstance().httpMethods.get,
+        })
 
-        const abonnList = await FleetService.makeRequest<ResponseWithPagination<FleetResponseType[]>>(
-            uri,
-            'GET',
-            undefined,
-            true
-        )
-
-        return AbonResponseModel.fromArray(abonnList.data)
+        return {
+            subscriptions: AbonResponseModel.fromArray(response.data),
+            totalPages: response.totalPages,
+            totalRecords: response.totalRecords,
+            currentPage: response.currentPage,
+            itemPerPage: response.itemPerPage
+        }
 
     }
 
     static invalidActiveSubscription() {
-        return FleetService.getInstance().queryClient.invalidateQueries({queryKey: [FleetApiPath.ActiveSubscription]})
+        return FleetService.getInstance().queryClient.invalidateQueries({ queryKey: [FleetApiPath.ActiveSubscription] })
     }
 
-    public static async getActiveSubscription({parkID}: { parkID: string }): Promise<AbonResponseModel> {
+    public static async getActiveSubscription({ parkID }: { parkID?: string }): Promise<AbonResponseModel> {
 
         const uri = FleetApiPath.ActiveSubscription + "/" + parkID
 
@@ -214,7 +210,7 @@ class FleetService extends Service {
         return new AbonResponseModel(abonn)
     }
 
-    public static async getFleetDetails({fleetID, fleetType}: {
+    public static async getFleetDetails({ fleetID, fleetType }: {
         fleetID: string,
         fleetType: string
     }): Promise<AdminOnFleetModel[]> {
@@ -231,7 +227,7 @@ class FleetService extends Service {
         return AdminOnFleetModel.fromArray(data)
     }
 
-    public static async getFleetStats({fleetID, fleetType}: {
+    public static async getFleetStats({ fleetID, fleetType }: {
         fleetID: string,
         fleetType: string
     }): Promise<AdminOnFleetModel[]> {
@@ -256,12 +252,11 @@ class FleetService extends Service {
     //     "google_code": "string"
     // }
 
-    public static async activeSubscription({parkID, subscriptionID}: {
+    public static async activeSubscription({ parkID, subscriptionID }: {
         parkID: string,
         subscriptionID: string
     }) {
 
-        console.log(`Exec request: ${parkID}, ==> ${subscriptionID}`)
 
         const uri = FleetApiPath.ActivateSubscription
 
@@ -279,7 +274,7 @@ class FleetService extends Service {
     }
 
 
-    public static async getParkStats({cityID, type, currency}: {
+    public static async getParkStats({ cityID, type, currency }: {
         cityID: string,
         type: string,
         currency?: string
@@ -294,7 +289,7 @@ class FleetService extends Service {
         return data
     }
 
-    public static async getFleetVehiclesAndProfilesDetails({fleetID}: {
+    public static async getFleetVehiclesAndProfilesDetails({ fleetID }: {
         fleetID: string
     }): Promise<BestDiverAndVehicleResponseType> {
 
@@ -308,7 +303,7 @@ class FleetService extends Service {
         )
     }
 
-    public static async getSpecificFleetStat({fleetID}: { fleetID: string }): Promise<ParkStatResponseType> {
+    public static async getSpecificFleetStat({ fleetID }: { fleetID: string }): Promise<ParkStatResponseType> {
 
         const uri = FleetApiPath.SpecificFleetStat + "?park_id=" + fleetID
 
@@ -320,7 +315,7 @@ class FleetService extends Service {
         )
     }
 
-    public static async getCourseEvolution({fleetID, graphType}: {
+    public static async getCourseEvolution({ fleetID, graphType }: {
         fleetID: string,
         graphType: string
     }): Promise<RevenusEvolution[]> {
@@ -335,7 +330,7 @@ class FleetService extends Service {
         )
     }
 
-    public static async getEntretienEvolution({fleetID, graphType, date}: {
+    public static async getEntretienEvolution({ fleetID, graphType, date }: {
         fleetID: string,
         graphType: string,
         date: Date
@@ -351,7 +346,7 @@ class FleetService extends Service {
         )
     }
 
-    public static async getRevenusEvolution({fleetID, graphType}: {
+    public static async getRevenusEvolution({ fleetID, graphType }: {
         fleetID: string,
         graphType: string
     }): Promise<RevenusEvolution[]> {
@@ -366,7 +361,7 @@ class FleetService extends Service {
         )
     }
 
-    public static async getBestAndLestOnCity({city_id, type}: {
+    public static async getBestAndLestOnCity({ city_id, type }: {
         city_id: string,
         type: string
     }): Promise<DashboardBestAndLeastProfilableResponseType> {
@@ -382,11 +377,11 @@ class FleetService extends Service {
     }
 
     public static async getDashboardActivities({
-                                                   start_date,
-                                                   end_date,
-                                                   city_id,
-                                                   type
-                                               }: {
+        start_date,
+        end_date,
+        city_id,
+        type
+    }: {
         start_date: Date,
         end_date: Date,
         city_id: string,
@@ -406,7 +401,7 @@ class FleetService extends Service {
         )
     }
 
-    public static async getDashboardSubscriptionEvolution({cityID, graphType, type}: {
+    public static async getDashboardSubscriptionEvolution({ cityID, graphType, type }: {
         cityID: string,
         graphType: string,
         type: string
@@ -423,7 +418,7 @@ class FleetService extends Service {
     }
 
 
-    public static async cancelSubscription({parkID}: {
+    public static async cancelSubscription({ parkID }: {
         parkID: string,
     }) {
 
@@ -444,7 +439,147 @@ class FleetService extends Service {
 
 
     protected static async makeRequest<T>(url: string, method: 'GET' | 'POST' | 'PUT' | 'DELETE', body?: any, secure: boolean = true): Promise<T> {
-        return this.getInstance().execHttpRequest<T>({url, method, body, secure});
+        return this.getInstance().execHttpRequest<T>({ url, method, body, secure });
+    }
+
+
+    // ////////////////////////////////////////////////////////
+
+    // Get fleet overview
+    public static async getFleetOverview(fleetId: string) {
+
+        const url = FleetApiPath.GetFleetOverview.replace("{park_id}", fleetId)
+
+        const response = await FleetService.getInstance().execHttpRequest<FleetOverviewData>({
+            url: url,
+            method: FleetService.getInstance().httpMethods.get,
+        });
+
+        return new FleetOverview(response)
+    }
+
+    // Invalidate fleet overview query
+    static invalidateFleetOverview() {
+        return FleetService.getInstance().queryClient.invalidateQueries({ queryKey: [FleetApiPath.GetFleetOverview] })
+    }
+
+
+
+    // get fleet profile details
+
+    public static async getFleetProfile(fleetId: string) {
+
+        const url = FleetApiPath.GetFleetProfile.replace("{park_id}", fleetId)
+
+        const response = await FleetService.getInstance().execHttpRequest<FleetProfileData>({
+            url: url,
+            method: FleetService.getInstance().httpMethods.get,
+        });
+
+        return new FleetProfileDetail(response)
+    }
+
+    // Invalidate fleet profile query
+    static invalidateFleetProfile() {
+        return FleetService.getInstance().queryClient.invalidateQueries({ queryKey: [FleetApiPath.GetFleetProfile] })
+    }
+
+
+
+
+
+    // get fleet journal data
+    public static async getFleetJournal(fleetId: string, page?: number, itemPerPage?: number) {
+        const url = toQueriesString(FleetApiPath.GetFleetJournal.replace("{park_id}", fleetId), { itemPerPage: itemPerPage, page: page })
+
+        const response = await FleetService.getInstance().execHttpRequest<FleetJournalData>({
+            url: url,
+            method: FleetService.getInstance().httpMethods.get,
+        });
+
+        return {
+            journals: FleetJournalModel.toArrays(response.data),
+            totalPages: response.totalPages,
+            totalRecords: response.totalRecords,
+            currentPage: response.currentPage,
+            itemPerPage: response.itemPerPage
+        }
+    }
+
+    // Invalidate fleet journal query
+    static invalidateFleetJournal() {
+        return FleetService.getInstance().queryClient.invalidateQueries({ queryKey: [FleetApiPath.GetFleetJournal] })
+    }
+
+
+    // get fleet transactions history Kpi
+     public static async getFleetTransactionsKpi(fleetId?: string, params?: {start_date?: string, end_date?: string}) {
+        const url = toQueriesString(FleetApiPath.GetFleetTransactionsKpi.replace("{park_id}", fleetId??""), params)
+
+        const response = await FleetService.getInstance().execHttpRequest<TransactionKpiData>({
+            url: url,
+            method: FleetService.getInstance().httpMethods.get,
+        });
+
+        return TransactionKpiModel.fromData(response)
+    }
+
+    // Invalidate fleet journal query
+    static invalidateTransactionsKpi() {
+        return FleetService.getInstance().queryClient.invalidateQueries({ queryKey: [FleetApiPath.GetFleetTransactionsKpi] })
+    }
+
+    // get fleet transactions data
+    public static async getFleetTransactions(params: TransactionHistoryParams) {
+        const url = toQueriesString(FleetApiPath.GetFleetTransactions, params)
+
+        const response = await FleetService.getInstance().execHttpRequest<TransactionHistoryData>({
+            url: url,
+            method: FleetService.getInstance().httpMethods.get,
+        });
+
+        return {
+            transaction: TransactionHistoryModel.toArray(response.data),
+            totalPages: response.totalPages,
+            totalRecords: response.totalRecords,
+            currentPage: response.currentPage,
+            itemPerPage: response.itemPerPage
+        }
+    }
+
+    // Invalidate fleet transactions query
+    static invalidateFleetTransactions() {
+        return FleetService.getInstance().queryClient.invalidateQueries({ queryKey: [FleetApiPath.GetFleetTransactions] })
+    }
+
+    // get fleet transactions history Kpi
+    public static async getFleetsKpi(params: DashboardParams) {
+        const url = toQueriesString(FleetApiPath.GetFleetsKpi, params)
+
+        const response = await FleetService.getInstance().execHttpRequest<FleetsKpiData>({
+            url: url,
+            method: FleetService.getInstance().httpMethods.get,
+        });
+
+        return new FleetsKpiModel(response)
+    }
+
+
+
+    public static async suspendFleet(formData: SuspendFleetData) {
+        return await FleetService.getInstance().execHttpRequest({
+            url: FleetApiPath.SuspendFleet,
+            method: FleetService.getInstance().httpMethods.post,
+            body: formData,
+        });
+    }
+
+    public static async deleteFleet(formData: SuspendFleetData) {
+        return await FleetService.getInstance().execHttpRequest({
+            url: FleetApiPath.DeleteFleet,
+            method: FleetService.getInstance().httpMethods.post,
+            body: formData,
+        });
     }
 
 }

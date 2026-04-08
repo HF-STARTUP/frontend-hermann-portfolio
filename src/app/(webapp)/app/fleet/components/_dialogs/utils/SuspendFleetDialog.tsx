@@ -1,15 +1,17 @@
 import { DialogFooter } from "@/components/display/DialogFooter";
 import { DialogMainBody } from "@/components/display/DialogMainBody";
-import { TextArea } from "@/components/form/TextField";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader } from "@/components/ui/dialog";
-import { CircleOff, PauseCircle } from "lucide-react";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useSuspendFleet } from "@/hooks/admin/useFleetHook";
+import notify from "@/utils/func/notification";
+import { useEffect } from "react";
+import { CircleOff } from "lucide-react";
 
 interface SuspendFleetDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  fleetName: string;
-  fleetId: string;
+  fleetName?: string;
+  fleetId?: string;
   onConfirm?: (fleetId: string) => void;
 }
 
@@ -18,12 +20,27 @@ export function SuspendFleetDialog({
   onClose,
   fleetName,
   fleetId,
-  onConfirm,
 }: SuspendFleetDialogProps) {
+  const { error, isError, isSuccess, loading, onSuspendFleet } = useSuspendFleet()
   const handleConfirm = () => {
-    onConfirm?.(fleetId);
-    onClose();
+    if (fleetId) {
+      onSuspendFleet({
+        park_id: fleetId,
+        reason: ""
+      })
+    }
+
+    if (isError) {
+      console.error(error);
+      notify(error?.message || "Une erreur est survenue lors de la suspension de la flotte", "error");
+    }
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+        onClose()
+    }
+}, [isSuccess]);
 
   return (
     <Dialog bgType="whited" open={isOpen} onOpenChange={onClose}>
@@ -46,7 +63,7 @@ export function SuspendFleetDialog({
             <Button variant="outline" onClick={onClose}>
               Annuler
             </Button>
-            <Button variant="mainBlue" onClick={handleConfirm}>
+            <Button variant="mainBlue" onClick={()=>handleConfirm()} loading={loading}>
               Confirmer
             </Button>
           </div>

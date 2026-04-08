@@ -1,11 +1,13 @@
+import { PackageType } from "@/app/(webapp)/app/subscriptions/_hooks/usePackageList";
 import Model from "@/model/Model";
 import {
     AdminOnFleetResponseType,
     FleetListResponseType,
     FleetResponseType,
     Info,
-    Subscription
-} from "@/types/admin/fleet";
+    Subscription,
+    SubscriptionStatus
+} from "@/types/admin/fleet.type";
 import {formatDistanceToNow} from "date-fns";
 
 
@@ -24,6 +26,10 @@ export class FleetModel extends Model {
 
     get id() {
         return this._instance.id
+    }
+
+    get logo(){
+        return this.getFleetImage(this._instance.logo)
     }
 
     get name() {
@@ -66,8 +72,8 @@ export class FleetModel extends Model {
         return (this._instance.subscription_amount ? this._instance.subscription_amount + " " : 0 + " ") + this._instance.currency
     }
 
-    get suscription_name() {
-        return this._instance.subscription ?? "Aucun abonnement actif"
+    get suscription_name(): PackageType | undefined {
+        return this._instance.subscription?this._instance.subscription.toUpperCase() as PackageType:undefined;
     }
 
     get hasActiveSubscription() {
@@ -79,7 +85,7 @@ export class FleetModel extends Model {
     }
 
     get statusDisplay() {
-        return this.hasActiveSubscription ? "Actif" : "Inactif";
+        return this._instance.status;
     }
 }
 
@@ -198,7 +204,7 @@ export class AbonResponseModel extends Model {
     }
 
     get endDate() {
-        return `${this.formatDate(this._instance.end_date)} (${this.toDate(this._instance.end_date)} Left)`;
+        return `${this.formatDate(this._instance.end_date)} (${this.toDate(this._instance.end_date)} Restant)`;
     }
 
     get abonResume() {
@@ -213,12 +219,21 @@ export class AbonResponseModel extends Model {
         return this._instance.subscription_plan;
     }
 
+    get status():SubscriptionStatus
+    {
+        return this._instance.status ?? this._instance.offer
+    }
+
     get vehicleNumber() {
         return this._instance.vehicle_number;
     }
 
     get offer() {
         return this._instance.offer;
+    }
+
+    get paymentMethod(): string{
+       return this._instance.subscriptionType ??""
     }
 
     get renew() {
@@ -267,7 +282,7 @@ export class SubscriptionModel {
     }
 
     get name(): string {
-        return this._instance?.name ?? "";
+        return this._instance?.name?.toUpperCase() ?? "";
     }
 
     get remise() {

@@ -28,7 +28,7 @@ export const getKpiVariantColor = (variant?: KpiVariant): string =>{
 
 export interface FleetKpiCardProps {
     title: string;
-    value: string;
+    value: string | number;
     variation?: 'up' | 'down' | 'stable';
     variant?: KpiVariant;
     hint?: string;
@@ -44,7 +44,20 @@ export function FleetKpiCard({ title, value, variation, variant, hint, unit }: F
     )
 }
 
-export default function FleetKpiGrid({ kpiItems, className }: { kpiItems: FleetKpiCardProps[], className?: string }) {
+export default function FleetKpiGrid({ kpiItems, className, isLoading }: { kpiItems: FleetKpiCardProps[], className?: string, isLoading?: boolean }) {
+    if(isLoading) {
+        return (
+            <div className={`grid grid-cols-3 gap-4 w-full ${className}`}>
+                {Array.from({ length: 3 }).map((_, index) => (
+                    <div key={index} className="animate-pulse flex flex-col gap-2 p-4 rounded-2xl w-full bg-vaLightGray/5">
+                        <div className="h-4 bg-vaLightGray rounded w-1/2"></div>
+                        <div className="h-6 bg-vaLightGray rounded w-3/4"></div>
+                        <div className="h-3 bg-vaLightGray rounded w-1/3"></div>
+                    </div>
+                ))}
+            </div>
+        )
+    }
     return (
         <div className={`grid grid-cols-3 gap-4 w-full ${className}`}>
             {kpiItems.map((kpi) => (

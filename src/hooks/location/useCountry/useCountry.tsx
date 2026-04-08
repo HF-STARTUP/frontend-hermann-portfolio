@@ -1,22 +1,17 @@
 "use client";
 
-import {CountryService, FleetCityPath} from "@/services/location/CountryService";
-import {useQuery} from "@tanstack/react-query";
-import {QUERY_KEYS} from "@/utils/const/queryKeys";
+import { useQuery, UseQueryOptions } from "@tanstack/react-query";
+import { QUERY_KEYS } from "@/utils/const/queryKeys";
+import { CountryService, GetCountryParams } from "@/services/location/CountryService";
 import Country from "@/model/location/Country";
-import {CityType} from "@/types/location/location.type";
 
-export function useCountries(inputs?: { fleet?: boolean }) {
-    const countryService = new CountryService();
-
+export function useCountries(
+    params?: GetCountryParams, 
+    options?: Partial<UseQueryOptions<Country[]>>
+) {
     return useQuery<Country[]>({
-        queryKey: [QUERY_KEYS.countries, inputs],
-        queryFn: () => countryService.fetchCountries(inputs)
+        queryKey: [QUERY_KEYS.countries, params],
+        queryFn: () => CountryService.fetchCountries(params),
+        ...options
     });
-}
-
-export function useFleetCity() {
-    const countryService = new CountryService();
-
-    return useQuery<CityType[]>({queryKey: [FleetCityPath], queryFn: () => countryService.fetchFleetCities()});
 }

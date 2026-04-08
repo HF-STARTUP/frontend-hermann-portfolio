@@ -4,6 +4,7 @@ import {Crumb} from "@/components/ui/custom/crumb";
 import {PageTitle} from "@/components/ui/custom/PageTitle";
 import {useRouter} from "next/navigation";
 import { FleetList } from "./fleetList";
+import PeriodSelector from "@/components/elements/PeriodSelector";
 
 export default function ADahboardPage() {
     const $router = useRouter()
@@ -18,11 +19,6 @@ export default function ADahboardPage() {
                     }
                 ]}
             />
-            <div className={"flex items-center justify-between"}>
-                <PageTitle
-                    page_title={"Flottes"}
-                />
-            </div>
             <div className={""}>
                 <FleetList/>
             </div>

@@ -66,11 +66,11 @@ const nextConfig = {
             },
 
             //ADMIN
-            {
-                source: '/app/settings',
-                destination: '/app/settings/profile',
-                permanent: true,
-            },
+            // {
+            //     source: '/app/settings',
+            //     destination: '/app/settings/profile',
+            //     permanent: true,
+            // },
             {
                 source: '/app',
                 destination: '/app/dashboard',

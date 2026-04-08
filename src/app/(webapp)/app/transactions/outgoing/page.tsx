@@ -10,7 +10,7 @@ export default function TransactionPage() {
             <Crumb
                 items={[
                     {
-                        label: "Transactions Entrantes",
+                        label: "Transactions Sortantes",
                         url: "transactions/outgoing",
                     }
                 ]}

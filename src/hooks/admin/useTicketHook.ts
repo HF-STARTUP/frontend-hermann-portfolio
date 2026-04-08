@@ -51,12 +51,10 @@ export const useGetTicketList = () => {
 
 export const useGetTicketMessageList = (ticket_id: string) => {
 
-    const enable_city_id = AuthManagerGuard.getEnabledCity
-
     const {isLoading, data, isSuccess} = useQuery({
         queryKey: [TicketApiPath.GetTicketMessages, ticket_id],
         queryFn: () => TicketService.getTicketsMessages({ticket_id: ticket_id as string}),
-        enabled: !!enable_city_id
+        enabled: !!ticket_id
     })
 
     return {isLoading, data}

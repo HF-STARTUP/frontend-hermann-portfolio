@@ -5,11 +5,13 @@ import { cloneElement } from 'react';
 
 export type CardVariant = 'green' | 'red' | 'orange' | 'yellow' | 'blue' | 'light-blue' | 'light-green' | 'purple' |'default' ;
 
+export type KpiVariation = 'up' | 'down' | 'stable';
+
 export interface KpiItem {
     icon: ReactNode;
     title: string;
-    value: string | number;
-    variation?: 'up' | 'down' | 'stable';
+    value?: string | number;
+    variation?: KpiVariation;
     variant?: CardVariant,
     className?: string;
     border?: boolean;
@@ -124,7 +126,10 @@ export const KpiCard = ({icon, title, value, variant, className, border=false, v
 };
 
 
-const KpiGrid = ({ items, border=false }: { items: KpiItem[], border?: boolean }) => {
+const KpiGrid = ({ items, border=false, isLoading }: { items: KpiItem[], border?: boolean, isLoading?: boolean }) => {
+    if(isLoading){
+        return <KpiShimmerGrid count={4} />
+    }
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 w-full">
             {items.map((item, index) => (

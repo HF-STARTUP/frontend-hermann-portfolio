@@ -21,15 +21,7 @@ export default function TransactionPage() {
 
     return (
         <div>
-            <div>
-                <Crumb
-                    items={[
-                        {
-                            label: "Transactions",
-                            url: "transactions",
-                        }
-                    ]}
-                />
+            <div>               
                 <div>                
                     <div className={"mt-2"}>
                         <TransactionBody />

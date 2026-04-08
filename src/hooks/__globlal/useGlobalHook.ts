@@ -125,11 +125,7 @@ export const useGetMyPosition = () => {
 }
 
 export const useGetActiveCurrency = () => {
-    const {data: currencies, isLoading: loadingCurrency} = useGetCurrenciesList()
-
-    const curId = AuthManagerGuard.getCurrency
-
-    return {
-        currency: currencies?.find(c => String(c.id) === String(curId))?.name
-    }
+  return{
+    currency: AuthManagerGuard.getCurrency ?? "XOF"
+  }
 }

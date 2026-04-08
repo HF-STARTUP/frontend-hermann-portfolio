@@ -1,57 +1,73 @@
 "use client"
 
-import React, {useEffect, useState} from "react";
-import DialogBase, {DialogActions, DialogContentText} from "@/components/dialog/Dialog";
+import React, { useEffect, useState } from "react";
+import DialogBase, { DialogActions, DialogContentText } from "@/components/dialog/Dialog";
 import BtnBase from "@/components/elements/BtnBase";
-import NAVIGATIONS_URL from "@/utils/navigation";
-import {useRouter} from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import notify from "@/utils/func/notification";
-import {useCheckTransactionStatus} from "@/hooks/subscription/useSubscription";
-import {CircularProgress} from "@/components/ui/Loader";
-import {TransactionStatusType} from "@/services/suscription/SubscriptionService";
+import { useCheckTransactionStatus } from "@/hooks/subscription/useSubscription";
+import { CircularProgress } from "@/components/ui/Loader";
+import { TransactionStatusType } from "@/services/suscription/SubscriptionService";
+import { Button } from "../ui/button";
+import { Dialog, DialogContent } from "../ui/dialog";
+import { DialogMainBody } from "../display/DialogMainBody";
+import { DialogFooter } from "../display/DialogFooter";
 
-const SignOutAction: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({children, ...props}) => {
+interface SignOutProps extends React.HTMLAttributes<HTMLDivElement> {
+    isOpen: boolean;
+    onClose: () => void;
+}
 
-    const [isOpen, setIsOpen] = useState(false)
-    const [signingOut, setSigningOut] = useState(false)
-
-    const $router = useRouter()
-
-    function toggleModal() {
-        setIsOpen(!isOpen)
-    }
+const SignOutAction: React.FC<SignOutProps> = ({ children, isOpen, onClose }) => {
+    const [signingOut, setSigningOut] = useState(false);
+    const router = useRouter();
 
     const handleSignOut = async () => {
-        setSigningOut(true)
-        AuthManagerGuard.logoutToApp()
-        $router.replace("/login", {scroll: true})
-        notify('Déconnexion reusis !')
-    }
+        setSigningOut(true);
+        try {
+            await AuthManagerGuard.logoutToApp();
+            notify('Déconnexion réussie !', 'success');
+            router.replace("/login");
+        } catch (error) {
+            notify('Erreur lors de la déconnexion', 'error');
+        } finally {
+            setSigningOut(false);
+            onClose();
+        }
+    };
 
     return (
-        <div {...props}>
-            <div onClick={toggleModal}>{children}</div>
-            <DialogBase variant={'sm'} isOpenned={isOpen} onClose={toggleModal} bgType={'whited'}>
-                <DialogContentText>
-                    Vous êtes sur le point de vous déconnecter de VTCADMIN, vos données seront restituées à votre
-                    prochaine connexion.
-                </DialogContentText>
-                <DialogActions className={`mt-[50px]`}>
-                    <BtnBase onClick={() => toggleModal()} shape={'square'} to={''} variant={'contained'} color={'blue'}
-                             fullwidth={true}>Annuler</BtnBase>
-                    <BtnBase loading={signingOut} onClick={handleSignOut} shape={'square'} to={''} variant={'contained'}
-                             fontWeight={'bold'} color={'yellow'}
-                             fullwidth={true}>Déconnexion</BtnBase>
-                </DialogActions>
-            </DialogBase>
-        </div>
-    )
-}
+        <Dialog open={isOpen} onOpenChange={onClose}>
+            <DialogContent>
+                <DialogMainBody>
+                    <div className="text-lg text-vaTextPrimary py-4 text-center">
+                        Vous êtes sur le point de vous déconnecter de VTCADMIN, vos données seront restituées à votre
+                        prochaine connexion.
+                    </div>
+                </DialogMainBody>
+                <DialogFooter className="grid grid-cols-2 gap-8">
+                    <Button onClick={onClose} variant={'outline'} fullWidth>
+                        Annuler
+                    </Button>
+                    <Button
+                        loading={signingOut}
+                        onClick={handleSignOut}
+                        variant={'orange'}
+                        fullWidth
+                    >
+                        Déconnexion
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+    );
+};
+
 
 export const CheckTransactionStatusDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     defaultOpen?: boolean
-}> = ({children, defaultOpen = false, ...props}) => {
+}> = ({ children, defaultOpen = false, ...props }) => {
 
     const [withVerification, setWithVerification] = useState(false);
     const [isOpen, setIsOpen] = useState(defaultOpen);
@@ -61,7 +77,7 @@ export const CheckTransactionStatusDialog: React.FC<React.HTMLAttributes<HTMLDiv
     const [isSuccess, setIsSuccess] = React.useState(false)
 
     const $router = useRouter();
-    const {data, isLoading} = useCheckTransactionStatus(transactionID as string, poulCount);
+    const { data, isLoading } = useCheckTransactionStatus(transactionID as string, poulCount);
 
     useEffect(() => {
         const transactionID = AuthManagerGuard?.getTransactionID;
@@ -113,10 +129,10 @@ export const CheckTransactionStatusDialog: React.FC<React.HTMLAttributes<HTMLDiv
             <DialogBase variant={'sm'} isOpenned={isOpen} onClose={() => setIsOpen(true)} bgType={'whited'}>
                 <DialogContentText>
                     <div className={"flex items-center justify-center flex-col gap-[50px] py-[50px]"}>
-                        {!isCancel && <CircularProgress/>}
+                        {!isCancel && <CircularProgress />}
                         <div className={"text-[18px] font-semibold text-center max-w-[300px]"}>
                             {!isSuccess && !isCancel &&
-                                <span>Vérification de votre abonnement en cour...</span>}
+                                <span>Vérification de votre abonnement en cours...</span>}
                             {isSuccess && <span>Votre abonnement à été activer avec success</span>}
                             {isCancel && <span>Abonnement innactif</span>}
                         </div>
