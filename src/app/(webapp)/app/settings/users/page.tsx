@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import React from "react";
 import {AdminSettingBox} from "@/components/box/Card";
@@ -35,7 +35,10 @@ import {ExpandableRoles} from "@/app/(webapp)/app/settings/users/_components/exp
 const UsersPage: React.FC = () => {
 
     const [isOpen, setIsOpen] = React.useState(false)
-    const {data: admins, isLoading} = useGetAdminList()
+    const {data: admins, isLoading} = useGetAdminList({
+        itemPerPage: 999,
+        page: 1,
+    })
 
 
     return (
@@ -58,7 +61,10 @@ const UsersPage: React.FC = () => {
 
 const AdminUsers: React.FC = () => {
 
-    const {data: adminsData, isLoading} = useGetAdminList()
+    const {data: adminsData, isLoading} = useGetAdminList({
+        itemPerPage: 999,
+        page: 1,
+    })
 
     if (isLoading) {
 

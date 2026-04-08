@@ -59,6 +59,8 @@ export type AddAdminInput = {
     last_name: string
     role_id: string
     password?: string
+    access?: AdminAccessType[]
+    city_id?: number | string
 }
 
 export type AddAdminOnCityInput = {

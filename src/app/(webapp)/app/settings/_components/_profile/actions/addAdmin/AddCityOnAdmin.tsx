@@ -6,10 +6,8 @@ import FormGroup from "@/components/box/FormGroup";
 import {SelectField} from "@/components/form/TextField";
 import BtnBase from "@/components/elements/BtnBase";
 import {Stack} from "@/components/box/Grid";
-import {useCountries, useFleetCity} from "@/hooks/location/useCountry/useCountry";
 import {useCity} from "@/hooks/location/useCity/useCity";
 import UserProfile from "@/model/user/User";
-import Country from "@/model/location/Country";
 import City from "@/model/location/City";
 import {useAddAdminOnCity} from "@/hooks/admin/useSettingsHook";
 import {UserAccess} from "@/schema/ADMIN/settings.schema";
@@ -31,7 +29,7 @@ export const SetCityToAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement>
     const [selectedCity, setSelectedCity] = React.useState('1')
 
     const {onAddAdminOnCity, loading, data, isSuccess} = useAddAdminOnCity()
-    const {data: fleetCities, error: fleetCitiesError, isLoading: fetchingFleetCities} = useFleetCity()
+    const {data: fleetCities, error: fleetCitiesError, isLoading: fetchingFleetCities} = useCity()
 
     const AccessPermissions = [
         {access_id: 1, type: "write"},

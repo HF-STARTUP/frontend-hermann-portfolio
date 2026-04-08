@@ -41,7 +41,7 @@ const AppLogo:React.FC<{isAdmin?:boolean}> = ({isAdmin = false})=>{
     }
 
     return(
-        <div className={'lg:w-48 min-w-[120px] pr-[40px] h-[43px] flex items-center'}>
+        <div className={'lg:w-48 min-w-[120px] h-[43px] flex items-center'}>
             <VLinkProvider to={'/'}>
                 <Image
                     src="/assets/logo/vtc.png"
