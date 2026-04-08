@@ -1,4 +1,8 @@
+import { FleetType } from "./admin/fleet.type";
 import { PaginationResponse } from "./dashboard.type";
+
+export type PackageType = "starter" | "premium" | "essentiel" | "tryfree";
+export type PackagePeriod = "monthly" | "yearly"
 
 export type SubscriptionPackResponseType = {
   id: string;
@@ -108,7 +112,7 @@ export type Country = {
 
 export interface TariffByPeriod {
   id: string;
-  period: "monthly" | "yearly";
+  period: PackagePeriod;
   amount: number;
   crossed_out_amount: number | null;
   enable: boolean;
@@ -221,3 +225,21 @@ export interface SubscriptionEvolutionSeries {
 export interface SubscriptionEvolutionChartData {
   series: SubscriptionEvolutionSeries[];
 }
+
+// GET & POST /admin/subscription-packages
+// PATH & DELETE /admin/subscription-packages/{subscription_id}
+
+export interface PackageFormData {
+  name: string;
+  period: PackagePeriod;
+  type: PackageType;
+  account_type: FleetType;
+  amount: number;
+  description: string;
+  text_remise: string;
+  text_limitation: string;
+  enable: boolean;
+  driver_number: number;
+  vehicle_number: number;
+}
+

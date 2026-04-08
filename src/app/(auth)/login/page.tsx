@@ -67,7 +67,8 @@ export default function LoginPage() {
                 if (currencies && currencies.length) {
                     const foundCurrency = currencies.find(cur => cur.name.toLowerCase() == defaultCity.currency.toLowerCase())
                     if (foundCurrency) {
-                        AuthManagerGuard.setCurrency(String(foundCurrency.id))
+                        AuthManagerGuard.setCurrency(String(foundCurrency.name))
+                        AuthManagerGuard.setCurrencyId(foundCurrency.id)
                     }
                 }
             }
@@ -139,10 +140,10 @@ export default function LoginPage() {
                     <div className={`mt-[24px] lg:mt-[36.2px]`}>
                         <Button
                             size={"lg"}
-                            disabled={$login.isLoading || $login.isSuccess}
                             loading={$login.isLoading || $login.isSuccess}
                             variant={'orange'}
                             fullWidth
+                            type={"submit"}
                         >
                             Se connecter
                         </Button>

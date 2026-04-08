@@ -7,6 +7,7 @@ import {
   GetSubscriptionsPricingParams,
   InitSubscriptionResponseType,
   OperatorResponseType,
+  PackageFormData,
   SubscriptionEvolutionChartData,
   SubscriptionPackResponseType,
   SubscriptionPricingData,
@@ -289,6 +290,42 @@ class SubscriptionService extends Service {
     return new AllSubscriptionsModel(response)
   }
 
+  public static async createSubscriptionPackage(data: PackageFormData) {
+    const response =
+      await SubscriptionService.getInstance().execHttpRequest<SubscriptionPricingItem>(
+        {
+          url: SubscriptionApiPath.GetAllSubscriptionsPackages,
+          method: SubscriptionService.getInstance().httpMethods.post,
+          body: data,
+        },
+      );
+
+    return new AllSubscriptionsModel(response);
+  }
+
+  public static async updateSubscriptionPackage(
+    id: string,
+    data: Partial<PackageFormData>,
+  ) {
+    const response =
+      await SubscriptionService.getInstance().execHttpRequest<SubscriptionPricingItem>(
+        {
+          url: `${SubscriptionApiPath.GetAllSubscriptionsPackages}/${id}`,
+          method: SubscriptionService.getInstance().httpMethods.update,
+          body: data,
+        },
+      );
+
+    return new AllSubscriptionsModel(response);
+  }
+
+  public static async deleteSubscriptionPackage(id: string) {
+    return await SubscriptionService.getInstance().execHttpRequest<{}>({
+      url: `${SubscriptionApiPath.GetAllSubscriptionsPackages}/${id}`,
+      method: "DELETE",
+    });
+  }
+
   // Invalidate fleet transactions query
   static invalidateSubscription(id?: string) {
     return SubscriptionService.getInstance().queryClient.invalidateQueries({
@@ -298,7 +335,7 @@ class SubscriptionService extends Service {
 
   protected static async makeRequest<T>(
     url: string,
-    method: "GET" | "POST" | "PUT",
+    method: "GET" | "POST" | "PUT" | "DELETE",
     body?: any,
     secure: boolean = true,
   ): Promise<T> {

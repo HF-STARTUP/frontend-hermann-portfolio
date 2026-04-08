@@ -1,7 +1,13 @@
-import {useMutationProvider, useQueryProvider} from "@/hooks/hooksProvider";
-import SubscriptionService, {SubscriptionApiPath} from "@/services/suscription/SubscriptionService";
-import {useGetMyPosition} from "@/hooks/__globlal/useGlobalHook";
-import { GetSubscriptionsPricingParams } from "@/types/subscription.types";
+import { useMutationProvider, useQueryProvider } from "@/hooks/hooksProvider";
+import SubscriptionService, {
+  SubscriptionApiPath,
+} from "@/services/suscription/SubscriptionService";
+import { useGetMyPosition } from "@/hooks/__globlal/useGlobalHook";
+import {
+  GetSubscriptionsPricingParams,
+  PackageFormData,
+  UpdatePackageFormData,
+} from "@/types/subscription.types";
 
 export const usGetSubscriptionPacks = (country_code?: string) => {
     return useQueryProvider({
@@ -97,4 +103,50 @@ export const useGetSubscription = (subsId?: string) => {
         enabled: !!subsId,
     })
 }
+
+export const useCreateSubscriptionPackage = () => {
+  return useMutationProvider<PackageFormData, Awaited<ReturnType<typeof SubscriptionService.createSubscriptionPackage>>>(
+    {
+      mutationFn: SubscriptionService.createSubscriptionPackage,
+      successMessage: "Package créé.",
+      onSuccess: () => {
+        void SubscriptionService.invalidateAllSubscriptionsList();
+      },
+    },
+  );
+};
+
+export const useUpdateSubscriptionPackage = (id?: string) => {
+  return useMutationProvider<
+    UpdatePackageFormData,
+    Awaited<ReturnType<typeof SubscriptionService.updateSubscriptionPackage>>
+  >({
+    mutationFn: (data: UpdatePackageFormData) => {
+      if (!id) {
+        throw new Error("Impossible de mettre à jour : l'ID est manquant");
+      }
+      return SubscriptionService.updateSubscriptionPackage(id, data);
+    },
+    successMessage: "Package mis à jour.",
+    updateMessage: "Package mis à jour.",
+    onSuccess: () => {
+      void SubscriptionService.invalidateAllSubscriptionsList();
+      void SubscriptionService.invalidateSubscription(id);
+    },
+  });
+};
+
+export const useDeleteSubscriptionPackage = () => {
+  return useMutationProvider<
+    { id: string },
+    Awaited<ReturnType<typeof SubscriptionService.deleteSubscriptionPackage>>
+  >({
+    mutationFn: ({ id }) => SubscriptionService.deleteSubscriptionPackage(id),
+    successMessage: "Package supprimé.",
+    onSuccess: (_, variables) => {
+      void SubscriptionService.invalidateAllSubscriptionsList();
+      void SubscriptionService.invalidateSubscription(variables.id);
+    },
+  });
+};
 

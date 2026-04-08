@@ -8,9 +8,29 @@ import { ChevronLeft } from "lucide-react"
 import { PackageStep2 } from "../_form_steps/Step2"
 import { PackageStep3 } from "../_form_steps/Step3"
 import { PackageOverview } from "../_form_steps/Overview"
+import { useCreateSubscriptionPackage } from "@/hooks/subscription/useSubscription"
+import { useEffect } from "react"
 
 const PackageForm = ({ isOpenned, onClose, action = "add" }: { isOpenned: boolean, onClose: () => void, action?: "add" | "edit" }) => {
-    const { step, handleGoToNext, handleBack, formData, updateFormData } = usePackageForm()
+    const { step, handleGoToNext, handleBack, formData, updateFormData, isLastStep, reset, canSubmit } = usePackageForm()
+    const createPackage = useCreateSubscriptionPackage()
+
+    useEffect(() => {
+        if (createPackage.isSuccess) {
+            reset()
+            onClose()
+        }
+    }, [createPackage.isSuccess, onClose, reset])
+
+    const handlePrimaryAction = () => {
+        if (!isLastStep) {
+            handleGoToNext()
+            return
+        }
+
+        if (!canSubmit()) return
+        createPackage.handleMutation(formData)
+    }
 
     return (
         <Dialog open={isOpenned} onOpenChange={onClose}>
@@ -21,10 +41,10 @@ const PackageForm = ({ isOpenned, onClose, action = "add" }: { isOpenned: boolea
                             {step > 1 && <Button variant={"ghost"} size={"icon"} onClick={() => handleBack()}>
                                 <ChevronLeft />
                             </Button>}
-                            <DialogTitle> {step == 1 ? (action=="add"?"Créer un package":"Modifier un package") : step == 2 ? "Tarifactions" :step==3? "Fonctionnalités":"Aperçu"} </DialogTitle>
+                            <DialogTitle> {step == 1 ? (action=="add"?"Créer un package":"Modifier un package") : step == 2 ? "Tarifactions" : "Aperçu"} </DialogTitle>
                         </div>
 
-                       {step < 4 && <p className="text-vaTextPrimary">Étape {step}/3</p>}
+                       {step < 3 && <p className="text-vaTextPrimary">Étape {step}/2</p>}
                     </div>
                 </DialogHeader>
                 <DialogMainBody>
@@ -40,22 +60,27 @@ const PackageForm = ({ isOpenned, onClose, action = "add" }: { isOpenned: boolea
                             onChange={updateFormData}
                         />
                     )}
-                    {step === 3 && (
+                    {/* {step === 3 && (
                         <PackageStep3
                             data={formData}
                             onChange={(val) => updateFormData({ features: val })}
                         />
-                    )}
+                    )} */}
 
-                       {step === 4 && (
+                       {step === 3 && (
                         <PackageOverview
                             data={formData}
                         />
                     )}
                 </DialogMainBody>
                 <DialogFooter>
-                    <Button variant={"mainBlue"} onClick={() => handleGoToNext()} fullWidth>
-                        {step < 3 ? "Suivant" : step == 3 ? "Visualiser" : "Ajouter"}
+                    <Button
+                        variant={"mainBlue"}
+                        onClick={handlePrimaryAction}
+                        fullWidth
+                        loading={createPackage.loading}
+                    >
+                        {isLastStep ? "Ajouter" : "Suivant"}
                     </Button>
                 </DialogFooter>
             </DialogContent>

@@ -24,7 +24,7 @@ import { DashboardParams } from "@/types/dashboard.type";
 export const useGetSubscriptionPlanRevenus = (
   inputs: SubscriptionPlanRevenusInputs,
 ) => {
-  const currency_id = AuthManagerGuard.getCurrency;
+  const currency_id = AuthManagerGuard.getCurrencyId;
   const { isLoading, data } = useQueryProvider({
     queryKey: [FleetApiPath.SubscriptionPlanRevenus, inputs, currency_id],
     queryFn: () => FleetService.getSubscriptionPlanRevenus(inputs),
@@ -64,18 +64,18 @@ export const useGetFleetByCity = (inputs: FleetByCityInputs) => {
 export const useGetOperatorsRevenus = (inputs: OperatorRevenusInputs) => {
   const enable_city_id = AuthManagerGuard.getEnabledCity;
   const fleetType = AuthManagerGuard.getEnabledFleetType;
-  const currency = AuthManagerGuard.getCurrency;
+  const currencyId = AuthManagerGuard.getCurrencyId;
 
   const { isLoading, data } = useQueryProvider({
     queryKey: [
       FleetApiPath.OperatorRevenus,
       enable_city_id,
       fleetType,
-      currency,
+      currencyId,
     ],
     queryFn: () =>
       FleetService.getOratorsRevenus({
-        currency_id: currency,
+        currency_id: currencyId,
         city_id: enable_city_id,
         ...inputs,
       }),

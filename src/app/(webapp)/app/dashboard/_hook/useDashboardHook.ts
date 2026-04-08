@@ -1,10 +1,11 @@
 import { NotificationBandContent } from "@/components/display/NotificationBand";
+import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import { useGetCurrenciesList } from "@/hooks/admin/useFleetHook";
 import { useGetExpiringSubs, useGetInactiveFleets } from "@/hooks/dashboard/useDashboard";
 import { toIsoDate } from "@/services/Service";
 import { FleetType } from "@/types/admin/fleet.type";
 import { ExpiringSubscriptionsParams } from "@/types/dashboard.type";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { DateRange } from "react-day-picker";
 
 export interface SubscriptionExpiredSoon {
@@ -26,17 +27,19 @@ export interface DashboardGlobalFilters {
 }
 
 export const useDashboardHook = () => {
-    const [globalFilters, setGlobalFilters] = useState<DashboardGlobalFilters>()
+    const [globalFilters, setGlobalFilters] = useState<DashboardGlobalFilters>({
+        currency: AuthManagerGuard.getCurrencyId,        
+    })
 
-    const [queryParams, setQueryParams]= useState<ExpiringSubscriptionsParams>(
-        {
-            start_date: toIsoDate(globalFilters?.dateRange?.from),
-            end_date: toIsoDate(globalFilters?.dateRange?.to),
-            itemPerPage: 100,
-            page: 1,
-            account_type: globalFilters?.profileType
-        }
-    )
+    const queryParams = useMemo<ExpiringSubscriptionsParams>(() => ({
+        start_date: toIsoDate(globalFilters?.dateRange?.from),
+        end_date: toIsoDate(globalFilters?.dateRange?.to),
+        itemPerPage: 100,
+        page: 1,
+        account_type: globalFilters?.profileType,
+        currency_id: AuthManagerGuard.getCurrencyId
+    }), [globalFilters?.dateRange?.from, globalFilters?.dateRange?.to, globalFilters?.profileType, globalFilters?.currency, AuthManagerGuard.getCurrencyId])
+
     const {data: expiringSubs, isLoading: isLoadingExpiringSubs} = useGetExpiringSubs(queryParams)   
     const {data: inactiveFleetsData, isLoading: isLoadingInactiveFleets} = useGetInactiveFleets(queryParams)     
 

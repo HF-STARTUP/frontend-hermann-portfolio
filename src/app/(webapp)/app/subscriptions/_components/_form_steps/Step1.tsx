@@ -2,10 +2,12 @@ import { TextArea } from "@/components/form/TextField";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Info } from "lucide-react";
+import { FleetType } from "@/types/admin/fleet.type";
+import { PackageFormData } from "@/types/subscription.types";
 
 interface Step1Props {
-  data: any;
-  onChange: (updates: any) => void;
+  data: PackageFormData;
+  onChange: (updates: Partial<PackageFormData>) => void;
 }
 
 export const PackageStep1 = ({ data, onChange }: Step1Props) => {
@@ -16,15 +18,15 @@ export const PackageStep1 = ({ data, onChange }: Step1Props) => {
           Cible <span className="text-vaRed">*</span>
         </label>
         <Select 
-          value={data.target} 
-          onValueChange={(val) => onChange({ target: val })}
+          value={data.account_type}
+          onValueChange={(val: FleetType) => onChange({ account_type: val })}
         >
           <SelectTrigger className="w-full rounded-xl py-2.5">
             <SelectValue placeholder="Sélectionner une cible" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="PROFESSIONNEL">Professionnel</SelectItem>
-            <SelectItem value="ENTREPRENEUR">Entrepreneur</SelectItem>
+            <SelectItem value="professionnel">Professionnel</SelectItem>
+            <SelectItem value="particulier">Particulier</SelectItem>
           </SelectContent>
         </Select>
       </div>

@@ -20,6 +20,7 @@ import PeriodSelector from "@/components/elements/PeriodSelector";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Loader } from "lucide-react";
 import { BestFleet } from "./_components/BestFleetsSection";
+import AuthManagerGuard from "@/guard/AuthManagerGuard";
 
 export default function DashboardPage() {
 
@@ -47,7 +48,7 @@ export default function DashboardPage() {
         isLoadingRevenusChartData,
         revenusBySource
     } = useDashboardRevenusEvolution(globalFilters);
-    
+
     const { fleets } = useDashboardFleetMap()
 
     return (
@@ -75,35 +76,16 @@ export default function DashboardPage() {
                                 <SelectItem value="particulier">Entrepreneur</SelectItem>
                                 <SelectItem value="professionnel">Professionnel</SelectItem>
                             </SelectContent>
-                        </Select>
-                        <Select value={globalFilters?.currency} onValueChange={(value) => setGlobalFilters({ ...globalFilters, currency: value })}>
-                            <SelectTrigger className="bg-vaDarkBlue text-vaMainBlue">
-                                <SelectValue placeholder="Devise" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {
-                                    isloadingCurrencies && (
-                                        <div className="flex items-center justify-center p-4 gap-2">
-                                            <Loader className="animate-spin" /> <span className="text-sm text-gray-500">Chargement des devises...</span>
-                                        </div>
-                                    )
-                                }
-                                {currencies?.map((currency) => (
-                                    <SelectItem key={currency.id} value={currency.id}>
-                                        {currency.name}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        </Select>                       
                     </div>
                 }
             />
 
 
-            {expiredSubscriptions?.length &&
+            {expiredSubscriptions && expiredSubscriptions.length > 0 &&
                 <NotificationBand content={subscriptionsBandContent} children={<ExpiredSubsList subs={expiredSubscriptions} />} dialogTitle={`Abonnements expirant bientôt (${totalExpiring})`} variant="error" />
             }
-            {inactiveFleets?.length &&
+            {inactiveFleets && inactiveFleets.length > 0 &&
                 <NotificationBand content={fleetBandContent} children={<InnactiveFleetList fleets={inactiveFleets} />} dialogTitle={`Flottes inactives (${totalInactives})`} variant="error" />
             }
 
@@ -148,7 +130,7 @@ export default function DashboardPage() {
                             </div>
 
                             <div className={"xl:col-span-2"}>
-                                <BestFleet globalFilters={globalFilters}  />
+                                <BestFleet globalFilters={globalFilters} />
                             </div>
                         </div>
                         {/*<Activities/>*/}

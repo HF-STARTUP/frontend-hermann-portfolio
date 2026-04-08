@@ -10,6 +10,16 @@ import { GetFleetsParams, SubscriptionStatus } from "@/types/admin/fleet.type";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import notify from "@/utils/func/notification";
 import { DashboardParams } from "@/types/dashboard.type";
+import { toIsoDate } from "@/services/Service";
+
+
+
+// premier jour du mois a 00:00 et dernier jours du mois en cours a 23:59:59
+const firstDay = new Date();
+firstDay.setDate(1);
+firstDay.setHours(0, 0, 0, 0);
+const lastDay = new Date();
+lastDay.setHours(23, 59, 59, 999);
 
 const useFleetHook = () => {
   const [page, setPage] = useState(1);
@@ -27,7 +37,9 @@ const useFleetHook = () => {
     city_id: AuthManagerGuard.getEnabledCity,
     itemPerPage: itemPerPage,
     page: page,
-    first_actions: []
+    first_actions: [],
+    created_from: toIsoDate(firstDay),
+    created_to: toIsoDate(lastDay),
   };
 
   const [fleetFilters, setFleetFilters] = useState<GetFleetsParams>(initialFilterState);
@@ -244,9 +256,9 @@ const useFleetHook = () => {
   const kpiParams = useMemo<DashboardParams>(() => ({
     account_type: fleetFilters.type,
     city_id: AuthManagerGuard.getEnabledCity,
-    start_date: fleetFilters.start_date,
-    end_date: fleetFilters.end_date,
-  }), [fleetFilters.type, fleetFilters.start_date, fleetFilters.end_date, AuthManagerGuard.getEnabledCity]);
+    start_date: fleetFilters.created_from,
+    end_date: fleetFilters.created_to,
+  }), [fleetFilters.type, fleetFilters.created_from, fleetFilters.created_to, AuthManagerGuard.getEnabledCity]);
 
   const { data: kpiData, isLoading: isLoadingKpi } = useGetFleetsKpi(kpiParams);
 

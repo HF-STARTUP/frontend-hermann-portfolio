@@ -1,10 +1,10 @@
 "use client"
 
-import Image from "next/image";
-import { cn, ConnexionMode } from "@/lib/utils";
+import Image from "next/image"
+import { cn, ConnexionMode } from "@/lib/utils"
 import logo_icon from "./logo.png"
-import { Button } from "@/components/ui/button";
-import { useUserProfile } from "@/hooks/__form/auth/useUserProfile";
+import { Button } from "@/components/ui/button"
+import { useUserProfile } from "@/hooks/__form/auth/useUserProfile"
 import {
     Select,
     SelectContent,
@@ -13,25 +13,26 @@ import {
     SelectLabel,
     SelectTrigger,
     SelectValue
-} from "@/components/ui/select";
-import * as React from "react";
-import { useMemo, useState } from "react";
-import AuthManagerGuard from "@/guard/AuthManagerGuard";
-import { queryClient } from "@/app/_utils/network/reactQuery";
-import { useParams, usePathname, useRouter } from "next/navigation";
-import Badge from "@/components/display/Badge";
-import { Input } from "@/components/ui/input";
-import { searchAndFilter } from "@/model/Model";
-import SignOutAction from "@/components/actions/Signout.action";
-import { Bell, ChevronDown, LogOut, MapPin, Search, Settings, User, Menu, X } from "lucide-react";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import Link from "next/link";
-import { Switch } from "@/components/ui/switch";
-import { useGetCurrenciesList } from "@/hooks/admin/useFleetHook";
-import { SwitchLoggingMode } from "./SwitchLogingModeDialog";
+} from "@/components/ui/select"
+import * as React from "react"
+import { useMemo, useState } from "react"
+import AuthManagerGuard from "@/guard/AuthManagerGuard"
+import { queryClient } from "@/app/_utils/network/reactQuery"
+import { useParams, usePathname, useRouter } from "next/navigation"
+import Badge from "@/components/display/Badge"
+import { Input } from "@/components/ui/input"
+import { searchAndFilter } from "@/model/Model"
+import SignOutAction from "@/components/actions/Signout.action"
+import { Bell, ChevronDown, LogOut, MapPin, Search, Settings, User, Menu, X, Loader } from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import Link from "next/link"
+import { Switch } from "@/components/ui/switch"
+import { useGetCurrenciesList } from "@/hooks/admin/useFleetHook"
+import { SwitchLoggingMode } from "./SwitchLogingModeDialog"
+import { useNavbarHook } from "./useNavbarHook"
 
 export const Navbar = () => {
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const [isSearchOpen, setIsSearchOpen] = useState(false)
 
     return (
         <nav className="bg-vaPrimary h-[70px] lg:h-[94px] fixed top-0 left-0 w-full flex items-center justify-between px-3 lg:px-[40px] z-50">
@@ -134,6 +135,7 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
     const $path = usePathname()
     const [filterCityToken, setFilterCityToken] = useState("")
     const [selectOpen, setSelectOpen] = useState(false)
+    const { data: currencies, isLoading: isloadingCurrencies } = useGetCurrenciesList()
 
     const cityFiltered = useMemo(() => {
         if (!filterCityToken || filterCityToken.trim() === "") return data?.listPark
@@ -146,14 +148,17 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
         }
     }, [filterCityToken, data])
 
+    const { invalidateDependentQueries } = useNavbarHook()
+
     return (
-        <div className={cn("w-full", !isMobile && "hidden md:block md:w-[130px] lg:w-[180px]")}>
+        <div className={cn("w-full", !isMobile && "hidden md:flex md:w-[130px] lg:w-[180px] items-center gap-2")}>
             <Select
                 onValueChange={(new_city_id) => {
-                    const selected = data?.listPark.find((lp) => lp.id == +new_city_id)
+                    const prevCityId = AuthManagerGuard.getEnabledCity
+
                     AuthManagerGuard.setEnabledCityID(new_city_id)
-                    AuthManagerGuard.setCurrency(selected?.currency)
-                    queryClient.invalidateQueries()
+                    invalidateDependentQueries({ prevCityId })
+
                     if ($params.hasOwnProperty("fleetID")) $router.push("/app/fleet")
                 }}
                 defaultValue={AuthManagerGuard.getEnabledCity}
@@ -179,17 +184,45 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
                     </SelectGroup>
                 </SelectContent>
             </Select>
+
+            <Select
+                onValueChange={(value) => {
+                    const selectedCurrency = currencies?.find(c => String(c.id) === value)
+
+                    AuthManagerGuard.setCurrencyId(Number(value))
+                    AuthManagerGuard.setCurrency(selectedCurrency?.name)
+
+                    invalidateDependentQueries()
+                }}
+                defaultValue={String(AuthManagerGuard.getCurrencyId)}
+            >
+                <SelectTrigger className="bg-white/10 border border-vaTexttext-vaTextPrimary rounded-xl text-white h-9 lg:h-11 px-2 overflow-hidden">
+                    <SelectValue placeholder="Devise" />
+                </SelectTrigger>
+                <SelectContent>
+                    {isloadingCurrencies && (
+                        <div className="flex items-center justify-center p-4 gap-2">
+                            <Loader className="animate-spin" />
+                            <span className="text-sm text-gray-500">Chargement des devises...</span>
+                        </div>
+                    )}
+                    {currencies?.map((currency) => (
+                        <SelectItem key={currency.id} value={String(currency.id)}>
+                            {currency.name}
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
         </div>
     )
 }
-
 const UserOption: React.FC = () => {
     const { data, isLoading } = useUserProfile()
     const [isLogoutOpenned, setIsLogoutOpenned] = useState(false)
     const [isSwitchOpenned, setIsSwitchOpenned] = useState(false)
 
 
-    if (isLoading || !data) return null;
+    if (isLoading || !data) return null
 
     return (
         <div className="flex gap-4 items-center">
@@ -225,8 +258,8 @@ const UserOption: React.FC = () => {
                         </div>
                         <div className="hidden sm:flex flex-col text-white max-w-[80px] lg:max-w-none gap-1">
                             <p className="text-lg font-bold leading-tight truncate" title={data.getUsername} >{data.getUsername}</p>
-                            <p className="text-xs text-vaLightGray truncate" title={ data?.roleName }>
-                                { data?.roleName }
+                            <p className="text-xs text-vaLightGray truncate" title={data?.roleName}>
+                                {data?.roleName}
                             </p>
                         </div>
                         <ChevronDown className="hidden md:block size-4 text-vaTextPrimary shrink-0" />
@@ -249,7 +282,7 @@ const UserOption: React.FC = () => {
                         <div className="flex items-center gap-2">
                             <Switch
                                 className="data-[state=checked]:bg-vaLightGreen"
-                                onClick={()=>setIsSwitchOpenned(true)}
+                                onClick={() => setIsSwitchOpenned(true)}
                                 checked={AuthManagerGuard.getConnexionMode === ConnexionMode.Production}
                             />
                             <span className="text-vaTextPrimary text-base">
@@ -274,7 +307,7 @@ const UserOption: React.FC = () => {
                         <SignOutAction isOpen={isLogoutOpenned} onClose={() => setIsLogoutOpenned(false)} />
                     </div>
                 </DropdownMenuContent>
-            </DropdownMenu>          
+            </DropdownMenu>
         </div>
     )
 }

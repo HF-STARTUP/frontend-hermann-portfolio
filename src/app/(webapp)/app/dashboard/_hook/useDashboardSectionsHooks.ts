@@ -390,10 +390,10 @@ export const useDashboardRevenusEvolution = (globalFilters?:DashboardGlobalFilte
       account_type: globalFilters?.profileType,
       start_date: globalFilters?.dateRange?.from?.toISOString(),
       end_date: globalFilters?.dateRange?.to?.toISOString(),      
-      currency_id: globalFilters?.currency as number,
+      currency_id: AuthManagerGuard.getCurrencyId,
 
       group_by: localFilters.groupBy as PeriodType,
-    }), [globalFilters, localFilters]);
+    }), [globalFilters, localFilters, AuthManagerGuard.getCurrencyId]);
 
   const { currency } = useGetActiveCurrency();
   const {data: chartData, isLoading: isLoadingRevenusChartData} = useGetDashboardRevenueChartData(queryParams);

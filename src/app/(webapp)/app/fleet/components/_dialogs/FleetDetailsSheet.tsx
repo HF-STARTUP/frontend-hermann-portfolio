@@ -67,7 +67,7 @@ export default function FleetDetailsSheet({
                     <div className="flex items-start justify-between">
                         <div className="flex items-center gap-3">
                             <div
-                                className={`size-20 rounded-xl flex items-center justify-center font-bold text-white text-3xl overflow-hidden ${getAvatarColor(
+                                className={`size-20 shrink-0 rounded-xl flex items-center justify-center font-bold text-white text-3xl overflow-hidden ${getAvatarColor(
                                     fleet.name
                                 )}`}
                             >
@@ -82,7 +82,7 @@ export default function FleetDetailsSheet({
                             <div className="h-20 flex flex-col justify-between gap-1">
                                 <h2 className="text-xl font-semibold text-[#0A0A0A]">
                                     {fleet.name} 
-                                    {/* {fleet.id} */}
+                                   {/* - {fleet.id} */}
                                 </h2>
                                 <div className="flex items-center gap-2 text-xs text-vaLightGray">
                                     <User size={18} />

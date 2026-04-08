@@ -59,10 +59,11 @@ abstract class Service {
     );
   }
 
-  protected httpMethods: { post: "POST"; get: "GET"; update: "PUT" } = {
+  protected httpMethods: { post: "POST"; get: "GET"; update: "PUT"; delete: "DELETE" } = {
     post: "POST",
     get: "GET",
     update: "PUT",
+    delete: "DELETE",
   };
 
   protected async execHttpRequest<T>({
