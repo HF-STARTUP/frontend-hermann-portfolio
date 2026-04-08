@@ -90,9 +90,9 @@ export default function LoginPage() {
     return (
         <React.Suspense fallback={<LoadingLoader />}>
             <div className="relative w-screen h-screen flex items-center justify-center overflow-hidden">
-                <div className="absolute inset-0 z-10 bg-[url('/assets/login-bg.png')] bg-cover bg-center opacity-50"></div>
+                <div className="absolute inset-0 z-10 bg-[url('/assets/login-bg.png')] bg-cover bg-center opacity-10"></div>
 
-                <div className="absolute inset-0 z-0 bg-vaPrimary/90"></div>
+                <div className="absolute inset-0 z-0 bg-vaPrimary"></div>
 
                 <form className="sm:w-[500px] bg-white p-4 rounded-2xl relative z-20" onSubmit={handleSubmit(onSubmit)}>
                     <div className="mb-4 m-auto w-full flex items-center justify-center">
@@ -100,7 +100,7 @@ export default function LoginPage() {
                     </div>
                     <AuthHead
                         title={'Connexion Admin'}
-                        subtitle={'Entrez vos identifiants VTC pour vous connecter'}
+                        subtitle={'Entrez vos identifiants pour vous connecter'}
                     />
                     <AuthFormContainer>
                         <FormGroup auth={true}>
