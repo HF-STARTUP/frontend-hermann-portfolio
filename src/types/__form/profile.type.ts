@@ -104,7 +104,7 @@ export interface GetAdminsParams {
   name?: string;
   page?: number;
   itemPerPage?: number;
-  include_permissions: boolean;
+  include_permissions?: boolean;
   status?: AdminAccountStatus;
 }
 

@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { ChevronDown } from 'lucide-react'
+import { RoleType } from "@/types/__form/profile.type"
 
 interface Role {
     onglet: {
@@ -19,8 +20,8 @@ interface RoleTitleProps {
 }
 
 interface ExpandableRolesProps {
-    readRoles: Role[]
-    writeRoles: Role[]
+    readRoles: RoleType[]
+    writeRoles: RoleType[]
 }
 
 const RoleTag: React.FC<RoleTagProps> = ({ children, tagType = "read" }) => (
@@ -57,7 +58,7 @@ export function ExpandableRoles({ readRoles, writeRoles }: ExpandableRolesProps)
                         <RoleTitle>Lecture:</RoleTitle>
                         <div className="flex flex-wrap items-center gap-[10px]">
                             {readRoles.map((r, i) => (
-                                <RoleTag key={i}>{r.onglet.name}</RoleTag>
+                                <RoleTag key={i}>{r.name}</RoleTag>
                             ))}
                         </div>
                     </div>
@@ -67,7 +68,7 @@ export function ExpandableRoles({ readRoles, writeRoles }: ExpandableRolesProps)
                         <div className="flex flex-wrap items-center gap-[10px]">
                             {writeRoles.map((r, i) => (
                                 <RoleTag key={i} tagType="write">
-                                    {r.onglet.name}
+                                    {r.name}
                                 </RoleTag>
                             ))}
                         </div>

@@ -92,7 +92,7 @@ export default function LoginPage() {
             <div className="relative w-screen h-screen flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 z-10 bg-[url('/assets/login-bg.png')] bg-cover bg-center opacity-10"></div>
 
-                <div className="absolute inset-0 z-0 bg-vaPrimary"></div>
+                <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#1A3F8C] to-[#031334]"></div>
 
                 <form className="sm:w-[500px] bg-white p-4 rounded-2xl relative z-20" onSubmit={handleSubmit(onSubmit)}>
                     <div className="mb-4 m-auto w-full flex items-center justify-center">

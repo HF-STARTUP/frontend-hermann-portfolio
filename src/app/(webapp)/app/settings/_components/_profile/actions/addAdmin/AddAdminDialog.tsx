@@ -18,7 +18,7 @@ import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectVal
 import Loading from "@/components/ui/Loader";
 import Country from "@/model/location/Country";
 import City from "@/model/location/City";
-import {useCountries, useFleetCity} from "@/hooks/location/useCountry/useCountry";
+import {useCountries } from "@/hooks/location/useCountry/useCountry";
 import {useCity} from "@/hooks/location/useCity/useCity";
 import UserProfile from "@/model/user/User";
 
@@ -44,7 +44,7 @@ export const AddAdminDialog: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     const [selectedCity, setSelectedCity] = React.useState('1')
 
     const {onUpdateProfile, loading: loadingProfile} = useUpdateProfile()
-    const {data: fleetCities, error: fleetCitiesError, isLoading: fetchingFleetCities} = useFleetCity()
+    const {data: fleetCities, error: fleetCitiesError, isLoading: fetchingFleetCities} = useCity()
 
 
     const isEdit = !!profile

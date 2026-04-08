@@ -126,6 +126,14 @@ class UserProfile extends Model {
   get getCurrencyObj() {
     return "Unknow";
   }
+
+  get readRoles() {
+    return this._instance?.roles ?? [];
+  }
+
+  get writeRoles() {
+    return this._instance?.roles ?? [];
+  }
 }
 
 export default UserProfile;
