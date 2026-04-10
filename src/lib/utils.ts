@@ -231,7 +231,7 @@ export function formatNumber(input: string | number | undefined): string {
   const fixedStr = numericValue.toFixed(2);
   const [intPart, decPart] = fixedStr.split(".");
 
-  const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const formattedInt = intPart.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
   // 👇 afficher les décimales seulement si ≠ "00"
   if (decPart && decPart !== "00") {
