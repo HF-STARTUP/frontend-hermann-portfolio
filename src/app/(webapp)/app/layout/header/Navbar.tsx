@@ -35,7 +35,7 @@ export const Navbar = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false)
 
     return (
-        <nav className="bg-vaPrimary h-[70px] lg:h-[94px] fixed top-0 left-0 w-full flex items-center justify-between px-3 lg:px-[40px] z-50">
+        <nav className="bg-vaPrimary h-[70px] lg:h-[94px] fixed top-0 left-0 w-full flex items-center justify-between px-3 lg:px-[40px] z-50 gap-2">
             {/* Overlay de recherche Mobile & Tablette */}
             {isSearchOpen && (
                 <div className="absolute inset-0 bg-vaPrimary flex items-center px-4 z-[60] animate-in fade-in duration-200">
@@ -54,27 +54,27 @@ export const Navbar = () => {
                 </div>
             )}
 
-            <div className="flex items-center gap-2 md:gap-4 lg:gap-12 flex-1 min-w-0 w-fit">
+            <div className="flex items-center gap-2 md:gap-4 lg:gap-8 flex-1 min-w-0">
                 {/* Menu Burger (Mobile seulement) */}
                 <div className="md:hidden shrink-0">
                     <MobileExtraMenu />
                 </div>
 
-                <Image className="h-[18px] lg:h-[23px] w-auto shrink-0 mr-24" width={169} height={23} src={logo_icon} alt="Logo" />
+                <Image className="h-[18px] lg:h-[23px] w-auto shrink-0" width={169} height={23} src={logo_icon} alt="Logo" />
 
-                {/* Recherche : Visible uniquement sur Large Desktop */}
-                <div className="hidden xl:block w-full max-w-80">
+                {/* Recherche : Masquée jusqu'à 2xl pour laisser place aux stats */}
+                <div className="hidden xl:block w-full max-w-xs">
                     <Input
                         type="search"
-                        placeholder="Rechercher une flotte, transaction..."
-                        className="bg-white/15 backdrop-blur-2xl border border-vaTexttext-vaTextPrimary text-white rounded-2xl placeholder:text-white/70 text-sm w-full min-w-72 pr-1 pl-10"
+                        placeholder="Rechercher..."
+                        className="bg-white/15 backdrop-blur-2xl border border-vaTexttext-vaTextPrimary text-white rounded-2xl placeholder:text-white/70 text-sm w-full pr-1 pl-10"
                         leftIcon={<Search className="text-white size-5" />}
                     />
                 </div>
             </div>
 
             <div className="flex items-center gap-1 lg:gap-4 shrink-0">
-                {/* Loupe de recherche : Visible sur Mobile et Tablette (jusqu'à xl) */}
+                {/* Loupe : Visible jusqu'à 2xl */}
                 <Button
                     variant="ghost"
                     size="icon"
@@ -151,7 +151,7 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
     const { invalidateDependentQueries } = useNavbarHook()
 
     return (
-        <div className={cn("w-full", !isMobile && "hidden md:flex md:w-[130px] lg:w-[180px] items-center gap-2")}>
+        <div className={cn("w-full", !isMobile && "hidden xl:flex xl:w-[130px] xl:w-[180px] items-center gap-2")}>
             <Select
                 onValueChange={(new_city_id) => {
                     const prevCityId = AuthManagerGuard.getEnabledCity
@@ -225,17 +225,17 @@ const UserOption: React.FC = () => {
     if (isLoading || !data) return null
 
     return (
-        <div className="flex gap-4 items-center">
-            {/* Statistiques : VISIBLES SUR TABLETTE ET DESKTOP (md:flex) */}
-            <div className="hidden md:flex items-center gap-2 lg:gap-6 shrink-0">
+        <div className="flex gap-2 lg:gap-4 items-center">
+            {/* Statistiques : Flexibilité accrue sur les petits écrans md+ */}
+            <div className="hidden md:flex items-center gap-2 shrink-0">
                 <div className="bg-white/10 px-2 py-1 rounded-xl flex items-center border border-vaTexttext-vaTextPrimary">
-                    <div className="flex flex-col text-vaLightGray pl-1 pr-3 border-r border-white/30">
-                        <p className="font-normal text-[9px] lg:text-sm tracking-tighter">Transactions du jour</p>
-                        <p className="font-bold text-xs lg:text-lg text-white">122</p>
+                    <div className="flex flex-col text-vaLightGray pl-1 pr-2 lg:pr-3 border-r border-white/30">
+                        <p className="font-normal text-[8px] lg:text-[10px] xl:text-sm tracking-tighter uppercase lg:normal-case">Transactions</p>
+                        <p className="font-bold text-xs lg:text-base xl:text-lg text-white">122</p>
                     </div>
-                    <div className="flex flex-col text-vaLightGray pr-1 pl-3">
-                        <p className="font-normal text-[9px] lg:text-sm tracking-tighter">Revenus du jour</p>
-                        <p className="font-bold text-xs lg:text-lg text-vaOrange whitespace-nowrap">2.4M XOF</p>
+                    <div className="flex flex-col text-vaLightGray pr-1 pl-2 lg:pl-3">
+                        <p className="font-normal text-[8px] lg:text-[10px] xl:text-sm tracking-tighter uppercase lg:normal-case">Revenus</p>
+                        <p className="font-bold text-xs lg:text-base xl:text-lg text-vaOrange whitespace-nowrap">2.4M XOF</p>
                     </div>
                 </div>
             </div>
@@ -243,9 +243,9 @@ const UserOption: React.FC = () => {
 
             <div className="relative shrink-0">
                 <Button variant="ghost" size="icon" className="hover:bg-white/10 size-9 lg:size-10 text-white hover:text-white">
-                    <Bell className="size-5 lg:size-12" />
+                    <Bell className="size-5 lg:size-6" />
                 </Button>
-                <span className="absolute bg-vaRed size-6 rounded-full text-white text-xs font-bold flex items-center justify-center -top-2 -right-2 border-2 border-vaPrimary lg:border-none">
+                <span className="absolute bg-vaRed size-5 rounded-full text-white text-[10px] font-bold flex items-center justify-center -top-1 -right-1 border-2 border-vaPrimary">
                     4
                 </span>
             </div>
@@ -256,13 +256,13 @@ const UserOption: React.FC = () => {
                         <div className="size-8 lg:size-11 rounded-full bg-vaYellow overflow-hidden ring-2 ring-white/20 shrink-0">
                             <Image src={data.getOrganisationLogo} alt={data.getUsername} width={48} height={48} className="size-full object-cover" />
                         </div>
-                        <div className="hidden sm:flex flex-col text-white max-w-[80px] lg:max-w-none gap-1">
-                            <p className="text-lg font-bold leading-tight truncate" title={data.getUsername} >{data.getUsername}</p>
-                            <p className="text-xs text-vaLightGray truncate" title={data?.roleName}>
+                        <div className="hidden lg:flex flex-col text-white max-w-[80px] xl:max-w-none gap-0">
+                            <p className="text-sm xl:text-lg font-bold leading-tight truncate" title={data.getUsername} >{data.getUsername}</p>
+                            <p className="text-[10px] xl:text-xs text-vaLightGray truncate" title={data?.roleName}>
                                 {data?.roleName}
                             </p>
                         </div>
-                        <ChevronDown className="hidden md:block size-4 text-vaTextPrimary shrink-0" />
+                        <ChevronDown className="hidden xl:block size-4 text-vaTextPrimary shrink-0" />
                     </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-64 rounded-2xl">

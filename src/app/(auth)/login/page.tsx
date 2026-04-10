@@ -56,7 +56,7 @@ export default function LoginPage() {
                 return
             }
 
-            notify('Bienvenus sur VTC ADMIN!', 'success');
+            notify('Bienvenue sur VTC ADMIN!', 'success');
             console.log($login.data)
             if ($login.data.admin_on_city) {
                 const firstCity = $login.data.admin_on_city[0]
