@@ -32,6 +32,7 @@ export const useUpdateProfile = () => {
 
 
     const onUpdateProfile = (data: UpdateProfileInput) => {
+        console.log(data)
         handleMutation(data)
     }
 

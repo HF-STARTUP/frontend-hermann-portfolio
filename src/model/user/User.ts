@@ -16,6 +16,10 @@ class UserProfile extends Model {
     return datas.map((data) => new UserProfile(data));
   }
 
+  get image(){
+    return this._instance.Image ? this.resolveImage(this._instance.Image.path):null
+  }
+
   get status(): AdminAccountStatus {
     return this._instance?.status ?? "inactive";
   }

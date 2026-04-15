@@ -1,157 +1,149 @@
 "use client"
 
-import React, {useId} from "react";
-import FormGroup from "@/components/box/FormGroup";
-import {Stack} from "@/components/box/Grid";
-import TextField, {FieldDate, SelectField} from "@/components/form/TextField";
-import {AdminPageTitle} from "@/components/typo/typo";
-import BtnBase from "@/components/elements/BtnBase";
-import Avatar from "@/components/box/Avatar";
-import {EditIcon} from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
-import {useCountries} from "@/hooks/location/useCountry/useCountry";
-import {useCity} from "@/hooks/location/useCity/useCity";
-import Country from "@/model/location/Country";
-import City from "@/model/location/City";
-import {UpdatePasswordForm} from "@/app/(protected)/dashboard/settings/password/_components/updatePasswordForm";
-import {useUpdateProfile} from "@/hooks/admin/useSettingsHook";
-import {SubmitHandler, useForm} from "react-hook-form";
-import {AddClientInputs, addClientSchema} from "@/schema/supplier.schema";
-import {joiResolver} from "@hookform/resolvers/joi";
-import {UpdateProfileInput, updateProfileInputSchema} from "@/schema/ADMIN/settings.schema";
-import AuthManagerGuard from "@/guard/AuthManagerGuard";
-import {useUserProfile} from "@/hooks/__form/auth/useUserProfile";
-import Loading from "@/components/ui/Loader";
-import {useGetProfileID} from "@/hooks/__globlal/useGlobalHook";
+import React, { useId, useRef } from "react"
+import FormGroup from "@/components/box/FormGroup"
+import { SubmitHandler, useForm } from "react-hook-form"
+import { joiResolver } from "@hookform/resolvers/joi"
+import { UpdateProfileInput, updateProfileInputSchema } from "@/schema/ADMIN/settings.schema"
+import AuthManagerGuard from "@/guard/AuthManagerGuard"
+import { useUserProfile } from "@/hooks/__form/auth/useUserProfile"
+import Loading from "@/components/ui/Loader"
+import { PageSubTitle } from "@/components/ui/custom/PageTitle"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import Image from "next/image"
+import { Edit2 } from "lucide-react"
+import { UpdatePasswordForm } from "@/app/(protected)/dashboard/settings/password/_components/updatePasswordForm"
+import { useUpdateProfile } from "@/hooks/admin/useSettingsHook"
 
 const ProfilePage: React.FC = () => {
     return (
-        <div className={`grid grid-cols-12`}>
-            <div className={`col-span-12 2xl:col-span-8 border-r border-r-[#89acff]`}>
-                <PersonalInfosForm/>
-            </div>
-            <div className={"col-span-12 2xl:col-span-4"}>
-                <UpdatePasswordForm/>
-            </div>
+        <div className="flex flex-col items-center gap-12 w-full">
+            <PersonalInfosForm />
+            <UpdatePasswordForm />
         </div>
     )
 }
 
 const PersonalInfosForm = () => {
-
     const [imgUri, setImgUri] = React.useState("")
     const [file, setFile] = React.useState<File | undefined>()
-    const {onUpdateProfile, loading} = useUpdateProfile()
+    const { onUpdateProfile, loading } = useUpdateProfile()
     const chooseAvatarInputID = useId()
 
     const {
         register,
         handleSubmit,
         setValue,
-        watch,
-        reset: resetForm,
-        formState: {errors},
+        formState: { errors },
     } = useForm<UpdateProfileInput>({
         resolver: joiResolver(updateProfileInputSchema)
     })
 
-    const onSubmit: SubmitHandler<UpdateProfileInput> = (profileInfos, event) => {
-        onUpdateProfile({...profileInfos, id: AuthManagerGuard.getProfileID as string, image: file})
-    }
+    const { data: profile, isLoading } = useUserProfile()
 
-    const {data: profile, isLoading} = useUserProfile()
-    const {profile_id} = useGetProfileID()
-
+  
 
     React.useEffect(() => {
-        if (profile && !isLoading) {
-            setValue("last_name", profile._instance.last_name)
-            setValue("first_name", profile._instance.first_name)
-            setValue("email", profile._instance.user.email)
-            //setValue("birthday", profile._instance.bi)
-            setImgUri("/assets/faker/setting/default-avatar-uppdate.png")
+        if (profile && !isLoading && profile._instance) {
+            setValue("last_name", profile._instance.last_name || "")
+            setValue("first_name", profile._instance.first_name || "")
+            setValue("email", profile._instance.user?.email || "")
+            setImgUri(profile.image || "/assets/faker/setting/default-avatar-uppdate.png")
         }
-    }, [profile, isLoading])
-
-    if (isLoading) {
-        return (
-            <Loading/>
-        )
-    }
+    }, [profile, isLoading, setValue])
 
     const onSelectAvatar = (files: FileList | null) => {
-        if (files) {
-            setFile(files[0])
-            const uri = URL.createObjectURL(files[0])
-            setImgUri(uri)
+        if (files && files[0]) {
+            setFile(files[0]);
+            const uri = URL.createObjectURL(files[0]);
+            setImgUri(uri);
         }
+    }
+
+    const onSubmit: SubmitHandler<UpdateProfileInput> = (profileInfos) => {
+        const profileId = AuthManagerGuard.getProfileID as string
+        if (!profileId) return
+    
+        onUpdateProfile({
+            ...profileInfos,
+            id: profileId,
+            image: file
+        })
+    }
+    
+  
+
+    if (isLoading) {
+        return <Loading />
     }
 
     return (
         <form
-            className={`px-[32px] py-[34px] `}
+            className="space-y-6 flex flex-col items-center"
             onSubmit={handleSubmit(onSubmit)}
         >
-            <AdminPageTitle withMb={true}>Modifier le profil</AdminPageTitle>
-            <FormGroup adminForm={true} className={`mb-[56px]`}>               
-                <Stack>
-                    <TextField
-                        label={'Nom complet'}
-                        register={register("last_name")}
-                        errors={errors}
+            <PageSubTitle subtitle="Mon profil" />
+
+            {/* Section avatar */}
+            <div className="mb-6 relative">
+                <input
+                    id={chooseAvatarInputID}
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => onSelectAvatar(e.target.files)}
+                    className="hidden"
+                />
+                <label htmlFor={chooseAvatarInputID} className="cursor-pointer">
+
+                    {imgUri && (
+                        <Image
+                            src={imgUri}
+                            alt="Avatar"
+                            className="w-20 h-20 rounded-full mt-3 object-cover"
+                            width={200}
+                            height={200}
+                        />
+                    )}
+                    <Button
+                        type="button"
+                        variant={"secondary"}
+                        size={"icon"}
+                        className="rounded-full size-6 absolute right-0 -bottom-2"
+                    >
+                        <Edit2 className="text-vaTextPrimary size-3" />
+                    </Button>
+                </label>
+            </div>
+
+            <FormGroup adminForm={true}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <Input
+                        label="Nom complet"
+                        {...register("last_name")}
+                        error={errors.last_name}
                     />
-                 
-                </Stack>
-                <Stack>
-                    <TextField
-                        label={'Adresse email'}
-                        register={register("email")}
-                        errors={errors}
+
+                    <Input
+                        label="Adresse email"
+                        {...register("email")}
+                        error={errors.email}
+                        type="email"
                     />
-                    <FieldDate
-                        label={'Date de naissance'}
-                        register={register("birthday")}
-                        errors={errors}
-                    />
-                </Stack>
+                </div>
             </FormGroup>
 
-            <BtnBase
-                w={"270px"}
-                to={''}
-                color={'blue'}
+            <Button
+                color="blue"
                 loading={loading}
-                variant={'contained'}
-                shape={'square'}
-                type={"submit"}
-                disabled={loading}
+                variant="mainBlue"
+                type="submit"
+                fullWidth={false}
             >
-                {loading ? "Mise à jour en cour..." : "Mettre à jour"}
-            </BtnBase>
-
+                {loading ? "Mise à jour en cours..." : "Enregistrer les modifications"}
+            </Button>
         </form>
     )
 }
-
-
-const AvatarUpdate: React.FC = () => {
-
-    const chooseAvatarInputID = useId()
-
-    return (
-        <div className={`relative w-fit`}>
-            <Avatar src={'/assets/faker/setting/default-avatar-uppdate.png'} h={108} w={108}/>
-            <input id={chooseAvatarInputID} type="file" accept={'image'} className={`hidden`}/>
-            <label htmlFor={chooseAvatarInputID}>
-                <div
-                    className={`size-[38.85px] rounded-full bg-white flex justify-center items-center text-text-body absolute bottom-0 right-[-15px] 
-                    transition ease-in duration-200
-                    cursor-pointer hover:text-blue-primary`}>
-                    <EditIcon/>
-                </div>
-            </label>
-        </div>
-    )
-}
-
 
 export default ProfilePage

@@ -1,42 +1,40 @@
-"use client";
+"use client"
 
-import {AdminPageTitle} from "@/components/typo/typo";
-import FormGroup from "@/components/box/FormGroup";
-import TextField from "@/components/form/TextField";
-import BtnBase from "@/components/elements/BtnBase";
-import React from "react";
-import {SubmitHandler, useForm} from "react-hook-form";
+import React from "react"
+import { SubmitHandler, useForm } from "react-hook-form"
 import {
     UpdatePasswordInput,
     updatePasswordInputSchema,
-    UpdateProfileInput,
-    updateProfileInputSchema
-} from "@/schema/ADMIN/settings.schema";
-import AuthManagerGuard from "@/guard/AuthManagerGuard";
-import {joiResolver} from "@hookform/resolvers/joi";
-import {useUpdatePassword, useUpdateProfile} from "@/hooks/admin/useSettingsHook";
-import {useUserProfile} from "@/hooks/__form/auth/useUserProfile";
+} from "@/schema/ADMIN/settings.schema"
+import { joiResolver } from "@hookform/resolvers/joi"
+import { useUpdatePassword } from "@/hooks/admin/useSettingsHook"
+import { useUserProfile } from "@/hooks/__form/auth/useUserProfile"
+import { PageSubTitle } from "@/components/ui/custom/PageTitle"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import FormGroup from "@/components/box/FormGroup"
 
 export const UpdatePasswordForm = () => {
-
-    const {data: profile} = useUserProfile()
+    const { data: profile } = useUserProfile()
 
     const {
         register,
         handleSubmit,
-        setValue,
-        watch,
         reset: resetForm,
-        formState: {errors},
+        formState: { errors },
     } = useForm<UpdatePasswordInput>({
         resolver: joiResolver(updatePasswordInputSchema)
     })
 
-    const {onUpdatePassword, loading, isSuccess} = useUpdatePassword()
+    const { onUpdatePassword, loading, isSuccess } = useUpdatePassword()
 
-    const onSubmit: SubmitHandler<UpdatePasswordInput> = (profileInfos, event) => {
-        if (profile)
-            onUpdatePassword({...profileInfos, email: profile._instance.user.email})
+    const onSubmit: SubmitHandler<UpdatePasswordInput> = (passwordData, event) => {
+        if (profile) {
+            onUpdatePassword({ 
+                ...passwordData, 
+                email: profile._instance.user.email 
+            })
+        }
     }
 
     React.useEffect(() => {
@@ -47,43 +45,42 @@ export const UpdatePasswordForm = () => {
 
     return (
         <form
-            className={`px-[24px] py-[34px] h-full`}
+            className={`space-y-6 mt-12 flex flex-col items-center`}
             onSubmit={handleSubmit(onSubmit)}
         >
-            <AdminPageTitle withMb={true}>Modifier le mot de passe</AdminPageTitle>
-            <FormGroup adminForm={true} className={`mb-[30px]`}>
+            <PageSubTitle subtitle="Modifier mon mot de passe" />
+            <FormGroup adminForm={true}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <Input
+                        type="password"
+                        label="Ancien mot de passe"
+                        {...register("old_password")}
+                        error={errors.old_password}
+                    />
 
-                <TextField
-                    inputType={'password'}
-                    label={'Ancien mot de passe'}
-                    register={register("old_password")}
-                    errors={errors}
-                />
+                    <Input
+                        type="password"
+                        label="Nouveau mot de passe"
+                        {...register("new_password")}
+                        error={errors.new_password}
+                    />
 
-                <TextField
-                    inputType={'password'}
-                    label={'Nouveau mot de passe'}
-                    register={register("new_password")}
-                    errors={errors}
-                />
-
-                <TextField
-                    inputType={'password'}
-                    label={'Confirmer le nouveau mot de passe'}
-                    register={register("new_password_confirm")}
-                    errors={errors}
-                />
+                    <Input
+                        type="password"
+                        label="Confirmer le nouveau mot de passe"
+                        {...register("new_password_confirm")}
+                        error={errors.new_password_confirm}
+                    />
+                </div>
             </FormGroup>
-            <BtnBase
-                w={"270px"}
-                to={''}
-                color={'blue'}
-                variant={'contained'}
-                shape={'square'}
-                type={"submit"}
+            <Button
+                color="blue"
+                variant="mainBlue"
+                type="submit"
                 loading={loading}
-                disabled={loading}
-            >{loading ? "Mise à jour..." : "Valider"}</BtnBase>
+            >
+                {loading ? "Mise à jour..." : "Enregistrer le nouveau mot de passe"}
+            </Button>
         </form>
     )
 }

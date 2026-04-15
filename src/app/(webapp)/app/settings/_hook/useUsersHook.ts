@@ -69,7 +69,7 @@ export const useUsersHook = () => {
       {
         header: "Utilisateur",
         accessor: (item) =>
-          React.createElement(UserNameAndInitials, { name: item.getUsername }),
+          React.createElement(UserNameAndInitials, { name: item.getUsername, imageUrl: item.image??undefined }),
       },
       {
         header: "Email",
