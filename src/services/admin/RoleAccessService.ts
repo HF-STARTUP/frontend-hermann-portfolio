@@ -101,6 +101,13 @@ class RoleService extends Service {
             body: formData,
         });
     }
+
+    public static deleteRole(roleId: string){
+        return RoleService.getInstance().execHttpRequest({
+            url: RoleApiPath.GetRole.replace("{id}", roleId),
+            method: RoleService.getInstance().httpMethods.delete,            
+        });
+    }
     
 }
 

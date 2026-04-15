@@ -1,10 +1,11 @@
-import { Edit, Plus, Shield } from "lucide-react"
+import { Edit, Plus, Shield, Trash } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Badge from "@/components/display/Badge"
 import { AddRoleDialog } from "./_dialogs/RoleFormDialog"
 import { useState } from "react"
 import RootRoleModel from "@/model/ADMIN/RoleAccessModel"
 import { useRoleHook } from "../_hook/useRoleHook"
+import { DeleteRoleDialog } from "./_dialogs/ConfirmRoleDelete";
 
 // Composant Shimmer local
 export const RoleCardShimmer = () => {
@@ -29,7 +30,7 @@ export const RoleCardShimmer = () => {
     )
 }
 
-export const RoleCard = ({ item, onEdit }: { item: RootRoleModel, onEdit: (item: RootRoleModel) => void }) => {
+export const RoleCard = ({ item, onEdit, onDelete }: { item: RootRoleModel, onEdit: (item: RootRoleModel) => void, onDelete: (item: RootRoleModel) => void }) => {
     const moduleNames = Object.keys(item.groupedAccesses || {});
     return (
         <div className="p-4 border rounded-xl shadow-sm flex-grow flex flex-col gap-4 hover:scale-105 transition-all duration-300 cursor-pointer w-full">
@@ -44,10 +45,16 @@ export const RoleCard = ({ item, onEdit }: { item: RootRoleModel, onEdit: (item:
                     </div>
                 </div>
 
-               { item.isModifiable &&
-                <Button variant={"ghost"} size="icon" className="text-vaTextPrimary" onClick={() => onEdit(item)}>
-                    <Edit size={16} />
-                </Button>}
+                {item.isModifiable &&
+                    <div className="flex items-center gap-2">
+                        <Button variant={"ghost"} size="icon" className="text-vaTextPrimary bg-vaLightGray/20" onClick={() => onEdit(item)}>
+                            <Edit size={16} />
+                        </Button>
+                        <Button variant={"destructive"} size="icon" onClick={() => onDelete(item)}>
+                            <Trash size={16} />
+                        </Button>
+                    </div>
+                }
             </div>
             <p className="text-sm text-vaTextPrimary line-clamp-2" title={moduleNames.join(', ')}>
                 {moduleNames.length > 0 ? moduleNames.join(', ') : "Aucun module"}
@@ -62,7 +69,7 @@ export const RoleCard = ({ item, onEdit }: { item: RootRoleModel, onEdit: (item:
 }
 
 const RoleList = ({ items, isLoading }: { items?: RootRoleModel[], isLoading?: boolean }) => {
-    const { formAction, handleAdd, handleEdit, isFormVisible, setIsFormVisible, selectedRole} = useRoleHook()
+    const { formAction, handleAdd, handleEdit, isFormVisible, setIsFormVisible, selectedRole, handleDelete, isDeleteVisible, setIsDeleteVisible } = useRoleHook()
     return (
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
             <div onClick={() => handleAdd()}
@@ -78,10 +85,11 @@ const RoleList = ({ items, isLoading }: { items?: RootRoleModel[], isLoading?: b
                 </>
             ) : (
                 items?.map((item, index) =>
-                    <RoleCard item={item} key={index} onEdit={() => handleEdit(item)} />
+                    <RoleCard item={item} key={index} onEdit={() => handleEdit(item)} onDelete={()=>handleDelete(item)} />
                 )
             )}
             <AddRoleDialog isOpenned={isFormVisible} onClose={() => setIsFormVisible(false)} action={formAction} roleId={selectedRole?.id} />
+            <DeleteRoleDialog isOpen={isDeleteVisible} onClose={()=>setIsDeleteVisible(false)} roleId={selectedRole?.id} roleName={selectedRole?.displayName} />
         </div>
     )
 }
