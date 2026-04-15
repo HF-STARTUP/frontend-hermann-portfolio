@@ -118,3 +118,42 @@ export const useUpdateRole = (id?: string) => {
         onUpdateRole,        
     }
 }
+
+
+export const useDeleteRole = (id: string) => {
+    const {
+        data,
+        loading,
+        isSuccess,
+        isError,
+        error,
+        handleMutation,
+    } = useMutationProvider({
+        mutationFn: () => RoleService.deleteRole(id!),
+        successMessage: "Role supprimer avec succès.",
+    });
+
+    const onDeleteRole = () => {
+        if (!id) {
+            console.error("Impossible de supprimer : l'ID est manquant");
+            notify("Impossible de supprimer : l'ID est manquant", "error");
+            return;
+        }
+        handleMutation(id);
+    };
+
+    React.useEffect(() => {
+        if (isSuccess && data) {
+            void RoleService.invalidRolesList();
+        }
+    }, [isSuccess, data]);
+
+    return {
+        data,
+        loading,
+        isSuccess,
+        isError,
+        error,
+        onDeleteRole,        
+    };
+};

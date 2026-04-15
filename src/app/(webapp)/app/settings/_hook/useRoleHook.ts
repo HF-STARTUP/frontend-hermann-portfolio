@@ -12,6 +12,7 @@ export interface RoleItem {
 export const useRoleHook = () => {
   const { data: adminRoles, isLoading: isLoadingAdminRoles } = useGetRoles();
   const [isFormVisible, setIsFormVisible] = useState(false);
+  const [isDeleteVisible, setIsDeleteVisible] = useState(false);
   const [formAction, setFormAction] = useState<"add" | "edit">("add");
   const [selectedRole, setSelectedRole] = useState<RootRoleModel>();
 
@@ -30,6 +31,14 @@ export const useRoleHook = () => {
     setIsFormVisible(true);
   };
 
+  const handleDelete = (role?: RootRoleModel)=>{
+    if (!role) {
+      return;
+    }
+    setSelectedRole(role)
+    setIsDeleteVisible(true)
+  }
+
   return {
     adminRoles,
     isLoadingAdminRoles,
@@ -37,12 +46,15 @@ export const useRoleHook = () => {
     selectedRole,
     formAction,
     isFormVisible,
+    isDeleteVisible,
 
     setSelectedRole,
     setFormAction,
     setIsFormVisible,
+    setIsDeleteVisible,
 
     handleAdd,
-    handleEdit
+    handleEdit,
+    handleDelete
   };
 };
