@@ -74,7 +74,6 @@ abstract class Service {
     toFormdata = false,
     secure = true,
   }: ExecHttpRequestOptionType): Promise<T> {
-    // Remove all data with value "999999"
     if (
       body &&
       typeof body === "object" &&
@@ -89,11 +88,6 @@ abstract class Service {
 
     if (notIsLoggedIn && secure) {
       await this.refreshToken();
-      // if (window?.location) {
-      //     window.location = `${window.location.origin}/auth/login` as unknown as Location
-      // }
-      // console.log("Session expiré")
-      // throw new CustomQueryError("Session expiré, veuillez vous reconnecter")
     }
 
     let requestData = body;
@@ -113,7 +107,7 @@ abstract class Service {
 
     return this.axiosInstance({
       method: method,
-      url: removeInvalidParams(getBaseApiPath() + "/" + url),
+      url: removeInvalidParams(`${getBaseApiPath()}/${url}`.replace(/([^:]\/)\/+/g, '$1')),
       headers: {
         ...headers,
       },
