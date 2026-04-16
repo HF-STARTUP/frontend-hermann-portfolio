@@ -29,7 +29,7 @@ export default function TransactionsContent({ fleetId }:{fleetId?: string}) {
                         defaultPeriod={"current_month"}
                         onChange={(dateRange)=>setDateRange(dateRange)}
                     />
-                    <Select>
+                    {/* <Select>
                         <SelectTrigger variant="mainBlueOutline" leftIcon={<AnchorIcon className="size-4 mr-2" />}>
                             <SelectValue placeholder="Exporter" />
                         </SelectTrigger>
@@ -38,7 +38,7 @@ export default function TransactionsContent({ fleetId }:{fleetId?: string}) {
                             <SelectItem value="excel">Excel</SelectItem>
                             <SelectItem value="pdf">PDF</SelectItem>
                         </SelectContent>
-                    </Select>
+                    </Select> */}
                 </div>
             </div>
             <FleetKpiGrid className="!grid-cols-4" kpiItems={transactionKpi} isLoading={isLoadingKpi} />

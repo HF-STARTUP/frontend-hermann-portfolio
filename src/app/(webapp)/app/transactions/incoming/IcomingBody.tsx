@@ -69,7 +69,7 @@ const IncomingBody = () => {
                         </SelectContent>
                     </Select>
                 </div>
-                <Select>
+                {/* <Select>
                     <SelectTrigger variant="mainBlueOutline" leftIcon={<AnchorIcon className="size-4 mr-2" />}>
                         <SelectValue placeholder="Exporter" />
                     </SelectTrigger>
@@ -78,7 +78,7 @@ const IncomingBody = () => {
                         <SelectItem value="excel">Excel</SelectItem>
                         <SelectItem value="pdf">PDF</SelectItem>
                     </SelectContent>
-                </Select>
+                </Select> */}
             </div>
 
             {/* Table */}

@@ -3,7 +3,7 @@
 import React from "react"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import { ArrowUp, ArrowDown } from "lucide-react"
+import { TrendingUp, TrendingDown } from "lucide-react"
 import type { PromoCodeMetricsEvolution } from "@/types/marketing.types"
 
 interface KpiCardProps {
@@ -64,9 +64,10 @@ export const KpiCard: React.FC<KpiCardProps> = ({
               )}
             >
               {isNegative ? (
-                <ArrowDown className="w-4 h-4" />
+                <TrendingDown
+                 className="w-4 h-4" />
               ) : (
-                <ArrowUp className="w-4 h-4" />
+                <TrendingUp className="w-4 h-4" />
               )}
               <span>
                 {displayValue !== undefined && displayValue >= 0 && !isNegative

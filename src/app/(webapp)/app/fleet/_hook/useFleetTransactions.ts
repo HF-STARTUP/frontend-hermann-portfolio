@@ -30,7 +30,7 @@ export interface TransactionRow {
 export const useFleetTransactions = (fleetId?: string) => {
   const [page, setPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(20);
-  const [dateRange, setDateRange] = useState<DateRange>(() => {
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(() => {
     const now = new Date();
     const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     return { from: startOfMonth, to: now };

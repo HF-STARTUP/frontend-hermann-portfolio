@@ -185,7 +185,7 @@ export const FleetList = () => {
                         <LuPlus className="w-4 h-4 mr-2" />
                         Ajouter une flotte
                     </Button>
-                    <Select>
+                    {/* <Select>
                         <SelectTrigger variant="mainBlueOutline" leftIcon={<AnchorIcon className="size-4 mr-2" />}>
                             <SelectValue placeholder="Exporter" />
                         </SelectTrigger>
@@ -194,7 +194,7 @@ export const FleetList = () => {
                             <SelectItem value="excel">Excel</SelectItem>
                             <SelectItem value="pdf">PDF</SelectItem>
                         </SelectContent>
-                    </Select>
+                    </Select> */}
 
                 </div>
 
