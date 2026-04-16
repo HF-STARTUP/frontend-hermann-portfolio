@@ -5,11 +5,12 @@ import { PackageType, ProfileStatus } from "@/app/(webapp)/app/subscriptions/_ho
 import { AdminAccountStatus } from "@/types/__form/profile.type";
 import { FleetStatus, SubscriptionStatus } from "@/types/admin/fleet.type";
 import { RootAccessType } from "@/types/admin/role-access.type";
+import { PromoCodeStatusApi } from "@/types/marketing.types";
 import { ReactNode } from "react";
 
 export type BadgeVariant = 'green' | "orange" | "red" | "purple" | "blue" | "light-blue" | "default"
 
-export type BadgeType = LeadStatus | CampagneStatus | PackageType | ProfileStatus | SubscriptionStatus | LeadStep | AdminAccountStatus | RootAccessType | FleetStatus | CustomerStatus
+export type BadgeType = LeadStatus | CampagneStatus | PackageType | ProfileStatus | SubscriptionStatus | LeadStep | AdminAccountStatus | RootAccessType | FleetStatus | CustomerStatus | PromoCodeStatusApi
 
 export const getBadgeVariantClasses = (variant: BadgeVariant): string => {
     switch (variant) {
@@ -113,6 +114,18 @@ export const getBadgeText = (type?: BadgeType) => {
             return "A risque"
         case "stable":
             return "Stable"
+        case "ACTIVE":
+            return "Actif";
+        case "ARCHIVED":
+            return "Archive";
+        case "DEACTIVATED":
+            return "Déactivé";
+        case "DRAFT":
+            return "Brouillon";
+        case "EXPIRED":
+            return "Expire"
+        case "SUSPENDED":
+            return "Suspendu"
         default:
             return "Inconnu";
     }
@@ -198,6 +211,18 @@ export const getBadgeVariant = (type?: BadgeType): BadgeVariant => {
             return "red"
         case "stable":
             return "light-blue"
+        case "ACTIVE":
+            return "green"
+        case "ARCHIVED":
+            return "default"
+        case "DEACTIVATED":
+            return "red"
+        case "DRAFT":
+            return "purple"
+        case  "EXPIRED":
+            return "orange"
+        case "SUSPENDED":
+            return "blue"
 
         default:
             return "default";

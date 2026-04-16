@@ -1,10 +1,11 @@
-"use client";
+"use client"
 
-import React from "react";
-import {Bars, Oval, RotatingLines} from "react-loader-spinner";
-import {cn} from "@/utils/ui/cn";
+import React from "react"
+import { Bars, Oval, RotatingLines } from "react-loader-spinner"
+import { cn } from "@/utils/ui/cn"
+import CardTitle from "./custom/CardTitle"
 
-export default function Loading({className, ...props}: React.HTMLAttributes<HTMLDivElement>) {
+export default function Loading({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
     return (
         <div className={cn(
             `w-full font-bold text-admin-primary h-[300px] flex justify-center items-center`,
@@ -23,7 +24,7 @@ export default function Loading({className, ...props}: React.HTMLAttributes<HTML
 }
 
 
-export function LoadingBar({className, ...props}: React.HTMLAttributes<HTMLDivElement>) {
+export function LoadingBar({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
     return (
         <div className={cn('text-admin-primary h-[50px]', className)} {...props}>
             <Bars
@@ -36,7 +37,7 @@ export function LoadingBar({className, ...props}: React.HTMLAttributes<HTMLDivEl
     )
 }
 
-export function CircularProgress({className, ...props}: React.HTMLAttributes<HTMLDivElement>) {
+export function CircularProgress({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) {
     return (
         <div className={cn('text-admin-primary h-[50px]', className)} {...props}>
             <Oval

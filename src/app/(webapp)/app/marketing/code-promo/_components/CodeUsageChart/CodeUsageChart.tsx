@@ -1,7 +1,6 @@
 "use client"
 
 import React from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import {
   ChartContainer,
   ChartTooltip,
@@ -13,6 +12,8 @@ import { useGetPromoCodeUsageByType } from "@/hooks/marketing/useMarketing"
 import { LoadingBar } from "@/components/ui/Loader"
 import type { CodeUsageData } from "@/types/marketing.types"
 import { usePromoCodePeriod } from "../../../_context/PromoCodePeriodContext"
+import CardTitle from "@/components/ui/custom/CardTitle"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 
 const chartConfig: ChartConfig = {
   count: {
@@ -47,26 +48,16 @@ export const CodeUsageChart: React.FC = () => {
 
   if (isLoading) {
     return (
-      <Card className="bg-white">
-        <CardHeader>
-          <CardTitle className="text-xl font-semibold text-gray-900">
-            Utilisation par type de code
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <LoadingBar />
-        </CardContent>
+      <Card className="bg-white rounded-2xl overflow-hidden p-6">
+        <CardTitle title="Utilisation par type de code" />
+        <LoadingBar />
       </Card>
     )
   }
 
   return (
-    <Card className="bg-white">
-      <CardHeader>
-        <CardTitle className="text-xl font-semibold text-gray-900">
-          Utilisation par type de code
-        </CardTitle>
-      </CardHeader>
+    <Card className="bg-white rounded-2xl p-6">
+      <CardTitle title="Utilisation par type de code" />
       <CardContent>
         <ChartContainer config={chartConfig} className="w-full">
           <BarChart

@@ -1,3 +1,5 @@
+import { PaginationResponse } from "./dashboard.type";
+
 export type PromoCodeStatusApi =
   | "DRAFT"
   | "ACTIVE"
@@ -96,9 +98,8 @@ export interface PromoCodeMetricsResponse {
   data: PromoCodeMetricsData
 }
 
-export interface PromoCodeListResponse {
+export interface PromoCodeListResponse extends PaginationResponse {
   data: PromoCode[]
-  totalRecords: number
 }
 
 export interface PromoCodeEvent {

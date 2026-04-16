@@ -8,25 +8,27 @@ import {
     DialogHeader,
     DialogTitle,
 } from "@/components/ui/dialog"
-import BtnBase from "@/components/elements/BtnBase";
+import BtnBase from "@/components/elements/BtnBase"
+import { DialogMainBody } from "../display/DialogMainBody"
+import { Button } from "../ui/button"
 
 interface ConfirmationDialogProps {
-    onConfirm: () => void;
-    title: string;
-    subtitle: string;
-    triggerText?: string;
-    open: boolean;
-    setOpen: (open: boolean) => void;
+    onConfirm: () => void
+    title: string
+    subtitle: string
+    triggerText?: string
+    open: boolean
+    setOpen: (open: boolean) => void
 }
 
 export default function ConfirmationDialog({
-                                               onConfirm,
-                                               title,
-                                               subtitle,
-                                               triggerText = "Supprimer",
-                                               open,
-                                               setOpen
-                                           }: ConfirmationDialogProps) {
+    onConfirm,
+    title,
+    subtitle,
+    triggerText = "Supprimer",
+    open,
+    setOpen
+}: ConfirmationDialogProps) {
 
     const handleConfirm = () => {
         onConfirm()
@@ -35,37 +37,31 @@ export default function ConfirmationDialog({
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
-            <DialogContent className="sm:max-w-[525px]">
+            <DialogContent className="p-4">
                 <DialogHeader>
                     <DialogTitle>{title}</DialogTitle>
-                    <DialogDescription className={"font-normal text-center text-[20px] text-[#506D82] tracking-[-2%]"}>
-                        {subtitle}
-                    </DialogDescription>
                 </DialogHeader>
+                <DialogMainBody>
+                    <p className={"font-normal text-center text-[20px] text-[#506D82] tracking-[-2%]"}>
+                        {subtitle}
+                    </p>
+                </DialogMainBody>
                 <DialogFooter>
-                    <div className={"flex flex-col gap-2 w-full mt-2"}>
-                        <BtnBase
-                            shape={'square'}
-                            to={''}
-                            variant={'contained'}
+                    <div className={"grid grid-cols-2 gap-8 w-full"}>
+                        <Button
+                            variant={'outline'}
                             color={'blue'}
-                            fullwidth={true}
                             onClick={() => setOpen(false)}
                         >
                             Annuler
-                        </BtnBase>
+                        </Button>
 
-                        <BtnBase
+                        <Button
                             onClick={handleConfirm}
-                            shape={'square'}
-                            to={''}
-                            variant={'contained'}
-                            color={'yellow'}
-                            fullwidth={true}
-                            fontWeight={"bold"}
+                            variant={'mainBlue'}
                         >
                             {triggerText}
-                        </BtnBase>
+                        </Button>
                     </div>
                 </DialogFooter>
             </DialogContent>
