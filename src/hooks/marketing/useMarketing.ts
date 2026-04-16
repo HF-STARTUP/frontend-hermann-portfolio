@@ -46,18 +46,12 @@ export function useGetMarketingKpis() {
 }
 
 export function useGetPromoCodes(filters?: MarketingFilters) {
-  const { data, isLoading, error, refetch } = useQuery({
+  const response = useQuery({
     queryKey: [MARKETING_QUERY_KEYS.codes, filters],
     queryFn: () => marketingService.getPromoCodes(filters),
   });
 
-  return {
-    data: data?.data ?? [],
-    totalRecords: data?.totalRecords ?? 0,
-    isLoading,
-    error,
-    refetch,
-  };
+  return response;
 }
 
 export function useGetPromoCodeDetails(id: string | undefined) {

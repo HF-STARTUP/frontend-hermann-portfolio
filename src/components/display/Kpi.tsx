@@ -1,5 +1,5 @@
 import { cn } from "@/lib/utils";
-import { ArrowDown, ArrowUp, Minus } from "lucide-react";
+import { TrendingDown, TrendingUp, Minus } from "lucide-react";
 import { isValidElement, ReactNode } from "react"
 import { cloneElement } from 'react';
 
@@ -115,7 +115,7 @@ export const KpiCard = ({icon, title, value, variant, className, border=false, v
                             "flex items-center gap-1",
                             variation === "up" ? "text-vaGreen": variation === "down" ? "text-vaRed" : "text-vaOrange"
                         )}>
-                            {variation === "up" ? <ArrowUp className="size-6" /> : variation === "down" ? <ArrowDown className="size-6" /> : <Minus className="size-6" />}                         
+                            {variation === "up" ? <TrendingUp className="size-6" /> : variation === "down" ? <TrendingDown className="size-6" /> : <Minus className="size-6" />}                         
                             { hint && <span className="text-xs">{hint}</span>}
                         </div>
                     )

@@ -54,7 +54,7 @@ export const CodesTableFilters: React.FC<CodesTableFiltersProps> = ({
         value={filters.code_type ?? "all"}
         onValueChange={handleCodeTypeChange}
       >
-        <SelectTrigger className="w-[200px] h-12 border-gray-200 rounded-lg">
+        <SelectTrigger className="w-[200px] h-11 border-gray-200 rounded-2xl">
           <SelectValue placeholder="Tous les types de code" />
         </SelectTrigger>
         <SelectContent>
@@ -68,7 +68,7 @@ export const CodesTableFilters: React.FC<CodesTableFiltersProps> = ({
       </Select>
 
       <Select value={filters.status ?? "all"} onValueChange={handleStatusChange}>
-        <SelectTrigger className="w-[160px] h-12 border-gray-200 rounded-lg">
+        <SelectTrigger className="w-[160px] h-10 border-gray-200 rounded-2xl" inForm>
           <SelectValue placeholder="Tous les statuts" />
         </SelectTrigger>
         <SelectContent>
@@ -81,22 +81,7 @@ export const CodesTableFilters: React.FC<CodesTableFiltersProps> = ({
             </SelectItem>
           ))}
         </SelectContent>
-      </Select>
-
-      <Select
-        value={String(filters.itemPerPage ?? 20)}
-        onValueChange={handleItemPerPageChange}
-      >
-        <SelectTrigger className="w-[120px] h-12 border-gray-200 rounded-lg">
-          <SelectValue placeholder="Par page" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="10">10</SelectItem>
-          <SelectItem value="20">20</SelectItem>
-          <SelectItem value="50">50</SelectItem>
-          <SelectItem value="100">100</SelectItem>
-        </SelectContent>
-      </Select>
+      </Select>     
     </div>
   )
 }

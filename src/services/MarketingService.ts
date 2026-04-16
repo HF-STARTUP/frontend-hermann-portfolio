@@ -1,3 +1,4 @@
+import { toQueriesString } from "@/lib/utils";
 import Service from "@/services/Service";
 import {
   PromoCode,
@@ -36,9 +37,9 @@ class MarketingService extends Service {
   async getPromoCodes(
     filters?: MarketingFilters,
   ): Promise<PromoCodeListResponse> {
-    const queryParams = filters ? this.toQueryString(filters) : "";
+    const uri = toQueriesString("/promo-code", filters)
     return this.execHttpRequest<PromoCodeListResponse>({
-      url: `promo-code${queryParams ? `?${queryParams}` : ""}`,
+      url: uri,
       method: this.httpMethods.get,
     });
   }
