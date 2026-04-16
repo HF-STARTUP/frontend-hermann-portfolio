@@ -149,7 +149,7 @@ const SubscriptionsBody = () => {
                         <LuPlus className="w-4 h-4 mr-2" />
                         Ajouter un package
                     </Button>
-                    <Select>
+                    {/* <Select>
                         <SelectTrigger
                             variant="mainBlueOutline"
                             className="w-full sm:w-auto"
@@ -162,7 +162,7 @@ const SubscriptionsBody = () => {
                             <SelectItem value="excel">Excel</SelectItem>
                             <SelectItem value="pdf">PDF</SelectItem>
                         </SelectContent>
-                    </Select>
+                    </Select> */}
                 </div>
             </div>
 

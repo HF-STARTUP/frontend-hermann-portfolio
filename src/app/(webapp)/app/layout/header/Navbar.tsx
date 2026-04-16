@@ -37,7 +37,7 @@ export const Navbar = () => {
     return (
         <nav className="bg-vaPrimary h-[70px] lg:h-[94px] fixed top-0 left-0 w-full flex items-center justify-between px-3 lg:px-[40px] z-50 gap-2">
             {/* Overlay de recherche Mobile & Tablette */}
-            {isSearchOpen && (
+            {/* {isSearchOpen && (
                 <div className="absolute inset-0 bg-vaPrimary flex items-center px-4 z-[60] animate-in fade-in duration-200">
                     <div className="flex-1 flex items-center gap-2 max-w-3xl mx-auto">
                         <Input
@@ -52,7 +52,7 @@ export const Navbar = () => {
                         </Button>
                     </div>
                 </div>
-            )}
+            )} */}
 
             <div className="flex items-center gap-2 md:gap-4 lg:gap-8 flex-1 min-w-0">
                 {/* Menu Burger (Mobile seulement) */}
@@ -60,29 +60,30 @@ export const Navbar = () => {
                     <MobileExtraMenu />
                 </div>
 
-                <Image className="h-[18px] lg:h-[23px] w-auto shrink-0" width={169} height={23} src={logo_icon} alt="Logo" />
-
+                <div className="lg:w-[290px]">
+                    <Image className="h-[18px] lg:h-[23px] w-auto shrink-0" width={169} height={23} src={logo_icon} alt="Logo" />
+                </div>
                 {/* Recherche : Masquée jusqu'à 2xl pour laisser place aux stats */}
-                <div className="hidden xl:block w-full max-w-xs">
+                {/* <div className="hidden xl:block w-full max-w-xs">
                     <Input
                         type="search"
                         placeholder="Rechercher..."
                         className="bg-white/15 backdrop-blur-2xl border border-vaTexttext-vaTextPrimary text-white rounded-2xl placeholder:text-white/70 text-sm w-full pr-1 pl-10"
                         leftIcon={<Search className="text-white size-5" />}
                     />
-                </div>
+                </div> */}
             </div>
 
             <div className="flex items-center gap-1 lg:gap-4 shrink-0">
                 {/* Loupe : Visible jusqu'à 2xl */}
-                <Button
+                {/* <Button
                     variant="ghost"
                     size="icon"
                     className="xl:hidden text-white hover:bg-white/10"
                     onClick={() => setIsSearchOpen(true)}
                 >
                     <Search className="size-5" />
-                </Button>
+                </Button> */}
                 <UserOption />
             </div>
         </nav>
@@ -103,8 +104,8 @@ const MobileExtraMenu = () => {
                     <CitySelector isMobile />
                 </div>
 
-                <div className="space-y-2">
-                    <p className="text-[10px] text-vaTextPrimary font-bold tracking-widest">Statistiques (Mobile)</p>
+                {/* <div className="space-y-2">
+                    <p className="text-[10px] text-vaTextPrimary font-bold tracking-widest">Statistiques</p>
                     <div className="grid grid-cols-2 gap-2">
                         <div className="bg-white/5 p-2 rounded-lg border border-white/10">
                             <p className="text-[9px] text-vaTextPrimary">Transactions</p>
@@ -115,7 +116,7 @@ const MobileExtraMenu = () => {
                             <p className="text-sm font-bold text-vaOrange">2.4M</p>
                         </div>
                     </div>
-                </div>
+                </div> */}
 
                 <div className="pt-2 border-t border-white/10 flex items-center justify-between">
                     <span className="text-xs text-white/60">Environnement</span>
@@ -151,7 +152,7 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
     const { invalidateDependentQueries } = useNavbarHook()
 
     return (
-        <div className={cn("w-full", !isMobile && "hidden xl:flex xl:w-[130px] xl:w-[180px] items-center gap-2")}>
+        <div className={cn("w-full flex gap-2", !isMobile && "hidden md:flex xl:w-[180px] items-center  gap-2")}>
             <Select
                 onValueChange={(new_city_id) => {
                     const prevCityId = AuthManagerGuard.getEnabledCity
@@ -184,7 +185,7 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
                     </SelectGroup>
                 </SelectContent>
             </Select>
-
+            
             <Select
                 onValueChange={(value) => {
                     const selectedCurrency = currencies?.find(c => String(c.id) === value)
@@ -227,7 +228,7 @@ const UserOption: React.FC = () => {
     return (
         <div className="flex gap-2 lg:gap-4 items-center">
             {/* Statistiques : Flexibilité accrue sur les petits écrans md+ */}
-            <div className="hidden md:flex items-center gap-2 shrink-0">
+            {/* <div className="hidden md:flex items-center gap-2 shrink-0">
                 <div className="bg-white/10 px-2 py-1 rounded-xl flex items-center border border-vaTexttext-vaTextPrimary">
                     <div className="flex flex-col text-vaLightGray pl-1 pr-2 lg:pr-3 border-r border-white/30">
                         <p className="font-normal text-[8px] lg:text-[10px] xl:text-sm tracking-tighter uppercase lg:normal-case">Transactions</p>
@@ -238,17 +239,17 @@ const UserOption: React.FC = () => {
                         <p className="font-bold text-xs lg:text-base xl:text-lg text-vaOrange whitespace-nowrap">2.4M XOF</p>
                     </div>
                 </div>
-            </div>
+            </div> */}
             <CitySelector />
 
-            <div className="relative shrink-0">
+            {/* <div className="relative shrink-0">
                 <Button variant="ghost" size="icon" className="hover:bg-white/10 size-9 lg:size-10 text-white hover:text-white">
                     <Bell className="size-5 lg:size-6" />
                 </Button>
                 <span className="absolute bg-vaRed size-5 rounded-full text-white text-[10px] font-bold flex items-center justify-center -top-1 -right-1 border-2 border-vaPrimary">
                     4
                 </span>
-            </div>
+            </div> */}
 
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>

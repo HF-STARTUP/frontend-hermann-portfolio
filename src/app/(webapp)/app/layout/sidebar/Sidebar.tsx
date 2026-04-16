@@ -1,11 +1,11 @@
 "use client"
 
 import React, { useEffect, useRef, useState } from "react";
-import { DashboardIcon, InfoIcon, LayoutListIcon, SettingIcon } from "@/components/ui/__icons";
+import { DashboardIcon, LayoutListIcon, SettingIcon } from "@/components/ui/__icons";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { CreditCardIcon, Megaphone, ChevronDown, Tag, Users, ArrowRightLeft, MegaphoneIcon, Crown } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { ChevronDown, ArrowRightLeft, Crown } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { LuMegaphone } from "react-icons/lu";
 import { PiMegaphone } from "react-icons/pi";
@@ -63,10 +63,10 @@ export const Sidebar = () => {
                 label={"Marketing & Campagnes"}
                 icon={<PiMegaphone className="w-6 h-6 -scale-x-100" />}
                 subItems={[
-                    { label: "Dashboard", to: "/app/marketing/dashboard" },
-                    { label: "Campagnes", to: "/app/marketing/campagnes" },
-                    { label: "Leads & Conversations", to: "/app/marketing/leads" },
-                    { label: "Pipeline Clients", to: "/app/marketing/pipeline" },
+                    // { label: "Dashboard", to: "/app/marketing/dashboard" },
+                    // { label: "Campagnes", to: "/app/marketing/campagnes" },
+                    // { label: "Leads & Conversations", to: "/app/marketing/leads" },
+                    // { label: "Pipeline Clients", to: "/app/marketing/pipeline" },
                     { label: "Code promo", to: "/app/marketing/code-promo" },
                     { label: "Commerciaux", to: "/app/marketing/commerciaux" },
                 ]}
