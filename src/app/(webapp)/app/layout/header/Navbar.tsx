@@ -272,14 +272,14 @@ const UserOption: React.FC = () => {
                         <p className="text-xs text-vaTextPrimary truncate">{data._instance.user.email}</p>
                     </div>
                     <div className="flex flex-col border-b p-4 gap-4">
-                        <Link href={"/app/settings"} className="flex items-center gap-2 hover:opacity-70">
+                        {/* <Link href={"/app/settings"} className="flex items-center gap-2 hover:opacity-70">
                             <User className="size-5 text-vaLightGray" />
                             <p className="text-sm font-medium text-vaTextPrimary">Mon profil</p>
                         </Link>
                         <Link href={"/app/settings"} className="flex items-center gap-2 hover:opacity-70">
                             <Settings className="size-5 text-vaLightGray" />
                             <p className="text-sm font-medium text-vaTextPrimary">Paramètres</p>
-                        </Link>
+                        </Link> */}
                         <div className="flex items-center gap-2">
                             <Switch
                                 className="data-[state=checked]:bg-vaLightGreen"
