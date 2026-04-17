@@ -45,7 +45,7 @@ export const CommerciauxTableFilters: React.FC<
           handleChange("channel", v === "all" ? undefined : v)
         }
       >
-        <SelectTrigger className="w-[180px] h-[47px] border-gray-200 rounded-lg">
+        <SelectTrigger className="w-[180px] h-10 border-gray-200 rounded-2xl">
           <SelectValue placeholder="Canal" />
         </SelectTrigger>
         <SelectContent>
@@ -65,7 +65,7 @@ export const CommerciauxTableFilters: React.FC<
         }
         disabled={loadingCountries}
       >
-        <SelectTrigger className="w-[200px] h-[47px] border-gray-200 rounded-lg">
+        <SelectTrigger className="w-[200px] h-10 rounded-2xl">
           <SelectValue placeholder="Tous les pays" />
         </SelectTrigger>
         <SelectContent>

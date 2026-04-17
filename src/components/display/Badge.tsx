@@ -1,95 +1,95 @@
-import { LeadStatus, LeadStep } from "@/app/(webapp)/app/marketing/campagnes/_hook/useCampagneLeadsHook";
-import { CampagneStatus } from "@/app/(webapp)/app/marketing/campagnes/_hook/useCampagnesHook";
-import { CustomerStatus } from "@/app/(webapp)/app/marketing/pipeline/_hooks/usePipelineHook";
-import { PackageType, ProfileStatus } from "@/app/(webapp)/app/subscriptions/_hooks/usePackageList";
-import { AdminAccountStatus } from "@/types/__form/profile.type";
-import { FleetStatus, SubscriptionStatus } from "@/types/admin/fleet.type";
-import { RootAccessType } from "@/types/admin/role-access.type";
-import { PromoCodeStatusApi } from "@/types/marketing.types";
-import { ReactNode } from "react";
+import { LeadStatus, LeadStep } from "@/app/(webapp)/app/marketing/campagnes/_hook/useCampagneLeadsHook"
+import { CampagneStatus } from "@/app/(webapp)/app/marketing/campagnes/_hook/useCampagnesHook"
+import { CustomerStatus } from "@/app/(webapp)/app/marketing/pipeline/_hooks/usePipelineHook"
+import { PackageType, ProfileStatus } from "@/app/(webapp)/app/subscriptions/_hooks/usePackageList"
+import { AdminAccountStatus } from "@/types/__form/profile.type"
+import { FleetStatus, SubscriptionStatus } from "@/types/admin/fleet.type"
+import { RootAccessType } from "@/types/admin/role-access.type"
+import { PromoCodeStatusApi, SalesAgentStatus } from "@/types/marketing.types"
+import { ReactNode } from "react"
 
 export type BadgeVariant = 'green' | "orange" | "red" | "purple" | "blue" | "light-blue" | "default"
 
-export type BadgeType = LeadStatus | CampagneStatus | PackageType | ProfileStatus | SubscriptionStatus | LeadStep | AdminAccountStatus | RootAccessType | FleetStatus | CustomerStatus | PromoCodeStatusApi
+export type BadgeType = LeadStatus | CampagneStatus | PackageType | ProfileStatus | SubscriptionStatus | LeadStep | AdminAccountStatus | RootAccessType | FleetStatus | CustomerStatus | PromoCodeStatusApi | SalesAgentStatus
 
 export const getBadgeVariantClasses = (variant: BadgeVariant): string => {
     switch (variant) {
         case 'blue':
-            return "bg-vaMainBlue/10 text-vaMainBlue";
+            return "bg-vaMainBlue/10 text-vaMainBlue"
         case 'light-blue':
-            return "bg-vaBlue/10 text-vaBlue";
+            return "bg-vaBlue/10 text-vaBlue"
         case 'green':
-            return "bg-vaGreen/10 text-vaGreen";
+            return "bg-vaGreen/10 text-vaGreen"
         case 'orange':
-            return "bg-vaOrange/10 text-vaOrange";
+            return "bg-vaOrange/10 text-vaOrange"
         case 'purple':
-            return "bg-vaPurple/10 text-vaPurple";
+            return "bg-vaPurple/10 text-vaPurple"
         case 'red':
-            return "bg-vaRed/10 text-vaRed";
+            return "bg-vaRed/10 text-vaRed"
 
         default:
-            return "text-black bg-vaLightGray/30";
+            return "text-black bg-vaLightGray/30"
     }
 }
 
 export const getBadgeText = (type?: BadgeType) => {
     switch (type) {
         case "finished":
-            return "Terminer";
+            return "Terminer"
         case "processing":
-            return "En cours";
+            return "En cours"
         case "todo":
-            return "À faire";
+            return "À faire"
         case "contacted":
-            return "Contacté";
+            return "Contacté"
         case "converted":
-            return "Converti";
+            return "Converti"
         case "lost":
-            return "Perdu";
+            return "Perdu"
         case "qualified":
-            return "Qualifié";
+            return "Qualifié"
         case "CROISSANCE":
-            return "CROISSANCE";
+            return "CROISSANCE"
         case "ELITE":
-            return "ÉLITE";
+            return "ÉLITE"
         case "ESSENTIEL":
-            return "ESSENTIEL";
+            return "ESSENTIEL"
         case "PERFORMANCE":
             return "PERFORMANCE"
         case "active":
-            return "Actif";
+            return "Actif"
         case "suspended":
             return "Suspendu"
         case "inactive":
-            return "Inactif";
+            return "Inactif"
         case "deleted":
-            return "Supprimé";
+            return "Supprimé"
         case "suspended":
-            return "Suspendu";
+            return "Suspendu"
         case "demo_planed":
-            return "Démo planifiée";
+            return "Démo planifiée"
         case "new":
-            return "Nouveau";
+            return "Nouveau"
         case "proposition":
-            return "Proposition";
+            return "Proposition"
         case "expired":
-            return "Expiré";
+            return "Expiré"
         case "paid":
-            return "Payé";
+            return "Payé"
         case "using":
-            return "En cours";
+            return "En cours"
         case "CRITICAL":
-            return "Critique";
+            return "Critique"
         case "READ":
-            return "Lecture";
+            return "Lecture"
         case "SENSITIVE":
-            return "Sensible";
+            return "Sensible"
         case "read":
-            return "Lecture";
+            return "Lecture"
         case "WRITE":
-            return "Ecriture";
+            return "Ecriture"
         case "write":
-            return "Ecriture";
+            return "Ecriture"
         case "ESSENTIEL ENTREPRENEUR":
             return "Essentiel entrepreneur"
         case "PREMIUM ENTREPRISE":
@@ -97,9 +97,9 @@ export const getBadgeText = (type?: BadgeType) => {
         case "STARTER ENTREPRISE":
             return "Starter Entreprise"
         case "deactivated":
-            return "Déactivé";
+            return "Déactivé"
         case "failed":
-            return "Echec";
+            return "Echec"
         case "free":
             return "Gratuit"
         case "gps_configuration_pending":
@@ -115,86 +115,88 @@ export const getBadgeText = (type?: BadgeType) => {
         case "stable":
             return "Stable"
         case "ACTIVE":
-            return "Actif";
+            return "Actif"
         case "ARCHIVED":
-            return "Archive";
+            return "Archive"
         case "DEACTIVATED":
-            return "Déactivé";
+            return "Déactivé"
         case "DRAFT":
-            return "Brouillon";
+            return "Brouillon"
         case "EXPIRED":
             return "Expire"
         case "SUSPENDED":
             return "Suspendu"
+        case "INACTIVE":
+            return "Inactif"
         default:
-            return "Inconnu";
+            return "Inconnu"
     }
 }
 
 export const getBadgeVariant = (type?: BadgeType): BadgeVariant => {
     switch (type) {
         case "finished":
-            return "green";
+            return "green"
         case "processing":
-            return "orange";
+            return "orange"
         case "todo":
-            return "purple";
+            return "purple"
         case "contacted":
-            return "blue";
+            return "blue"
         case "converted":
-            return "green";
+            return "green"
         case "lost":
-            return "red";
+            return "red"
         case "qualified":
-            return "light-blue";
+            return "light-blue"
         case "CROISSANCE":
-            return "light-blue";
+            return "light-blue"
         case "ELITE":
-            return "green";
+            return "green"
         case "ESSENTIEL":
-            return "orange";
+            return "orange"
         case "PERFORMANCE":
             return "blue"
         case "active":
-            return "green";
+            return "green"
         case "inactive":
-            return "orange";
+            return "orange"
         case "deleted":
-            return "red";
+            return "red"
         case "suspended":
-            return "default";
+            return "default"
         case "demo_planed":
-            return "orange";
+            return "orange"
         case "new":
-            return "light-blue";
+            return "light-blue"
         case "proposition":
             return "purple"
         case "expired":
-            return "red";
+            return "red"
         case "paid":
-            return "green";
+            return "green"
         case "using":
             return "orange"
         case "CRITICAL":
-            return "red";
+            return "red"
         case "READ":
-            return "light-blue";
+            return "light-blue"
         case "read":
-            return "light-blue";
+            return "light-blue"
         case "SENSITIVE":
-            return "orange";
+            return "orange"
         case "WRITE":
-            return "orange";
+            return "orange"
         case "write":
-            return "orange";
+            return "orange"
         case "ESSENTIEL ENTREPRENEUR":
-            return "purple";
+            return "purple"
         case "PREMIUM ENTREPRISE":
             return "blue"
         case "STARTER ENTREPRISE":
             return "red"
         case "deactivated":
-            return "red";
+            return "red"
         case "failed":
             return "red"
         case "free":
@@ -219,13 +221,15 @@ export const getBadgeVariant = (type?: BadgeType): BadgeVariant => {
             return "red"
         case "DRAFT":
             return "purple"
-        case  "EXPIRED":
+        case "EXPIRED":
             return "orange"
         case "SUSPENDED":
             return "blue"
+        case "INACTIVE":
+            return "red"
 
         default:
-            return "default";
+            return "default"
     }
 }
 
