@@ -9,9 +9,8 @@ const initialFormData: PackageFormData = {
   account_type: "particulier",
   amount: 0,
   description: "",
-  text_remise: "",
-  text_limitation: "",
-  enable: true,
+  text_remise: "test",
+  text_limitation: "test",
   driver_number: 1,
   vehicle_number: 1,
 };

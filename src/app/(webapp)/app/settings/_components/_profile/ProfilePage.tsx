@@ -49,7 +49,7 @@ const PersonalInfosForm = () => {
             setValue("last_name", profile._instance.last_name || "")
             setValue("first_name", profile._instance.first_name || "")
             setValue("email", profile._instance.user?.email || "")
-            setImgUri(profile.image || "/assets/faker/setting/default-avatar-uppdate.png")
+            setImgUri(profile.image || "/assets/admin-default-cover.png")
         }
     }, [profile, isLoading, setValue])
 
@@ -86,7 +86,7 @@ const PersonalInfosForm = () => {
             <PageSubTitle subtitle="Mon profil" />
 
             {/* Section avatar */}
-            <div className="mb-6 relative">
+            <div className="mb-6 relative size-32 rounded-full overflow-hidden">
                 <input
                     id={chooseAvatarInputID}
                     type="file"
@@ -100,7 +100,7 @@ const PersonalInfosForm = () => {
                         <Image
                             src={imgUri}
                             alt="Avatar"
-                            className="w-20 h-20 rounded-full mt-3 object-cover"
+                            className="size-full rounded-full mt-3 object-cover bg-gray-200"
                             width={200}
                             height={200}
                         />
@@ -109,7 +109,7 @@ const PersonalInfosForm = () => {
                         type="button"
                         variant={"secondary"}
                         size={"icon"}
-                        className="rounded-full size-6 absolute right-0 -bottom-2"
+                        className="rounded-full size-6 "
                     >
                         <Edit2 className="text-vaTextPrimary size-3" />
                     </Button>
@@ -138,7 +138,7 @@ const PersonalInfosForm = () => {
                 loading={loading}
                 variant="mainBlue"
                 type="submit"
-                fullWidth={false}
+                fullWidth={true}
             >
                 {loading ? "Mise à jour en cours..." : "Enregistrer les modifications"}
             </Button>

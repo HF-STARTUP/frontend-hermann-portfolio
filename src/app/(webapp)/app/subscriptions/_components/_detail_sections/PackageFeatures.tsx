@@ -1,5 +1,4 @@
 import { PageSubTitle } from "@/components/ui/custom/PageTitle";
-import { GetFonctionnalityLabel } from "../../_hooks/usePackageForm";
 import Badge from "@/components/display/Badge";
 import { Check } from "lucide-react";
 
@@ -29,8 +28,8 @@ export const PackageFeatures = () => {
     return (
         <div className="space-y-4">
             <PageSubTitle subtitle={`Fonctionnalités incluses (${MOCK_FEATURES.length}) `} />
-            {groupedFeatures.map((feature) => (
-                <FeaturesByGroup category={feature.category} features={feature.features} />
+            {groupedFeatures.map((feature, index) => (
+                <FeaturesByGroup key={index} category={feature.category} features={feature.features} />
             ))}
         </div>
     );
@@ -41,11 +40,12 @@ const FeaturesByGroup = ({category, features}:{category: string, features:string
         <div className="p-4 bg-vaLightGray/10 rounded-xl space-y-4">
            <PageSubTitle subtitle={category} />
            <div className={`grid ${features.length > 2 ? "grid-cols-2" : "grid-cols-1"} gap-4`}>
-               {features.map((featureId) => (
-                <div className="flex items-center gap-2">
+               {features.map((featureId, index) => (
+                <div className="flex items-center gap-2" key={index}>
                     <Badge icon={ <Check /> } variant="light-blue" iconOnly={true} />
-                       <p key={featureId} className="text-sm text-vaTextPrimary font-medium">
-                       {GetFonctionnalityLabel(featureId)}
+                       <p className="text-sm text-vaTextPrimary font-medium">
+                       {/* {GetFonctionnalityLabel(featureId)} */}
+                       { featureId }
                    </p>
                 </div>                
                ))}

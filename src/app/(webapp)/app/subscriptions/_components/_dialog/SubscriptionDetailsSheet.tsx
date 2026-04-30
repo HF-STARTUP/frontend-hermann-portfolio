@@ -26,7 +26,7 @@ const SubscriptionDetailsSheet = ({ isOpenned, onClose, packageId, packageData, 
                             </div>
                             <div className="h-12 flex flex-col justify-between">
                                 <SheetTitle>
-                                    {packageData?.name || "Détails du package"} { packageId }
+                                    {packageData?.name || "Détails du package"}
                                 </SheetTitle>
                                 <div className="flex items-center gap-2 text-sm text-vaLightGray">
                                     <Calendar className="size-4" />
@@ -36,7 +36,7 @@ const SubscriptionDetailsSheet = ({ isOpenned, onClose, packageId, packageData, 
                         </div>
                         <div className="flex items-center gap-2">
                             <Badge type={packageData?.status} />
-                            <DropdownMenu>
+                            {/* <DropdownMenu>
                                 <DropdownMenuTrigger>
                                     <Button variant={"ghost"} size={"icon"}>
                                         <MoreVertical />
@@ -62,7 +62,7 @@ const SubscriptionDetailsSheet = ({ isOpenned, onClose, packageId, packageData, 
                                            Supprimer
                                         </DropdownMenuItem>
                                 </DropdownMenuContent>
-                            </DropdownMenu>
+                            </DropdownMenu> */}
                         </div>
                     </div>
                 </SheetHeader>
@@ -82,10 +82,10 @@ const SubscriptionDetailsSheet = ({ isOpenned, onClose, packageId, packageData, 
                         </div>
                     </div>
                     <Tabs defaultValue="desc" value={activeTab} onValueChange={(value) => setActiveTab(value)}>
-                        <TabsList className="w-full grid grid-cols-3">
+                        <TabsList className="w-full grid grid-cols-2">
                             <TabsTrigger value="desc">Description</TabsTrigger>
                             <TabsTrigger value="tarif">Tarifaction</TabsTrigger>
-                            <TabsTrigger value="fonctionalities">Fonctionnalités</TabsTrigger>
+                            {/* <TabsTrigger value="fonctionalities">Fonctionnalités</TabsTrigger> */}
                         </TabsList>
                     </Tabs>
                     {
@@ -98,11 +98,11 @@ const SubscriptionDetailsSheet = ({ isOpenned, onClose, packageId, packageData, 
                             <PackagePricing packageId={packageData?.id} />
                         )
                     }
-                    {
+                    {/* {
                         activeTab === "fonctionalities" && (
                             <PackageFeatures />
                         )
-                    }
+                    } */}
                 </DialogMainBody>
             </SheetContent>
         </Sheet>
