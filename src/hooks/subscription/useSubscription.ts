@@ -6,7 +6,6 @@ import { useGetMyPosition } from "@/hooks/__globlal/useGlobalHook";
 import {
   GetSubscriptionsPricingParams,
   PackageFormData,
-  UpdatePackageFormData,
 } from "@/types/subscription.types";
 
 export const usGetSubscriptionPacks = (country_code?: string) => {
@@ -108,7 +107,7 @@ export const useCreateSubscriptionPackage = () => {
   return useMutationProvider<PackageFormData, Awaited<ReturnType<typeof SubscriptionService.createSubscriptionPackage>>>(
     {
       mutationFn: SubscriptionService.createSubscriptionPackage,
-      successMessage: "Package créé.",
+      successMessage: "Package créé avec succes.",
       onSuccess: () => {
         void SubscriptionService.invalidateAllSubscriptionsList();
       },
@@ -118,10 +117,10 @@ export const useCreateSubscriptionPackage = () => {
 
 export const useUpdateSubscriptionPackage = (id?: string) => {
   return useMutationProvider<
-    UpdatePackageFormData,
+    PackageFormData,
     Awaited<ReturnType<typeof SubscriptionService.updateSubscriptionPackage>>
   >({
-    mutationFn: (data: UpdatePackageFormData) => {
+    mutationFn: (data: PackageFormData) => {
       if (!id) {
         throw new Error("Impossible de mettre à jour : l'ID est manquant");
       }

@@ -35,7 +35,7 @@ export const Navbar = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false)
 
     return (
-        <nav className="bg-vaPrimary h-[70px] lg:h-[94px] fixed top-0 left-0 w-full flex items-center justify-between px-3 lg:px-[40px] z-50 gap-2">
+        <nav className="bg-[#051534] h-[70px] lg:h-[94px] fixed top-0 left-0 w-full flex items-center justify-between px-3 lg:px-[40px] z-50 gap-2">
             {/* Overlay de recherche Mobile & Tablette */}
             {/* {isSearchOpen && (
                 <div className="absolute inset-0 bg-vaPrimary flex items-center px-4 z-[60] animate-in fade-in duration-200">
@@ -254,8 +254,8 @@ const UserOption: React.FC = () => {
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <div className="py-1 lg:pl-4 p-1 lg:border-l border-vaTextPrimary flex items-center gap-2 cursor-pointer hover:bg-white/10 rounded-full lg:rounded-r-full lg:rounded-l-none transition-all">
-                        <div className="size-8 lg:size-11 rounded-full bg-vaYellow overflow-hidden ring-2 ring-white/20 shrink-0">
-                            <Image src={data.getOrganisationLogo} alt={data.getUsername} width={48} height={48} className="size-full object-cover" />
+                        <div className="size-8 lg:size-11 rounded-full bg-vaYellow overflow-hidden flex items-center justify-center ring-2 ring-white/20 shrink-0">
+                            <Image src={data.getOrganisationLogo} alt={data.getUsername} width={200} height={200} className="object-cover size-12 lg:size-16" />
                         </div>
                         <div className="hidden lg:flex flex-col text-white max-w-[80px] xl:max-w-none gap-0">
                             <p className="text-sm xl:text-lg font-bold leading-tight truncate" title={data.getUsername} >{data.getUsername}</p>

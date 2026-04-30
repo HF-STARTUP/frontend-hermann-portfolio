@@ -78,6 +78,7 @@ export const UpdatePasswordForm = () => {
                 variant="mainBlue"
                 type="submit"
                 loading={loading}
+                fullWidth
             >
                 {loading ? "Mise à jour..." : "Enregistrer le nouveau mot de passe"}
             </Button>

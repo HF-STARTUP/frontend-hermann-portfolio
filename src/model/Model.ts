@@ -21,7 +21,7 @@ abstract class Model {
   }
 
   protected getAdminImage(path?: string | null) {
-    return path ? this.resolveImage(path) : "/assets/admin-default-image.png";
+    return path ? this.resolveImage(path) : "/assets/admin-default-cover.png";
   }
 
   protected getFleetImage(path?: string | null) {

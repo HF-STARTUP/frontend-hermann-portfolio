@@ -238,7 +238,7 @@ export interface PackageFormData {
   description: string;
   text_remise: string;
   text_limitation: string;
-  enable: boolean;
+  // enable: boolean;
   driver_number: number;
   vehicle_number: number;
 }

@@ -94,7 +94,7 @@ export default function LoginPage() {
 
                 <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#1A3F8C] to-[#031334]"></div>
 
-                <form className="sm:w-[500px] bg-white p-4 rounded-2xl relative z-20" onSubmit={handleSubmit(onSubmit)}>
+                <form className="sm:w-[500px] bg-white p-8 rounded-2xl relative z-20" onSubmit={handleSubmit(onSubmit)}>
                     <div className="mb-4 m-auto w-full flex items-center justify-center">
                         <AppLogo />
                     </div>
@@ -170,8 +170,8 @@ export function LoadingLoader({ className, ...props }: React.HTMLAttributes<HTML
 const AuthHead: React.FC<{ title: string, subtitle: string }> = ({ title, subtitle }) => {
     return (
         <div className="relative mb-[21px] lg:mb-[40px] text-center">
-            <h1 className="text-black text-2xl lg:text-[40.39px] font-bold leading-[62.83px]">{title}</h1>
-            <div className="text-gray-500 text-lg font-normal leading-[17.95px] mb-[30px]">{subtitle}</div>
+            <h1 className="text-black text-3xl font-bold leading-[62.83px]">{title}</h1>
+            <div className="text-gray-500 text-base font-normal leading-[17.95px] mb-[30px]">{subtitle}</div>
             <div className="w-full h-[0px] lg:border lg:border-slate-200"></div>
         </div>
     )
