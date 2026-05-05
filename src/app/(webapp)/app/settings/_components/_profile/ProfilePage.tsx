@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useId, useRef } from "react"
+import React, { useId, useRef, useState } from "react"
 import FormGroup from "@/components/box/FormGroup"
 import { SubmitHandler, useForm } from "react-hook-form"
 import { joiResolver } from "@hookform/resolvers/joi"
@@ -15,12 +15,29 @@ import Image from "next/image"
 import { Edit2 } from "lucide-react"
 import { UpdatePasswordForm } from "@/app/(protected)/dashboard/settings/password/_components/updatePasswordForm"
 import { useUpdateProfile } from "@/hooks/admin/useSettingsHook"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 const ProfilePage: React.FC = () => {
+    const [currentTab, setCurrentTab] = useState("profile")
     return (
         <div className="flex flex-col items-center gap-12 w-full">
-            <PersonalInfosForm />
-            <UpdatePasswordForm />
+            <Tabs value={currentTab} defaultValue={"profile"} onValueChange={(v) => setCurrentTab(v)}>
+                <TabsList className="w-full grid grid-cols-2 mb-8">
+                    <TabsTrigger value="profile">
+                        Profil
+                    </TabsTrigger>
+                    <TabsTrigger value="password">
+                        Mot de passe
+                    </TabsTrigger>
+
+                </TabsList>
+                <TabsContent value="profile">
+                    <PersonalInfosForm />
+                </TabsContent>
+                <TabsContent value="password">
+                    <UpdatePasswordForm />
+                </TabsContent>
+            </Tabs>
         </div>
     )
 }
@@ -42,7 +59,7 @@ const PersonalInfosForm = () => {
 
     const { data: profile, isLoading } = useUserProfile()
 
-  
+
 
     React.useEffect(() => {
         if (profile && !isLoading && profile._instance) {
@@ -64,15 +81,15 @@ const PersonalInfosForm = () => {
     const onSubmit: SubmitHandler<UpdateProfileInput> = (profileInfos) => {
         const profileId = AuthManagerGuard.getProfileID as string
         if (!profileId) return
-    
+
         onUpdateProfile({
             ...profileInfos,
             id: profileId,
             image: file
         })
     }
-    
-  
+
+
 
     if (isLoading) {
         return <Loading />
