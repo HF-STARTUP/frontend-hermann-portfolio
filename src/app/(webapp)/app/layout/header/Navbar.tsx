@@ -180,7 +180,6 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
                     <SelectGroup>
                         <SelectLabel>Sélectionnez une ville</SelectLabel>
                         <div className="px-2 mb-2"><Input placeholder="Rechercher..." value={filterCityToken} onChange={(e) => setFilterCityToken(e.target.value)} onClick={(e) => e.stopPropagation()} /></div>
-                        <SelectItem value="all">Toutes les villes</SelectItem>
                         {cityFiltered?.map((item) => (<SelectItem key={item.id} value={String(item.id)}>{item.name}</SelectItem>))}
                     </SelectGroup>
                 </SelectContent>
@@ -281,11 +280,11 @@ const UserOption: React.FC = () => {
                             <p className="text-sm font-medium text-vaTextPrimary">Paramètres</p>
                         </Link> */}
                         <div className="flex items-center gap-2">
-                            <Switch
+                            {/* <Switch
                                 className="data-[state=checked]:bg-vaLightGreen"
                                 onClick={() => setIsSwitchOpenned(true)}
                                 checked={AuthManagerGuard.getConnexionMode === ConnexionMode.Production}
-                            />
+                            /> */}
                             <span className="text-vaTextPrimary text-base">
                                 {AuthManagerGuard.getConnexionMode === ConnexionMode.Staging ? "Staging" : "Production"}
                             </span>
@@ -295,10 +294,10 @@ const UserOption: React.FC = () => {
                                 {AuthManagerGuard.getConnexionMode}
                             </Badge>
                         </div>
-                        <SwitchLoggingMode
+                        {/* <SwitchLoggingMode
                             isOpenned={isSwitchOpenned}
                             onClose={() => setIsSwitchOpenned(false)}
-                        />
+                        /> */}
                     </div>
                     <div className="p-4">
                         <div className="flex text-vaRed items-center gap-3 cursor-pointer" onClick={() => setIsLogoutOpenned(true)}>
