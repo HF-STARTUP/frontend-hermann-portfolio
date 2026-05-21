@@ -17,7 +17,7 @@ class UserProfile extends Model {
   }
 
   get image(){
-    return this._instance.Image ? this.resolveImage(this._instance.Image.path):null
+    return this._instance.Image ? this.resolveImage(this._instance.Image.path):"/assets/admin-default-cover.png"
   }
 
   get status(): AdminAccountStatus {
@@ -48,6 +48,10 @@ class UserProfile extends Model {
     const lastName = this._instance?.last_name ?? "";
     const firstName = this._instance?.first_name ?? "";
     return lastName + " " + firstName;
+  }
+
+  get email(){
+    return this._instance.user? this._instance.user.email : ""
   }
 
   get roles() {

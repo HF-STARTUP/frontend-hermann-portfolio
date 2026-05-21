@@ -75,7 +75,7 @@ export const useGetOperatorsRevenus = (inputs: OperatorRevenusInputs) => {
     ],
     queryFn: () =>
       FleetService.getOratorsRevenus({
-        currency_id: currencyId,
+        currency_id: currencyId.toString(),
         city_id: enable_city_id,
         ...inputs,
       }),

@@ -255,7 +255,7 @@ const UserOption: React.FC = () => {
                 <DropdownMenuTrigger asChild>
                     <div className="py-1 lg:pl-4 p-1 lg:border-l border-vaTextPrimary flex items-center gap-2 cursor-pointer hover:bg-white/10 rounded-full lg:rounded-r-full lg:rounded-l-none transition-all">
                         <div className="size-8 lg:size-11 rounded-full bg-vaYellow overflow-hidden flex items-center justify-center ring-2 ring-white/20 shrink-0">
-                            <Image src={data.getOrganisationLogo} alt={data.getUsername} width={200} height={200} className="object-cover size-12 lg:size-16" />
+                            <Image src={data.image} alt={data.getUsername} width={200} height={200} className="object-cover size-12 lg:size-16" />
                         </div>
                         <div className="hidden lg:flex flex-col text-white max-w-[80px] xl:max-w-none gap-0">
                             <p className="text-sm xl:text-lg font-bold leading-tight truncate" title={data.getUsername} >{data.getUsername}</p>
@@ -269,7 +269,7 @@ const UserOption: React.FC = () => {
                 <DropdownMenuContent align="end" className="w-64 rounded-2xl">
                     <div className="flex flex-col -space-y-1 px-4 border-b pb-4 pt-2">
                         <p className="text-lg font-bold">{data.username}</p>
-                        <p className="text-xs text-vaTextPrimary truncate">{data._instance.user.email}</p>
+                        <p className="text-xs text-vaTextPrimary truncate">{data.email}</p>
                     </div>
                     <div className="flex flex-col border-b p-4 gap-4">
                         {/* <Link href={"/app/settings"} className="flex items-center gap-2 hover:opacity-70">
