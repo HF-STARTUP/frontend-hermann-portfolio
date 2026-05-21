@@ -44,17 +44,17 @@ const useFleetHook = () => {
 
   const [fleetFilters, setFleetFilters] = useState<GetFleetsParams>(initialFilterState);
 
-  // Correction: Ajouter toutes les dépendances nécessaires
-  const apiParams: GetFleetsParams = useMemo(() => {
+  const apiParamsWithoutDates: GetFleetsParams = useMemo(() => {
+    const { created_from, created_to, ...rest } = fleetFilters;
     return {
-      ...fleetFilters,
+      ...rest,
       itemPerPage,
       page,
-      city_id: AuthManagerGuard.getEnabledCity, // Forcer la ville actuelle
+      city_id: AuthManagerGuard.getEnabledCity,
     };
   }, [page, itemPerPage, fleetFilters, AuthManagerGuard.getEnabledCity]);
 
-  const { data, isLoading, isFetching } = useGetFleetsList(apiParams);
+  const { data, isLoading, isFetching } = useGetFleetsList(apiParamsWithoutDates);
 
   const fleets = useMemo(() => data?.fleets ?? [], [data]);
 
@@ -102,10 +102,10 @@ const useFleetHook = () => {
         accessor: (item) =>
           item.suscription_name
             ? React.createElement(Badge, {
-                type: item.suscription_name,
-                icon: React.createElement(Crown),
-                isPackage: true
-              }, item.suscription_name)
+              type: item.suscription_name,
+              icon: React.createElement(Crown),
+              isPackage: true
+            }, item.suscription_name)
             : "Aucun abonnement actif",
       },
       {
@@ -221,10 +221,10 @@ const useFleetHook = () => {
   const hasActiveFilters = useMemo(() => {
     const { city_id, itemPerPage, page, ...filtersToCheck } = fleetFilters;
     const defaultCityId = AuthManagerGuard.getEnabledCity;
-    
+
     // Vérifier si la ville a changé par rapport à la valeur par défaut
     const hasCityFilter = city_id !== defaultCityId;
-    
+
     const hasOtherFilters = Object.values(filtersToCheck).some((value) => {
       if (Array.isArray(value)) {
         return value.length > 0;
@@ -239,7 +239,7 @@ const useFleetHook = () => {
         value !== "none"
       );
     });
-    
+
     return hasCityFilter || hasOtherFilters;
   }, [fleetFilters, AuthManagerGuard.getEnabledCity]);
 

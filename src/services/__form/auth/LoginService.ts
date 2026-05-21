@@ -1,7 +1,7 @@
 import {LoginInputs, LoginVerifyOtpInputs} from "@/schema/auth.schema";
 import Service from "@/services/Service";
 import {LoginOtpResponseData} from "@/types/__form/auth.type";
-import {AdminLoginResponseType, AdminProfileResponseType} from "@/types/__form/profile.type";
+import {AdminLoginResponseType, AdminProfileResponseType, AdminResponseData} from "@/types/__form/profile.type";
 import UserProfile from "@/model/user/User";
 
 enum LoginType {
@@ -61,13 +61,13 @@ class LoginService extends Service {
     }
 
     static async getProfileInfo() {
-        const response = await LoginService.getInstance().execHttpRequest<AdminProfileResponseType>({
+        const response = await LoginService.getInstance().execHttpRequest<AdminResponseData>({
             url: LoginService.profilePath,
             method: 'GET',
             secure: false,
         })
 
-        return new UserProfile(response)
+        return new UserProfile(response.data[0])
     }
 
     static refreshProfile() {
