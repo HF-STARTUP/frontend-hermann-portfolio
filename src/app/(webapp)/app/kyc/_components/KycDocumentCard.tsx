@@ -1,8 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { KycDocumentModel } from "@/model/ADMIN/KycSubmissionDetail";
 import { Button } from "@/components/ui/button";
+import { KycDocumentPreviewModal } from "./KycDocumentPreviewModal";
+import { downloadFileFromUrl } from "@/utils/func/downloadFile";
 import {
   Check,
   Clock3,
@@ -25,10 +28,23 @@ const iconBoxClasses: Record<string, string> = {
   default: "bg-zinc-100 text-gray-600",
 };
 
-export function KycDocumentCard({ document }: { document: KycDocumentModel }) {
-  const handleOpen = () => {
-    if (document.fileUrl) {
-      window.open(document.fileUrl, "_blank");
+export function KycDocumentCard({
+  document,
+  canModerate = false,
+}: {
+  document: KycDocumentModel;
+  canModerate?: boolean;
+}) {
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const handleDownload = async () => {
+    if (!document.fileUrl) return;
+    setIsDownloading(true);
+    try {
+      await downloadFileFromUrl(document.fileUrl, document.downloadFileName);
+    } finally {
+      setIsDownloading(false);
     }
   };
 
@@ -92,7 +108,7 @@ export function KycDocumentCard({ document }: { document: KycDocumentModel }) {
           variant="outline"
           size="sm"
           className="rounded-[10px] h-8 gap-1.5 text-xs border-gray-200 text-slate-500"
-          onClick={handleOpen}
+          onClick={() => setIsPreviewOpen(true)}
           disabled={!document.fileUrl}
         >
           <Eye className="size-3.5" />
@@ -102,8 +118,8 @@ export function KycDocumentCard({ document }: { document: KycDocumentModel }) {
           variant="outline"
           size="sm"
           className="rounded-[10px] h-8 gap-1.5 text-xs border-gray-200 text-slate-500"
-          onClick={handleOpen}
-          disabled={!document.fileUrl}
+          onClick={handleDownload}
+          disabled={!document.fileUrl || isDownloading}
         >
           <Download className="size-3.5" />
           Télécharger
@@ -129,6 +145,13 @@ export function KycDocumentCard({ document }: { document: KycDocumentModel }) {
           </button>
         </div>
       </div>
+
+      <KycDocumentPreviewModal
+        document={document}
+        open={isPreviewOpen}
+        onClose={() => setIsPreviewOpen(false)}
+        canModerate={canModerate}
+      />
     </div>
   );
 }

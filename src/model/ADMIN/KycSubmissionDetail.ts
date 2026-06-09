@@ -107,6 +107,57 @@ export class KycDocumentModel extends Model {
     return this._instance.file_url ?? undefined;
   }
 
+  get mimeType() {
+    return this._instance.mime_type ?? undefined;
+  }
+
+  get fileTypeLabel() {
+    const mime = this._instance.mime_type ?? "";
+    if (mime.includes("pdf")) return "PDF";
+    if (mime.includes("jpeg") || mime.includes("jpg")) return "JPG";
+    if (mime.includes("png")) return "PNG";
+    if (mime.includes("image")) return "IMG";
+    return formatMimeLabel(mime);
+  }
+
+  get fileSizeLabel() {
+    if (!this._instance.size) return "-";
+    return `${(this._instance.size / (1024 * 1024)).toFixed(1)} Mo`;
+  }
+
+  get isPdf() {
+    const mime = this._instance.mime_type ?? "";
+    const url = this._instance.file_url ?? "";
+    return mime.includes("pdf") || url.toLowerCase().includes(".pdf");
+  }
+
+  get isImage() {
+    const mime = this._instance.mime_type ?? "";
+    return mime.includes("image");
+  }
+
+  get requiredLabel() {
+    return this._instance.required === false ? "Non" : "Oui";
+  }
+
+  get isRequired() {
+    return this._instance.required !== false;
+  }
+
+  get originalName() {
+    return this._instance.original_name ?? undefined;
+  }
+
+  get downloadFileName() {
+    if (this._instance.original_name) {
+      return this._instance.original_name;
+    }
+
+    const safeLabel = this.label.replace(/[^\w\s-]/g, "").trim() || "document";
+    const ext = this.isPdf ? "pdf" : this.isImage ? "jpg" : "file";
+    return `${safeLabel}.${ext}`;
+  }
+
   get isOptional() {
     return this._instance.required === false;
   }

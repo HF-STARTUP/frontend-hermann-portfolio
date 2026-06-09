@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { KycSubmissionDetailModel } from "@/model/ADMIN/KycSubmissionDetail";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import { Download, FileText, History } from "lucide-react";
 import { KycDocumentCard } from "./KycDocumentCard";
 import { EmptyData } from "@/components/box/PageNetworkState";
 import { cn } from "@/lib/utils";
+import { downloadFileFromUrl } from "@/utils/func/downloadFile";
 
 const tabTriggerClass =
   "rounded-none border-b-2 border-transparent data-[state=active]:border-blue-800 data-[state=active]:text-blue-800 data-[state=inactive]:text-gray-600 data-[state=active]:bg-transparent data-[state=active]:rounded-none data-[state=active]:shadow-none bg-transparent shadow-none px-4 py-3 h-auto text-base font-medium leading-4 gap-2 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 [&_svg]:size-4 data-[state=active]:[&_svg]:text-blue-800 data-[state=inactive]:[&_svg]:text-gray-600";
@@ -17,13 +19,21 @@ export function KycDetailTabs({
   detail: KycSubmissionDetailModel;
 }) {
   const documents = detail.documents;
+  const [isDownloadingAll, setIsDownloadingAll] = useState(false);
 
-  const handleDownloadAll = () => {
-    documents.forEach((doc) => {
-      if (doc.fileUrl) {
-        window.open(doc.fileUrl, "_blank");
+  const handleDownloadAll = async () => {
+    const docsWithUrl = documents.filter((doc) => doc.fileUrl);
+    if (docsWithUrl.length === 0) return;
+
+    setIsDownloadingAll(true);
+    try {
+      for (const doc of docsWithUrl) {
+        await downloadFileFromUrl(doc.fileUrl!, doc.downloadFileName);
+        await new Promise((resolve) => setTimeout(resolve, 300));
       }
-    });
+    } finally {
+      setIsDownloadingAll(false);
+    }
   };
 
   return (
@@ -57,9 +67,9 @@ export function KycDetailTabs({
               size="sm"
               className="rounded-[10px] gap-2 text-sm border-gray-200 text-slate-500 h-10 px-4"
               onClick={handleDownloadAll}
-              disabled={documents.length === 0}>
+              disabled={documents.length === 0 || isDownloadingAll}>
               <Download className="size-4" />
-              Tout télécharger
+              {isDownloadingAll ? "Téléchargement..." : "Tout télécharger"}
             </Button>
           </div>
 
@@ -72,7 +82,11 @@ export function KycDetailTabs({
           ) : (
             <div className="grid grid-cols-1 xl:grid-cols-2 gap-4">
               {documents.map((doc) => (
-                <KycDocumentCard key={doc.id} document={doc} />
+                <KycDocumentCard
+                  key={doc.id}
+                  document={doc}
+                  canModerate={detail.canModerate}
+                />
               ))}
             </div>
           )}
