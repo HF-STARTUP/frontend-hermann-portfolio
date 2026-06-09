@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import React, { useMemo, useCallback, memo } from "react";
-import { MoreVertical } from "lucide-react";
+import { Loader2, MoreVertical } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -161,9 +161,14 @@ interface DataTableProps<T> {
     data: T[];
     pagination: PaginationProps;
     isLoading?: boolean;
+    isError?: boolean;
     rowActions?: (item: T) => RowAction<T>[];
     onRowClick?: (item: T) => void;
+    loadingRowId?: string | null;
+    getRowId?: (item: T) => string;
     emptyMessage?: string;
+    emptyContent?: React.ReactNode;
+    errorContent?: React.ReactNode;
     className?: string;
 }
 
@@ -271,12 +276,14 @@ const TableRow = memo(function TableRow<T>({
     hasActions,
     rowActions,
     onRowClick,
+    isLoading,
 }: {
     row: T;
     columns: Column<T>[];
     hasActions: boolean;
     rowActions?: (item: T) => RowAction<T>[];
     onRowClick?: (item: T) => void;
+    isLoading?: boolean;
 }) {
     // Utiliser les mêmes largeurs que l'en-tête
     const gridTemplateColumns = useMemo(() => {
@@ -288,16 +295,28 @@ const TableRow = memo(function TableRow<T>({
     return (
         <div
             role={onRowClick ? "button" : undefined}
-            tabIndex={onRowClick ? 0 : undefined}
-            onKeyDown={onRowClick ? (e) => e.key === "Enter" && onRowClick(row) : undefined}
-            className="grid items-center bg-white border border-[#E0E9FF] rounded-2xl transition-all group hover:bg-vaPrimary/5 hover:border-vaPrimary/20 duration-200 cursor-pointer py-2 px-2"
+            tabIndex={onRowClick && !isLoading ? 0 : undefined}
+            onKeyDown={onRowClick && !isLoading ? (e) => e.key === "Enter" && onRowClick(row) : undefined}
+            className={cn(
+                "grid items-center bg-white border border-[#E0E9FF] rounded-2xl transition-all group duration-200 py-2 px-2 relative",
+                isLoading
+                    ? "opacity-70 pointer-events-none border-vaPrimary/30 bg-vaPrimary/5"
+                    : onRowClick
+                      ? "cursor-pointer hover:bg-vaPrimary/5 hover:border-vaPrimary/20"
+                      : "",
+            )}
             style={{
                 display: 'grid',
                 gridTemplateColumns: gridTemplateColumns,
                 gap: '0.5rem'
             }}
-            onClick={onRowClick ? () => onRowClick(row) : undefined}
+            onClick={onRowClick && !isLoading ? () => onRowClick(row) : undefined}
         >
+            {isLoading && (
+                <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-white/60 z-10">
+                    <Loader2 className="size-5 animate-spin text-vaPrimary" />
+                </div>
+            )}
             {columns.map((col, colIdx) => {
                 const value = typeof col.accessor === "function"
                     ? col.accessor(row)
@@ -332,16 +351,22 @@ const TableRow = memo(function TableRow<T>({
     hasActions: boolean;
     rowActions?: (item: T) => RowAction<T>[];
     onRowClick?: (item: T) => void;
+    isLoading?: boolean;
 }) => JSX.Element;
 
 export function DataTable<T extends Record<string, any>>({ 
     columns, 
     data, 
     pagination, 
-    isLoading, 
+    isLoading,
+    isError,
     rowActions, 
     onRowClick,
+    loadingRowId,
+    getRowId,
     emptyMessage = "Aucune donnée à afficher",
+    emptyContent,
+    errorContent,
     className 
 }: DataTableProps<T>) {
     const hasActions = !!rowActions;
@@ -393,17 +418,26 @@ export function DataTable<T extends Record<string, any>>({
                                 rows={pagination.pageSize} 
                                 columns={columns.length + (hasActions ? 1 : 0)} 
                             />
+                        ) : isError && errorContent ? (
+                            errorContent
                         ) : data.length === 0 ? (
-                            <EmptyData message={emptyMessage} className="bg-transparent" />
+                            emptyContent ?? (
+                                <EmptyData message={emptyMessage} className="bg-transparent" />
+                            )
                         ) : (
                             data.map((row, index) => (
                                 <TableRow
-                                    key={index}
+                                    key={getRowId?.(row) ?? index}
                                     row={row}
                                     columns={columns}
                                     hasActions={hasActions}
                                     rowActions={rowActions}
                                     onRowClick={onRowClick}
+                                    isLoading={
+                                        !!loadingRowId &&
+                                        !!getRowId &&
+                                        getRowId(row) === loadingRowId
+                                    }
                                 />
                             ))
                         )}
@@ -411,7 +445,7 @@ export function DataTable<T extends Record<string, any>>({
                 </div>
             </div>
 
-            {!isLoading && data.length > 0 && (
+            {!isLoading && !isError && data.length > 0 && (
                 <div className="bg-white rounded-2xl">
                     <Pagination {...pagination} />
                 </div>

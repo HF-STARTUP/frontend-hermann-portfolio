@@ -5,7 +5,7 @@ import { DashboardIcon, LayoutListIcon, SettingIcon } from "@/components/ui/__ic
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, ArrowRightLeft, Crown } from "lucide-react";
+import { ChevronDown, ArrowRightLeft, Crown, ShieldCheck } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { LuMegaphone } from "react-icons/lu";
 import { PiMegaphone } from "react-icons/pi";
@@ -59,6 +59,11 @@ export const Sidebar = () => {
                 icon={<Crown />}
                 to={"/app/subscriptions"}
             />
+            <SidebarItem
+                label={"KYC & Vérifications"}
+                icon={<ShieldCheck />}
+                to={"/app/kyc"}
+            />
             <SidebarItemWithSubmenu
                 label={"Marketing & Campagnes"}
                 icon={<PiMegaphone className="w-6 h-6 -scale-x-100" />}
@@ -87,7 +92,7 @@ const SidebarItem: React.FC<React.HTMLAttributes<HTMLDivElement> & {
 }> = ({ label, icon, to }) => {
 
     const cur_path = usePathname()
-    const isActive = cur_path === to
+    const isActive = cur_path === to || (!!to && cur_path.startsWith(`${to}/`))
 
     return (
         <Link href={to ?? ""} className={"w-full"}>
