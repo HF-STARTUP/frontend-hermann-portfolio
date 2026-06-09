@@ -36,7 +36,7 @@ import { ReactNode } from "react";
 import { formatPhoneNumber } from "@/utils/func/formatPhoneNumber";
 
 const GRID_COLS =
-  "grid-cols-[minmax(220px,1.6fr)_minmax(120px,1fr)_minmax(150px,1fr)_minmax(100px,0.8fr)_minmax(130px,0.9fr)_minmax(120px,0.9fr)_minmax(70px,0.5fr)_minmax(170px,1.2fr)_minmax(90px,0.6fr)]";
+  "grid-cols-[minmax(220px,1.6fr)_minmax(120px,1fr)_minmax(150px,1fr)_minmax(170px,1.1fr)_minmax(130px,0.9fr)_minmax(120px,0.9fr)_minmax(70px,0.5fr)_minmax(170px,1.2fr)_minmax(90px,0.6fr)]";
 
 function TableCompletenessBar({ value }: { value: number }) {
   const clamped = Math.min(Math.max(value, 0), 100);
@@ -301,7 +301,7 @@ function TableRow({
         {formatPhoneNumber(item.phone)}
       </div>
 
-      <div className="px-3.5 py-5 text-sm text-gray-600 leading-5">
+      <div className="px-3.5 py-5 text-sm text-gray-600 leading-5 whitespace-nowrap">
         {item.submittedAt}
       </div>
 
@@ -478,7 +478,7 @@ export function KycSubmissionsTable({
       </div>
 
       <div className="overflow-x-auto custom-scrollbar min-w-0">
-        <div className="min-w-[1150px]">
+        <div className="min-w-[1220px]">
           <div
             className={cn(
               "grid bg-blue-950 text-white text-xs font-semibold tracking-tight leading-3",
