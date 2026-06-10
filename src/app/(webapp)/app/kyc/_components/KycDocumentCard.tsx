@@ -6,6 +6,8 @@ import { KycDocumentModel } from "@/model/ADMIN/KycSubmissionDetail";
 import { Button } from "@/components/ui/button";
 import { KycDocumentPreviewModal } from "./KycDocumentPreviewModal";
 import { downloadFileFromUrl } from "@/utils/func/downloadFile";
+import { useUpdateKycDocument } from "@/hooks/admin/useKycHook";
+import { KycDocumentType } from "@/types/admin/kyc.type";
 import {
   Check,
   Clock3,
@@ -13,6 +15,7 @@ import {
   Download,
   Eye,
   FileText,
+  Loader2,
   Upload,
   X,
 } from "lucide-react";
@@ -30,13 +33,32 @@ const iconBoxClasses: Record<string, string> = {
 
 export function KycDocumentCard({
   document,
+  submissionId,
   canModerate = false,
+  onDocumentUpdated,
 }: {
   document: KycDocumentModel;
+  submissionId: string;
   canModerate?: boolean;
+  onDocumentUpdated?: () => void;
 }) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const { loading: isUpdating, onUpdateDocument } = useUpdateKycDocument({
+    onSuccess: onDocumentUpdated,
+  });
+
+  const handleValidate = () => {
+    onUpdateDocument(submissionId, document.type as KycDocumentType, {
+      status: "approved",
+    });
+  };
+
+  const handleReject = () => {
+    onUpdateDocument(submissionId, document.type as KycDocumentType, {
+      status: "rejected",
+    });
+  };
 
   const handleDownload = async () => {
     if (!document.fileUrl) return;
@@ -125,32 +147,55 @@ export function KycDocumentCard({
           Télécharger
         </Button>
 
-        <div className="flex-1 flex justify-end items-center gap-1.5">
-          <button
-            type="button"
-            className={cn(
-              "size-8 rounded-[10px] border flex items-center justify-center transition-colors",
-              document.isValidated
-                ? "bg-emerald-600 border-emerald-600 text-white"
-                : "border-gray-200 text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200",
-            )}
-          >
-            <Check className="size-4" />
-          </button>
-          <button
-            type="button"
-            className="size-8 rounded-[10px] border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors"
-          >
-            <X className="size-4" />
-          </button>
-        </div>
+        {canModerate && (
+          <div className="flex-1 flex justify-end items-center gap-1.5">
+            <button
+              type="button"
+              onClick={handleValidate}
+              disabled={isUpdating || document.isValidated}
+              className={cn(
+                "size-8 rounded-[10px] border flex items-center justify-center transition-colors disabled:opacity-50",
+                document.isValidated
+                  ? "bg-emerald-600 border-emerald-600 text-white"
+                  : "border-gray-200 text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200",
+              )}
+              aria-label="Valider le document"
+            >
+              {isUpdating ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Check className="size-4" />
+              )}
+            </button>
+            <button
+              type="button"
+              onClick={handleReject}
+              disabled={isUpdating || document.isRejected}
+              className={cn(
+                "size-8 rounded-[10px] border flex items-center justify-center transition-colors disabled:opacity-50",
+                document.isRejected
+                  ? "bg-red-600 border-red-600 text-white"
+                  : "border-gray-200 text-gray-400 hover:bg-red-50 hover:text-red-600 hover:border-red-200",
+              )}
+              aria-label="Rejeter le document"
+            >
+              {isUpdating ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <X className="size-4" />
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       <KycDocumentPreviewModal
         document={document}
+        submissionId={submissionId}
         open={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
         canModerate={canModerate}
+        onDocumentUpdated={onDocumentUpdated}
       />
     </div>
   );

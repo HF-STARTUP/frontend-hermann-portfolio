@@ -5,10 +5,12 @@ import KycSubmissionModel from "@/model/ADMIN/KycSubmission";
 import KycSubmissionDetailModel from "@/model/ADMIN/KycSubmissionDetail";
 import {
   GetKycSubmissionsParams,
+  KycDocumentType,
   KycKpiData,
   KycSubmissionDetailResponseType,
   KycSubmissionsListResponse,
   RejectKycPayload,
+  UpdateKycDocumentPayload,
 } from "@/types/admin/kyc.type";
 
 export enum KycApiPath {
@@ -17,6 +19,7 @@ export enum KycApiPath {
   GetSubmissionDetail = "/admin-kyc/submissions/{id}",
   ApproveSubmission = "/admin-kyc/submissions/{id}/approve",
   RejectSubmission = "/admin-kyc/submissions/{id}/reject",
+  UpdateDocument = "/admin-kyc/submissions/{id}/documents/{type}",
 }
 
 class KycService extends Service {
@@ -73,6 +76,18 @@ class KycService extends Service {
     return KycService.makeRequest(url, "POST", payload);
   }
 
+  public static async updateDocument(
+    submissionId: string,
+    documentType: KycDocumentType,
+    payload: UpdateKycDocumentPayload,
+  ) {
+    const url = KycApiPath.UpdateDocument.replace("{id}", submissionId).replace(
+      "{type}",
+      documentType,
+    );
+    return KycService.makeRequest(url, "PATCH", payload);
+  }
+
   static invalidateKycData() {
     return Promise.all([
       KycService.getInstance().queryClient.invalidateQueries({
@@ -89,7 +104,7 @@ class KycService extends Service {
 
   protected static async makeRequest<T>(
     url: string,
-    method: "GET" | "POST" | "PUT" | "DELETE",
+    method: "GET" | "POST" | "PUT" | "PATCH" | "DELETE",
     body?: unknown,
     secure = true,
   ): Promise<T> {

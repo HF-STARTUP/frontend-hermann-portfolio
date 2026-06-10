@@ -97,13 +97,12 @@ export function KycBody() {
       <KycCrumb />
 
       <div className="flex items-center justify-between gap-4 min-h-10">
-        <h1 className="text-slate-500 text-4xl font-bold leading-10">
+        <h1 className="text-slate-500 text-3xl font-bold leading-10">
           Vérifications KYC
         </h1>
         <button
           type="button"
-          className="shrink-0 px-4 py-2.5 bg-white rounded-[10px] border border-gray-200 inline-flex items-center gap-2 text-slate-500 text-sm font-medium hover:bg-gray-50 transition-colors"
-        >
+          className="shrink-0 px-4 py-2.5 bg-white rounded-[10px] border border-gray-200 inline-flex items-center gap-2 text-slate-500 text-sm font-medium hover:bg-gray-50 transition-colors">
           <Download className="size-4" />
           Exporter
         </button>

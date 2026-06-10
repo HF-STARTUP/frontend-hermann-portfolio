@@ -10,7 +10,7 @@ const SiteNav: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({children}) => 
         <div>
             <Navbar/>
             <Sidebar/>
-            <div className={"ml-[320px] pt-[110px] mr-[100px]"}>
+            <div className={"lg:ml-[250px] pt-[110px] lg:mr-[60px] px-4 lg:px-0"}>
                 <main>
                     {children}
                 </main>

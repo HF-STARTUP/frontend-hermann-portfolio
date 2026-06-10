@@ -53,6 +53,11 @@ export type KycDocumentType =
 
 export type KycDocumentStatus = "approved" | "rejected" | "pending" | "validated";
 
+export type UpdateKycDocumentPayload = {
+  status?: Extract<KycDocumentStatus, "approved" | "rejected" | "pending">;
+  note?: string;
+};
+
 export type KycDocumentResponseType = {
   type: KycDocumentType | string;
   required?: boolean;

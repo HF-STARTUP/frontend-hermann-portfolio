@@ -172,6 +172,10 @@ export class KycDocumentModel extends Model {
       this._instance.status === "validated"
     );
   }
+
+  get isRejected() {
+    return this._instance.status === "rejected";
+  }
 }
 
 export class KycSubmissionDetailModel extends Model {

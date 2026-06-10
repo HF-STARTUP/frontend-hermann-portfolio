@@ -35,7 +35,7 @@ export const Sidebar = () => {
     return (
         <motion.div
             className={cn(
-                "lg:w-[290px] bg-[#051534] backdrop-blur-md border-t border-white text-white lg:h-[100vh] lg:pt-[100px] lg:px-0 lg:flex lg:flex-col lg:gap-[20px] fixed z-40 lg:justify-start lg:items-start",
+                "lg:w-[230px] bg-[#051534] backdrop-blur-md border-t border-white text-white lg:h-[100vh] lg:pt-[100px] lg:px-0 lg:flex lg:flex-col lg:gap-3 fixed z-40 lg:justify-start lg:items-start",
                 "w-[100%] lg:ml-0 lg:mb-0 lg:rounded-none h-[60px] bottom-0 flex items-center justify-around px-[7px] gap-1 lg:overflow-y-auto custom-scrollbar"
             )}
         >
@@ -51,22 +51,22 @@ export const Sidebar = () => {
             />
             <SidebarItem
                 label={"Transactions & Revenus"}
-                icon={<ArrowRightLeft className="rotate-45" />}
+                icon={<ArrowRightLeft className="size-5 rotate-45" />}
                 to={"/app/transactions"}
             />
             <SidebarItem
                 label={"Abonnements"}
-                icon={<Crown />}
+                icon={<Crown className="size-5" />}
                 to={"/app/subscriptions"}
             />
             <SidebarItem
                 label={"KYC & Vérifications"}
-                icon={<ShieldCheck />}
+                icon={<ShieldCheck className="size-5" />}
                 to={"/app/kyc"}
             />
             <SidebarItemWithSubmenu
                 label={"Marketing & Campagnes"}
-                icon={<PiMegaphone className="w-6 h-6 -scale-x-100" />}
+                icon={<PiMegaphone className="size-5 -scale-x-100" />}
                 subItems={[
                     // { label: "Dashboard", to: "/app/marketing/dashboard" },
                     // { label: "Campagnes", to: "/app/marketing/campagnes" },
@@ -97,11 +97,11 @@ const SidebarItem: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     return (
         <Link href={to ?? ""} className={"w-full"}>
             <div className={cn(
-                "flex gap-[11px] text-[16px] lg:pl-[33px] rounded-[1px] py-[10px] cursor-pointer hover:opacity-80 w-full",
+                "flex gap-2 text-sm lg:pl-5 rounded-[1px] py-2 cursor-pointer hover:opacity-80 w-full",
                 isActive && " bg-white/10 rounded-md text-white lg:rounded-none",
                 "flex items-center justify-center lg:justify-start"
             )}>
-                <div>{icon}</div>
+                <div className="shrink-0 [&_svg]:size-5">{icon}</div>
                 <div className="hidden lg:flex">{label}</div>
             </div>
         </Link>
@@ -163,19 +163,19 @@ const SidebarItemWithSubmenu: React.FC<{
             <div
                 onClick={handleToggle}
                 className={cn(
-                    "flex gap-[11px] text-[16px] lg:pl-[33px] rounded-[1px] py-[10px] cursor-pointer hover:opacity-80 w-full relative z-[100]",
+                    "flex gap-2 text-sm lg:pl-5 rounded-[1px] py-2 cursor-pointer hover:opacity-80 w-full relative z-[100]",
                     isActive && "lg:border-r-4 bg-white/10 rounded-md text-white lg:bg-transparent lg:text-white lg:rounded-none",
-                    "flex items-center justify-center lg:justify-between lg:pr-4"
+                    "flex items-center justify-center lg:justify-between lg:pr-3"
                 )}
             >
-                <div className="flex items-center gap-[11px]">
-                    <div className={cn(isActive && "text-white lg:text-white")}>{icon}</div>
+                <div className="flex items-center gap-2 min-w-0">
+                    <div className={cn("shrink-0 [&_svg]:size-5", isActive && "text-white lg:text-white")}>{icon}</div>
                     <div className="hidden lg:flex line-clamp-1 truncate">{label}</div>
                 </div>
                 <div className="hidden lg:block p-1">
                     <ChevronDown
                         className={cn(
-                            "w-4 h-4 transition-transform duration-200",
+                            "size-3.5 transition-transform duration-200",
                             isOpen && "rotate-180"
                         )}
                     />
@@ -191,7 +191,7 @@ const SidebarItemWithSubmenu: React.FC<{
                         exit={{ height: 0, opacity: 0 }}
                         className="overflow-hidden hidden lg:block"
                     >
-                        <div className="flex flex-col gap-1 pl-[44px] py-2">
+                        <div className="flex flex-col gap-1 pl-9 py-1.5">
                             {subItems.map((item) => (
                                 <Link
                                     key={item.to}

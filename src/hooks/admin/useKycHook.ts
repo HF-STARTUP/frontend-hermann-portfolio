@@ -4,7 +4,9 @@ import { useMutationProvider, useQueryProvider } from "@/hooks/hooksProvider";
 import KycService, { KycApiPath } from "@/services/admin/kyc/kycService";
 import {
   GetKycSubmissionsParams,
+  KycDocumentType,
   RejectKycPayload,
+  UpdateKycDocumentPayload,
 } from "@/types/admin/kyc.type";
 
 export const useGetKycKpis = () => {
@@ -79,4 +81,34 @@ export const useRejectKycSubmission = () => {
   }, [isSuccess]);
 
   return { data, loading, isSuccess, isError, error, onReject };
+};
+
+export const useUpdateKycDocument = (options?: { onSuccess?: () => void }) => {
+  const { data, loading, isSuccess, isError, error, handleMutation } =
+    useMutationProvider({
+      mutationFn: ({
+        submissionId,
+        documentType,
+        payload,
+      }: {
+        submissionId: string;
+        documentType: KycDocumentType;
+        payload: UpdateKycDocumentPayload;
+      }) => KycService.updateDocument(submissionId, documentType, payload),
+      successMessage: "Statut du document mis à jour.",
+      onSuccess: () => {
+        void KycService.invalidateKycData();
+        options?.onSuccess?.();
+      },
+    });
+
+  const onUpdateDocument = (
+    submissionId: string,
+    documentType: KycDocumentType,
+    payload: UpdateKycDocumentPayload,
+  ) => {
+    handleMutation({ submissionId, documentType, payload });
+  };
+
+  return { data, loading, isSuccess, isError, error, onUpdateDocument };
 };

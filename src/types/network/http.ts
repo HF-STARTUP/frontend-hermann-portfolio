@@ -26,7 +26,7 @@ export type GlobalResponseType<T> = {
 
 export type ExecHttpRequestOptionType = {
     url: string,
-    method: 'GET' | 'POST' | 'PUT' | "DELETE",
+    method: 'GET' | 'POST' | 'PUT' | 'PATCH' | "DELETE",
     headers?: AxiosRequestHeaders
     body?: any,
     toFormdata?: boolean,

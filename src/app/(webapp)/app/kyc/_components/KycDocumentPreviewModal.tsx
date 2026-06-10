@@ -4,6 +4,8 @@ import { ReactNode, useMemo, useState } from "react";
 import { KycDocumentModel } from "@/model/ADMIN/KycSubmissionDetail";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
+import { useUpdateKycDocument } from "@/hooks/admin/useKycHook";
+import { KycDocumentType } from "@/types/admin/kyc.type";
 import {
   Ban,
   Check,
@@ -22,9 +24,11 @@ import { downloadFileFromUrl } from "@/utils/func/downloadFile";
 
 interface KycDocumentPreviewModalProps {
   document: KycDocumentModel | null;
+  submissionId: string;
   open: boolean;
   onClose: () => void;
   canModerate?: boolean;
+  onDocumentUpdated?: () => void;
 }
 
 const statusSidebarClasses = {
@@ -61,14 +65,25 @@ function ToolbarButton({
 
 export function KycDocumentPreviewModal({
   document,
+  submissionId,
   open,
   onClose,
   canModerate = false,
+  onDocumentUpdated,
 }: KycDocumentPreviewModalProps) {
   const [zoom, setZoom] = useState(100);
   const [page, setPage] = useState(1);
   const [reviewNote, setReviewNote] = useState("");
   const [isDownloading, setIsDownloading] = useState(false);
+  const { loading: isUpdating, onUpdateDocument } = useUpdateKycDocument({
+    onSuccess: () => {
+      onDocumentUpdated?.();
+      setZoom(100);
+      setPage(1);
+      setReviewNote("");
+      onClose();
+    },
+  });
 
   const previewUrl = useMemo(() => {
     if (!document?.fileUrl) return "";
@@ -93,6 +108,24 @@ export function KycDocumentPreviewModal({
     } finally {
       setIsDownloading(false);
     }
+  };
+
+  const handleValidate = () => {
+    if (!document) return;
+    const note = reviewNote.trim();
+    onUpdateDocument(submissionId, document.type as KycDocumentType, {
+      status: "approved",
+      ...(note ? { note } : {}),
+    });
+  };
+
+  const handleReject = () => {
+    if (!document) return;
+    const note = reviewNote.trim();
+    onUpdateDocument(submissionId, document.type as KycDocumentType, {
+      status: "rejected",
+      ...(note ? { note } : {}),
+    });
   };
 
   if (!document) return null;
@@ -234,11 +267,19 @@ export function KycDocumentPreviewModal({
                 <Button
                   variant="outline"
                   className="w-full rounded-[10px] border-red-600 text-red-600 hover:bg-red-50 gap-2 h-11"
+                  onClick={handleReject}
+                  loading={isUpdating}
+                  disabled={document.isRejected}
                 >
                   <Ban className="size-4" />
                   Rejeter le document
                 </Button>
-                <Button className="w-full rounded-[10px] bg-emerald-600 hover:bg-emerald-700 text-white gap-2 h-11">
+                <Button
+                  className="w-full rounded-[10px] bg-emerald-600 hover:bg-emerald-700 text-white gap-2 h-11"
+                  onClick={handleValidate}
+                  loading={isUpdating}
+                  disabled={document.isValidated}
+                >
                   <CheckCircle2 className="size-4" />
                   Valider le document
                 </Button>

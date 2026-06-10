@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { KycCrumb } from "../_components/KycCrumb";
 import { useGetKycSubmissionDetail } from "@/hooks/admin/useKycHook";
@@ -23,6 +23,10 @@ export function KycDetailBody() {
   const [isApproveOpen, setIsApproveOpen] = useState(false);
   const [isRejectOpen, setIsRejectOpen] = useState(false);
   const [processing, setProcessing] = useState(false);
+
+  const handleDocumentUpdated = useCallback(() => {
+    void refetch();
+  }, [refetch]);
 
   if (isLoading) {
     return (
@@ -67,7 +71,10 @@ export function KycDetailBody() {
         onReject={() => setIsRejectOpen(true)}
       />
 
-      <KycDetailTabs detail={detail} />
+      <KycDetailTabs
+        detail={detail}
+        onDocumentUpdated={handleDocumentUpdated}
+      />
 
       <ApproveKycDialog
         isOpen={isApproveOpen}

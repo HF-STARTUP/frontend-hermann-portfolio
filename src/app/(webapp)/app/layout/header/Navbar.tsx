@@ -60,7 +60,7 @@ export const Navbar = () => {
                     <MobileExtraMenu />
                 </div>
 
-                <div className="lg:w-[290px]">
+                <div className="lg:w-[230px]">
                     <Image className="h-[18px] lg:h-[23px] w-auto shrink-0" width={169} height={23} src={logo_icon} alt="Logo" />
                 </div>
                 {/* Recherche : Masquée jusqu'à 2xl pour laisser place aux stats */}

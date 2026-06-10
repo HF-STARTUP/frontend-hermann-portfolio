@@ -15,8 +15,10 @@ const tabTriggerClass =
 
 export function KycDetailTabs({
   detail,
+  onDocumentUpdated,
 }: {
   detail: KycSubmissionDetailModel;
+  onDocumentUpdated?: () => void;
 }) {
   const documents = detail.documents;
   const [isDownloadingAll, setIsDownloadingAll] = useState(false);
@@ -85,7 +87,9 @@ export function KycDetailTabs({
                 <KycDocumentCard
                   key={doc.id}
                   document={doc}
+                  submissionId={detail.kycId}
                   canModerate={detail.canModerate}
+                  onDocumentUpdated={onDocumentUpdated}
                 />
               ))}
             </div>

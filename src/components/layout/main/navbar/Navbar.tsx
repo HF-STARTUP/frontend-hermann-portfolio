@@ -29,7 +29,7 @@ const Navbar = () => {
             <Container>
                 <div className={'py-[22px] flex justify-center align-bottom'}>
                     <div className={'flex flex-1 justify-start items-center'}>
-                        <AppLogo/>
+                        <AppLogo size="sm" />
                         <ul className={'hidden lg:flex gap-[30px] pl-[40px]  h-[43px] items-center'}>
                             {primaryNavLinks.map((link, key) => (
                                 <li key={key}>
