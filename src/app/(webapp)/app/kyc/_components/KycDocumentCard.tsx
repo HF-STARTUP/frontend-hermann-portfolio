@@ -70,10 +70,9 @@ export function KycDocumentCard({
     }
   };
 
-  const iconBox =
-    document.isIdentity
-      ? iconBoxClasses.identity
-      : iconBoxClasses.default;
+  const iconBox = document.isIdentity
+    ? iconBoxClasses.identity
+    : iconBoxClasses.default;
 
   return (
     <div className="p-4 rounded-xl border border-gray-200 bg-white flex flex-col gap-3">
@@ -82,8 +81,7 @@ export function KycDocumentCard({
           className={cn(
             "size-12 rounded-xl flex items-center justify-center shrink-0",
             iconBox,
-          )}
-        >
+          )}>
           {document.isIdentity ? (
             <CreditCard className="size-6" />
           ) : (
@@ -109,8 +107,7 @@ export function KycDocumentCard({
           className={cn(
             "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0",
             statusClasses[document.statusVariant],
-          )}
-        >
+          )}>
           {document.statusVariant === "green" ? (
             <Check className="size-3" />
           ) : (
@@ -131,8 +128,7 @@ export function KycDocumentCard({
           size="sm"
           className="rounded-[10px] h-8 gap-1.5 text-xs border-gray-200 text-slate-500"
           onClick={() => setIsPreviewOpen(true)}
-          disabled={!document.fileUrl}
-        >
+          disabled={!document.fileUrl}>
           <Eye className="size-3.5" />
           Aperçu
         </Button>
@@ -141,52 +137,49 @@ export function KycDocumentCard({
           size="sm"
           className="rounded-[10px] h-8 gap-1.5 text-xs border-gray-200 text-slate-500"
           onClick={handleDownload}
-          disabled={!document.fileUrl || isDownloading}
-        >
+          disabled={!document.fileUrl || isDownloading}>
           <Download className="size-3.5" />
           Télécharger
         </Button>
 
-        {canModerate && (
-          <div className="flex-1 flex justify-end items-center gap-1.5">
-            <button
-              type="button"
-              onClick={handleValidate}
-              disabled={isUpdating || document.isValidated}
-              className={cn(
-                "size-8 rounded-[10px] border flex items-center justify-center transition-colors disabled:opacity-50",
-                document.isValidated
-                  ? "bg-emerald-600 border-emerald-600 text-white"
-                  : "border-gray-200 text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200",
-              )}
-              aria-label="Valider le document"
-            >
-              {isUpdating ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Check className="size-4" />
-              )}
-            </button>
-            <button
-              type="button"
-              onClick={handleReject}
-              disabled={isUpdating || document.isRejected}
-              className={cn(
-                "size-8 rounded-[10px] border flex items-center justify-center transition-colors disabled:opacity-50",
-                document.isRejected
-                  ? "bg-red-600 border-red-600 text-white"
-                  : "border-gray-200 text-gray-400 hover:bg-red-50 hover:text-red-600 hover:border-red-200",
-              )}
-              aria-label="Rejeter le document"
-            >
-              {isUpdating ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <X className="size-4" />
-              )}
-            </button>
-          </div>
-        )}
+        {/* {canModerate && ( */}
+        <div className="flex-1 flex justify-end items-center gap-1.5">
+          <button
+            type="button"
+            onClick={handleValidate}
+            disabled={isUpdating || document.isValidated}
+            className={cn(
+              "size-8 rounded-[10px] border flex items-center justify-center transition-colors disabled:opacity-50",
+              document.isValidated
+                ? "bg-emerald-600 border-emerald-600 text-white"
+                : "border-gray-200 text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200",
+            )}
+            aria-label="Valider le document">
+            {isUpdating ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <Check className="size-4" />
+            )}
+          </button>
+          <button
+            type="button"
+            onClick={handleReject}
+            disabled={isUpdating || document.isRejected}
+            className={cn(
+              "size-8 rounded-[10px] border flex items-center justify-center transition-colors disabled:opacity-50",
+              document.isRejected
+                ? "bg-red-600 border-red-600 text-white"
+                : "border-gray-200 text-gray-400 hover:bg-red-50 hover:text-red-600 hover:border-red-200",
+            )}
+            aria-label="Rejeter le document">
+            {isUpdating ? (
+              <Loader2 className="size-4 animate-spin" />
+            ) : (
+              <X className="size-4" />
+            )}
+          </button>
+        </div>
+        {/* )} */}
       </div>
 
       <KycDocumentPreviewModal
