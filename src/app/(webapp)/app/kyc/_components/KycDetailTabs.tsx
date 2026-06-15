@@ -9,6 +9,8 @@ import { KycDocumentCard } from "./KycDocumentCard";
 import { EmptyData } from "@/components/box/PageNetworkState";
 import { cn } from "@/lib/utils";
 import { downloadFileFromUrl } from "@/utils/func/downloadFile";
+import { useGetKycSubmissionHistory } from "@/hooks/admin/useKycHook";
+import { KycAuditHistoryPanel } from "./KycAuditHistoryPanel";
 
 const tabTriggerClass =
   "rounded-none border-b-2 border-transparent data-[state=active]:border-blue-800 data-[state=active]:text-blue-800 data-[state=inactive]:text-gray-600 data-[state=active]:bg-transparent data-[state=active]:rounded-none data-[state=active]:shadow-none bg-transparent shadow-none px-4 py-3 h-auto text-base font-medium leading-4 gap-2 ring-0 focus-visible:ring-0 focus-visible:ring-offset-0 [&_svg]:size-4 data-[state=active]:[&_svg]:text-blue-800 data-[state=inactive]:[&_svg]:text-gray-600";
@@ -22,6 +24,14 @@ export function KycDetailTabs({
 }) {
   const documents = detail.documents;
   const [isDownloadingAll, setIsDownloadingAll] = useState(false);
+  const [activeTab, setActiveTab] = useState("documents");
+
+  const {
+    data: auditHistory,
+    isLoading: isHistoryLoading,
+    isError: isHistoryError,
+    refetch: refetchHistory,
+  } = useGetKycSubmissionHistory(detail.kycId, activeTab === "audit");
 
   const handleDownloadAll = async () => {
     const docsWithUrl = documents.filter((doc) => doc.fileUrl);
@@ -39,7 +49,10 @@ export function KycDetailTabs({
   };
 
   return (
-    <Tabs defaultValue="documents" className="w-full">
+    <Tabs
+      value={activeTab}
+      onValueChange={setActiveTab}
+      className="w-full">
       <TabsList className="bg-transparent border-b border-gray-200 rounded-none w-full justify-start h-auto p-0 gap-1">
         <TabsTrigger value="documents" className={tabTriggerClass}>
           <FileText className="size-4" />
@@ -97,36 +110,13 @@ export function KycDetailTabs({
         </div>
       </TabsContent>
 
-      <TabsContent value="audit" className="mt-4">
-        <div className="bg-white rounded-2xl shadow-[0_4px_7px_0_rgba(0,0,0,0.10)] px-6 py-8">
-          {detail.auditHistory.length === 0 ? (
-            <EmptyData
-              message="Aucun historique"
-              description="Aucune action d'audit enregistrée pour ce dossier."
-              className="h-[280px]"
-            />
-          ) : (
-            <div className="space-y-3">
-              {detail.auditHistory.map((event, index) => (
-                <div
-                  key={event.id ?? index}
-                  className="border border-gray-200 rounded-xl p-4">
-                  <p className="font-medium text-neutral-950 text-sm">
-                    {event.action ?? "Action"}
-                  </p>
-                  {event.actor && (
-                    <p className="text-xs text-gray-400 mt-1">{event.actor}</p>
-                  )}
-                  {event.comment && (
-                    <p className="text-sm text-gray-600 mt-2">
-                      {event.comment}
-                    </p>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+      <TabsContent value="audit" className="mt-3">
+        <KycAuditHistoryPanel
+          events={auditHistory}
+          isLoading={isHistoryLoading}
+          isError={isHistoryError}
+          onRetry={() => refetchHistory()}
+        />
       </TabsContent>
     </Tabs>
   );

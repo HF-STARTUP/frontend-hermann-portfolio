@@ -20,6 +20,15 @@ export const KycRejectReasonMap: Record<KycRejectionReason, string> = {
   autre: "Autre",
 };
 
+export function buildKycRejectionNote(
+  reasonCode: KycRejectionReason,
+  comment?: string,
+): string {
+  const reasonLabel = KycRejectReasonMap[reasonCode];
+  const trimmedComment = comment?.trim();
+  return trimmedComment ? `${reasonLabel} — ${trimmedComment}` : reasonLabel;
+}
+
 export const getKycStatusVariant = (
   status?: KycStatus,
 ): "green" | "blue" | "red" | "default" | "orange" => {

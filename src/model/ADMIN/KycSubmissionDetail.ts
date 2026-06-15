@@ -176,6 +176,102 @@ export class KycDocumentModel extends Model {
   get isRejected() {
     return this._instance.status === "rejected";
   }
+
+  get isPending() {
+    return !this.isValidated && !this.isRejected;
+  }
+}
+
+export class KycAuditEventModel extends Model {
+  private _instance: KycAuditEventResponseType;
+
+  constructor(data: KycAuditEventResponseType) {
+    super();
+    this._instance = data;
+  }
+
+  get type() {
+    return this._instance.type;
+  }
+
+  get action() {
+    return this._instance.label;
+  }
+
+  get actorKind() {
+    return this._instance.actor.kind;
+  }
+
+  get actorLabel() {
+    const name = this._instance.actor.name?.trim();
+    if (name) return name;
+
+    switch (this._instance.actor.kind) {
+      case "admin":
+        return "Administrateur";
+      case "client":
+        return "Client";
+      case "system":
+        return "Système";
+      default:
+        return undefined;
+    }
+  }
+
+  get comment() {
+    return this._instance.comment?.trim() || undefined;
+  }
+
+  get documentType() {
+    return this._instance.document_type ?? undefined;
+  }
+
+  get documentLabel() {
+    if (!this._instance.document_type) return undefined;
+    return getDocumentLabel(this._instance.document_type);
+  }
+
+  get createdAt() {
+    return this._instance.at
+      ? this.formatDateTime(this._instance.at)
+      : undefined;
+  }
+
+  get createdAtTimeline() {
+    if (!this._instance.at) return undefined;
+
+    const dateObj = new Date(this._instance.at);
+    if (isNaN(dateObj.getTime())) return undefined;
+
+    const datePart = new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    }).format(dateObj);
+
+    const timePart = new Intl.DateTimeFormat("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+    }).format(dateObj);
+
+    return `${datePart} · ${timePart}`;
+  }
+
+  get timelineVariant(): "success" | "rejected" | "review" | "upload" | "init" {
+    const label = this._instance.label.toLowerCase();
+
+    if (label.includes("rejet")) return "rejected";
+    if (label.includes("approuv") || label.includes("valid")) return "success";
+    if (this._instance.type === "kyc_initiated") return "init";
+    if (this._instance.type === "document_uploaded") return "upload";
+
+    return "review";
+  }
+
+  static fromArray(data: KycAuditEventResponseType[]): KycAuditEventModel[] {
+    return data.map((item) => new KycAuditEventModel(item));
+  }
 }
 
 export class KycSubmissionDetailModel extends Model {

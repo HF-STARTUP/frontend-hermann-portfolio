@@ -37,6 +37,19 @@ export const useGetKycSubmissionDetail = (id?: string) => {
   return { isLoading, data, isError, error, refetch };
 };
 
+export const useGetKycSubmissionHistory = (
+  id?: string,
+  enabled = true,
+) => {
+  const { isLoading, data, isError, error, refetch, isFetching } = useQuery({
+    queryKey: [KycApiPath.GetSubmissionHistory, id],
+    queryFn: () => KycService.getSubmissionHistory(id!),
+    enabled: !!id && enabled,
+  });
+
+  return { isLoading, data, isError, error, refetch, isFetching };
+};
+
 export const useApproveKycSubmission = () => {
   const { data, loading, isSuccess, isError, error, handleMutation } =
     useMutationProvider({

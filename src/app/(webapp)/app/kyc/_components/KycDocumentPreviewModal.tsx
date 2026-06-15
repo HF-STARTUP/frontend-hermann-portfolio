@@ -29,6 +29,7 @@ interface KycDocumentPreviewModalProps {
   onClose: () => void;
   canModerate?: boolean;
   onDocumentUpdated?: () => void;
+  onRequestReject?: () => void;
 }
 
 const statusSidebarClasses = {
@@ -70,6 +71,7 @@ export function KycDocumentPreviewModal({
   onClose,
   canModerate = false,
   onDocumentUpdated,
+  onRequestReject,
 }: KycDocumentPreviewModalProps) {
   const [zoom, setZoom] = useState(100);
   const [page, setPage] = useState(1);
@@ -120,12 +122,7 @@ export function KycDocumentPreviewModal({
   };
 
   const handleReject = () => {
-    if (!document) return;
-    const note = reviewNote.trim();
-    onUpdateDocument(submissionId, document.type as KycDocumentType, {
-      status: "rejected",
-      ...(note ? { note } : {}),
-    });
+    onRequestReject?.();
   };
 
   if (!document) return null;
@@ -268,7 +265,6 @@ export function KycDocumentPreviewModal({
                   variant="outline"
                   className="w-full rounded-[10px] border-red-600 text-red-600 hover:bg-red-50 gap-2 h-11"
                   onClick={handleReject}
-                  loading={isUpdating}
                   disabled={document.isRejected}
                 >
                   <Ban className="size-4" />
