@@ -356,11 +356,11 @@ export class KycSubmissionDetailModel extends Model {
   }
 
   get rccmNumber() {
-    return this._instance.rccm_number || "Non renseigné";
+    return this._instance.rccm_number || "XX XXX XXX XXX";
   }
 
   get ncc() {
-    return this._instance.ncc || "Non renseigné";
+    return this._instance.ncc || "XX XXX XXX XXX";
   }
 
   get registeredAt() {

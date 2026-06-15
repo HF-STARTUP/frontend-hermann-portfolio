@@ -137,7 +137,9 @@ export function KycDocumentCard({
             <KycSystemValidationBadge validation="pending" />
           ) : (
             <>
-              <KycSystemValidationBadge validation={document.systemValidation} />
+              <KycSystemValidationBadge
+                validation={document.systemValidation}
+              />
               {document.systemValidation === "invalid" &&
                 document.systemMessage && (
                   <p className="text-xs text-orange-700 leading-4">
