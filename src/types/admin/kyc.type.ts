@@ -53,6 +53,8 @@ export type KycDocumentType =
 
 export type KycDocumentStatus = "approved" | "rejected" | "pending" | "validated";
 
+export type KycSystemValidation = "pending" | "valid" | "invalid" | "error";
+
 export type UpdateKycDocumentPayload = {
   status?: Extract<KycDocumentStatus, "approved" | "rejected" | "pending">;
   note?: string;
@@ -67,8 +69,13 @@ export type KycDocumentResponseType = {
   mime_type?: string | null;
   size?: number | null;
   original_name?: string | null;
+  note?: string | null;
   uploaded_at?: string | null;
   updated_at?: string | null;
+  system_validation?: KycSystemValidation;
+  system_message?: string | null;
+  system_confidence?: number | null;
+  system_validated_at?: string | null;
 };
 
 export type KycAuditActorKind = "admin" | "client" | "system";

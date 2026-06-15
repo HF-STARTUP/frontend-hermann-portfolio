@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { KycSubmissionDetailModel } from "@/model/ADMIN/KycSubmissionDetail";
 import { Button } from "@/components/ui/button";
-import { Download, FileText, History } from "lucide-react";
+import { Download, FileText, History, Loader2, RefreshCw } from "lucide-react";
 import { KycDocumentCard } from "./KycDocumentCard";
 import { EmptyData } from "@/components/box/PageNetworkState";
 import { cn } from "@/lib/utils";
@@ -18,9 +18,13 @@ const tabTriggerClass =
 export function KycDetailTabs({
   detail,
   onDocumentUpdated,
+  isRefreshing = false,
+  onRefresh,
 }: {
   detail: KycSubmissionDetailModel;
   onDocumentUpdated?: () => void;
+  isRefreshing?: boolean;
+  onRefresh?: () => void;
 }) {
   const documents = detail.documents;
   const [isDownloadingAll, setIsDownloadingAll] = useState(false);
@@ -77,15 +81,36 @@ export function KycDetailTabs({
                 Documents soumis
               </h2>
             </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="rounded-[10px] gap-2 text-sm border-gray-200 text-slate-500 h-10 px-4"
-              onClick={handleDownloadAll}
-              disabled={documents.length === 0 || isDownloadingAll}>
-              <Download className="size-4" />
-              {isDownloadingAll ? "Téléchargement..." : "Tout télécharger"}
-            </Button>
+            <div className="flex items-center gap-2">
+              {detail.hasPendingSystemValidation && (
+                <span className="inline-flex items-center gap-1.5 text-xs text-gray-500">
+                  <Loader2 className="size-3.5 animate-spin" />
+                  Analyse IA en cours…
+                </span>
+              )}
+              {onRefresh && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="rounded-[10px] gap-2 text-sm border-gray-200 text-slate-500 h-10 px-4"
+                  onClick={onRefresh}
+                  disabled={isRefreshing}>
+                  <RefreshCw
+                    className={cn("size-4", isRefreshing && "animate-spin")}
+                  />
+                  Rafraîchir
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                className="rounded-[10px] gap-2 text-sm border-gray-200 text-slate-500 h-10 px-4"
+                onClick={handleDownloadAll}
+                disabled={documents.length === 0 || isDownloadingAll}>
+                <Download className="size-4" />
+                {isDownloadingAll ? "Téléchargement..." : "Tout télécharger"}
+              </Button>
+            </div>
           </div>
 
           {documents.length === 0 ? (

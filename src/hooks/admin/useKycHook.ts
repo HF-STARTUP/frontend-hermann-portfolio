@@ -28,13 +28,18 @@ export const useGetKycSubmissions = (params: GetKycSubmissionsParams) => {
 };
 
 export const useGetKycSubmissionDetail = (id?: string) => {
-  const { isLoading, data, isError, error, refetch } = useQuery({
+  const { isLoading, data, isError, error, refetch, isFetching } = useQuery({
     queryKey: [KycApiPath.GetSubmissionDetail, id],
     queryFn: () => KycService.getSubmissionById(id!),
     enabled: !!id,
+    refetchInterval: (query) => {
+      const detail = query.state.data;
+      if (!detail?.hasPendingSystemValidation) return false;
+      return 4000;
+    },
   });
 
-  return { isLoading, data, isError, error, refetch };
+  return { isLoading, data, isError, error, refetch, isFetching };
 };
 
 export const useGetKycSubmissionHistory = (

@@ -6,6 +6,7 @@ import { KycDocumentModel } from "@/model/ADMIN/KycSubmissionDetail";
 import { Button } from "@/components/ui/button";
 import { KycDocumentPreviewModal } from "./KycDocumentPreviewModal";
 import { RejectKycDialog } from "./RejectKycDialog";
+import { KycSystemValidationBadge } from "./KycSystemValidationBadge";
 import { downloadFileFromUrl } from "@/utils/func/downloadFile";
 import { useUpdateKycDocument } from "@/hooks/admin/useKycHook";
 import { KycDocumentType } from "@/types/admin/kyc.type";
@@ -105,7 +106,7 @@ export function KycDocumentCard({
 
         <span
           className={cn(
-            "inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0",
+            "inline-flex w-max items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap shrink-0",
             statusClasses[document.statusVariant],
           )}>
           {document.statusVariant === "green" ? (
@@ -121,6 +122,32 @@ export function KycDocumentCard({
         <Upload className="size-3.5" />
         Téléversé le {document.uploadedAt}
       </div>
+
+      {document.showSystemValidation && (
+        <div className="flex flex-col gap-1.5">
+          <KycSystemValidationBadge validation={document.systemValidation} />
+          {document.systemValidation === "invalid" &&
+            document.systemMessage && (
+              <p className="text-xs text-orange-700 leading-4">
+                {document.systemMessage}
+              </p>
+            )}
+          {(document.systemValidatedAt ||
+            document.systemConfidencePercent != null) && (
+            <p className="text-[11px] text-gray-400 leading-4">
+              {document.systemValidatedAt && (
+                <span>Analysé le {document.systemValidatedAt}</span>
+              )}
+              {document.systemValidatedAt &&
+                document.systemConfidencePercent != null &&
+                " · "}
+              {document.systemConfidencePercent != null && (
+                <span>Confiance {document.systemConfidencePercent} %</span>
+              )}
+            </p>
+          )}
+        </div>
+      )}
 
       <div className="pt-3 border-t border-gray-100 flex items-center gap-2">
         <Button

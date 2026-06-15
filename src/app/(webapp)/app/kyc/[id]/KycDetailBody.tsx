@@ -17,7 +17,7 @@ export function KycDetailBody() {
   const router = useRouter();
   const kycId = params?.id as string;
 
-  const { data: detail, isLoading, isError, refetch } =
+  const { data: detail, isLoading, isError, refetch, isFetching } =
     useGetKycSubmissionDetail(kycId);
 
   const [isApproveOpen, setIsApproveOpen] = useState(false);
@@ -74,6 +74,8 @@ export function KycDetailBody() {
       <KycDetailTabs
         detail={detail}
         onDocumentUpdated={handleDocumentUpdated}
+        isRefreshing={isFetching && !isLoading}
+        onRefresh={() => void refetch()}
       />
 
       <ApproveKycDialog

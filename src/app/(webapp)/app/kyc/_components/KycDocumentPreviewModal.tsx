@@ -21,6 +21,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { downloadFileFromUrl } from "@/utils/func/downloadFile";
+import { KycSystemValidationBadge } from "./KycSystemValidationBadge";
 
 interface KycDocumentPreviewModalProps {
   document: KycDocumentModel | null;
@@ -247,6 +248,30 @@ export function KycDocumentPreviewModal({
                   {document.statusLabel}
                 </span>
               </MetaRow>
+              {document.showSystemValidation && (
+                <>
+                  <MetaRow label="Pré-validation IA">
+                    <KycSystemValidationBadge
+                      validation={document.systemValidation}
+                    />
+                  </MetaRow>
+                  {document.systemMessage && (
+                    <MetaRow label="Analyse IA" value={document.systemMessage} />
+                  )}
+                  {document.systemConfidencePercent != null && (
+                    <MetaRow
+                      label="Confiance IA"
+                      value={`${document.systemConfidencePercent} %`}
+                    />
+                  )}
+                  {document.systemValidatedAt && (
+                    <MetaRow
+                      label="Analysé le"
+                      value={document.systemValidatedAt}
+                    />
+                  )}
+                </>
+              )}
             </div>
 
             <div className="pb-4">

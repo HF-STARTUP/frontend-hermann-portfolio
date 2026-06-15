@@ -1,4 +1,9 @@
-import { KycOwnerType, KycRejectionReason, KycStatus } from "@/types/admin/kyc.type";
+import {
+  KycOwnerType,
+  KycRejectionReason,
+  KycStatus,
+  KycSystemValidation,
+} from "@/types/admin/kyc.type";
 
 export const KycOwnerTypeMap: Record<KycOwnerType, string> = {
   particulier: "Entrepreneur",
@@ -94,5 +99,27 @@ export const getKycDocumentStatusVariant = (
       return "red";
     default:
       return "orange";
+  }
+};
+
+export const KycSystemValidationMap: Record<KycSystemValidation, string> = {
+  pending: "Analyse en cours…",
+  valid: "Conforme (IA)",
+  invalid: "Non conforme (IA)",
+  error: "Analyse indisponible",
+};
+
+export const getKycSystemValidationVariant = (
+  validation: KycSystemValidation,
+): "gray" | "green" | "red" | "neutral" => {
+  switch (validation) {
+    case "valid":
+      return "green";
+    case "invalid":
+      return "red";
+    case "error":
+      return "neutral";
+    default:
+      return "gray";
   }
 };

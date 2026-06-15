@@ -5,6 +5,7 @@ import {
   KycOwnerType,
   KycStatus,
   KycSubmissionDetailResponseType,
+  KycSystemValidation,
 } from "@/types/admin/kyc.type";
 import { getAvatarColor, getAvatarInitials } from "@/lib/initials.avatar.util";
 
@@ -179,6 +180,38 @@ export class KycDocumentModel extends Model {
 
   get isPending() {
     return !this.isValidated && !this.isRejected;
+  }
+
+  get provided() {
+    return this._instance.provided === true;
+  }
+
+  get systemValidation(): KycSystemValidation {
+    return this._instance.system_validation ?? "pending";
+  }
+
+  get systemMessage() {
+    return this._instance.system_message?.trim() || undefined;
+  }
+
+  get systemConfidence() {
+    return this._instance.system_confidence ?? undefined;
+  }
+
+  get systemConfidencePercent() {
+    const confidence = this._instance.system_confidence;
+    if (confidence == null) return undefined;
+    return Math.round(confidence * 100);
+  }
+
+  get systemValidatedAt() {
+    return this._instance.system_validated_at
+      ? this.formatDateTime(this._instance.system_validated_at)
+      : undefined;
+  }
+
+  get showSystemValidation() {
+    return this.provided && this.isPending;
   }
 }
 
@@ -365,6 +398,13 @@ export class KycSubmissionDetailModel extends Model {
 
   get auditHistory(): KycAuditEventResponseType[] {
     return this._instance.audit_history ?? [];
+  }
+
+  get hasPendingSystemValidation() {
+    return this.documents.some(
+      (doc) =>
+        doc.showSystemValidation && doc.systemValidation === "pending",
+    );
   }
 }
 
