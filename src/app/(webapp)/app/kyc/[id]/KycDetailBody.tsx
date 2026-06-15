@@ -1,9 +1,14 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { KycCrumb } from "../_components/KycCrumb";
-import { useGetKycSubmissionDetail } from "@/hooks/admin/useKycHook";
+import {
+  useGetKycSubmissionDetail,
+  useRelaunchKycDocumentSystemValidation,
+} from "@/hooks/admin/useKycHook";
+import KycService from "@/services/admin/kyc/kycService";
+import { KycDocumentType } from "@/types/admin/kyc.type";
 import { KycDetailHeader } from "../_components/KycDetailHeader";
 import { KycDetailTabs } from "../_components/KycDetailTabs";
 import { ApproveKycDialog } from "../_components/ApproveKycDialog";
@@ -17,12 +22,70 @@ export function KycDetailBody() {
   const router = useRouter();
   const kycId = params?.id as string;
 
-  const { data: detail, isLoading, isError, refetch, isFetching } =
-    useGetKycSubmissionDetail(kycId);
+  const {
+    data: detail,
+    isLoading,
+    isError,
+    refetch,
+    isFetching,
+  } = useGetKycSubmissionDetail(kycId);
 
   const [isApproveOpen, setIsApproveOpen] = useState(false);
   const [isRejectOpen, setIsRejectOpen] = useState(false);
   const [processing, setProcessing] = useState(false);
+  const [reanalyzingDocumentTypes, setReanalyzingDocumentTypes] = useState<
+    string[]
+  >([]);
+  const relaunchingDocumentTypeRef = useRef<string | null>(null);
+
+  const { onRelaunch: onRelaunchDocumentAnalysis, loading: isRelaunching } =
+    useRelaunchKycDocumentSystemValidation({
+      onSuccess: () => void refetch(),
+    });
+
+  useEffect(() => {
+    if (!isRelaunching && relaunchingDocumentTypeRef.current) {
+      const documentType = relaunchingDocumentTypeRef.current;
+      relaunchingDocumentTypeRef.current = null;
+      setReanalyzingDocumentTypes((prev) =>
+        prev.filter((type) => type !== documentType),
+      );
+    }
+  }, [isRelaunching]);
+
+  const handleRelaunchDocumentAnalysis = useCallback(
+    (documentType: string) => {
+      relaunchingDocumentTypeRef.current = documentType;
+      setReanalyzingDocumentTypes((prev) =>
+        prev.includes(documentType) ? prev : [...prev, documentType],
+      );
+      onRelaunchDocumentAnalysis(kycId, documentType as KycDocumentType);
+    },
+    [kycId, onRelaunchDocumentAnalysis],
+  );
+
+  const handleRelaunchAllPendingAnalysis = useCallback(async () => {
+    if (!detail) return;
+
+    const pendingDocs = detail.documents.filter((doc) => doc.showSystemValidation);
+    if (pendingDocs.length === 0) return;
+
+    setReanalyzingDocumentTypes(pendingDocs.map((doc) => doc.type));
+
+    try {
+      await Promise.all(
+        pendingDocs.map((doc) =>
+          KycService.relaunchDocumentSystemValidation(
+            kycId,
+            doc.type as KycDocumentType,
+          ),
+        ),
+      );
+      await refetch();
+    } finally {
+      setReanalyzingDocumentTypes([]);
+    }
+  }, [detail, kycId, refetch]);
 
   const handleDocumentUpdated = useCallback(() => {
     void refetch();
@@ -76,6 +139,9 @@ export function KycDetailBody() {
         onDocumentUpdated={handleDocumentUpdated}
         isRefreshing={isFetching && !isLoading}
         onRefresh={() => void refetch()}
+        reanalyzingDocumentTypes={reanalyzingDocumentTypes}
+        onRelaunchDocumentAnalysis={handleRelaunchDocumentAnalysis}
+        onRelaunchAllPendingAnalysis={handleRelaunchAllPendingAnalysis}
       />
 
       <ApproveKycDialog

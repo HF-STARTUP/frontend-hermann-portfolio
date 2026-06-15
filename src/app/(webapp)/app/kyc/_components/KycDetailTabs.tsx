@@ -20,15 +20,26 @@ export function KycDetailTabs({
   onDocumentUpdated,
   isRefreshing = false,
   onRefresh,
+  reanalyzingDocumentTypes = [],
+  onRelaunchDocumentAnalysis,
+  onRelaunchAllPendingAnalysis,
 }: {
   detail: KycSubmissionDetailModel;
   onDocumentUpdated?: () => void;
   isRefreshing?: boolean;
   onRefresh?: () => void;
+  reanalyzingDocumentTypes?: string[];
+  onRelaunchDocumentAnalysis?: (documentType: string) => void;
+  onRelaunchAllPendingAnalysis?: () => void;
 }) {
   const documents = detail.documents;
+  const pendingAnalysisDocuments = documents.filter(
+    (doc) => doc.showSystemValidation,
+  );
   const [isDownloadingAll, setIsDownloadingAll] = useState(false);
   const [activeTab, setActiveTab] = useState("documents");
+  const isSystemValidationInProgress =
+    detail.hasPendingSystemValidation || reanalyzingDocumentTypes.length > 0;
 
   const {
     data: auditHistory,
@@ -53,10 +64,7 @@ export function KycDetailTabs({
   };
 
   return (
-    <Tabs
-      value={activeTab}
-      onValueChange={setActiveTab}
-      className="w-full">
+    <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
       <TabsList className="bg-transparent border-b border-gray-200 rounded-none w-full justify-start h-auto p-0 gap-1">
         <TabsTrigger value="documents" className={tabTriggerClass}>
           <FileText className="size-4" />
@@ -82,12 +90,29 @@ export function KycDetailTabs({
               </h2>
             </div>
             <div className="flex items-center gap-2">
-              {detail.hasPendingSystemValidation && (
+              {isSystemValidationInProgress && (
                 <span className="inline-flex items-center gap-1.5 text-xs text-gray-500">
                   <Loader2 className="size-3.5 animate-spin" />
                   Analyse IA en cours…
                 </span>
               )}
+              {onRelaunchAllPendingAnalysis &&
+                pendingAnalysisDocuments.length > 0 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="rounded-[10px] gap-2 text-sm border-gray-200 text-slate-500 h-10 px-4"
+                    onClick={onRelaunchAllPendingAnalysis}
+                    disabled={isSystemValidationInProgress}>
+                    <RefreshCw
+                      className={cn(
+                        "size-4",
+                        isSystemValidationInProgress && "animate-spin",
+                      )}
+                    />
+                    Analyse IA
+                  </Button>
+                )}
               {onRefresh && (
                 <Button
                   variant="outline"
@@ -128,6 +153,12 @@ export function KycDetailTabs({
                   submissionId={detail.kycId}
                   canModerate={detail.canModerate}
                   onDocumentUpdated={onDocumentUpdated}
+                  isReanalyzing={reanalyzingDocumentTypes.includes(doc.type)}
+                  onRelaunchAnalysis={
+                    doc.showSystemValidation
+                      ? () => onRelaunchDocumentAnalysis?.(doc.type)
+                      : undefined
+                  }
                 />
               ))}
             </div>

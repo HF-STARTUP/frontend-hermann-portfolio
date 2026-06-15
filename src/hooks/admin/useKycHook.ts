@@ -130,3 +130,32 @@ export const useUpdateKycDocument = (options?: { onSuccess?: () => void }) => {
 
   return { data, loading, isSuccess, isError, error, onUpdateDocument };
 };
+
+export const useRelaunchKycDocumentSystemValidation = (options?: {
+  onSuccess?: () => void;
+}) => {
+  const { loading, handleMutation } = useMutationProvider({
+    mutationFn: ({
+      submissionId,
+      documentType,
+    }: {
+      submissionId: string;
+      documentType: KycDocumentType;
+    }) =>
+      KycService.relaunchDocumentSystemValidation(submissionId, documentType),
+    successMessage: "",
+    onSuccess: () => {
+      void KycService.invalidateKycData();
+      options?.onSuccess?.();
+    },
+  });
+
+  const onRelaunch = (
+    submissionId: string,
+    documentType: KycDocumentType,
+  ) => {
+    handleMutation({ submissionId, documentType });
+  };
+
+  return { loading, onRelaunch };
+};

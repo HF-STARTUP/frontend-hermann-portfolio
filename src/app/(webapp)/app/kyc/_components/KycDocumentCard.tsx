@@ -18,6 +18,7 @@ import {
   Eye,
   FileText,
   Loader2,
+  RefreshCw,
   Upload,
   X,
 } from "lucide-react";
@@ -38,11 +39,15 @@ export function KycDocumentCard({
   submissionId,
   canModerate = false,
   onDocumentUpdated,
+  isReanalyzing = false,
+  onRelaunchAnalysis,
 }: {
   document: KycDocumentModel;
   submissionId: string;
   canModerate?: boolean;
   onDocumentUpdated?: () => void;
+  isReanalyzing?: boolean;
+  onRelaunchAnalysis?: () => void;
 }) {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isRejectOpen, setIsRejectOpen] = useState(false);
@@ -74,6 +79,9 @@ export function KycDocumentCard({
   const iconBox = document.isIdentity
     ? iconBoxClasses.identity
     : iconBoxClasses.default;
+
+  const isAnalysisInProgress =
+    isReanalyzing || document.systemValidation === "pending";
 
   return (
     <div className="p-4 rounded-xl border border-gray-200 bg-white flex flex-col gap-3">
@@ -125,26 +133,32 @@ export function KycDocumentCard({
 
       {document.showSystemValidation && (
         <div className="flex flex-col gap-1.5">
-          <KycSystemValidationBadge validation={document.systemValidation} />
-          {document.systemValidation === "invalid" &&
-            document.systemMessage && (
-              <p className="text-xs text-orange-700 leading-4">
-                {document.systemMessage}
-              </p>
-            )}
-          {(document.systemValidatedAt ||
-            document.systemConfidencePercent != null) && (
-            <p className="text-[11px] text-gray-400 leading-4">
-              {document.systemValidatedAt && (
-                <span>Analysé le {document.systemValidatedAt}</span>
+          {isAnalysisInProgress ? (
+            <KycSystemValidationBadge validation="pending" />
+          ) : (
+            <>
+              <KycSystemValidationBadge validation={document.systemValidation} />
+              {document.systemValidation === "invalid" &&
+                document.systemMessage && (
+                  <p className="text-xs text-orange-700 leading-4">
+                    {document.systemMessage}
+                  </p>
+                )}
+              {(document.systemValidatedAt ||
+                document.systemConfidencePercent != null) && (
+                <p className="text-[11px] text-gray-400 leading-4">
+                  {document.systemValidatedAt && (
+                    <span>Analysé le {document.systemValidatedAt}</span>
+                  )}
+                  {document.systemValidatedAt &&
+                    document.systemConfidencePercent != null &&
+                    " · "}
+                  {document.systemConfidencePercent != null && (
+                    <span>Confiance {document.systemConfidencePercent} %</span>
+                  )}
+                </p>
               )}
-              {document.systemValidatedAt &&
-                document.systemConfidencePercent != null &&
-                " · "}
-              {document.systemConfidencePercent != null && (
-                <span>Confiance {document.systemConfidencePercent} %</span>
-              )}
-            </p>
+            </>
           )}
         </div>
       )}
@@ -171,6 +185,20 @@ export function KycDocumentCard({
 
         {document.isPending && (
           <div className="flex-1 flex justify-end items-center gap-1.5">
+            {onRelaunchAnalysis && (
+              <button
+                type="button"
+                onClick={onRelaunchAnalysis}
+                disabled={isReanalyzing}
+                className="size-8 rounded-[10px] border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-sky-50 hover:text-sky-600 hover:border-sky-200 transition-colors disabled:opacity-50"
+                aria-label="Relancer l'analyse IA">
+                {isReanalyzing ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="size-4" />
+                )}
+              </button>
+            )}
             <button
               type="button"
               onClick={handleValidate}

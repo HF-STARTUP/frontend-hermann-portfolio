@@ -23,6 +23,7 @@ export enum KycApiPath {
   ApproveSubmission = "/admin-kyc/submissions/{id}/approve",
   RejectSubmission = "/admin-kyc/submissions/{id}/reject",
   UpdateDocument = "/admin-kyc/submissions/{id}/documents/{type}",
+  RelaunchDocumentSystemValidation = "/admin-kyc/submissions/{id}/documents/{type}/system-validation",
   GetSubmissionHistory = "/admin-kyc/submissions/{id}/history",
 }
 
@@ -90,6 +91,17 @@ class KycService extends Service {
       documentType,
     );
     return KycService.makeRequest(url, "PATCH", payload);
+  }
+
+  public static async relaunchDocumentSystemValidation(
+    submissionId: string,
+    documentType: KycDocumentType,
+  ) {
+    const url = KycApiPath.RelaunchDocumentSystemValidation.replace(
+      "{id}",
+      submissionId,
+    ).replace("{type}", documentType);
+    return KycService.makeRequest(url, "POST", {});
   }
 
   public static async getSubmissionHistory(id: string) {
