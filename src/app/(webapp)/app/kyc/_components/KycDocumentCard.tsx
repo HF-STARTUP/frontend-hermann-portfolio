@@ -201,30 +201,34 @@ export function KycDocumentCard({
                 )}
               </button>
             )}
-            <button
-              type="button"
-              onClick={handleValidate}
-              disabled={isUpdating}
-              className="size-8 rounded-[10px] border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-colors disabled:opacity-50"
-              aria-label="Valider le document">
-              {isUpdating ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <Check className="size-4" />
-              )}
-            </button>
-            <button
-              type="button"
-              onClick={handleReject}
-              disabled={isUpdating}
-              className="size-8 rounded-[10px] border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors disabled:opacity-50"
-              aria-label="Rejeter le document">
-              {isUpdating ? (
-                <Loader2 className="size-4 animate-spin" />
-              ) : (
-                <X className="size-4" />
-              )}
-            </button>
+            {canModerate && (
+              <>
+                <button
+                  type="button"
+                  onClick={handleValidate}
+                  disabled={isUpdating}
+                  className="size-8 rounded-[10px] border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-colors disabled:opacity-50"
+                  aria-label="Valider le document">
+                  {isUpdating ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <Check className="size-4" />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleReject}
+                  disabled={isUpdating}
+                  className="size-8 rounded-[10px] border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors disabled:opacity-50"
+                  aria-label="Rejeter le document">
+                  {isUpdating ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : (
+                    <X className="size-4" />
+                  )}
+                </button>
+              </>
+            )}
           </div>
         )}
       </div>
