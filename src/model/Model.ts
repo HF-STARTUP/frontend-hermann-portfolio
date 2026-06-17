@@ -28,6 +28,50 @@ abstract class Model {
     return path ? this.resolveImage(path) : "/assets/default-fleet-logo.png";
   }
 
+  protected formatRelativeOrAbsoluteDate(dateInput: string): string {
+    if (!dateInput) return "";
+
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return dateInput;
+
+    const now = new Date();
+
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const startOfTarget = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+    const diffTime = startOfTarget.getTime() - startOfToday.getTime();
+    const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const timeString = `${hours}h${minutes}`;
+
+    if (diffDays === 0) {
+      return `aujourd'hui à ${timeString}`;
+    } else if (diffDays === -1) {
+      return `hier à ${timeString}`;
+    } else if (diffDays === -2) {
+      return `il y a deux jours à ${timeString}`;
+    }
+
+    const diffInMs = now.getTime() - date.getTime();
+    const diffInWeeks = Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 7));
+    const diffInMonths = Math.floor(diffInMs / (1000 * 60 * 60 * 24 * 30.4375));
+
+    if (diffInMs > 0) {
+      if (diffInWeeks === 1) return "il y a une semaine";
+      if (diffInMonths === 1) return "il y a un mois";
+      if (diffInMonths > 1 && diffInMonths < 12) return `il y a ${diffInMonths} mois`;
+    }
+
+    const day = date.getDate();
+    let month = new Intl.DateTimeFormat('fr-FR', { month: 'long' }).format(date);
+    month = month.charAt(0).toUpperCase() + month.slice(1);
+    const year = date.getFullYear();
+
+    return `${day} ${month} ${year} à ${timeString}`;
+  }
+
   protected formatDateTime(date: string): string {
     if (!date) return "";
 
@@ -57,6 +101,7 @@ abstract class Model {
 
     return `${parts.join(" ")} à ${formattedTime}`;
   }
+
 
   public getDifferenceInDays(dateLeft: Date, dateRight: Date): number {
     return differenceInDays(dateLeft, dateRight);

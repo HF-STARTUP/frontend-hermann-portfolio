@@ -11,6 +11,7 @@ import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import notify from "@/utils/func/notification";
 import { DashboardParams } from "@/types/dashboard.type";
 import { toIsoDate } from "@/services/Service";
+import { FleetStatusMap } from "../utils";
 
 
 
@@ -182,16 +183,16 @@ const useFleetHook = () => {
       const actions: RowAction<FleetModel>[] = [
         {
           id: "suspend",
-          label: "Suspendre",
+          label: item.statusDisplay == "locked" ?"Activer":"Suspendre",
           onClick: (fleet) => handleSuspend(fleet),
           variant: "ghost",
         },
-        {
-          id: "debug_mode",
-          label: "Mode débogage",
-          variant: "vaBlue",
-          onClick: (fleet) => handleDebudMode(fleet),
-        },
+        // {
+        //   id: "debug_mode",
+        //   label: "Mode débogage",
+        //   variant: "vaBlue",
+        //   onClick: (fleet) => handleDebudMode(fleet),
+        // },
       ];
       if (!item.hasActiveSubscription) {
         actions.push({
