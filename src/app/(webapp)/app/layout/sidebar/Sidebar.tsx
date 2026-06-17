@@ -5,7 +5,7 @@ import { DashboardIcon, LayoutListIcon, SettingIcon } from "@/components/ui/__ic
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ChevronDown, ArrowRightLeft, Crown, ShieldCheck } from "lucide-react";
+import { ChevronDown, ArrowRightLeft, Crown, ShieldCheck, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
 import { LuMegaphone } from "react-icons/lu";
 import { PiMegaphone } from "react-icons/pi";
@@ -80,6 +80,11 @@ export const Sidebar = () => {
                 label={"Paramètres"}
                 icon={<SettingIcon />}
                 to={"/app/settings"}
+            />
+            <SidebarItem
+                label={"Clients à risque"}
+                icon={<AlertTriangle className="size-5" />}
+                to={"/app/at-risk-customers"}
             />
         </motion.div>
     )
