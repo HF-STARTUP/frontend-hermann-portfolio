@@ -9,18 +9,26 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { useRejectKycSubmission } from "@/hooks/admin/useKycHook";
-import { KycRejectionReason } from "@/types/admin/kyc.type";
+import {
+  useRejectKycSubmission,
+  useUpdateKycDocument,
+} from "@/hooks/admin/useKycHook";
+import { KycDocumentType, KycRejectionReason } from "@/types/admin/kyc.type";
 import notify from "@/utils/func/notification";
-import { Ban, X } from "lucide-react";
+import { Ban, FileText, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { KycRejectReasonMap } from "../utils";
+import { buildKycRejectionNote, KycRejectReasonMap } from "../utils";
 import { cn } from "@/lib/utils";
+
+type RejectKycDialogVariant = "submission" | "document";
 
 interface RejectKycDialogProps {
   isOpen: boolean;
   onClose: () => void;
+  variant?: RejectKycDialogVariant;
   submissionId?: string;
+  documentType?: KycDocumentType;
+  documentLabel?: string;
   clientName?: string;
   clientCode?: string;
   avatarInitials?: string;
@@ -32,7 +40,10 @@ interface RejectKycDialogProps {
 export function RejectKycDialog({
   isOpen,
   onClose,
+  variant = "submission",
   submissionId,
+  documentType,
+  documentLabel,
   clientName,
   clientCode,
   avatarInitials,
@@ -40,9 +51,23 @@ export function RejectKycDialog({
   onLoadingChange,
   onSuccess,
 }: RejectKycDialogProps) {
-  const { loading, isSuccess, onReject } = useRejectKycSubmission();
+  const {
+    loading: submissionLoading,
+    isSuccess: submissionSuccess,
+    onReject,
+  } = useRejectKycSubmission();
+  const {
+    loading: documentLoading,
+    isSuccess: documentSuccess,
+    onUpdateDocument,
+  } = useUpdateKycDocument();
+
   const [reasonCode, setReasonCode] = useState<KycRejectionReason | "">("");
   const [comment, setComment] = useState("");
+
+  const isDocumentVariant = variant === "document";
+  const loading = isDocumentVariant ? documentLoading : submissionLoading;
+  const isSuccess = isDocumentVariant ? documentSuccess : submissionSuccess;
 
   useEffect(() => {
     onLoadingChange?.(loading);
@@ -67,7 +92,20 @@ export function RejectKycDialog({
     }
 
     if (reasonCode === "autre" && !comment.trim()) {
-      notify("Le commentaire est obligatoire pour le motif « Autre ».", "warning");
+      notify(
+        "Le commentaire est obligatoire pour le motif « Autre ».",
+        "warning",
+      );
+      return;
+    }
+
+    if (isDocumentVariant) {
+      if (!documentType) return;
+
+      onUpdateDocument(submissionId, documentType, {
+        status: "rejected",
+        note: buildKycRejectionNote(reasonCode, comment),
+      });
       return;
     }
 
@@ -95,37 +133,52 @@ export function RejectKycDialog({
                 <Ban className="size-5" />
               </div>
               <DialogTitle className="text-lg font-bold text-[#000B20]">
-                Rejeter le KYC
+                {isDocumentVariant ? "Rejeter le document" : "Rejeter le KYC"}
               </DialogTitle>
             </div>
-            <button
+            {/* <button
               type="button"
               onClick={handleClose}
               className="text-[#A3AED0] hover:text-[#506D82] transition-colors"
             >
               <X className="size-5" />
-            </button>
+            </button> */}
           </div>
         </DialogHeader>
 
         <div className="px-6 pb-6 space-y-5">
           <div className="flex items-center gap-3 bg-[#F4F7FE] rounded-xl p-4">
-            <div
-              className={cn(
-                "size-11 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0",
-                avatarColor ?? "bg-orange-500",
-              )}
-            >
-              {avatarInitials ?? clientName?.slice(0, 2).toUpperCase()}
-            </div>
-            <div className="min-w-0">
-              <p className="font-semibold text-[#000B20] truncate">
-                {clientName}
-              </p>
-              {clientCode && (
-                <p className="text-xs text-[#A3AED0]">{clientCode}</p>
-              )}
-            </div>
+            {isDocumentVariant ? (
+              <>
+                <div className="size-11 rounded-xl bg-white text-vaRed flex items-center justify-center shrink-0">
+                  <FileText className="size-5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="font-semibold text-[#000B20] truncate">
+                    {documentLabel}
+                  </p>
+                  <p className="text-xs text-[#A3AED0]">Document KYC</p>
+                </div>
+              </>
+            ) : (
+              <>
+                <div
+                  className={cn(
+                    "size-11 rounded-full flex items-center justify-center text-white text-sm font-bold shrink-0",
+                    avatarColor ?? "bg-orange-500",
+                  )}>
+                  {avatarInitials ?? clientName?.slice(0, 2).toUpperCase()}
+                </div>
+                <div className="min-w-0">
+                  <p className="font-semibold text-[#000B20] truncate">
+                    {clientName}
+                  </p>
+                  {clientCode && (
+                    <p className="text-xs text-[#A3AED0]">{clientCode}</p>
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
           <div className="space-y-3">
@@ -137,20 +190,21 @@ export function RejectKycDialog({
               onValueChange={(value) =>
                 setReasonCode(value as KycRejectionReason)
               }
-              className="space-y-2"
-            >
+              className="space-y-2">
               {Object.entries(KycRejectReasonMap).map(([value, label]) => (
                 <label
                   key={value}
-                  htmlFor={`reject-${value}`}
+                  htmlFor={`reject-${variant}-${value}`}
                   className={cn(
                     "flex items-center gap-3 border rounded-xl px-4 py-3 cursor-pointer transition-colors",
                     reasonCode === value
                       ? "border-vaMainBlue bg-vaMainBlue/5"
                       : "border-[#E9EAEC] hover:border-[#A3AED0]",
-                  )}
-                >
-                  <RadioGroupItem value={value} id={`reject-${value}`} />
+                  )}>
+                  <RadioGroupItem
+                    value={value}
+                    id={`reject-${variant}-${value}`}
+                  />
                   <span className="text-sm text-[#506D82]">{label}</span>
                 </label>
               ))}
@@ -174,8 +228,7 @@ export function RejectKycDialog({
               variant="outline"
               className="rounded-xl"
               onClick={handleClose}
-              disabled={loading}
-            >
+              disabled={loading}>
               Annuler
             </Button>
             <Button
@@ -183,8 +236,7 @@ export function RejectKycDialog({
               className="rounded-xl border-vaRed text-vaRed hover:bg-vaRed/5 gap-2"
               onClick={handleConfirm}
               loading={loading}
-              disabled={!submissionId}
-            >
+              disabled={!submissionId || (isDocumentVariant && !documentType)}>
               <Ban className="size-4" />
               Confirmer le rejet
             </Button>

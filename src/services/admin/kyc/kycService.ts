@@ -2,12 +2,15 @@ import Service from "@/services/Service";
 import { toQueriesString } from "@/lib/utils";
 import KycKpiModel from "@/model/ADMIN/KycKpi";
 import KycSubmissionModel from "@/model/ADMIN/KycSubmission";
-import KycSubmissionDetailModel from "@/model/ADMIN/KycSubmissionDetail";
+import KycSubmissionDetailModel, {
+  KycAuditEventModel,
+} from "@/model/ADMIN/KycSubmissionDetail";
 import {
   GetKycSubmissionsParams,
   KycDocumentType,
   KycKpiData,
   KycSubmissionDetailResponseType,
+  KycSubmissionHistoryResponse,
   KycSubmissionsListResponse,
   RejectKycPayload,
   UpdateKycDocumentPayload,
@@ -20,6 +23,8 @@ export enum KycApiPath {
   ApproveSubmission = "/admin-kyc/submissions/{id}/approve",
   RejectSubmission = "/admin-kyc/submissions/{id}/reject",
   UpdateDocument = "/admin-kyc/submissions/{id}/documents/{type}",
+  RelaunchDocumentSystemValidation = "/admin-kyc/submissions/{id}/documents/{type}/system-validation",
+  GetSubmissionHistory = "/admin-kyc/submissions/{id}/history",
 }
 
 class KycService extends Service {
@@ -88,6 +93,26 @@ class KycService extends Service {
     return KycService.makeRequest(url, "PATCH", payload);
   }
 
+  public static async relaunchDocumentSystemValidation(
+    submissionId: string,
+    documentType: KycDocumentType,
+  ) {
+    const url = KycApiPath.RelaunchDocumentSystemValidation.replace(
+      "{id}",
+      submissionId,
+    ).replace("{type}", documentType);
+    return KycService.makeRequest(url, "POST", {});
+  }
+
+  public static async getSubmissionHistory(id: string) {
+    const url = KycApiPath.GetSubmissionHistory.replace("{id}", id);
+    const response = await KycService.makeRequest<KycSubmissionHistoryResponse>(
+      url,
+      "GET",
+    );
+    return KycAuditEventModel.fromArray(response ?? []);
+  }
+
   static invalidateKycData() {
     return Promise.all([
       KycService.getInstance().queryClient.invalidateQueries({
@@ -98,6 +123,9 @@ class KycService extends Service {
       }),
       KycService.getInstance().queryClient.invalidateQueries({
         queryKey: [KycApiPath.GetSubmissionDetail],
+      }),
+      KycService.getInstance().queryClient.invalidateQueries({
+        queryKey: [KycApiPath.GetSubmissionHistory],
       }),
     ]);
   }
