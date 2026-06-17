@@ -1,6 +1,6 @@
 import { KpiItem } from "@/components/display/Kpi";
 import { useGetARCClientDetails, useGetARCClients, useGetARCKpi } from "@/hooks/at-risk-customers/useAtRiskCustomers";
-import { AtRiskCustomersParams } from "@/types/at-risk-customers.type";
+import { ARCGroupBy, AtRiskCustomersParams } from "@/types/at-risk-customers.type";
 import { BadgePercent, Banknote, Clock, GraduationCap, Repeat, Star } from "lucide-react";
 import React, { useState } from "react";
 
@@ -8,6 +8,7 @@ export const useARCHook = () => {
     const [params, setParams] = useState<AtRiskCustomersParams>({
         page: 1,
         itemPerPage: 20,
+        group_by: ARCGroupBy.NONE
     })
 
 

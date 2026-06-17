@@ -4,17 +4,19 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Download, Filter, Layers, RefreshCcw, Search } from "lucide-react"
 import { useARCClientsColumns } from "../_utils/at-risk-clients-columns"
+import { ARCGroupBy } from "@/types/at-risk-customers.type"
 
 export const AtRiskCustomersList = () => {
     const {
         clients, columns, rowActions, selection, exportConfig,
-        pagination, isLoadingCustomers, tableRef
+        pagination, isLoadingCustomers, tableRef, params, setParams, groupConfig
     } = useARCClientsColumns();
     return (
         <div className="">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4 py-4 pl-1">
                     <Input
+                        onChange={(e) => setParams({ ...params, search: e.target.value })}
                         placeholder="Rechercher dans cette liste…"
                         type="search"
                         className="border bg-white border-muted-foreground/30 text-muted-foreground h-10"
@@ -27,24 +29,24 @@ export const AtRiskCustomersList = () => {
                         <Filter size={16} className="mr-2 shrink-0" />
                         Filtrer
                     </Button>
-                    <Select>
-                        <SelectTrigger leftIcon={<Layers size={16} className="mr-2 shrink-0" />} className="font-semibold rounded-xl max-w-fit w-fit">
+                    <Select value={params.group_by} onValueChange={(v) => setParams({ ...params, group_by: v as ARCGroupBy })}>
+                        <SelectTrigger leftIcon={<Layers size={16} className="mr-2 shrink-0" />} className="font-semibold rounded-xl max-w-96 w-fit">
                             <SelectValue placeholder="Grouper" />
                         </SelectTrigger>
                         <SelectContent className="rounded-2xl">
-                            <SelectItem value={"all"}>
+                            <SelectItem value={ARCGroupBy.NONE}>
                                 Aucun regroupement
                             </SelectItem>
-                            <SelectItem value={"risk_level"}>
+                            <SelectItem value={ARCGroupBy.RISK_LEVEL}>
                                 Niveau de risque
                             </SelectItem>
-                            <SelectItem value={"risk_cause"}>
+                            <SelectItem value={ARCGroupBy.RISK_CAUSE}>
                                 Cause de risque
                             </SelectItem>
-                            <SelectItem value={"client_need"}>
+                            <SelectItem value={ARCGroupBy.CLIENT_NEED}>
                                 Besoin client
                             </SelectItem>
-                            <SelectItem value={"account_charged"}>
+                            <SelectItem value={ARCGroupBy.ACCOUNT_MANAGER}>
                                 Chargé de compte
                             </SelectItem>
                         </SelectContent>
@@ -82,11 +84,7 @@ export const AtRiskCustomersList = () => {
                 rowActions={rowActions}
                 loadingRowId={null}
                 exportConfig={exportConfig}
-                groupConfig={{
-                    groupKey: "city",
-                    groupLabel: (city, items) => `${city} — ${items.length} chauffeur(s)`,
-                    defaultExpanded: true,
-                }}
+                groupConfig={groupConfig}
                 selection={selection}
             />
         </div>

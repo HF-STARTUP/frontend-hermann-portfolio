@@ -8,6 +8,7 @@ import {
     DataTableRef,
     ExportConfig,
     ExportFormat,
+    GroupConfig,
     RowAction,
     SelectionConfig,
 } from "@/components/display/CustomTableDisplay";
@@ -18,6 +19,8 @@ import { getAvatarColor, getAvatarInitials } from "@/lib/initials.avatar.util";
 import { PackageType } from "../../subscriptions/_hooks/usePackageList";
 import { Cell, PieChart, ResponsiveContainer, Pie } from "recharts";
 import { Button } from "@/components/ui/button";
+import { toIsoDate } from "@/services/Service";
+import { ARCGroupBy } from "@/types/at-risk-customers.type";
 
 export const useARCClientsColumns = () => {
     const router = useRouter();
@@ -84,10 +87,10 @@ export const useARCClientsColumns = () => {
                 {client.planName
                     ? <div className="">
                         <Badge type={client.planName as PackageType} />
-                        {client.expiredDaysAgo && <p className="text-xs flex items-center gap-2 mt-1">
+                        {client.renewalLabel && <p className={cn("text-xs flex items-center gap-2 mt-1 text-muted-foreground", client.renewalLabel.toLowerCase().includes("expiré") ? "text-vaRed" : "")}>
                             <Clock size={16} />
                             <span>
-                                expiré depuis {client.expiredDaysAgo} jour(s)
+                                {client.renewalLabel}
                             </span>
                         </p>}
                     </div>
@@ -196,6 +199,25 @@ export const useARCClientsColumns = () => {
         }
     ];
 
+    const GROUP_KEY_MAP: Record<ARCGroupBy, keyof ARCClientDetailModel | null> = {
+        [ARCGroupBy.NONE]: null,
+        [ARCGroupBy.RISK_LEVEL]: "riskLevelLabel",
+        [ARCGroupBy.RISK_CAUSE]: "alertLabel",
+        [ARCGroupBy.CLIENT_NEED]: "clientNeedLabel",
+        [ARCGroupBy.ACCOUNT_MANAGER]: "accountManagerId",
+    };
+
+    const groupConfig: GroupConfig<ARCClientDetailModel> | undefined = (() => {
+        const groupKey = GROUP_KEY_MAP[params.group_by as ARCGroupBy];
+        if (!groupKey) return undefined;
+
+        return {
+            groupKey,
+            groupLabel: (value, items) => `${value ?? "Non renseigné"} — ${items.length} client(s)`,
+            defaultExpanded: true,            
+        };
+    })();
+
     const rowActions = (client: ARCClientDetailModel): RowAction<ARCClientDetailModel>[] => [
         {
             id: "contact",
@@ -231,6 +253,7 @@ export const useARCClientsColumns = () => {
 
     const exportConfig: ExportConfig<ARCClientDetailModel> = {
         hideTrigger: true,
+        fileName: "clients_a_risque_vtcc_" + toIsoDate(new Date())
     };
 
     return {
@@ -251,5 +274,8 @@ export const useARCClientsColumns = () => {
         isLoadingCustomers,
         filteredCountLabel,
         tableRef,
+        params,
+        setParams,
+        groupConfig
     };
 };
