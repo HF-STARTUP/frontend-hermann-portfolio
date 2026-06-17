@@ -37,14 +37,14 @@ const iconBoxClasses: Record<string, string> = {
 export function KycDocumentCard({
   document,
   submissionId,
-  canModerate = false,
+  isDossierReviewFinalized = false,
   onDocumentUpdated,
   isReanalyzing = false,
   onRelaunchAnalysis,
 }: {
   document: KycDocumentModel;
   submissionId: string;
-  canModerate?: boolean;
+  isDossierReviewFinalized?: boolean;
   onDocumentUpdated?: () => void;
   isReanalyzing?: boolean;
   onRelaunchAnalysis?: () => void;
@@ -201,7 +201,7 @@ export function KycDocumentCard({
                 )}
               </button>
             )}
-            {canModerate && (
+            {!isDossierReviewFinalized && (
               <>
                 <button
                   type="button"
@@ -238,7 +238,7 @@ export function KycDocumentCard({
         submissionId={submissionId}
         open={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
-        canModerate={canModerate && document.isPending}
+        canModerate={!isDossierReviewFinalized && document.isPending}
         onDocumentUpdated={onDocumentUpdated}
         onRequestReject={() => {
           setIsPreviewOpen(false);

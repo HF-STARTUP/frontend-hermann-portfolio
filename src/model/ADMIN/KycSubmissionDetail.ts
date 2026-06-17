@@ -390,6 +390,13 @@ export class KycSubmissionDetailModel extends Model {
     return this._instance.status === "pending";
   }
 
+  get isReviewFinalized() {
+    return (
+      this._instance.status === "approved" ||
+      this._instance.status === "rejected"
+    );
+  }
+
   get documents(): KycDocumentModel[] {
     return (this._instance.documents ?? []).map(
       (doc) => new KycDocumentModel(doc, this._instance.owner_type),

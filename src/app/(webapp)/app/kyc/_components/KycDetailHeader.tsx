@@ -139,14 +139,14 @@ export function KycDetailHeader({
           variant="outline"
           className="rounded-xl border-red-600 text-red-600 hover:bg-red-50 gap-2 h-11 px-5"
           onClick={onReject}
-          disabled={!detail.canModerate}>
+          disabled={detail.isReviewFinalized}>
           <Ban className="size-4" />
           Rejeter le KYC
         </Button>
         <Button
           className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white gap-2 h-11 px-5"
           onClick={onApprove}
-          disabled={!detail.canModerate}>
+          disabled={detail.isReviewFinalized}>
           <CheckCircle2 className="size-4" />
           Approuver le KYC
         </Button>

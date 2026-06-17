@@ -151,7 +151,7 @@ export function KycDetailTabs({
                   key={doc.id}
                   document={doc}
                   submissionId={detail.kycId}
-                  canModerate={detail.canModerate}
+                  isDossierReviewFinalized={detail.isReviewFinalized}
                   onDocumentUpdated={onDocumentUpdated}
                   isReanalyzing={reanalyzingDocumentTypes.includes(doc.type)}
                   onRelaunchAnalysis={
