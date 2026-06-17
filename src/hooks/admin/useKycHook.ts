@@ -28,13 +28,31 @@ export const useGetKycSubmissions = (params: GetKycSubmissionsParams) => {
 };
 
 export const useGetKycSubmissionDetail = (id?: string) => {
-  const { isLoading, data, isError, error, refetch } = useQuery({
+  const { isLoading, data, isError, error, refetch, isFetching } = useQuery({
     queryKey: [KycApiPath.GetSubmissionDetail, id],
     queryFn: () => KycService.getSubmissionById(id!),
     enabled: !!id,
+    refetchInterval: (query) => {
+      const detail = query.state.data;
+      if (!detail?.hasPendingSystemValidation) return false;
+      return 4000;
+    },
   });
 
-  return { isLoading, data, isError, error, refetch };
+  return { isLoading, data, isError, error, refetch, isFetching };
+};
+
+export const useGetKycSubmissionHistory = (
+  id?: string,
+  enabled = true,
+) => {
+  const { isLoading, data, isError, error, refetch, isFetching } = useQuery({
+    queryKey: [KycApiPath.GetSubmissionHistory, id],
+    queryFn: () => KycService.getSubmissionHistory(id!),
+    enabled: !!id && enabled,
+  });
+
+  return { isLoading, data, isError, error, refetch, isFetching };
 };
 
 export const useApproveKycSubmission = () => {
@@ -111,4 +129,33 @@ export const useUpdateKycDocument = (options?: { onSuccess?: () => void }) => {
   };
 
   return { data, loading, isSuccess, isError, error, onUpdateDocument };
+};
+
+export const useRelaunchKycDocumentSystemValidation = (options?: {
+  onSuccess?: () => void;
+}) => {
+  const { loading, handleMutation } = useMutationProvider({
+    mutationFn: ({
+      submissionId,
+      documentType,
+    }: {
+      submissionId: string;
+      documentType: KycDocumentType;
+    }) =>
+      KycService.relaunchDocumentSystemValidation(submissionId, documentType),
+    successMessage: "",
+    onSuccess: () => {
+      void KycService.invalidateKycData();
+      options?.onSuccess?.();
+    },
+  });
+
+  const onRelaunch = (
+    submissionId: string,
+    documentType: KycDocumentType,
+  ) => {
+    handleMutation({ submissionId, documentType });
+  };
+
+  return { loading, onRelaunch };
 };

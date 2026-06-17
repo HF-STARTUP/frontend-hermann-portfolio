@@ -134,23 +134,23 @@ export function KycDetailHeader({
         )}
       </div>
 
-      {/* {detail.canModerate && ( */}
       <div className="flex items-center justify-end gap-3">
         <Button
           variant="outline"
           className="rounded-xl border-red-600 text-red-600 hover:bg-red-50 gap-2 h-11 px-5"
-          onClick={onReject}>
+          onClick={onReject}
+          disabled={!detail.canModerate}>
           <Ban className="size-4" />
           Rejeter le KYC
         </Button>
         <Button
           className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white gap-2 h-11 px-5"
-          onClick={onApprove}>
+          onClick={onApprove}
+          disabled={!detail.canModerate}>
           <CheckCircle2 className="size-4" />
           Approuver le KYC
         </Button>
       </div>
-      {/* )} */}
     </div>
   );
 }

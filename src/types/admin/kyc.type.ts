@@ -53,6 +53,8 @@ export type KycDocumentType =
 
 export type KycDocumentStatus = "approved" | "rejected" | "pending" | "validated";
 
+export type KycSystemValidation = "pending" | "valid" | "invalid" | "error";
+
 export type UpdateKycDocumentPayload = {
   status?: Extract<KycDocumentStatus, "approved" | "rejected" | "pending">;
   note?: string;
@@ -67,17 +69,39 @@ export type KycDocumentResponseType = {
   mime_type?: string | null;
   size?: number | null;
   original_name?: string | null;
+  note?: string | null;
   uploaded_at?: string | null;
   updated_at?: string | null;
+  system_validation?: KycSystemValidation;
+  system_message?: string | null;
+  system_confidence?: number | null;
+  system_validated_at?: string | null;
 };
 
-export type KycAuditEventResponseType = {
-  id?: string;
-  action?: string;
-  actor?: string;
-  created_at?: string;
-  comment?: string;
+export type KycAuditActorKind = "admin" | "client" | "system";
+
+export type KycAuditActorResponseType = {
+  kind: KycAuditActorKind;
+  id?: string | null;
+  name?: string | null;
 };
+
+export type KycAuditEventType =
+  | "document_reviewed"
+  | "document_uploaded"
+  | "kyc_initiated"
+  | string;
+
+export type KycAuditEventResponseType = {
+  type: KycAuditEventType;
+  label: string;
+  at: string;
+  actor: KycAuditActorResponseType;
+  document_type?: string | null;
+  comment?: string | null;
+};
+
+export type KycSubmissionHistoryResponse = KycAuditEventResponseType[];
 
 export type KycSubmissionDetailResponseType = {
   account_id: string;

@@ -1,4 +1,9 @@
-import { KycOwnerType, KycRejectionReason, KycStatus } from "@/types/admin/kyc.type";
+import {
+  KycOwnerType,
+  KycRejectionReason,
+  KycStatus,
+  KycSystemValidation,
+} from "@/types/admin/kyc.type";
 
 export const KycOwnerTypeMap: Record<KycOwnerType, string> = {
   particulier: "Entrepreneur",
@@ -19,6 +24,15 @@ export const KycRejectReasonMap: Record<KycRejectionReason, string> = {
   document_invalide: "Document invalide",
   autre: "Autre",
 };
+
+export function buildKycRejectionNote(
+  reasonCode: KycRejectionReason,
+  comment?: string,
+): string {
+  const reasonLabel = KycRejectReasonMap[reasonCode];
+  const trimmedComment = comment?.trim();
+  return trimmedComment ? `${reasonLabel} — ${trimmedComment}` : reasonLabel;
+}
 
 export const getKycStatusVariant = (
   status?: KycStatus,
@@ -85,5 +99,27 @@ export const getKycDocumentStatusVariant = (
       return "red";
     default:
       return "orange";
+  }
+};
+
+export const KycSystemValidationMap: Record<KycSystemValidation, string> = {
+  pending: "Analyse en cours…",
+  valid: "Conforme (IA)",
+  invalid: "Non conforme (IA)",
+  error: "Analyse indisponible",
+};
+
+export const getKycSystemValidationVariant = (
+  validation: KycSystemValidation,
+): "gray" | "green" | "red" | "neutral" => {
+  switch (validation) {
+    case "valid":
+      return "green";
+    case "invalid":
+      return "red";
+    case "error":
+      return "neutral";
+    default:
+      return "gray";
   }
 };

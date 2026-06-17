@@ -18,8 +18,7 @@ export function CompletionRing({
   return (
     <div
       className={cn("relative flex items-center justify-center", className)}
-      style={{ width: size, height: size }}
-    >
+      style={{ width: size, height: size }}>
       <svg width={size} height={size} className="-rotate-90">
         <circle
           cx={size / 2}
@@ -42,7 +41,9 @@ export function CompletionRing({
           className="transition-all duration-500"
         />
       </svg>
-      <span className="absolute text-xs font-bold text-amber-500">{clamped}</span>
+      <span className="absolute text-xs font-bold text-amber-500">
+        {clamped + "%"}
+      </span>
     </div>
   );
 }
