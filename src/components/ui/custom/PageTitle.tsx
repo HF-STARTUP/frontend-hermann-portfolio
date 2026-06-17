@@ -34,8 +34,9 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
     withSelect?: boolean
     onValueChange?: (selectedValue: string) => void,
     end_component?: ReactNode,
-    close_component?: ReactNode
-}> = ({ page_title, items = defaultSelect, onValueChange, withSelect = true, end_component, close_component }) => {
+    close_component?: ReactNode,
+    description?: string
+}> = ({ page_title, items = defaultSelect, onValueChange, withSelect = true, end_component, close_component, description }) => {
 
     const { parkID } = useGetParkID()
 
@@ -57,12 +58,17 @@ export const PageTitle: React.FC<React.HTMLAttributes<HTMLDivElement> & {
 
 
     return (
-        <div className={"flex items-center justify-between  gap-12 flex-wrap my-5 w-full"}>
+        <div className={"flex items-start justify-between  gap-12 flex-wrap my-5 w-full"}>
             <div
                 className="text-vaTextPrimary text-[1.5rem] md:text-[34px] font-bold font-['DM Sans'] leading-[42px] flex items-center gap-1">
 
-                <div className="text-[#506D82] font-bold text-3xl flex items-center gap-4">{page_title}
-
+                <div className="text-[#506D82] font-bold text-3xl flex items-start gap-4">
+                    <p className="flex flex-col gap-1 items-start">
+                        {page_title}
+                        <span className="text-sm font-normal text-muted-foreground max-w-xl">
+                            {description}
+                        </span>
+                    </p>
                     {close_component &&
                         close_component
                     }

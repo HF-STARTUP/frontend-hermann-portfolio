@@ -39,7 +39,7 @@ export const getCardVariant = (variant?: CardVariant): string => {
         case 'purple':
                 return 'bg-vaDarkPurple text-vaPurple';
         case 'default':
-            return 'bg-[#F9FAFB] text-[#111827]';
+            return 'bg-[#F2EFE7] text-[#111827]';
         default:
             return 'bg-[#F9FAFB] text-[#111827]';
     }
@@ -53,16 +53,13 @@ export const KpiShimmerGrid = ({ count = 4 }: { count?: number }) => {
                     key={index} 
                     className="px-6 py-4 bg-white rounded-2xl border border-gray-100 flex flex-col gap-3 animate-pulse"
                 >
-                    {/* Icône Cercle */}
                     <div className="size-10 bg-gray-200 rounded-full" />
                     
-                    {/* Textes (Title & Value) */}
                     <div className="flex flex-col gap-2">
                         <div className="h-4 w-24 bg-gray-200 rounded" />
                         <div className="h-7 w-16 bg-gray-200 rounded" />
                     </div>
                     
-                    {/* Hint / Variation */}
                     <div className="h-5 w-32 bg-gray-100 rounded mt-1" />
                 </div>
             ))}
@@ -85,7 +82,7 @@ export const KpiCard = ({icon, title, value, variant, className, border=false, v
         )}>
             <div className={cn(
                 getCardVariant(variant), 
-                "size-10 flex items-center justify-center rounded-full"
+                "size-10 flex items-center justify-center rounded-xl"
             )}>
                 {renderedIcon}
             </div>
