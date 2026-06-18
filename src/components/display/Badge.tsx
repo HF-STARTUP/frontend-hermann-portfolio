@@ -235,7 +235,7 @@ export const getBadgeVariant = (type?: BadgeType): BadgeVariant => {
 
 const Badge = ({ variant, type, icon, children, className, iconOnly, isPackage }: { variant?: BadgeVariant, type?: BadgeType, icon?: ReactNode, children?: ReactNode, className?: string, iconOnly?: boolean, isPackage?: boolean }) => {
     return (
-        <div className={`py-1 px-2 w-fit flex items-center justify-center gap-2 rounded-full text-xs font-semibold ${getBadgeVariantClasses(variant || getBadgeVariant(type))} ${iconOnly ? "!px-1 !py-1 !rounded-full" : ""} ${className}`}>
+        <div className={`py-1 shrink-0 px-2 w-fit flex items-center justify-center gap-2 rounded-full text-xs font-semibold ${getBadgeVariantClasses(variant || getBadgeVariant(type))} ${iconOnly ? "!px-1 !py-1 !rounded-lg !size-8" : ""} ${className}`}>
             {icon && (
                 <span className="flex items-center size-4 [&>svg]:size-full">
                     {icon}

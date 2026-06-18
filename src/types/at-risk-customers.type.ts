@@ -37,6 +37,7 @@ export interface ARCKpiResponseType {
 }
 
 export interface AtRiskCustomersParams {
+    park_id?: string;
     itemPerPage?: number,
     page?: number,
     start_date?: string,
@@ -112,4 +113,130 @@ export interface ARCClientDetailListResponseType {
     currentPage: number;
     itemPerPage: number;
     filtered_count_label: string;
+}
+
+
+export interface ARCClientBadges {
+    risk_level: ARCRiskLevel;
+    risk_level_label: string;
+    primary_alert_signal: ARCAlertSignals;
+    primary_alert_label: string;
+}
+
+export interface ARCRiskSparklinePoint {
+    date: string;
+    score: number;
+}
+
+export interface ARCRiskTrend30d {
+    score_delta: number;
+    label: string;
+}
+
+export interface ARCRiskFactor {
+    key: string;
+    label: string;
+    points: number;
+    metadata: Record<string, number>;
+}
+
+export interface ARCRiskAnalysis {
+    risk_score: number;
+    risk_level: ARCRiskLevel;
+    risk_level_label: string;
+    trend_30d: ARCRiskTrend30d;
+    sparkline_30d: ARCRiskSparklinePoint[];
+    factors: ARCRiskFactor[];
+}
+
+export interface ARCRecommendation {
+    key: string;
+    label: string;
+    cta_label: string;
+    cta_action: string;
+}
+
+export interface ARCPrimaryContact {
+    profile_id: string;
+    first_name: string;
+    last_name: string;
+    role_label: string;
+    phone: string;
+    email: string;
+}
+
+export interface ARCFleetSummary {
+    vehicle_count: number;
+    tier_label: string;
+    tier_min: number;
+    tier_max: number;
+}
+
+export interface ARCSubscriptionSummary {
+    plan_name: PackageType;
+    annual_amount: number;
+    currency: string;
+    renewal_date: string;
+    renewal_in_days: number;
+    status: SubscriptionStatus;
+    status_label: string;
+}
+
+export interface ARCAccountManager {
+    profile_id: string;
+    first_name: string;
+    last_name: string;
+}
+
+export interface ARCRecentPaymentsSummary {
+    last_success_at: string | null;
+    last_failed_at: string | null;
+}
+
+export interface ARCClientProfileResponseType {
+    park_id: string;
+    name: string;
+    logo: string | null;
+    city: string;
+    country: string;
+    location_label: string;
+    vehicle_count_label: string;
+    badges: ARCClientBadges;
+    risk_analysis: ARCRiskAnalysis;
+    recommendations: ARCRecommendation[];
+    primary_contact: ARCPrimaryContact;
+    fleet: ARCFleetSummary;
+    subscription: ARCSubscriptionSummary;
+    account_manager: ARCAccountManager | null;
+    last_activity_at: string | null;
+    unpaid_invoices_count: number;
+    recent_payments_summary: ARCRecentPaymentsSummary;
+}
+
+
+export type ARCInteractionSource = "system" | "manual" | string;
+export type ARCInteractionCategory = "subscription" | "payment" | "follow_up" | string;
+
+export interface ARCInteractionTag {
+    type: string;
+    label: string;
+}
+
+export interface ARCInteractionResponseType {
+    id: string;
+    source: ARCInteractionSource;
+    category: ARCInteractionCategory;
+    category_label: string;
+    title: string;
+    occurred_at: string;
+    notes: string | null;
+    tags: ARCInteractionTag[];
+}
+
+export interface ARCInteractionListResponseType {
+    data: ARCInteractionResponseType[];
+    totalRecords: number;
+    totalPages: number;
+    currentPage: number;
+    itemPerPage: number;
 }

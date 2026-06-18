@@ -1,13 +1,18 @@
+import { toQueriesString } from "@/lib/utils";
 import ARCClientDetailModel from "@/model/at-risk-customers/ARCClientDetailModel";
+import ARCClientProfileModel from "@/model/at-risk-customers/ARCClientProfileModel";
+import ARCInteractionModel from "@/model/at-risk-customers/ARCInteractionsModel";
 import ARCKpiModel from "@/model/at-risk-customers/ARCKpisModel";
 import ARCClientModel from "@/model/at-risk-customers/ARCPrioritiesModel";
 import Service from "@/services/Service";
-import { ARCClientDetailListResponseType, ARCClientPrioritiesResponseType, ARCKpiResponseType, AtRiskCustomersParams } from "@/types/at-risk-customers.type";
+import { ARCClientDetailListResponseType, ARCClientPrioritiesResponseType, ARCClientProfileResponseType, ARCInteractionListResponseType, ARCKpiResponseType, AtRiskCustomersParams } from "@/types/at-risk-customers.type";
 
 export enum ARCApiPath {
     GetARCKpi = "/admin/clients-at-risk/overview/kpis",
     GetARCClientsPriorities = "/admin/clients-at-risk/priorities",
-    GetAtRiskCustomers = "/admin/clients-at-risk"
+    GetAtRiskCustomers = "/admin/clients-at-risk",
+    GetAtRiskCustomer = "/admin/clients-at-risk/{park_id}",
+    GetARCInteractions = "/admin/clients-at-risk/{park_id}/interactions"
 }
 
 class ARCService extends Service {
@@ -55,6 +60,36 @@ class ARCService extends Service {
             meta,
         };
     }
+
+    public static async getARCClientProfile(params: AtRiskCustomersParams): Promise<ARCClientProfileModel> {
+        const result = await ARCService.makeRequest<ARCClientProfileResponseType>(
+            ARCApiPath.GetAtRiskCustomer.replace("{park_id}", params?.park_id ?? ""), 'GET'
+        );
+        return ARCClientProfileModel.fromResponse(result);
+    }
+
+    public static async getARCInteractions(
+        params: AtRiskCustomersParams
+    ): Promise<{ data: ARCInteractionModel[]; meta: Omit<ARCInteractionListResponseType, "data"> }> {
+        const { park_id, ...otherParams } = params;
+
+        const url = toQueriesString(ARCApiPath.GetARCInteractions.replace("{park_id}", park_id ?? ""), otherParams)
+        const result = await ARCService.makeRequest<ARCInteractionListResponseType>(
+            url,
+            'GET'
+        );
+
+        const { data, ...meta } = result;
+
+        return {
+            data: ARCInteractionModel.toArrays(data),
+            meta,
+        };
+    }
+
+
+
+
 
 
 

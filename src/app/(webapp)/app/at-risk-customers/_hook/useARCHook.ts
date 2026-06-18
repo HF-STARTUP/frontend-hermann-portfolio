@@ -1,5 +1,5 @@
 import { KpiItem } from "@/components/display/Kpi";
-import { useGetARCClientDetails, useGetARCClients, useGetARCKpi } from "@/hooks/at-risk-customers/useAtRiskCustomers";
+import { useGetARCClientDetails, useGetARCClients, useGetARCInteractions, useGetARCKpi } from "@/hooks/at-risk-customers/useAtRiskCustomers";
 import { ARCGroupBy, AtRiskCustomersParams } from "@/types/at-risk-customers.type";
 import { BadgePercent, Banknote, Clock, GraduationCap, Repeat, Star } from "lucide-react";
 import React, { useState } from "react";

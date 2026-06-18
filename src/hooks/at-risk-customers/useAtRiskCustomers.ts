@@ -38,3 +38,30 @@ export const useGetARCClientDetails = (params: AtRiskCustomersParams) => {
         isLoading,
     };
 };
+
+
+export const useGetARCClientProfile = (params: AtRiskCustomersParams) => {
+    const { isLoading, data } = useQuery({
+        queryKey: [ARCApiPath.GetAtRiskCustomer, params],
+        queryFn: () => ARCService.getARCClientProfile(params),
+        enabled: !!params.park_id,
+    });
+
+    return { isLoading, profile: data };
+};
+
+export const useGetARCInteractions = (params: AtRiskCustomersParams) => {
+    const { isLoading, data } = useQuery({
+        queryKey: [ARCApiPath.GetARCInteractions, params],
+        queryFn: () => ARCService.getARCInteractions(params),
+        enabled: !!params.park_id,
+    });
+
+    return {
+        interactions: data?.data ?? [],
+        totalRecords: data?.meta.totalRecords ?? 0,
+        totalPages: data?.meta.totalPages ?? 1,
+        currentPage: data?.meta.currentPage ?? 1,
+        isLoading,
+    };
+};
