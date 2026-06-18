@@ -55,7 +55,8 @@ export interface AtRiskCustomersParams {
     account_manager_id?: string,
     group_by?: ARCGroupBy,
     sort_by?: ARCSortBy,
-    sort_order?: 'asc' | 'desc'
+    sort_order?: 'asc' | 'desc',
+    interraction_id?: string
 }
 
 
@@ -240,3 +241,40 @@ export interface ARCInteractionListResponseType {
     currentPage: number;
     itemPerPage: number;
 }
+
+
+export interface ARCInteractionDetailHeader {
+    client_name: string;
+    location_label: string;
+    vehicle_count: number;
+    vehicle_count_label: string;
+    risk_score: number;
+}
+
+export interface ARCInteractionDetailResponseType {
+    id: string;
+    park_id: string;
+    source: ARCInteractionSource;
+    editable: boolean;
+    header: ARCInteractionDetailHeader;
+    communication_channel: string | null;
+    communication_channel_label: string | null;
+    contact_reason: string | null;
+    contact_reason_label: string | null;
+    exchange_summary: string | null;
+    identified_needs: string[];
+    identified_needs_labels: string[];
+    proposed_solution: string | null;
+    next_follow_up_at: string | null;
+    assigned_to: string | null;
+    result: string | null;
+    result_label: string | null;
+    next_steps: string | null;
+    status: string | null;
+    status_label: string | null;
+    occurred_at: string;
+    created_at: string;
+    updated_at: string;
+}
+
+

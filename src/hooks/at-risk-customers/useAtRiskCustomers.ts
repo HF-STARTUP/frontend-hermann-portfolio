@@ -65,3 +65,14 @@ export const useGetARCInteractions = (params: AtRiskCustomersParams) => {
         isLoading,
     };
 };
+
+
+export const useGetARCInteractionDetail = (params: AtRiskCustomersParams) => {
+    const { isLoading, data } = useQuery({
+        queryKey: [ARCApiPath.GetARCInteractions, params],
+        queryFn: () => ARCService.getARCInteractionDetail(params),
+        enabled: !!params.park_id && !!params.interraction_id,
+    });
+
+    return { isLoading, interaction: data };
+};
