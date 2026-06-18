@@ -23,10 +23,13 @@ import { ResponsiveContainer } from "recharts"
 import Link from "next/link"
 import { PiMessengerLogo } from "react-icons/pi"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { InterractionDetailsSheet } from "./_components/InterractionDetailsSheet"
+import { useState } from "react"
 
 ChartJS.register(ArcElement, LineElement, PointElement, LinearScale, CategoryScale, Filler, Tooltip)
 
 export const ClientDetailsBody = ({ id }: { id: string }) => {
+    const [selectedInteractionId, setSelectedInteractionId] = useState<string | null>(null)
 
     const {
         profile,
@@ -414,7 +417,7 @@ export const ClientDetailsBody = ({ id }: { id: string }) => {
                     <main className="px-6 py-4">
                         {
                             interactions.map((int) =>
-                                <div className="pl-5 pb-5 border-l-2 last:border-l-0 border-muted-foreground/50 relative">
+                                <div className="pl-5 pb-5 border-l-2 last:border-l-0 border-muted-foreground/50 relative cursor-pointer hover:scale-[.99] transition-all duration-300" onClick={() => setSelectedInteractionId(int.id)}>
                                     <div className="border p-4 rounded-2xl shadow bg-muted-foreground/10 backdrop-blur-lg flex flex-col space-y-4">
                                         <div className="flex items-center justify-between gap-4">
                                             <p className="font-bold text-base text-foreground">
@@ -429,7 +432,10 @@ export const ClientDetailsBody = ({ id }: { id: string }) => {
                                                         <MoreVertical size={16} className="text-muted-foreground" />
                                                     </DropdownMenuTrigger>
                                                     <DropdownMenuContent className="rounded-2xl p-2">
-                                                        <DropdownMenuItem className="rounded-xl text-muted-foreground cursor-pointer hover:bg-muted-foreground/10 hover:font-medium">
+                                                        <DropdownMenuItem
+                                                            onClick={() => setSelectedInteractionId(int.id)}
+                                                            className="rounded-xl text-muted-foreground cursor-pointer hover:bg-muted-foreground/10 hover:font-medium"
+                                                        >
                                                             Voir les détails
                                                         </DropdownMenuItem>
                                                     </DropdownMenuContent>
@@ -465,6 +471,12 @@ export const ClientDetailsBody = ({ id }: { id: string }) => {
                     </main>
                 </div>
             </div>
+            <InterractionDetailsSheet
+                isOpenned={selectedInteractionId !== null}
+                onClose={() => setSelectedInteractionId(null)}
+                interactionId={selectedInteractionId ?? ""}
+                parkId={id}
+            />
         </div>
 
     )

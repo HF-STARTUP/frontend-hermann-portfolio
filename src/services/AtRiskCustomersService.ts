@@ -1,11 +1,12 @@
 import { toQueriesString } from "@/lib/utils";
 import ARCClientDetailModel from "@/model/at-risk-customers/ARCClientDetailModel";
 import ARCClientProfileModel from "@/model/at-risk-customers/ARCClientProfileModel";
+import ARCInteractionDetailModel from "@/model/at-risk-customers/ARCInteractionModel";
 import ARCInteractionModel from "@/model/at-risk-customers/ARCInteractionsModel";
 import ARCKpiModel from "@/model/at-risk-customers/ARCKpisModel";
 import ARCClientModel from "@/model/at-risk-customers/ARCPrioritiesModel";
 import Service from "@/services/Service";
-import { ARCClientDetailListResponseType, ARCClientPrioritiesResponseType, ARCClientProfileResponseType, ARCInteractionListResponseType, ARCKpiResponseType, AtRiskCustomersParams } from "@/types/at-risk-customers.type";
+import { ARCClientDetailListResponseType, ARCClientPrioritiesResponseType, ARCClientProfileResponseType, ARCInteractionDetailResponseType, ARCInteractionListResponseType, ARCKpiResponseType, AtRiskCustomersParams } from "@/types/at-risk-customers.type";
 
 export enum ARCApiPath {
     GetARCKpi = "/admin/clients-at-risk/overview/kpis",
@@ -86,6 +87,22 @@ class ARCService extends Service {
             meta,
         };
     }
+
+    public static async getARCInteractionDetail(
+        params: AtRiskCustomersParams
+    ): Promise<ARCInteractionDetailModel> {
+
+        const { park_id, interraction_id, ...cleanParams } = params;
+
+        const result = await ARCService.makeRequest<ARCInteractionDetailResponseType>(
+            toQueriesString(`${ARCApiPath.GetARCInteractions.replace("{park_id}", params.park_id ?? "")}/${params.interraction_id}`, cleanParams),
+            'GET'
+        );
+        return ARCInteractionDetailModel.fromResponse(result);
+    }
+
+
+
 
 
 
