@@ -211,6 +211,54 @@ export const toQueriesString = (baseUri: string, params: any) => {
   return url;
 };
 
+interface ExcelExportColumn<T> {
+  header: string;
+  accessor: keyof T | ((item: T) => string | number);
+  width?: number;
+}
+
+interface ExportToExcelParams<T> {
+  data: T[];
+  columns: ExcelExportColumn<T>[];
+  fileName?: string;
+  sheetName?: string;
+}
+
+export async function exportToExcel<T extends Record<string, any>>({
+  data,
+  columns,
+  fileName = "export",
+  sheetName = "Sheet1",
+}: ExportToExcelParams<T>) {
+  const XLSX = await import("xlsx");
+
+  const headers = columns.map((col) => col.header);
+
+  const rows = data.map((item) =>
+    columns.map((col) => {
+      const value = typeof col.accessor === "function"
+        ? col.accessor(item)
+        : item[col.accessor];
+      return value ?? "";
+    })
+  );
+
+  const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
+
+  worksheet["!cols"] = columns.map((col, idx) => ({
+    wch: col.width ?? Math.max(
+      headers[idx].length,
+      ...rows.map((r) => String(r[idx]).length),
+      10
+    ) + 2,
+  }));
+
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, sheetName);
+
+  XLSX.writeFile(workbook, `${fileName}.xlsx`);
+}
+
 export function formatNumber(input: string | number | undefined): string {
   if (!input) {
     return "0";

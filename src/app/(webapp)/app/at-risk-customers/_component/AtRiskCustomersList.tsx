@@ -5,12 +5,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Download, Filter, Layers, RefreshCcw, Search } from "lucide-react"
 import { useARCClientsColumns } from "../_utils/at-risk-clients-columns"
 import { ARCGroupBy } from "@/types/at-risk-customers.type"
+import { useRouter } from "next/navigation"
 
 export const AtRiskCustomersList = () => {
     const {
         clients, columns, rowActions, selection, exportConfig,
         pagination, isLoadingCustomers, tableRef, params, setParams, groupConfig
     } = useARCClientsColumns();
+    const $router = useRouter()
     return (
         <div className="">
             <div className="flex items-center justify-between">
@@ -80,9 +82,9 @@ export const AtRiskCustomersList = () => {
                 emptyMessage="Vous n'avez pas encore de client"
                 getRowId={(client) => client.parkId}
                 isLoading={isLoadingCustomers}
-                onRowClick={(client) => { }}
+                onRowClick={(client) => $router.push(`/app/at-risk-customers/${client.parkId}/details`)}
                 rowActions={rowActions}
-                loadingRowId={null}
+                loadingRowId={null} 
                 exportConfig={exportConfig}
                 groupConfig={groupConfig}
                 selection={selection}

@@ -20,6 +20,16 @@ abstract class Model {
     }
   }
 
+  protected toName(text: string): string {
+    if (!text) return "";
+
+    return text
+      .toLowerCase()
+      .split(" ")
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(" ");
+  }
+
   protected getAdminImage(path?: string | null) {
     return path ? this.resolveImage(path) : "/assets/admin-default-cover.png";
   }
