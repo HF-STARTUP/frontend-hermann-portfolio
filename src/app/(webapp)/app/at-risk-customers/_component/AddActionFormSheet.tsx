@@ -55,20 +55,21 @@ export const AddActionFormSheet = ({
             onClose()
         }
     }, [isSuccess])
+
     useEffect(() => {
-        resetPayload()
-        if (activeTab == "interaction") {
+        if (activeTab === "interaction") {
             setPayload({
-                ...payload,
+                park_id: clientId,
                 mode: "register_interaction"
             })
         } else {
             setPayload({
-                ...payload,
+                park_id: clientId,
                 mode: "schedule_follow_up"
             })
         }
     }, [activeTab])
+
     return (
         <Sheet open={isOpenned} onOpenChange={() => onClose()}>
             <SheetContent variant={"xl"}>
@@ -85,7 +86,7 @@ export const AddActionFormSheet = ({
                         </Button>
                     </div>
                 </SheetHeader>
-                <DialogMainBody className="max-h-[calc(100dvh-170px)]">
+                <DialogMainBody className="max-h-[calc(100dvh-170px)] h-full flex-1">
                     <SwitcherTabs
                         value={activeTab}
                         onSelect={(v) => {
@@ -104,121 +105,220 @@ export const AddActionFormSheet = ({
                             }
                         ]}
                     />
+                    <div className="space-y-6">
+                        <CustomComboBox
+                            options={[
+                                ...(isLoadingCustomers
+                                    ? [{ label: "Chargement des clients...", value: "" }]
+                                    : (clients && clients.length > 0)
+                                        ? clients.map((cl) => ({
+                                            label: cl.name,
+                                            value: cl.parkId
+                                        }))
+                                        : [{ label: "Aucun client trouvé", value: "" }]
+                                )
+                            ]}
 
-                    {
-                        activeTab == "interaction" &&
-                        <div className="space-y-6">
-                            <CustomComboBox
-                                options={[
-                                    ...(isLoadingCustomers
-                                        ? [{ label: "Chargement des clients...", value: "" }]
-                                        : (clients && clients.length > 0)
-                                            ? clients.map((cl) => ({
-                                                label: cl.name,
-                                                value: cl.parkId
-                                            }))
-                                            : [{ label: "Aucun client trouvé", value: "" }]
-                                    )
-                                ]}
+                            onValueChange={(v) => {
+                                setPayload({ ...payload, park_id: v })
+                            }}
+                            value={payload.park_id}
+                            onSearch={(v) => setParams({ ...params, search: v })}
+                            label="Client concerné"
+                            required
+                            emptyMessage="Aucun client trouvé"
+                        />
+                        {
+                            activeTab == "interaction" ?
+                                <>
+                                    <div className="space-y-2">
+                                        <Label required>
+                                            Canal de communication
+                                        </Label>
+                                        <div className="flex items-center gap-4 flex-wrap">
+                                            {
+                                                CommunicationChannels.map((cc) =>
+                                                    <SelectableChip {...cc} />
+                                                )
+                                            }
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>
+                                            Motif du contact
+                                        </Label>
+                                        <div className="flex items-center gap-4 flex-wrap">
+                                            {
+                                                ContactReasons.map((cr) =>
+                                                    <SelectableChip {...cr} />
+                                                )
+                                            }
+                                        </div>
+                                    </div>
+                                    <div className="-space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <Label>
+                                                Compte rendu de l’échange
+                                            </Label>
+                                            <span className="text-xs text-muted-foreground">
+                                                Ce qui s’est dit en résumé
+                                            </span>
+                                        </div>
+                                        <TextArea
+                                            onChange={(e) => setPayload({
+                                                ...payload,
+                                                exchange_summary: e.target.value
+                                            })}
+                                            placeholder="ex. Echange de 15 min Le client confirme vouloir continuer mais demande un geste commercial..."
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <Label>
+                                                Besoins identifiés
+                                            </Label>
+                                            <span className="text-xs text-muted-foreground">
+                                                Sélectionnez tout ce qui s'applique
+                                            </span>
+                                        </div>
 
-                                onValueChange={(v) => {
-                                    setPayload({ ...payload, park_id: v })
-                                }}
-                                value={payload.park_id}
-                                onSearch={(v) => setParams({ ...params, search: v })}
-                                label="Client concerné"
-                                required
-                                emptyMessage="Aucun client trouvé"
-                            />
-                            <div className="space-y-2">
-                                <Label required>
-                                    Canal de communication
-                                </Label>
-                                <div className="flex items-center gap-4 flex-wrap">
-                                    {
-                                        CommunicationChannels.map((cc) =>
-                                            <SelectableChip {...cc} />
-                                        )
-                                    }
-                                </div>
-                            </div>
-                            <div className="space-y-2">
-                                <Label>
-                                    Motif du contact
-                                </Label>
-                                <div className="flex items-center gap-4 flex-wrap">
-                                    {
-                                        ContactReasons.map((cr) =>
-                                            <SelectableChip {...cr} />
-                                        )
-                                    }
-                                </div>
-                            </div>
-                            <div className="-space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <Label>
-                                        Compte rendu de l’échange
-                                    </Label>
-                                    <span className="text-xs text-muted-foreground">
-                                        Ce qui s’est dit en résumé
-                                    </span>
-                                </div>
-                                <TextArea placeholder="ex. Echange de 15 min Le client confirme vouloir continuer mais demande un geste commercial..." />
-                            </div>
-                            <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <Label>
-                                        Besoins identifiés
-                                    </Label>
-                                    <span className="text-xs text-muted-foreground">
-                                        Sélectionnez tout ce qui s'applique
-                                    </span>
-                                </div>
-
-                                <div className="flex items-center gap-4 flex-wrap">
-                                    {
-                                        IdentifiedNeeds.map((idn) =>
-                                            <SelectableChip {...idn} />
-                                        )
-                                    }
-                                </div>
-                            </div>
-                            <div className="space-y-4">
-                                <Label required>
-                                    Résultat
-                                </Label>
-                                <Select value={payload.result} defaultValue="positive" onValueChange={(v) => setPayload({ ...payload, result: v })}>
-                                    <SelectTrigger className="w-full rounded-xl py-3.5 px-4 h-10" inForm>
-                                        <SelectValue placeholder="issue de l'interaction" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value={"positive"}>
-                                            Positif
-                                        </SelectItem>
-                                        <SelectItem value={"negative"}>
-                                            Négatif
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                            <div className="space-y-2">
-                                <div className="flex items-center justify-between">
-                                    <Label>
-                                        Prochaines étapes
-                                    </Label>
-                                    <span className="text-xs text-muted-foreground">
-                                        Convertie en action planifiée si renseignée
-                                    </span>
-                                </div>
-                                <Input type="text" value={payload.next_steps} onChange={(e) =>
-                                    setPayload({
-                                        ...payload,
-                                        next_steps: e.target.value
-                                    })
-                                } placeholder="ex. Envoyer la proposition chiffrée avant Vendredi" />
-                            </div>
-                        </div>
-                    }
+                                        <div className="flex items-center gap-4 flex-wrap">
+                                            {
+                                                IdentifiedNeeds.map((idn) =>
+                                                    <SelectableChip {...idn} />
+                                                )
+                                            }
+                                        </div>
+                                    </div>
+                                    <div className="space-y-4">
+                                        <Label required>
+                                            Résultat
+                                        </Label>
+                                        <Select value={payload.result} defaultValue="positive" onValueChange={(v) => setPayload({ ...payload, result: v })}>
+                                            <SelectTrigger className="w-full rounded-xl py-3.5 px-4 h-10" inForm>
+                                                <SelectValue placeholder="issue de l'interaction" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value={"positive"}>
+                                                    Positif
+                                                </SelectItem>
+                                                <SelectItem value={"negative"}>
+                                                    Négatif
+                                                </SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <Label>
+                                                Prochaines étapes
+                                            </Label>
+                                            <span className="text-xs text-muted-foreground">
+                                                Convertie en action planifiée si renseignée
+                                            </span>
+                                        </div>
+                                        <Input type="text" value={payload.next_steps} onChange={(e) =>
+                                            setPayload({
+                                                ...payload,
+                                                next_steps: e.target.value
+                                            })
+                                        } placeholder="ex. Envoyer la proposition chiffrée avant Vendredi" />
+                                    </div>
+                                </> :
+                                <>
+                                    <div className="space-y-2">
+                                        <Label required>
+                                            Type d'action
+                                        </Label>
+                                        <div className="flex items-center gap-4 flex-wrap">
+                                            {
+                                                NextActions.map((ac) =>
+                                                    <SelectableChip {...ac} />
+                                                )
+                                            }
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <div className="flex items-center justify-between">
+                                            <Label required>
+                                                Description
+                                            </Label>
+                                        </div>
+                                        <TextArea
+                                            onChange={(e) => setPayload({
+                                                ...payload,
+                                                description: e.target.value
+                                            })}
+                                            className="-mt-4"
+                                            placeholder="ex. Relancer le client au sujet de l’échéancier et confirmer la date de signature..."
+                                        />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between">
+                                                <Label>
+                                                    Responsable
+                                                </Label>
+                                            </div>
+                                            <CustomComboBox
+                                                onValueChange={(v) =>
+                                                    setPayload({
+                                                        ...payload,
+                                                        assigned_to_profile_id: v
+                                                    })
+                                                }
+                                                options={[
+                                                    {
+                                                        label: "Test",
+                                                        value: "test"
+                                                    }
+                                                ]}
+                                                value={payload.assigned_to_profile_id}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between">
+                                                <Label>
+                                                    Echéance
+                                                </Label>
+                                            </div>
+                                            <Input
+                                                type="date"
+                                                onChange={(e) => setPayload({
+                                                    ...payload,
+                                                    deadline_at: e.target.value
+                                                })}
+                                                placeholder="ex. Relancer le client au sujet de l’échéancier et confirmer la date de signature..."
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>
+                                            Priorité
+                                        </Label>
+                                        <div className="flex items-center gap-4 flex-wrap">
+                                            {
+                                                Priorities.map((pr) =>
+                                                    <SelectableChip {...pr} />
+                                                )
+                                            }
+                                        </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>
+                                            Statut
+                                        </Label>
+                                        <div className="flex items-center gap-4 flex-wrap">
+                                            {
+                                                Statuses.map((st) =>
+                                                    <SelectableChip {...st} />
+                                                )
+                                            }
+                                        </div>
+                                    </div>
+                                </>
+                        }
+                    </div>
                 </DialogMainBody>
                 <DialogFooter>
                     <div className="flex items-center justify-between">
