@@ -192,8 +192,8 @@ export const useARCClientsColumns = () => {
         },
         {
             header: "Prochaine action",
-            accessor: (client) => client.nextAction ?? "---",
-            exportValue: (client) => client.nextAction ?? "---",
+            accessor: (client) => client.nextAction?.display_label ?? "---",
+            exportValue: (client) => client.nextAction?.display_label ?? "---",
             sortKey: "renewalInDays",
             minWidth: "150px",
         }
@@ -214,7 +214,7 @@ export const useARCClientsColumns = () => {
         return {
             groupKey,
             groupLabel: (value, items) => `${value ?? "Non renseigné"} — ${items.length} client(s)`,
-            defaultExpanded: true,            
+            defaultExpanded: true,
         };
     })();
 

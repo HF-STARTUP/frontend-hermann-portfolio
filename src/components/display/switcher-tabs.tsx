@@ -2,26 +2,28 @@ import { LucideIcon } from "lucide-react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs"
 import { ReactNode } from "react"
 import { motion } from "framer-motion"
+import { cn } from "@/lib/utils"
 
 interface SwitcherTabsProps {
     tabs: {
         label: string,
         value: string,
-        icon: LucideIcon,
-        content: ReactNode
+        icon?: LucideIcon,
+        content?: ReactNode,
     }[]
     onSelect: (value: string) => void // On le passe en requis puisque ton composant est contrôlé
-    value: string
+    fullWidth?: boolean,
+    value: string,
 }
 
-export const SwitcherTabs = ({ onSelect, tabs, value }: SwitcherTabsProps) => {
+export const SwitcherTabs = ({ onSelect, tabs, value, fullWidth = false }: SwitcherTabsProps) => {
     return (
         <Tabs
             value={value}
             onValueChange={onSelect}
             className="w-full"
         >
-            <TabsList className="w-fit border justify-start bg-muted-foreground/10 relative rounded-2xl overflow-x-auto custom-scrollbar p-1">
+            <TabsList className={cn("border justify-start bg-muted-foreground/10 relative rounded-2xl overflow-x-auto custom-scrollbar p-1", fullWidth ? "w-full" : "w-fit")}>
                 {tabs.map((tab) => {
                     const Icon = tab.icon
                     const isActive = value === tab.value // Basé sur la prop du parent maintenant
@@ -30,7 +32,7 @@ export const SwitcherTabs = ({ onSelect, tabs, value }: SwitcherTabsProps) => {
                         <TabsTrigger
                             key={tab.value}
                             value={tab.value}
-                            className="relative z-10 data-[state=active]:bg-white data-[state=active]:shadow-none data-[state=active]:rounded-xl rounded-xl text-muted-foreground"
+                            className="relative z-10 data-[state=active]:bg-white data-[state=active]:shadow-none data-[state=active]:rounded-xl rounded-xl text-muted-foreground w-full"
                         >
                             <div className="flex items-center gap-2 z-20">
                                 {Icon && <Icon className="w-4 h-4" />}
@@ -52,7 +54,7 @@ export const SwitcherTabs = ({ onSelect, tabs, value }: SwitcherTabsProps) => {
             <div className="mt-4 overflow-hidden">
                 {tabs.map((tab) => (
                     <TabsContent key={tab.value} value={tab.value} forceMount>
-                        {value === tab.value && ( // Basé sur la prop du parent aussi
+                        {value === tab.value && (
                             <motion.div
                                 initial={{ opacity: 0, y: 8 }}
                                 animate={{ opacity: 1, y: 0 }}

@@ -25,11 +25,13 @@ import { PiMessengerLogo } from "react-icons/pi"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { InterractionDetailsSheet } from "./_components/InterractionDetailsSheet"
 import { useState } from "react"
+import { AddActionFormSheet } from "../../_component/AddActionFormSheet"
 
 ChartJS.register(ArcElement, LineElement, PointElement, LinearScale, CategoryScale, Filler, Tooltip)
 
 export const ClientDetailsBody = ({ id }: { id: string }) => {
     const [selectedInteractionId, setSelectedInteractionId] = useState<string | null>(null)
+    const [isActionOpen, setIsActionOpen] = useState(false)
 
     const {
         profile,
@@ -86,6 +88,7 @@ export const ClientDetailsBody = ({ id }: { id: string }) => {
 
     return (
         <div className="p-4 space-y-6">
+            <AddActionFormSheet isOpenned={isActionOpen} onClose={() => setIsActionOpen(false)} />
             <Crumb items={[
                 {
                     label: "Clients à risque",
@@ -136,7 +139,7 @@ export const ClientDetailsBody = ({ id }: { id: string }) => {
                         </div>
                     </div>
                 </div>
-                <Button variant={"mainBlue"}>
+                <Button variant={"mainBlue"} onClick={() => setIsActionOpen(true)}>
                     <Plus size={16} className="mr-3" /> Nouvelle action
                 </Button>
             </div>

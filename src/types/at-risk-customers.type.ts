@@ -103,7 +103,14 @@ export interface ARCClientDetailResponseType {
     last_activity_at: string | null;
     last_contact_at: string | null;
     last_contact_type: string | null;
-    next_action: string | null;
+    next_action: {
+        id: string;
+        type: string;
+        label: string;
+        display_label: string;
+        scheduled_at: string;
+        assignee: string;
+    } | null;
     account_manager_id: string | null;
 }
 
@@ -275,6 +282,31 @@ export interface ARCInteractionDetailResponseType {
     occurred_at: string;
     created_at: string;
     updated_at: string;
+}
+
+export interface ARCNewActionPayload {
+    mode?: string,
+    park_id?: string,
+    action_type?: string,
+    type?: string,
+    title?: string,
+    description?: string,
+    assigned_to_profile_id?: string,
+    deadline_at?: string,
+    scheduled_at?: string,
+    priority?: string,
+    status?: string,
+    notes?: string,
+    communication_channel?: string,
+    contact_reason?: string,
+    exchange_summary?: string,
+    identified_needs?: string[],
+    proposed_solution?: string,
+    next_follow_up_at?: string,
+    result?: string,
+    next_steps?: string,
+    occurred_at?: string,
+    category?: string
 }
 
 
