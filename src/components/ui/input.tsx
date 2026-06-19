@@ -1,14 +1,14 @@
 "use client"
 
 import * as React from "react";
-import {useId} from "react";
+import { useId } from "react";
 
-import {FieldError} from "react-hook-form";
-import {cn} from "@/utils/ui/cn";
-import {EyeIcon, EyeOffIcon} from "lucide-react";
-import {ChevronDownIcon, WarningIcon} from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
-import {useCountries} from "@/hooks/location/useCountry/useCountry";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import { FieldError } from "react-hook-form";
+import { cn } from "@/utils/ui/cn";
+import { EyeIcon, EyeOffIcon } from "lucide-react";
+import { ChevronDownIcon, WarningIcon } from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
+import { useCountries } from "@/hooks/location/useCountry/useCountry";
+import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Image from "next/image";
 
 //TODO: Fix select validation
@@ -33,23 +33,23 @@ export interface InputProps
 
 const Input = React.forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>(
     ({
-         className,
-         placeholder,
-         rightIcon,
-         leftIcon,
-         isInputButton,
-         type,
-         as = 'input',
-         options,
-         value,
-         error,
-         label,
-         required,
-         fixedPhoneValue,
-         onPhoneCodeChange,
-         ...props
-     },
-     ref
+        className,
+        placeholder,
+        rightIcon,
+        leftIcon,
+        isInputButton,
+        type,
+        as = 'input',
+        options,
+        value,
+        error,
+        label,
+        required,
+        fixedPhoneValue,
+        onPhoneCodeChange,
+        ...props
+    },
+        ref
     ) => {
 
         const [passwordMasked, setPasswordMasked] = React.useState(false)
@@ -75,19 +75,19 @@ const Input = React.forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>
             // 1. Layout & Taille
             "block w-full rounded-xl px-5 py-2.5",
             "text-base leading-tight font-normal transition-all duration-200",
-            
+
             // 2. Look & Couleurs (Default)
             "bg-transparent border border-solid border-neutral-300/60 text-neutral-700",
             "placeholder:text-vaTextPrimary/50 bg-clip-padding",
-            
+
             // 3. Focus & Interactions
             "focus:outline-none focus:ring focus:ring-vaBlue focus:border-none",
-            
+
             // 4. États Conditionnels (Erreur vs Normal)
-            error 
-                ? "border-yRed/30 hover:border-yRed/80 focus:ring-yRed" 
+            error
+                ? "border-yRed/30 hover:border-yRed/80 focus:ring-yRed"
                 : "border-black/5 hover:border-yPrimary/30 focus:ring-yPrimary",
-            
+
             // 5. Ajustements dynamiques
             leftIcon && "pl-[50px]",
             className
@@ -104,22 +104,22 @@ const Input = React.forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>
                     >{label} {required && <span className="text-red-500">*</span>}</label>}
                     <div className={`relative`}>
                         {as === 'select' ? (<>
-                                <select
-                                    value={value}
-                                    className={classes}
-                                    ref={ref as React.Ref<HTMLSelectElement>}
-                                    {...props}
-                                >
-                                    <option disabled selected>{placeholder ?? label}</option>
-                                    {options?.map((option, index) => (
-                                        <option key={index} value={option.value}>
-                                            {option.label}
-                                        </option>
-                                    ))}
-                                </select>
-                                {/*<ChevronDownIcon*/}
-                                {/*    className={`absolute top-[30%] right-[12px] -z-30 group-hover:text-yPrimary group-hover:scale-[1.05]`}/>*/}
-                            </>)
+                            <select
+                                value={value}
+                                className={classes}
+                                ref={ref as React.Ref<HTMLSelectElement>}
+                                {...props}
+                            >
+                                <option disabled selected>{placeholder ?? label}</option>
+                                {options?.map((option, index) => (
+                                    <option key={index} value={option.value}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                            {/*<ChevronDownIcon*/}
+                            {/*    className={`absolute top-[30%] right-[12px] -z-30 group-hover:text-yPrimary group-hover:scale-[1.05]`}/>*/}
+                        </>)
                             :
                             (<>
                                 <div
@@ -175,22 +175,22 @@ const Input = React.forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>
 
 Input.displayName = "Input";
 
-export const InputErrorMessage: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({children}) => {
+export const InputErrorMessage: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ children }) => {
 
     return (
         <div className={`text-yRed font-yMulish text-[14px] flex items-center justify-start mt-1 gap-1`}>
             <div>
-                <WarningIcon/>
+                <WarningIcon />
             </div>
             <span className={"line-clamp-1"}>{children}</span>
         </div>
     )
 }
 
-export function CountrySelect({onPhoneChange}: { onPhoneChange: (phone: string) => void }) {
+export function CountrySelect({ onPhoneChange }: { onPhoneChange: (phone: string) => void }) {
 
     const [isOpen, setIsOpen] = React.useState(false)
-    const {data: countries, isLoading} = useCountries()
+    const { data: countries, isLoading } = useCountries()
     const [activeValue, setActiveValue] = React.useState("237")
 
     const onCountriesSelect = () => {
@@ -209,7 +209,7 @@ export function CountrySelect({onPhoneChange}: { onPhoneChange: (phone: string) 
                 onCountriesSelect()
             }} className={"flex gap-1"}>
                 <div>{cleanPhoneNumber(`+${activeValue}`)}</div>
-                <ChevronDownIcon/>
+                <ChevronDownIcon />
             </button>
             <Select
                 open={isOpen}
@@ -218,7 +218,7 @@ export function CountrySelect({onPhoneChange}: { onPhoneChange: (phone: string) 
                 onValueChange={onValueChange}
             >
                 <SelectTrigger className="size-0 absolute -z-10 opacity-0">
-                    <SelectValue className={"hidden overflow-hidden"} placeholder="pays"/>
+                    <SelectValue className={"hidden overflow-hidden"} placeholder="pays" />
                 </SelectTrigger>
                 <SelectContent>
                     {countries && <SelectGroup>
@@ -226,7 +226,7 @@ export function CountrySelect({onPhoneChange}: { onPhoneChange: (phone: string) 
                             <SelectItem key={k} value={c.phoneCode}>
                                 <div className={"flex items-center gap-2"}>
                                     <Image width={30} height={30} className={"w-[30px] h-auto"}
-                                           src={`https://flagsapi.com/${c.isoCode}/flat/32.png`} alt=""/>
+                                        src={`https://flagsapi.com/${c.isoCode}/flat/32.png`} alt="" />
                                     <div>{c.name}({cleanPhoneNumber('+' + c.phoneCode)})</div>
                                 </div>
                             </SelectItem>
@@ -265,4 +265,30 @@ function extractPhoneDetails(phoneNumber: string) {
 }
 
 
-export {Input};
+export { Input };
+
+
+
+export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+    required?: boolean
+}
+
+export function Label({
+    children,
+    className,
+    required = false,
+    ...props
+}: LabelProps) {
+    return (
+        <label
+            className={cn(
+                "text-sm text-foreground font-semibold",
+                className
+            )}
+            {...props}
+        >
+            {children}
+            {required && <span className="text-vaRed font-bold ml-1">*</span>}
+        </label>
+    )
+}

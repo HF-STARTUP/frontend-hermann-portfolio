@@ -6,14 +6,15 @@ import ARCInteractionModel from "@/model/at-risk-customers/ARCInteractionsModel"
 import ARCKpiModel from "@/model/at-risk-customers/ARCKpisModel";
 import ARCClientModel from "@/model/at-risk-customers/ARCPrioritiesModel";
 import Service from "@/services/Service";
-import { ARCClientDetailListResponseType, ARCClientPrioritiesResponseType, ARCClientProfileResponseType, ARCInteractionDetailResponseType, ARCInteractionListResponseType, ARCKpiResponseType, AtRiskCustomersParams } from "@/types/at-risk-customers.type";
+import { ARCClientDetailListResponseType, ARCClientPrioritiesResponseType, ARCClientProfileResponseType, ARCInteractionDetailResponseType, ARCInteractionListResponseType, ARCKpiResponseType, ARCNewActionPayload, AtRiskCustomersParams } from "@/types/at-risk-customers.type";
 
 export enum ARCApiPath {
     GetARCKpi = "/admin/clients-at-risk/overview/kpis",
     GetARCClientsPriorities = "/admin/clients-at-risk/priorities",
     GetAtRiskCustomers = "/admin/clients-at-risk",
     GetAtRiskCustomer = "/admin/clients-at-risk/{park_id}",
-    GetARCInteractions = "/admin/clients-at-risk/{park_id}/interactions"
+    GetARCInteractions = "/admin/clients-at-risk/{park_id}/interactions",
+    CreateAction = "/admin/clients-at-risk/actions"
 }
 
 class ARCService extends Service {
@@ -48,9 +49,9 @@ class ARCService extends Service {
     public static async getARCClientDetails(
         params: AtRiskCustomersParams
     ): Promise<{ data: ARCClientDetailModel[]; meta: Omit<ARCClientDetailListResponseType, "data"> }> {
-
+        const url = toQueriesString(ARCApiPath.GetAtRiskCustomers, params)
         const result = await ARCService.makeRequest<ARCClientDetailListResponseType>(
-            ARCApiPath.GetAtRiskCustomers,
+            url,
             'GET'
         );
 
@@ -101,6 +102,13 @@ class ARCService extends Service {
         return ARCInteractionDetailModel.fromResponse(result);
     }
 
+    public static async addARCAction(payload: ARCNewActionPayload) {
+        return await ARCService.makeRequest(
+            ARCApiPath.CreateAction,
+            "POST",
+            payload
+        )
+    }
 
 
 

@@ -1,6 +1,7 @@
 import ARCService, { ARCApiPath } from "@/services/AtRiskCustomersService";
-import { AtRiskCustomersParams } from "@/types/at-risk-customers.type";
-import { useQuery } from "@tanstack/react-query";
+import { ARCNewActionPayload, AtRiskCustomersParams } from "@/types/at-risk-customers.type";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutationProvider } from "../hooksProvider";
 
 export const useGetARCKpi = () => {
 
@@ -75,4 +76,17 @@ export const useGetARCInteractionDetail = (params: AtRiskCustomersParams) => {
     });
 
     return { isLoading, interaction: data };
+};
+
+
+export const useAddARCAction = () => {
+    const queryClient = useQueryClient();
+
+    return useMutationProvider({
+        mutationFn: (payload: ARCNewActionPayload) => ARCService.addARCAction(payload),
+        successMessage: "Action enregistrée avec succès",
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: [ARCApiPath.GetARCInteractions] });
+        },
+    });
 };

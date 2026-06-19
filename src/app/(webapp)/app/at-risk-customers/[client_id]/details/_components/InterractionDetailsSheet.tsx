@@ -85,10 +85,10 @@ export const InterractionDetailsSheet = ({ isOpenned, onClose, interactionId, pa
                                     BESOINS identifiés
                                 </h1>
                                 {interaction?.identifiedNeeds ?
-                                    <div className="">
+                                    <div className="flex items-center gap-2 flex-wrap">
                                         {interaction.identifiedNeedsLabels.map((nl) =>
                                             < Badge variant="light-blue">
-                                                {interaction?.exchangeSummary}
+                                                {nl}
                                             </Badge>
                                         )}
                                     </div>
