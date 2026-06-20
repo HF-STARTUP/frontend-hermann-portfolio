@@ -1,4 +1,5 @@
 import { toQueriesString } from "@/lib/utils";
+import ARCAssigneeModel from "@/model/at-risk-customers/ARCAssigneeModel";
 import ARCClientDetailModel from "@/model/at-risk-customers/ARCClientDetailModel";
 import ARCClientProfileModel from "@/model/at-risk-customers/ARCClientProfileModel";
 import ARCInteractionDetailModel from "@/model/at-risk-customers/ARCInteractionModel";
@@ -6,7 +7,7 @@ import ARCInteractionModel from "@/model/at-risk-customers/ARCInteractionsModel"
 import ARCKpiModel from "@/model/at-risk-customers/ARCKpisModel";
 import ARCClientModel from "@/model/at-risk-customers/ARCPrioritiesModel";
 import Service from "@/services/Service";
-import { ARCClientDetailListResponseType, ARCClientPrioritiesResponseType, ARCClientProfileResponseType, ARCInteractionDetailResponseType, ARCInteractionListResponseType, ARCKpiResponseType, ARCNewActionPayload, AtRiskCustomersParams } from "@/types/at-risk-customers.type";
+import { ARCAssigneeResponseType, ARCClientDetailListResponseType, ARCClientPrioritiesResponseType, ARCClientProfileResponseType, ARCInteractionDetailResponseType, ARCInteractionListResponseType, ARCKpiResponseType, ARCNewActionPayload, AtRiskCustomersParams } from "@/types/at-risk-customers.type";
 
 export enum ARCApiPath {
     GetARCKpi = "/admin/clients-at-risk/overview/kpis",
@@ -14,7 +15,8 @@ export enum ARCApiPath {
     GetAtRiskCustomers = "/admin/clients-at-risk",
     GetAtRiskCustomer = "/admin/clients-at-risk/{park_id}",
     GetARCInteractions = "/admin/clients-at-risk/{park_id}/interactions",
-    CreateAction = "/admin/clients-at-risk/actions"
+    CreateAction = "/admin/clients-at-risk/actions",
+    GetAssignees = "/admin/clients-at-risk/meta/assignees"
 }
 
 class ARCService extends Service {
@@ -108,6 +110,13 @@ class ARCService extends Service {
             "POST",
             payload
         )
+    }
+
+    public static async getARCAssignees(params: AtRiskCustomersParams): Promise<ARCAssigneeModel[]> {
+        const result = await ARCService.makeRequest<ARCAssigneeResponseType[]>(
+            toQueriesString(ARCApiPath.GetAssignees, params), 'GET'
+        );
+        return ARCAssigneeModel.toArrays(result);
     }
 
 

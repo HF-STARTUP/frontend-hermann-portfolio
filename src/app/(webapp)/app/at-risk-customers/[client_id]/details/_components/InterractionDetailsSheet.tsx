@@ -7,6 +7,7 @@ import { useGetARCInteractionDetail } from "@/hooks/at-risk-customers/useAtRiskC
 import { getAvatarColor, getAvatarInitials } from "@/lib/initials.avatar.util"
 import { cn } from "@/lib/utils"
 import { Dot, MapPin, X } from "lucide-react"
+import Image from "next/image"
 import { PiMegaphone } from "react-icons/pi"
 
 export const InterractionDetailsSheet = ({ isOpenned, onClose, interactionId, parkId }: { isOpenned: boolean, onClose: () => void, interactionId: string, parkId: string }) => {
@@ -119,9 +120,19 @@ export const InterractionDetailsSheet = ({ isOpenned, onClose, interactionId, pa
                                         COMMERCIAL ASSIGNÉ
                                     </h1>
                                     {<div className="font-bold text-sm flex items-center gap-2">
-                                        <div className={cn("rounded-full size-6 text-white flex items-center justify-center", getAvatarColor(interaction?.assignedTo ?? "RAS"))}>
-                                            {getAvatarInitials(interaction?.assignedTo ?? "RAS")}
-                                        </div> {interaction?.assignedTo ?? "----"}
+                                        <div className={cn("rounded-full border size-6 text-white flex items-center justify-center", getAvatarColor(interaction?.assignedToFullName ?? "RAS"))}>
+
+                                            {interaction?.assignedToImage
+                                                ? <Image
+                                                    src={interaction.assignedToImage}
+                                                    alt={interaction.assignedToFullName}
+                                                    width={50}
+                                                    height={50}
+                                                    className="size-full object-cover"
+                                                />
+                                                : getAvatarInitials(interaction?.assignedToFullName ?? "RAS")}
+                                        </div>
+                                        {interaction?.assignedToFullName ?? "----"}
                                     </div>}
                                 </div>
                             </div>

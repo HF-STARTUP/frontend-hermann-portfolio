@@ -22,14 +22,12 @@ class ARCInteractionDetailModel extends Model {
         return this._instance.source === "system";
     }
 
-    // ── Header ───────────────────────────────
     get clientName() { return this._instance.header.client_name; }
     get locationLabel() { return this._instance.header.location_label; }
     get vehicleCount() { return this._instance.header.vehicle_count; }
     get vehicleCountLabel() { return this._instance.header.vehicle_count_label; }
     get riskScore() { return this._instance.header.risk_score; }
 
-    // ── Détails de l'échange ─────────────────
     get communicationChannel() { return this._instance.communication_channel; }
     get communicationChannelLabel() { return this._instance.communication_channel_label ?? "----"; }
     get contactReason() { return this._instance.contact_reason; }
@@ -39,6 +37,24 @@ class ARCInteractionDetailModel extends Model {
     get identifiedNeedsLabels() { return this._instance.identified_needs_labels; }
     get proposedSolution() { return this._instance.proposed_solution ?? "----"; }
     get assignedTo() { return this._instance.assigned_to; }
+
+    get assignedToFirstName() {
+        return this.assignedTo?.first_name ?? ""
+    }
+
+    get assignedToLastName() {
+        return this.assignedTo?.last_name ?? ""
+    }
+
+    get assignedToFullName() {
+        if(!this.assignedTo) return "----"
+        return this.toName(`${this.assignedToFirstName} ${this.assignedTo?.last_name}`)
+    }
+
+    get assignedToImage() {
+        return this.assignedTo?.avatar_url ? this.resolveImage(this.assignedTo?.avatar_url) : undefined
+    }
+    
     get result() { return this._instance.result; }
     get resultLabel() { return this._instance.result_label ?? "----"; }
     get nextSteps() { return this._instance.next_steps ?? "----"; }
