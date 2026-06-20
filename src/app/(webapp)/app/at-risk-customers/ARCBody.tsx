@@ -2,16 +2,27 @@
 
 
 import { SwitcherTabs } from "@/components/display/switcher-tabs"
-import { useState } from "react"
 import { LayoutDashboard, Table } from "lucide-react"
 import { ARCOverview } from "./_component/ATCOverview"
 import { useARCHook } from "./_hook/useARCHook"
 import { AtRiskCustomersList } from "./_component/AtRiskCustomersList"
+import { useRouter, useSearchParams, usePathname } from "next/navigation"
+import { useCallback } from "react"
 
 
 export const AtRiskCustomersBody = () => {
 
-    const [selectedTab, setSelectedTab] = useState("overview")
+    const router = useRouter()
+    const pathname = usePathname()
+    const searchParams = useSearchParams()
+
+    const selectedTab = searchParams.get("at") ?? "overview"
+
+    const setSelectedTab = useCallback((value: string) => {
+        const params = new URLSearchParams(searchParams.toString())
+        params.set("at", value)
+        router.push(`${pathname}?${params.toString()}`, { scroll: false })
+    }, [pathname, router, searchParams])
 
     const {
         kpiItems,
@@ -41,7 +52,7 @@ export const AtRiskCustomersBody = () => {
     ]
     return (
         <div className="">
-            <SwitcherTabs value={selectedTab} tabs={tabs} onSelect={(v) => setSelectedTab(v)} />
+            <SwitcherTabs value={selectedTab} tabs={tabs} onSelect={setSelectedTab} />
         </div>
     )
 }

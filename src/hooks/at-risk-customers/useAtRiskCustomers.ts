@@ -90,3 +90,13 @@ export const useAddARCAction = () => {
         },
     });
 };
+
+
+export const useGetARCAssignees = (params: AtRiskCustomersParams) => {
+    const { isLoading, data } = useQuery({
+        queryKey: [ARCApiPath.GetAssignees, params],
+        queryFn: () => ARCService.getARCAssignees(params),
+    });
+
+    return { isLoading, assignees: data };
+};

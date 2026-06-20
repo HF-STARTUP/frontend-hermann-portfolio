@@ -1,263 +1,246 @@
-import { ARCNewActionPayload } from "@/types/at-risk-customers.type"
+import {
+    ARCNewActionPayload,
+    ARCCommunicationChannel,
+    ARCContactReason,
+    ARCClientNeed,
+    ARCActionType,
+    ARCActionPriority,
+    ARCActionStatus,
+} from "@/types/at-risk-customers.type"
 import { SelectableChipProps } from "../_component/SelectableChip"
-import { Mail, Phone, User, RefreshCcw, Wrench, Tag, Puzzle, ClipboardList, TrendingDown, BarChart2, HeadphonesIcon, BookOpen, Box, PhoneCall, Megaphone, MonitorPlay, FileSearch, GraduationCap, Hammer } from "lucide-react"
+import {
+    Mail, Phone, User, RefreshCcw, Wrench, Tag, ClipboardList,
+    TrendingDown, BarChart2, PhoneCall, Megaphone, MonitorPlay,
+    FileSearch, GraduationCap, Hammer,
+} from "lucide-react"
 import { PiWhatsappLogo } from "react-icons/pi"
 import { Dispatch, SetStateAction } from "react"
 
 export const ActionFormConstants = ({
     payload,
-    setPayload
-}
-    : {
-        payload: ARCNewActionPayload;
-        setPayload: Dispatch<SetStateAction<ARCNewActionPayload>>
-    }) => {
+    setPayload,
+}: {
+    payload: ARCNewActionPayload;
+    setPayload: Dispatch<SetStateAction<ARCNewActionPayload>>;
+}) => {
 
     const CommunicationChannels: SelectableChipProps[] = [
         {
-            isSelected: payload.communication_channel == "call",
+            isSelected: payload.communication_channel === ARCCommunicationChannel.CALL,
             label: "Appel",
-            onSelect: () => setPayload({ ...payload, communication_channel: "call" }),
-            value: "call",
+            onSelect: () => setPayload({ ...payload, communication_channel: ARCCommunicationChannel.CALL }),
+            value: ARCCommunicationChannel.CALL,
             icon: <Phone size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.communication_channel == "whatsapp",
+            isSelected: payload.communication_channel === ARCCommunicationChannel.WHATSAPP,
             label: "WhatsApp",
-            onSelect: () => setPayload({ ...payload, communication_channel: "whatsapp" }),
-            value: "whatsapp",
+            onSelect: () => setPayload({ ...payload, communication_channel: ARCCommunicationChannel.WHATSAPP }),
+            value: ARCCommunicationChannel.WHATSAPP,
             icon: <PiWhatsappLogo size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.communication_channel == "email",
+            isSelected: payload.communication_channel === ARCCommunicationChannel.EMAIL,
             label: "E-mail",
-            onSelect: () => setPayload({ ...payload, communication_channel: "email" }),
-            value: "email",
+            onSelect: () => setPayload({ ...payload, communication_channel: ARCCommunicationChannel.EMAIL }),
+            value: ARCCommunicationChannel.EMAIL,
             icon: <Mail size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.communication_channel == "person",
+            isSelected: payload.communication_channel === ARCCommunicationChannel.MEETING,
             label: "En personne",
-            onSelect: () => setPayload({ ...payload, communication_channel: "person" }),
-            value: "person",
+            onSelect: () => setPayload({ ...payload, communication_channel: ARCCommunicationChannel.MEETING }),
+            value: ARCCommunicationChannel.MEETING,
             icon: <User size={16} className="shrink-0" />
         },
     ]
 
     const ContactReasons: SelectableChipProps[] = [
         {
-            isSelected: payload.contact_reason == "renewal",
+            isSelected: payload.contact_reason === ARCContactReason.SUBSCRIPTION_RENEWAL,
             label: "Renouvellement",
-            onSelect: () => setPayload({ ...payload, contact_reason: "renewal" }),
-            value: "renewal",
+            onSelect: () => setPayload({ ...payload, contact_reason: ARCContactReason.SUBSCRIPTION_RENEWAL }),
+            value: ARCContactReason.SUBSCRIPTION_RENEWAL,
             icon: <RefreshCcw size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.contact_reason == "technical_issue",
-            label: "Problème technique",
-            onSelect: () => setPayload({ ...payload, contact_reason: "technical_issue" }),
-            value: "technical_issue",
-            icon: <Wrench size={16} className="shrink-0" />
-        },
-        {
-            isSelected: payload.contact_reason == "plan_change",
-            label: "Changement de forfait",
-            onSelect: () => setPayload({ ...payload, contact_reason: "plan_change" }),
-            value: "plan_change",
-            icon: <Tag size={16} className="shrink-0" />
-        },
-        {
-            isSelected: payload.contact_reason == "late_payment",
+            isSelected: payload.contact_reason === ARCContactReason.PAYMENT_OVERDUE,
             label: "Paiement en retard",
-            onSelect: () => setPayload({ ...payload, contact_reason: "late_payment" }),
-            value: "late_payment",
+            onSelect: () => setPayload({ ...payload, contact_reason: ARCContactReason.PAYMENT_OVERDUE }),
+            value: ARCContactReason.PAYMENT_OVERDUE,
             icon: <ClipboardList size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.contact_reason == "integration",
-            label: "Intégration",
-            onSelect: () => setPayload({ ...payload, contact_reason: "integration" }),
-            value: "integration",
-            icon: <Puzzle size={16} className="shrink-0" />
+            isSelected: payload.contact_reason === ARCContactReason.TRAINING,
+            label: "Formation",
+            onSelect: () => setPayload({ ...payload, contact_reason: ARCContactReason.TRAINING }),
+            value: ARCContactReason.TRAINING,
+            icon: <GraduationCap size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.contact_reason == "discount_request",
-            label: "Demande de remise",
-            onSelect: () => setPayload({ ...payload, contact_reason: "discount_request" }),
-            value: "discount_request",
-            icon: <TrendingDown size={16} className="shrink-0" />
+            isSelected: payload.contact_reason === ARCContactReason.ACCOUNT_REVIEW,
+            label: "Revue de compte",
+            onSelect: () => setPayload({ ...payload, contact_reason: ARCContactReason.ACCOUNT_REVIEW }),
+            value: ARCContactReason.ACCOUNT_REVIEW,
+            icon: <FileSearch size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.contact_reason == "general_followup",
-            label: "Suivi général",
-            onSelect: () => setPayload({ ...payload, contact_reason: "general_followup" }),
-            value: "general_followup",
-            icon: <BarChart2 size={16} className="shrink-0" />
-        },
-        {
-            isSelected: payload.contact_reason == "low_usage",
-            label: "Faible utilisation",
-            onSelect: () => setPayload({ ...payload, contact_reason: "low_usage" }),
-            value: "low_usage",
-            icon: <HeadphonesIcon size={16} className="shrink-0" />
+            isSelected: payload.contact_reason === ARCContactReason.OTHER,
+            label: "Autre",
+            onSelect: () => setPayload({ ...payload, contact_reason: ARCContactReason.OTHER }),
+            value: ARCContactReason.OTHER,
+            icon: <Wrench size={16} className="shrink-0" />
         },
     ]
 
     const IdentifiedNeeds: SelectableChipProps[] = [
         {
-            isSelected: payload.identified_needs?.includes("loyalty_discount"),
+            isSelected: payload.identified_needs?.includes(ARCClientNeed.LOYALTY_DISCOUNT) ?? false,
             label: "Remise fidélité",
-            onSelect: () => setPayload({ ...payload, identified_needs: toggleMulti(payload.identified_needs, "loyalty_discount") }),
-            value: "loyalty_discount",
+            onSelect: () => setPayload({ ...payload, identified_needs: toggleMulti(payload.identified_needs, ARCClientNeed.LOYALTY_DISCOUNT) }),
+            value: ARCClientNeed.LOYALTY_DISCOUNT,
             icon: <Tag size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.identified_needs?.includes("account_review"),
+            isSelected: payload.identified_needs?.includes(ARCClientNeed.ACCOUNT_REVIEW) ?? false,
             label: "Revue de compte",
-            onSelect: () => setPayload({ ...payload, identified_needs: toggleMulti(payload.identified_needs, "account_review") }),
-            value: "account_review",
+            onSelect: () => setPayload({ ...payload, identified_needs: toggleMulti(payload.identified_needs, ARCClientNeed.ACCOUNT_REVIEW) }),
+            value: ARCClientNeed.ACCOUNT_REVIEW,
             icon: <FileSearch size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.identified_needs?.includes("payment_plan"),
+            isSelected: payload.identified_needs?.includes(ARCClientNeed.PAYMENT_PLAN) ?? false,
             label: "Échéancier de paiement",
-            onSelect: () => setPayload({ ...payload, identified_needs: toggleMulti(payload.identified_needs, "payment_plan") }),
-            value: "payment_plan",
+            onSelect: () => setPayload({ ...payload, identified_needs: toggleMulti(payload.identified_needs, ARCClientNeed.PAYMENT_PLAN) }),
+            value: ARCClientNeed.PAYMENT_PLAN,
             icon: <ClipboardList size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.identified_needs?.includes("renewal_reminder"),
-            label: "Rappel de renouvellement",
-            onSelect: () => setPayload({ ...payload, identified_needs: toggleMulti(payload.identified_needs, "renewal_reminder") }),
-            value: "renewal_reminder",
+            isSelected: payload.identified_needs?.includes(ARCClientNeed.RENEWAL_CALL) ?? false,
+            label: "Appel de renouvellement",
+            onSelect: () => setPayload({ ...payload, identified_needs: toggleMulti(payload.identified_needs, ARCClientNeed.RENEWAL_CALL) }),
+            value: ARCClientNeed.RENEWAL_CALL,
             icon: <RefreshCcw size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.identified_needs?.includes("training"),
+            isSelected: payload.identified_needs?.includes(ARCClientNeed.TRAINING) ?? false,
             label: "Session de formation",
-            onSelect: () => setPayload({ ...payload, identified_needs: toggleMulti(payload.identified_needs, "training") }),
-            value: "training",
+            onSelect: () => setPayload({ ...payload, identified_needs: toggleMulti(payload.identified_needs, ARCClientNeed.TRAINING) }),
+            value: ARCClientNeed.TRAINING,
             icon: <GraduationCap size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.identified_needs?.includes("plan_downgrade"),
-            label: "Rétrogradation de forfait",
-            onSelect: () => setPayload({ ...payload, identified_needs: toggleMulti(payload.identified_needs, "plan_downgrade") }),
-            value: "plan_downgrade",
+            isSelected: payload.identified_needs?.includes(ARCClientNeed.RENEWAL) ?? false,
+            label: "Renouvellement",
+            onSelect: () => setPayload({ ...payload, identified_needs: toggleMulti(payload.identified_needs, ARCClientNeed.RENEWAL) }),
+            value: ARCClientNeed.RENEWAL,
             icon: <TrendingDown size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.identified_needs?.includes("device_replacement") ?? false,
-            label: "Remplacement de boitier",
-            onSelect: () => setPayload({ ...payload, identified_needs: toggleMulti(payload.identified_needs, "device_replacement") }),
-            value: "device_replacement",
-            icon: <Box size={16} className="shrink-0" />
-        },
-        {
-            isSelected: payload.identified_needs?.includes("technical_support") ?? false,
-            label: "Support technique",
-            onSelect: () => setPayload({ ...payload, identified_needs: toggleMulti(payload.identified_needs, "technical_support") }),
-            value: "technical_support",
-            icon: <Hammer size={16} className="shrink-0" />
+            isSelected: payload.identified_needs?.includes(ARCClientNeed.BILLING_REVIEW) ?? false,
+            label: "Revue facturation",
+            onSelect: () => setPayload({ ...payload, identified_needs: toggleMulti(payload.identified_needs, ARCClientNeed.BILLING_REVIEW) }),
+            value: ARCClientNeed.BILLING_REVIEW,
+            icon: <BarChart2 size={16} className="shrink-0" />
         },
     ]
 
     const NextActions: SelectableChipProps[] = [
         {
-            isSelected: payload.action_type == "callback",
+            isSelected: payload.action_type === ARCActionType.FOLLOW_UP_CLIENT,
             label: "Relancer le client",
-            onSelect: () => setPayload({ ...payload, action_type: "callback" }),
-            value: "callback",
+            onSelect: () => setPayload({ ...payload, action_type: ARCActionType.FOLLOW_UP_CLIENT }),
+            value: ARCActionType.FOLLOW_UP_CLIENT,
             icon: <PhoneCall size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.action_type == "send_promotion",
+            isSelected: payload.action_type === ARCActionType.SEND_PROMOTION,
             label: "Envoyer une promotion",
-            onSelect: () => setPayload({ ...payload, action_type: "send_promotion" }),
-            value: "send_promotion",
+            onSelect: () => setPayload({ ...payload, action_type: ARCActionType.SEND_PROMOTION }),
+            value: ARCActionType.SEND_PROMOTION,
             icon: <Megaphone size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.action_type == "schedule_demo",
+            isSelected: payload.action_type === ARCActionType.SCHEDULE_DEMO,
             label: "Programmer une démo",
-            onSelect: () => setPayload({ ...payload, action_type: "schedule_demo" }),
-            value: "schedule_demo",
+            onSelect: () => setPayload({ ...payload, action_type: ARCActionType.SCHEDULE_DEMO }),
+            value: ARCActionType.SCHEDULE_DEMO,
             icon: <MonitorPlay size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.action_type == "account_review",
+            isSelected: payload.action_type === ARCActionType.ACCOUNT_REVIEW,
             label: "Revue de compte",
-            onSelect: () => setPayload({ ...payload, action_type: "account_review" }),
-            value: "account_review",
+            onSelect: () => setPayload({ ...payload, action_type: ARCActionType.ACCOUNT_REVIEW }),
+            value: ARCActionType.ACCOUNT_REVIEW,
             icon: <FileSearch size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.action_type == "training_session",
+            isSelected: payload.action_type === ARCActionType.TRAINING_SESSION,
             label: "Session de formation",
-            onSelect: () => setPayload({ ...payload, action_type: "training_session" }),
-            value: "training_session",
+            onSelect: () => setPayload({ ...payload, action_type: ARCActionType.TRAINING_SESSION }),
+            value: ARCActionType.TRAINING_SESSION,
             icon: <GraduationCap size={16} className="shrink-0" />
         },
         {
-            isSelected: payload.action_type == "technical_intervention",
+            isSelected: payload.action_type === ARCActionType.TECHNICAL_INTERVENTION,
             label: "Intervention technique",
-            onSelect: () => setPayload({ ...payload, action_type: "technical_intervention" }),
-            value: "technical_intervention",
+            onSelect: () => setPayload({ ...payload, action_type: ARCActionType.TECHNICAL_INTERVENTION }),
+            value: ARCActionType.TECHNICAL_INTERVENTION,
             icon: <Hammer size={16} className="shrink-0" />
         },
     ]
 
     const Priorities: SelectableChipProps[] = [
         {
-            isSelected: payload.priority == "low",
+            isSelected: payload.priority === ARCActionPriority.LOW,
             label: "Basse",
-            onSelect: () => setPayload({ ...payload, priority: "low" }),
-            value: "low",
+            onSelect: () => setPayload({ ...payload, priority: ARCActionPriority.LOW }),
+            value: ARCActionPriority.LOW,
         },
         {
-            isSelected: payload.priority == "medium",
+            isSelected: payload.priority === ARCActionPriority.MEDIUM,
             label: "Moyenne",
-            onSelect: () => setPayload({ ...payload, priority: "medium" }),
-            value: "medium",
+            onSelect: () => setPayload({ ...payload, priority: ARCActionPriority.MEDIUM }),
+            value: ARCActionPriority.MEDIUM,
         },
         {
-            isSelected: payload.priority == "high",
+            isSelected: payload.priority === ARCActionPriority.HIGH,
             label: "Haute",
-            onSelect: () => setPayload({ ...payload, priority: "high" }),
-            value: "high",
+            onSelect: () => setPayload({ ...payload, priority: ARCActionPriority.HIGH }),
+            value: ARCActionPriority.HIGH,
         },
         {
-            isSelected: payload.priority == "urgent",
+            isSelected: payload.priority === ARCActionPriority.URGENT,
             label: "Urgente",
-            onSelect: () => setPayload({ ...payload, priority: "urgent" }),
-            value: "urgent",
+            onSelect: () => setPayload({ ...payload, priority: ARCActionPriority.URGENT }),
+            value: ARCActionPriority.URGENT,
         },
     ]
 
     const Statuses: SelectableChipProps[] = [
         {
-            isSelected: payload.status == "todo",
+            isSelected: payload.status === ARCActionStatus.TODO,
             label: "À faire",
-            onSelect: () => setPayload({ ...payload, status: "todo" }),
-            value: "todo",
+            onSelect: () => setPayload({ ...payload, status: ARCActionStatus.TODO }),
+            value: ARCActionStatus.TODO,
         },
         {
-            isSelected: payload.status == "in_progress",
+            isSelected: payload.status === ARCActionStatus.IN_PROGRESS,
             label: "En cours",
-            onSelect: () => setPayload({ ...payload, status: "in_progress" }),
-            value: "in_progress",
+            onSelect: () => setPayload({ ...payload, status: ARCActionStatus.IN_PROGRESS }),
+            value: ARCActionStatus.IN_PROGRESS,
         },
         {
-            isSelected: payload.status == "done",
+            isSelected: payload.status === ARCActionStatus.COMPLETED,
             label: "Réalisée",
-            onSelect: () => setPayload({ ...payload, status: "done" }),
-            value: "done",
+            onSelect: () => setPayload({ ...payload, status: ARCActionStatus.COMPLETED }),
+            value: ARCActionStatus.COMPLETED,
         },
         {
-            isSelected: payload.status == "canceled",
+            isSelected: payload.status === ARCActionStatus.CANCELLED,
             label: "Annulée",
-            onSelect: () => setPayload({ ...payload, status: "canceled" }),
-            value: "canceled",
+            onSelect: () => setPayload({ ...payload, status: ARCActionStatus.CANCELLED }),
+            value: ARCActionStatus.CANCELLED,
         },
     ]
 
@@ -272,7 +255,7 @@ export const ActionFormConstants = ({
 }
 
 // helper pour la sélection multiple
-const toggleMulti = (current: string[] | undefined, value: string): string[] => {
+const toggleMulti = (current: ARCClientNeed[] | undefined, value: ARCClientNeed): ARCClientNeed[] => {
     const list = current ?? []
     return list.includes(value) ? list.filter((v) => v !== value) : [...list, value]
 }

@@ -1,5 +1,5 @@
 import { useAddARCAction } from "@/hooks/at-risk-customers/useAtRiskCustomers"
-import { ARCNewActionPayload } from "@/types/at-risk-customers.type"
+import { ARCNewActionPayload, ARCResult } from "@/types/at-risk-customers.type"
 import notify from "@/utils/func/notification"
 import { useEffect, useState } from "react"
 
@@ -7,7 +7,7 @@ export const useARCActionHook = (clientId?: string, action: 'add' | 'edit' = "ad
 
     const [payload, setPayload] = useState<ARCNewActionPayload>({
         park_id: clientId,
-        result: "positive"
+        result: ARCResult.POSITIVE
     })
 
     const resetPayload = () => setPayload({

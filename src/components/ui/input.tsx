@@ -89,7 +89,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>
                 : "border-black/5 hover:border-yPrimary/30 focus:ring-yPrimary",
 
             // 5. Ajustements dynamiques
-            leftIcon && "pl-[50px]",
+            leftIcon && "pl-8",
             className
         );
 

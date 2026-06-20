@@ -14,6 +14,8 @@ import { Textarea } from "@/components/ui/textarea"
 import { TextArea } from "@/components/form/TextField"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { DialogFooter } from "@/components/display/DialogFooter"
+import { useAssigneesHook } from "../_hook/useAssigneesHook"
+import { ARCActionMode, ARCActionStatus, ARCResult } from "@/types/at-risk-customers.type"
 
 export const AddActionFormSheet = ({
     isOpenned,
@@ -41,6 +43,11 @@ export const AddActionFormSheet = ({
     } = useARCActionHook(clientId, action)
 
     const {
+        assignees,
+        isLoadingAssignees
+    } = useAssigneesHook()
+
+    const {
         CommunicationChannels,
         ContactReasons,
         IdentifiedNeeds,
@@ -60,12 +67,12 @@ export const AddActionFormSheet = ({
         if (activeTab === "interaction") {
             setPayload({
                 park_id: clientId,
-                mode: "register_interaction"
+                mode: ARCActionMode.REGISTER_INTERACTION
             })
         } else {
             setPayload({
                 park_id: clientId,
-                mode: "schedule_follow_up"
+                mode: ARCActionMode.SCHEDULE_FOLLOW_UP
             })
         }
     }, [activeTab])
@@ -91,7 +98,7 @@ export const AddActionFormSheet = ({
                         value={activeTab}
                         onSelect={(v) => {
                             setActiveTab(v as 'interaction' | 'retarget');
-                            setPayload({ ...payload, mode: v == "interaction" ? "register_interaction" : "schedule_follow_up" })
+                            setPayload({ ...payload, mode: v == "interaction" ? ARCActionMode.REGISTER_INTERACTION : ARCActionMode.SCHEDULE_FOLLOW_UP })
                         }}
                         fullWidth
                         tabs={[
@@ -194,16 +201,25 @@ export const AddActionFormSheet = ({
                                         <Label required>
                                             Résultat
                                         </Label>
-                                        <Select value={payload.result} defaultValue="positive" onValueChange={(v) => setPayload({ ...payload, result: v })}>
+                                        <Select value={payload.result} defaultValue="positive" onValueChange={(v) => setPayload({ ...payload, result: v as ARCResult })}>
                                             <SelectTrigger className="w-full rounded-xl py-3.5 px-4 h-10" inForm>
                                                 <SelectValue placeholder="issue de l'interaction" />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value={"positive"}>
+                                                <SelectItem value={ARCResult.POSITIVE}>
                                                     Positif
                                                 </SelectItem>
-                                                <SelectItem value={"negative"}>
+                                                <SelectItem value={ARCResult.NEGATIVE}>
                                                     Négatif
+                                                </SelectItem>
+                                                <SelectItem value={ARCResult.NEUTRAL}>
+                                                    Neutre
+                                                </SelectItem>
+                                                <SelectItem value={ARCResult.NO_ANSWER}>
+                                                    Sans reponse
+                                                </SelectItem>
+                                                <SelectItem value={ARCResult.PENDING}>
+                                                    En cours
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
@@ -268,10 +284,15 @@ export const AddActionFormSheet = ({
                                                     })
                                                 }
                                                 options={[
-                                                    {
-                                                        label: "Test",
-                                                        value: "test"
-                                                    }
+                                                    ...(isLoadingAssignees
+                                                        ? [{ label: "Chargement des responsables...", value: "" }]
+                                                        : (assignees && assignees.length > 0)
+                                                            ? assignees.map((ass) => ({
+                                                                label: ass.fullName,
+                                                                value: ass.profileId
+                                                            }))
+                                                            : [{ label: "Aucun responsable trouvé", value: "" }]
+                                                    )
                                                 ]}
                                                 value={payload.assigned_to_profile_id}
                                             />
@@ -332,7 +353,7 @@ export const AddActionFormSheet = ({
                             <Button loading={loading} variant={"outline"} onClick={() => {
                                 setPayload({
                                     ...payload,
-                                    status: "daft"
+                                    status: ARCActionStatus.DRAFT
                                 })
                                 onSubmit()
                             }}>
@@ -342,7 +363,7 @@ export const AddActionFormSheet = ({
                             <Button loading={loading} variant={"mainBlue"} onClick={() => {
                                 setPayload({
                                     ...payload,
-                                    status: "in_progress"
+                                    status: ARCActionStatus.IN_PROGRESS
                                 })
                                 onSubmit()
                             }}>

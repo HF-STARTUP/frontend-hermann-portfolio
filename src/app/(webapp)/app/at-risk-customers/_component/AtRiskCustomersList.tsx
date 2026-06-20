@@ -15,18 +15,21 @@ export const AtRiskCustomersList = () => {
     const $router = useRouter()
     return (
         <div className="">
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4 py-4 pl-1">
-                    <Input
-                        onChange={(e) => setParams({ ...params, search: e.target.value })}
-                        placeholder="Rechercher dans cette liste…"
-                        type="search"
-                        className="border bg-white border-muted-foreground/30 text-muted-foreground h-10"
-                        leftIcon={
-                            <Search
-                                size={16}
-                                className="text-muted-foreground" />
-                        } />
+            <div className="flex items-end xl:items-center justify-between gap-4 max-h-fit pb-6">
+                <div className="flex items-end xl:items-center gap-4 flex-wrap ">
+                    <div className="max-w-96 w-fit">
+                        <Input
+                            onChange={(e) => setParams({ ...params, search: e.target.value })}
+                            placeholder="Rechercher dans cette liste…"
+                            type="search"
+                            className="border bg-white border-muted-foreground/30 text-muted-foreground h-10 w-full"
+                            leftIcon={
+                                <Search
+                                    size={16}
+                                    className="text-muted-foreground" />
+                            } />
+                    </div>
+
                     <Button variant={"outline"} className="font-semibold text-foreground">
                         <Filter size={16} className="mr-2 shrink-0" />
                         Filtrer
@@ -84,7 +87,7 @@ export const AtRiskCustomersList = () => {
                 isLoading={isLoadingCustomers}
                 onRowClick={(client) => $router.push(`/app/at-risk-customers/${client.parkId}/details`)}
                 rowActions={rowActions}
-                loadingRowId={null} 
+                loadingRowId={null}
                 exportConfig={exportConfig}
                 groupConfig={groupConfig}
                 selection={selection}
