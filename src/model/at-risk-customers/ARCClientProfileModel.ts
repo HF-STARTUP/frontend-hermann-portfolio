@@ -5,8 +5,10 @@ import {
     ARCRiskFactor,
     ARCRiskSparklinePoint,
     ARCRecommendation,
+    ARCRecommendationKey,
 } from "@/types/at-risk-customers.type";
 import { BadgeVariant } from "@/components/display/Badge";
+import { Banknote, FileSearch, LucideIcon, PhoneCall, Sparkles } from "lucide-react";
 
 class ARCClientProfileModel extends Model {
     private _instance: ARCClientProfileResponseType;
@@ -61,7 +63,7 @@ class ARCClientProfileModel extends Model {
         return this._instance.risk_analysis.sparkline_30d;
     }
 
-    get analysisRiskLevelLabel(){
+    get analysisRiskLevelLabel() {
         return this._instance.risk_analysis.risk_level_label
     }
 
@@ -75,6 +77,19 @@ class ARCClientProfileModel extends Model {
 
     get recommendations(): ARCRecommendation[] {
         return this._instance.recommendations;
+    }
+
+    getRecommendationIcon(key: ARCRecommendationKey): LucideIcon {
+        switch (key) {
+            case ARCRecommendationKey.PAYMENT_PLAN:
+                return Banknote
+            case ARCRecommendationKey.CONTACT_48H:
+                return PhoneCall
+            case ARCRecommendationKey.ACCOUNT_REVIEW:
+                return FileSearch
+            default:
+                return Sparkles;
+        }
     }
 
     get primaryContactFullName(): string {

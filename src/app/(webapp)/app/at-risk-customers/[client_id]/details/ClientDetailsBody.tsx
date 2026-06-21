@@ -25,6 +25,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { InterractionDetailsSheet } from "./_components/InterractionDetailsSheet"
 import { useState } from "react"
 import { AddActionFormSheet } from "../../_component/AddActionFormSheet"
+import { ARCActionMode, ARCRecommendationCtaAction } from "@/types/at-risk-customers.type"
 
 ChartJS.register(ArcElement, LineElement, PointElement, LinearScale, CategoryScale, Filler, Tooltip)
 
@@ -179,6 +180,7 @@ const ClientNotFound = () => (
 export const ClientDetailsBody = ({ id }: { id: string }) => {
     const [selectedInteractionId, setSelectedInteractionId] = useState<string | null>(null)
     const [isActionOpen, setIsActionOpen] = useState(false)
+    const [actionType, setActionType] = useState<ARCActionMode>()
 
     const {
         profile,
@@ -191,6 +193,21 @@ export const ClientDetailsBody = ({ id }: { id: string }) => {
         exportInteractions,
         isExporting
     } = useClientDetailsHook(id)
+
+    const handleCta = (action: ARCRecommendationCtaAction) => {
+        switch (action) {
+            case ARCRecommendationCtaAction.REGISTER_FOLLOW_UP:
+            case ARCRecommendationCtaAction.SCHEDULE_ACCOUNT_REVIEW:
+                setActionType(ARCActionMode.SCHEDULE_FOLLOW_UP)
+                break
+            case ARCRecommendationCtaAction.SEND_PAYMENT_PLAN:
+                setActionType(ARCActionMode.REGISTER_INTERACTION)
+                break
+            default:
+                break
+        }
+        setIsActionOpen(true)
+    }
 
     const notFound = !isLoading && !profile
 
@@ -249,7 +266,7 @@ export const ClientDetailsBody = ({ id }: { id: string }) => {
 
     return (
         <div className="p-4 space-y-6">
-            <AddActionFormSheet isOpenned={isActionOpen} onClose={() => setIsActionOpen(false)} />
+            <AddActionFormSheet isOpenned={isActionOpen} onClose={() => setIsActionOpen(false)} action="add" initTab={actionType == ARCActionMode.REGISTER_INTERACTION ? "interaction" : "retarget"} clientId={id} />
             <Crumb items={[
                 {
                     label: "Clients à risque",
@@ -430,23 +447,26 @@ export const ClientDetailsBody = ({ id }: { id: string }) => {
                                 </div>
                                 <div className="space-y-3">
                                     {
-                                        profile?.recommendations.map((r) =>
-                                            <div key={r.label} className="rounded-xl w-full p-4 border border-muted-foreground/20 shadow space-y-4 flex items-center justify-between gap-2">
-                                                <div className="flex items-start space-x-4">
-                                                    <Badge variant="blue" iconOnly>
-                                                        <Banknote size={16} />
-                                                    </Badge>
-                                                    <div className="font-bold text-foreground">
-                                                        <p>
-                                                            {r.label}
-                                                        </p>
+                                        profile?.recommendations.map((r) => {
+                                            const Icon = profile.getRecommendationIcon(r.key)
+                                            return (
+                                                <div key={r.label} className="rounded-xl w-full p-4 border border-muted-foreground/20 shadow space-y-4 flex items-center justify-between gap-2">
+                                                    <div className="flex items-start space-x-4">
+                                                        <Badge variant="blue" iconOnly>
+                                                            <Icon size={16} />
+                                                        </Badge>
+                                                        <div className="font-bold text-foreground">
+                                                            <p>
+                                                                {r.label}
+                                                            </p>
+                                                        </div>
                                                     </div>
+                                                    <Button variant={"mainBlueOutline"} className="shrink-0" onClick={() => handleCta(r.cta_action)}>
+                                                        {r.cta_label}
+                                                    </Button>
                                                 </div>
-                                                <Button variant={"mainBlueOutline"} className="shrink-0">
-                                                    {r.cta_label}
-                                                </Button>
-                                            </div>
-                                        )
+                                            )
+                                        })
                                     }
                                 </div>
                             </div>
@@ -710,7 +730,7 @@ export const ClientDetailsBody = ({ id }: { id: string }) => {
                 interactionId={selectedInteractionId ?? ""}
                 parkId={id}
             />
-        </div>
+        </div >
 
     )
 }

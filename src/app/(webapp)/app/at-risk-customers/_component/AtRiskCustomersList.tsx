@@ -6,15 +6,23 @@ import { Download, Filter, Layers, RefreshCcw, Search } from "lucide-react"
 import { useARCClientsColumns } from "../_utils/at-risk-clients-columns"
 import { ARCGroupBy } from "@/types/at-risk-customers.type"
 import { useRouter } from "next/navigation"
+import { AddActionFormSheet } from "./AddActionFormSheet"
 
 export const AtRiskCustomersList = () => {
     const {
         clients, columns, rowActions, selection, exportConfig,
-        pagination, isLoadingCustomers, tableRef, params, setParams, groupConfig
+        pagination, isLoadingCustomers, tableRef, params, setParams, groupConfig,
+        isActionFormVisible, setIsActionFormVisible, selectedParkId, initTab
     } = useARCClientsColumns();
     const $router = useRouter()
     return (
         <div className="">
+            <AddActionFormSheet
+                isOpenned={isActionFormVisible}
+                onClose={() => setIsActionFormVisible(false)}
+                clientId={selectedParkId}
+                initTab={initTab}
+            />
             <div className="flex items-end xl:items-center justify-between gap-4 max-h-fit pb-6">
                 <div className="flex items-end xl:items-center gap-4 flex-wrap ">
                     <div className="max-w-96 w-fit">
@@ -30,10 +38,10 @@ export const AtRiskCustomersList = () => {
                             } />
                     </div>
 
-                    <Button variant={"outline"} className="font-semibold text-foreground">
+                    {/* <Button variant={"outline"} className="font-semibold text-foreground">
                         <Filter size={16} className="mr-2 shrink-0" />
                         Filtrer
-                    </Button>
+                    </Button> */}
                     <Select value={params.group_by} onValueChange={(v) => setParams({ ...params, group_by: v as ARCGroupBy })}>
                         <SelectTrigger leftIcon={<Layers size={16} className="mr-2 shrink-0" />} className="font-semibold rounded-xl max-w-96 w-fit">
                             <SelectValue placeholder="Grouper" />

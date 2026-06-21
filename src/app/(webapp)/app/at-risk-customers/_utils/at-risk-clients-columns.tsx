@@ -27,6 +27,10 @@ export const useARCClientsColumns = () => {
     const [selectedClients, setSelectedClients] = useState<string[]>([]);
     const tableRef = useRef<DataTableRef>(null);
 
+    const [isActionFormVisible, setIsActionFormVisible] = useState(false);
+    const [selectedParkId, setSelectedParkId] = useState<string>();
+    const [initTab, setInitTab] = useState<'interaction' | 'retarget'>("interaction");
+
     const {
         clients,
         currentPage,
@@ -37,6 +41,18 @@ export const useARCClientsColumns = () => {
         setParams,
         params,
     } = useARCHook();
+
+    const handleContact = (parkId: string) => {
+        setSelectedParkId(parkId)
+        setInitTab("interaction")
+        setIsActionFormVisible(true)
+    }
+
+    const handleScheduleFollowUp = (parkId: string) => {
+        setSelectedParkId(parkId)
+        setInitTab("retarget")
+        setIsActionFormVisible(true)
+    }
 
     const columns: Column<ARCClientDetailModel>[] = [
         {
@@ -223,13 +239,13 @@ export const useARCClientsColumns = () => {
             id: "contact",
             label: "Contacter",
             icon: <Phone className="size-4" />,
-            onClick: () => router.push(`/dashboard/at-risk-customers/${client.parkId}/contact`),
+            onClick: () => handleContact(client.parkId),
         },
         {
             id: "schedule",
             label: "Planifier une relance",
             icon: <CalendarClock className="size-4" />,
-            onClick: () => router.push(`/dashboard/at-risk-customers/${client.parkId}/follow-up`),
+            onClick: () => handleScheduleFollowUp(client.parkId),
         },
     ];
 
@@ -238,18 +254,6 @@ export const useARCClientsColumns = () => {
         onSelectionChange: setSelectedClients,
         selectionKey: "parkId",
     };
-
-    // const handleExport = (format: ExportFormat, data: ARCClientDetailModel[]) => {
-    //     if (format === "excel") {
-    //         console.log("Export Excel", data);
-    //     }
-    //     if (format === "pdf") {
-    //         console.log("Export PDF", data);
-    //     }
-    //     if (format === "word") {
-    //         console.log("Export Word", data);
-    //     }
-    // };
 
     const exportConfig: ExportConfig<ARCClientDetailModel> = {
         hideTrigger: true,
@@ -276,6 +280,10 @@ export const useARCClientsColumns = () => {
         tableRef,
         params,
         setParams,
-        groupConfig
+        groupConfig,
+        isActionFormVisible,
+        setIsActionFormVisible,
+        selectedParkId,
+        initTab,
     };
 };

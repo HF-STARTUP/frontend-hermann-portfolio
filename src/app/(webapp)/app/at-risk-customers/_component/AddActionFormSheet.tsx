@@ -33,6 +33,13 @@ export const AddActionFormSheet = ({
     const { clients, isLoadingCustomers, setParams, params } = useARCClientsColumns()
     const [activeTab, setActiveTab] = useState<'interaction' | 'retarget'>(initTab)
 
+    useEffect(() => {
+        if (isOpenned) setActiveTab(initTab)
+    }, [isOpenned, initTab])
+
+    useEffect(() => {
+        if (clientId) setParams({ ...params, park_id: clientId })
+    }, [clientId])
     const {
         isSuccess,
         loading,
@@ -82,7 +89,7 @@ export const AddActionFormSheet = ({
             <SheetContent variant={"xl"}>
                 <SheetHeader>
                     <div className="flex items-start justify-between">
-                        <SheetTitle>
+                        <SheetTitle className="text-left">
                             {action == "add" ? "Nouvelle action" : "Modifier l'action"}
                             <SheetDescription>
                                 Créer/ Modifier une relance ou enregistrer une interaction
@@ -130,7 +137,7 @@ export const AddActionFormSheet = ({
                                 setPayload({ ...payload, park_id: v })
                             }}
                             value={payload.park_id}
-                            onSearch={(v) => setParams({ ...params, search: v })}
+                            onSearch={(v) => { setParams({ ...params, search: v, park_id: undefined }) }}
                             label="Client concerné"
                             required
                             emptyMessage="Aucun client trouvé"
