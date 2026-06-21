@@ -84,7 +84,7 @@ export const Navbar = () => {
                 >
                     <Search className="size-5" />
                 </Button> */}
-                <UserOption />
+                <UserOption />at-risk
             </div>
         </nav>
     )
