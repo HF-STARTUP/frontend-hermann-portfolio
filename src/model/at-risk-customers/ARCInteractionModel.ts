@@ -1,5 +1,8 @@
 import Model from "@/model/Model";
-import { ARCInteractionDetailResponseType, ARCInteractionSource } from "@/types/at-risk-customers.type";
+import { ARCCommunicationChannel, ARCInteractionDetailResponseType, ARCActionSource } from "@/types/at-risk-customers.type";
+import { Group, LucideIcon, Mail, MessageCircle, Phone, UsersRound } from "lucide-react";
+import { IconType } from "react-icons/lib";
+import { PiMegaphone, PiWhatsappLogo } from "react-icons/pi";
 
 class ARCInteractionDetailModel extends Model {
     private _instance: ARCInteractionDetailResponseType;
@@ -15,11 +18,11 @@ class ARCInteractionDetailModel extends Model {
 
     get id() { return this._instance.id; }
     get parkId() { return this._instance.park_id; }
-    get source(): ARCInteractionSource { return this._instance.source; }
+    get source(): ARCActionSource { return this._instance.source; }
     get editable() { return this._instance.editable; }
 
     get isSystemGenerated(): boolean {
-        return this._instance.source === "system";
+        return this._instance.source === ARCActionSource.SYSTEM;
     }
 
     get clientName() { return this._instance.header.client_name; }
@@ -29,17 +32,37 @@ class ARCInteractionDetailModel extends Model {
     get riskScore() { return this._instance.header.risk_score; }
 
     get communicationChannel() { return this._instance.communication_channel; }
-    get communicationChannelLabel() { return this._instance.communication_channel_label ?? "----"; }
+    get communicationChannelLabel() { return this._instance.communication_channel_label; }
     get contactReason() { return this._instance.contact_reason; }
-    get contactReasonLabel() { return this._instance.contact_reason_label ?? "----"; }
-    get exchangeSummary() { return this._instance.exchange_summary ?? "----"; }
+    get contactReasonLabel() { return this._instance.contact_reason_label; }
+    get exchangeSummary() { return this._instance.exchange_summary }
     get identifiedNeeds() { return this._instance.identified_needs.length > 0 ? this._instance.identified_needs : undefined; }
     get identifiedNeedsLabels() { return this._instance.identified_needs_labels; }
-    get proposedSolution() { return this._instance.proposed_solution ?? "----"; }
+    get proposedSolution() { return this._instance.proposed_solution; }
     get assignedTo() { return this._instance.assigned_to; }
 
     get assignedToFirstName() {
         return this.assignedTo?.first_name ?? ""
+    }
+
+    get communicationChannelIcon(): LucideIcon | IconType {
+        switch (this.communicationChannel) {
+            case ARCCommunicationChannel.CALL:
+                return Phone
+            case ARCCommunicationChannel.EMAIL:
+                return Mail
+            case ARCCommunicationChannel.MEETING:
+                return UsersRound
+            case ARCCommunicationChannel.OTHER:
+                return PiMegaphone
+            case ARCCommunicationChannel.SMS:
+                return MessageCircle
+            case ARCCommunicationChannel.WHATSAPP:
+                return PiWhatsappLogo
+
+            default:
+                return PiMegaphone
+        }
     }
 
     get assignedToLastName() {
@@ -47,19 +70,19 @@ class ARCInteractionDetailModel extends Model {
     }
 
     get assignedToFullName() {
-        if(!this.assignedTo) return "----"
+        if (!this.assignedTo) return "----"
         return this.toName(`${this.assignedToFirstName} ${this.assignedTo?.last_name}`)
     }
 
     get assignedToImage() {
         return this.assignedTo?.avatar_url ? this.resolveImage(this.assignedTo?.avatar_url) : undefined
     }
-    
+
     get result() { return this._instance.result; }
-    get resultLabel() { return this._instance.result_label ?? "----"; }
-    get nextSteps() { return this._instance.next_steps ?? "----"; }
+    get resultLabel() { return this._instance.result_label; }
+    get nextSteps() { return this._instance.next_steps; }
     get status() { return this._instance.status; }
-    get statusLabel() { return this._instance.status_label ?? "----"; }
+    get statusLabel() { return this._instance.status_label; }
 
     get hasNextFollowUp(): boolean {
         return !!this._instance.next_follow_up_at;
@@ -68,7 +91,7 @@ class ARCInteractionDetailModel extends Model {
     get nextFollowUpAt() {
         return this._instance.next_follow_up_at
             ? this.formatDateTime(this._instance.next_follow_up_at)
-            : "----";
+            : undefined;
     }
 
     get occurredAt() {

@@ -8,7 +8,6 @@ import { getAvatarColor, getAvatarInitials } from "@/lib/initials.avatar.util"
 import { cn } from "@/lib/utils"
 import { Dot, MapPin, X } from "lucide-react"
 import Image from "next/image"
-import { PiMegaphone } from "react-icons/pi"
 
 export const InterractionDetailsSheet = ({ isOpenned, onClose, interactionId, parkId }: { isOpenned: boolean, onClose: () => void, interactionId: string, parkId: string }) => {
 
@@ -53,16 +52,16 @@ export const InterractionDetailsSheet = ({ isOpenned, onClose, interactionId, pa
                                     </div>
                                 </div>
                             </div>
-                            <div className="space-y-4">
+                            {interaction?.communicationChannel && <div className="space-y-4">
                                 <h1 className="uppercase text-muted-foreground font-medium">
                                     Canal de communication
                                 </h1>
                                 {<div className="p-3 rounded-xl bg-vaBlue/10 text-foreground flex items-center gap-2 border shadow font-medium">
-                                    <PiMegaphone className="scale-x-[-1] text-vaMainBlue size-6" />
+                                    <interaction.communicationChannelIcon className="text-vaMainBlue size-4" />
                                     {interaction?.communicationChannelLabel}
                                 </div>}
-                            </div>
-                            <div className="space-y-4">
+                            </div>}
+                            {interaction?.contactReason && <div className="space-y-4">
                                 <h1 className="uppercase text-muted-foreground font-medium">
                                     Motif du contact
                                 </h1>
@@ -70,18 +69,18 @@ export const InterractionDetailsSheet = ({ isOpenned, onClose, interactionId, pa
                                     ? <Badge variant="red">
                                         {interaction?.contactReasonLabel}
                                     </Badge> : interaction?.contactReasonLabel}
-                            </div>
+                            </div>}
 
-                            <div className="space-y-4">
+                            {interaction?.exchangeSummary && <div className="space-y-4">
                                 <h1 className="uppercase text-muted-foreground font-medium">
                                     Compte rendu de l’échange
                                 </h1>
                                 {<div className="p-3 rounded-xl bg-vaBlue/5 text-muted-foreground flex items-center gap-2 font-medium">
                                     {interaction?.exchangeSummary}
                                 </div>}
-                            </div>
+                            </div>}
 
-                            <div className="space-y-4">
+                            {interaction?.identifiedNeeds && <div className="space-y-4">
                                 <h1 className="uppercase text-muted-foreground font-medium">
                                     BESOINS identifiés
                                 </h1>
@@ -95,32 +94,32 @@ export const InterractionDetailsSheet = ({ isOpenned, onClose, interactionId, pa
                                     </div>
                                     : <span className="text-muted-foreground">----</span>
                                 }
-                            </div>
+                            </div>}
 
-                            <div className="space-y-4">
+                            {interaction?.proposedSolution && <div className="space-y-4">
                                 <h1 className="uppercase text-muted-foreground font-medium">
                                     solution proposée
                                 </h1>
                                 {<div className="p-3 rounded-xl bg-vaBlue/5 text-muted-foreground flex items-center gap-2 font-medium">
                                     {interaction?.proposedSolution}
                                 </div>}
-                            </div>
+                            </div>}
 
                             <div className="grid grid-cols-2 gap-8">
-                                <div className="space-y-4">
+                                {interaction?.nextFollowUpAt && <div className="space-y-4">
                                     <h1 className="uppercase text-muted-foreground font-medium">
                                         PROCHAINE RELANCE
                                     </h1>
                                     {<div className="font-bold">
                                         {interaction?.nextFollowUpAt}
                                     </div>}
-                                </div>
-                                <div className="space-y-4">
+                                </div>}
+                                {interaction?.assignedTo && <div className="space-y-4">
                                     <h1 className="uppercase text-muted-foreground font-medium">
                                         COMMERCIAL ASSIGNÉ
                                     </h1>
                                     {<div className="font-bold text-sm flex items-center gap-2">
-                                        <div className={cn("rounded-full border size-6 text-white flex items-center justify-center", getAvatarColor(interaction?.assignedToFullName ?? "RAS"))}>
+                                        <div className={cn("rounded-full border size-6 text-white flex items-center justify-center overflow-hidden", getAvatarColor(interaction?.assignedToFullName ?? "RAS"))}>
 
                                             {interaction?.assignedToImage
                                                 ? <Image
@@ -134,10 +133,10 @@ export const InterractionDetailsSheet = ({ isOpenned, onClose, interactionId, pa
                                         </div>
                                         {interaction?.assignedToFullName ?? "----"}
                                     </div>}
-                                </div>
+                                </div>}
                             </div>
 
-                            <div className="space-y-4">
+                            {interaction?.result && <div className="space-y-4">
                                 <h1 className="uppercase text-muted-foreground font-medium">
                                     résultat
                                 </h1>
@@ -145,16 +144,16 @@ export const InterractionDetailsSheet = ({ isOpenned, onClose, interactionId, pa
                                     ? <Badge variant="red">
                                         {interaction?.resultLabel}
                                     </Badge> : interaction?.resultLabel}
-                            </div>
+                            </div>}
 
-                            <div className="space-y-4">
+                            {interaction?.nextSteps && <div className="space-y-4">
                                 <h1 className="uppercase text-muted-foreground font-medium">
                                     prochaines étapes
                                 </h1>
                                 {<div className="p-3 rounded-xl bg-vaBlue/5 text-muted-foreground flex items-center gap-2 font-medium">
                                     {interaction?.nextSteps}
                                 </div>}
-                            </div>
+                            </div>}
                         </DialogMainBody>
                 }
 

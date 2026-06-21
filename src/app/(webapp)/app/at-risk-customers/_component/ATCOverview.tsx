@@ -4,7 +4,9 @@ import { Button } from "@/components/ui/button"
 import { getAvatarColor, getAvatarInitials } from "@/lib/initials.avatar.util"
 import { cn } from "@/lib/utils"
 import ARCClientModel from "@/model/at-risk-customers/ARCPrioritiesModel"
+import { useState } from "react"
 import { ArrowRight, Banknote, CalendarPlus, MapPin, Phone } from "lucide-react"
+import { AddActionFormSheet } from "./AddActionFormSheet"
 
 interface OverviewProps {
     kpiItems: KpiItem[],
@@ -19,8 +21,30 @@ export const ARCOverview = ({
     prioritiesData,
     isLoadingPriorities,
 }: OverviewProps) => {
+    const [isActionFormVisible, setIsActionFormVisible] = useState(false)
+    const [selectedParkId, setSelectedParkId] = useState<string>()
+    const [initTab, setInitTab] = useState<'interaction' | 'retarget'>("interaction")
+
+    const handleCall = (parkId: string) => {
+        setSelectedParkId(parkId)
+        setInitTab("interaction")
+        setIsActionFormVisible(true)
+    }
+
+    const handleScheduleFollowUp = (parkId: string) => {
+        setSelectedParkId(parkId)
+        setInitTab("retarget")
+        setIsActionFormVisible(true)
+    }
+
     return (
         <div className="space-y-8">
+            <AddActionFormSheet
+                isOpenned={isActionFormVisible}
+                onClose={() => setIsActionFormVisible(false)}
+                clientId={selectedParkId}
+                initTab={initTab}
+            />
             <KpiGrid items={kpiItems} isLoading={isLoadingKpi} />
             <div className="rounded-2xl bg-white shadow p-2">
                 <div className="flex items-center justify-between w-full flex-wrap space-x-8 p-4">
@@ -85,13 +109,13 @@ export const ARCOverview = ({
                                     }></div>
                                 </div>
                                 <div className="flex items-center -space-x-1 ml-auto sm:ml-0">
-                                    <Button variant={"ghost"} size={"icon"}>
+                                    <Button variant={"ghost"} size={"icon"} onClick={() => handleCall(pd.parkId)}>
                                         <Phone size={16} />
                                     </Button>
-                                    <Button variant={"ghost"} size={"icon"}>
+                                    <Button variant={"ghost"} size={"icon"} onClick={() => handleScheduleFollowUp(pd.parkId)}>
                                         <CalendarPlus size={16} />
                                     </Button>
-                                    <Button variant={"ghost"} size={"icon"}>
+                                    <Button variant={"ghost"} size={"icon"} href={`/app/at-risk-customers/${pd.parkId}/details`}>
                                         <ArrowRight size={16} />
                                     </Button>
                                 </div>
