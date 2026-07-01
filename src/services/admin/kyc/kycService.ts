@@ -73,7 +73,7 @@ class KycService extends Service {
 
   public static async approveSubmission(id: string) {
     const url = KycApiPath.ApproveSubmission.replace("{id}", id);
-    return KycService.makeRequest(url, "POST");
+    return KycService.makeRequest(url, "POST", {});
   }
 
   public static async rejectSubmission(id: string, payload: RejectKycPayload) {

@@ -92,7 +92,7 @@ abstract class Service {
 
     let requestData = body;
 
-    if (method === this.httpMethods.post) {
+    if (method === this.httpMethods.post && requestData != null) {
       body = this.cleanObject(requestData);
     }
 
