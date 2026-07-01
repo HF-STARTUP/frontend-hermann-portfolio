@@ -1,13 +1,22 @@
+import { toQueriesString } from "@/lib/utils";
+import ARCAssigneeModel from "@/model/at-risk-customers/ARCAssigneeModel";
 import ARCClientDetailModel from "@/model/at-risk-customers/ARCClientDetailModel";
+import ARCClientProfileModel from "@/model/at-risk-customers/ARCClientProfileModel";
+import ARCInteractionDetailModel from "@/model/at-risk-customers/ARCInteractionModel";
+import ARCInteractionModel from "@/model/at-risk-customers/ARCInteractionsModel";
 import ARCKpiModel from "@/model/at-risk-customers/ARCKpisModel";
 import ARCClientModel from "@/model/at-risk-customers/ARCPrioritiesModel";
 import Service from "@/services/Service";
-import { ARCClientDetailListResponseType, ARCClientPrioritiesResponseType, ARCKpiResponseType, AtRiskCustomersParams } from "@/types/at-risk-customers.type";
+import { ARCAssigneeResponseType, ARCClientDetailListResponseType, ARCClientPrioritiesResponseType, ARCClientProfileResponseType, ARCInteractionDetailResponseType, ARCInteractionListResponseType, ARCKpiResponseType, ARCNewActionPayload, AtRiskCustomersParams } from "@/types/at-risk-customers.type";
 
 export enum ARCApiPath {
     GetARCKpi = "/admin/clients-at-risk/overview/kpis",
     GetARCClientsPriorities = "/admin/clients-at-risk/priorities",
-    GetAtRiskCustomers = "/admin/clients-at-risk"
+    GetAtRiskCustomers = "/admin/clients-at-risk",
+    GetAtRiskCustomer = "/admin/clients-at-risk/{park_id}",
+    GetARCInteractions = "/admin/clients-at-risk/{park_id}/interactions",
+    CreateAction = "/admin/clients-at-risk/actions",
+    GetAssignees = "/admin/clients-at-risk/meta/assignees"
 }
 
 class ARCService extends Service {
@@ -42,9 +51,9 @@ class ARCService extends Service {
     public static async getARCClientDetails(
         params: AtRiskCustomersParams
     ): Promise<{ data: ARCClientDetailModel[]; meta: Omit<ARCClientDetailListResponseType, "data"> }> {
-
+        const url = toQueriesString(ARCApiPath.GetAtRiskCustomers, params)
         const result = await ARCService.makeRequest<ARCClientDetailListResponseType>(
-            ARCApiPath.GetAtRiskCustomers,
+            url,
             'GET'
         );
 
@@ -55,6 +64,66 @@ class ARCService extends Service {
             meta,
         };
     }
+
+    public static async getARCClientProfile(params: AtRiskCustomersParams): Promise<ARCClientProfileModel> {
+        const result = await ARCService.makeRequest<ARCClientProfileResponseType>(
+            ARCApiPath.GetAtRiskCustomer.replace("{park_id}", params?.park_id ?? ""), 'GET'
+        );
+        return ARCClientProfileModel.fromResponse(result);
+    }
+
+    public static async getARCInteractions(
+        params: AtRiskCustomersParams
+    ): Promise<{ data: ARCInteractionModel[]; meta: Omit<ARCInteractionListResponseType, "data"> }> {
+        const { park_id, ...otherParams } = params;
+
+        const url = toQueriesString(ARCApiPath.GetARCInteractions.replace("{park_id}", park_id ?? ""), otherParams)
+        const result = await ARCService.makeRequest<ARCInteractionListResponseType>(
+            url,
+            'GET'
+        );
+
+        const { data, ...meta } = result;
+
+        return {
+            data: ARCInteractionModel.toArrays(data),
+            meta,
+        };
+    }
+
+    public static async getARCInteractionDetail(
+        params: AtRiskCustomersParams
+    ): Promise<ARCInteractionDetailModel> {
+
+        const { park_id, interraction_id, ...cleanParams } = params;
+
+        const result = await ARCService.makeRequest<ARCInteractionDetailResponseType>(
+            toQueriesString(`${ARCApiPath.GetARCInteractions.replace("{park_id}", params.park_id ?? "")}/${params.interraction_id}`, cleanParams),
+            'GET'
+        );
+        return ARCInteractionDetailModel.fromResponse(result);
+    }
+
+    public static async addARCAction(payload: ARCNewActionPayload) {
+        return await ARCService.makeRequest(
+            ARCApiPath.CreateAction,
+            "POST",
+            payload
+        )
+    }
+
+    public static async getARCAssignees(params: AtRiskCustomersParams): Promise<ARCAssigneeModel[]> {
+        const result = await ARCService.makeRequest<ARCAssigneeResponseType[]>(
+            toQueriesString(ARCApiPath.GetAssignees, params), 'GET'
+        );
+        return ARCAssigneeModel.toArrays(result);
+    }
+
+
+
+
+
+
 
 
 

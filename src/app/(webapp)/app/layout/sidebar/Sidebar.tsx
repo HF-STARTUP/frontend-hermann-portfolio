@@ -72,20 +72,19 @@ export const Sidebar = () => {
                     // { label: "Campagnes", to: "/app/marketing/campagnes" },
                     // { label: "Leads & Conversations", to: "/app/marketing/leads" },
                     // { label: "Pipeline Clients", to: "/app/marketing/pipeline" },
+                   { label:"Clients à risque",
+                    icon:<AlertTriangle className="size-5" />,
+                    to:"/app/at-risk-customers"},
                     { label: "Code promo", to: "/app/marketing/code-promo" },
                     { label: "Commerciaux", to: "/app/marketing/commerciaux" },
+
                 ]}
             />
             <SidebarItem
                 label={"Paramètres"}
                 icon={<SettingIcon />}
                 to={"/app/settings"}
-            />
-            <SidebarItem
-                label={"Clients à risque"}
-                icon={<AlertTriangle className="size-5" />}
-                to={"/app/at-risk-customers"}
-            />
+            />           
         </motion.div>
     )
 }

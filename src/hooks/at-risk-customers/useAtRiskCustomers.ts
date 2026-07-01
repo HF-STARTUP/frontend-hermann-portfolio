@@ -1,6 +1,7 @@
 import ARCService, { ARCApiPath } from "@/services/AtRiskCustomersService";
-import { AtRiskCustomersParams } from "@/types/at-risk-customers.type";
-import { useQuery } from "@tanstack/react-query";
+import { ARCNewActionPayload, AtRiskCustomersParams } from "@/types/at-risk-customers.type";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutationProvider } from "../hooksProvider";
 
 export const useGetARCKpi = () => {
 
@@ -37,4 +38,65 @@ export const useGetARCClientDetails = (params: AtRiskCustomersParams) => {
         filteredCountLabel: data?.meta.filtered_count_label ?? "",
         isLoading,
     };
+};
+
+
+export const useGetARCClientProfile = (params: AtRiskCustomersParams) => {
+    const { isLoading, data } = useQuery({
+        queryKey: [ARCApiPath.GetAtRiskCustomer, params],
+        queryFn: () => ARCService.getARCClientProfile(params),
+        enabled: !!params.park_id,
+    });
+
+    return { isLoading, profile: data };
+};
+
+export const useGetARCInteractions = (params: AtRiskCustomersParams) => {
+    const { isLoading, data } = useQuery({
+        queryKey: [ARCApiPath.GetARCInteractions, params],
+        queryFn: () => ARCService.getARCInteractions(params),
+        enabled: !!params.park_id,
+    });
+
+    return {
+        interactions: data?.data ?? [],
+        totalRecords: data?.meta.totalRecords ?? 0,
+        totalPages: data?.meta.totalPages ?? 1,
+        currentPage: data?.meta.currentPage ?? 1,
+        isLoading,
+    };
+};
+
+
+export const useGetARCInteractionDetail = (params: AtRiskCustomersParams) => {
+    const { isLoading, data } = useQuery({
+        queryKey: [ARCApiPath.GetARCInteractions, params],
+        queryFn: () => ARCService.getARCInteractionDetail(params),
+        enabled: !!params.park_id && !!params.interraction_id,
+    });
+
+    return { isLoading, interaction: data };
+};
+
+
+export const useAddARCAction = () => {
+    const queryClient = useQueryClient();
+
+    return useMutationProvider({
+        mutationFn: (payload: ARCNewActionPayload) => ARCService.addARCAction(payload),
+        successMessage: "Action enregistrée avec succès",
+        onSuccess: async () => {
+            await queryClient.invalidateQueries({ queryKey: [ARCApiPath.GetARCInteractions] });
+        },
+    });
+};
+
+
+export const useGetARCAssignees = (params: AtRiskCustomersParams) => {
+    const { isLoading, data } = useQuery({
+        queryKey: [ARCApiPath.GetAssignees, params],
+        queryFn: () => ARCService.getARCAssignees(params),
+    });
+
+    return { isLoading, assignees: data };
 };
