@@ -37,14 +37,12 @@ const iconBoxClasses: Record<string, string> = {
 export function KycDocumentCard({
   document,
   submissionId,
-  isDossierReviewFinalized = false,
   onDocumentUpdated,
   isReanalyzing = false,
   onRelaunchAnalysis,
 }: {
   document: KycDocumentModel;
   submissionId: string;
-  isDossierReviewFinalized?: boolean;
   onDocumentUpdated?: () => void;
   isReanalyzing?: boolean;
   onRelaunchAnalysis?: () => void;
@@ -79,6 +77,8 @@ export function KycDocumentCard({
   const iconBox = document.isIdentity
     ? iconBoxClasses.identity
     : iconBoxClasses.default;
+
+  const canModerateDocument = document.provided || !!document.fileUrl;
 
   const isAnalysisInProgress =
     isReanalyzing || document.systemValidation === "pending";
@@ -185,9 +185,10 @@ export function KycDocumentCard({
           Télécharger
         </Button>
 
-        {document.isPending && (
+        {(canModerateDocument ||
+          (document.isPending && onRelaunchAnalysis)) && (
           <div className="flex-1 flex justify-end items-center gap-1.5">
-            {onRelaunchAnalysis && (
+            {document.isPending && onRelaunchAnalysis && (
               <button
                 type="button"
                 onClick={onRelaunchAnalysis}
@@ -201,33 +202,33 @@ export function KycDocumentCard({
                 )}
               </button>
             )}
-            {!isDossierReviewFinalized && (
-              <>
-                <button
-                  type="button"
-                  onClick={handleValidate}
-                  disabled={isUpdating}
-                  className="size-8 rounded-[10px] border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-colors disabled:opacity-50"
-                  aria-label="Valider le document">
-                  {isUpdating ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <Check className="size-4" />
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleReject}
-                  disabled={isUpdating}
-                  className="size-8 rounded-[10px] border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors disabled:opacity-50"
-                  aria-label="Rejeter le document">
-                  {isUpdating ? (
-                    <Loader2 className="size-4 animate-spin" />
-                  ) : (
-                    <X className="size-4" />
-                  )}
-                </button>
-              </>
+            {canModerateDocument && !document.isValidated && (
+              <button
+                type="button"
+                onClick={handleValidate}
+                disabled={isUpdating}
+                className="size-8 rounded-[10px] border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-emerald-50 hover:text-emerald-600 hover:border-emerald-200 transition-colors disabled:opacity-50"
+                aria-label="Valider le document">
+                {isUpdating ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <Check className="size-4" />
+                )}
+              </button>
+            )}
+            {canModerateDocument && !document.isRejected && (
+              <button
+                type="button"
+                onClick={handleReject}
+                disabled={isUpdating}
+                className="size-8 rounded-[10px] border border-gray-200 flex items-center justify-center text-gray-400 hover:bg-red-50 hover:text-red-600 hover:border-red-200 transition-colors disabled:opacity-50"
+                aria-label="Rejeter le document">
+                {isUpdating ? (
+                  <Loader2 className="size-4 animate-spin" />
+                ) : (
+                  <X className="size-4" />
+                )}
+              </button>
             )}
           </div>
         )}
@@ -238,7 +239,7 @@ export function KycDocumentCard({
         submissionId={submissionId}
         open={isPreviewOpen}
         onClose={() => setIsPreviewOpen(false)}
-        canModerate={!isDossierReviewFinalized && document.isPending}
+        canModerate={canModerateDocument}
         onDocumentUpdated={onDocumentUpdated}
         onRequestReject={() => {
           setIsPreviewOpen(false);

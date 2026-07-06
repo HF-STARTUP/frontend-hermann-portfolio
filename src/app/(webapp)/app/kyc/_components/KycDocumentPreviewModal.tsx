@@ -286,24 +286,26 @@ export function KycDocumentPreviewModal({
 
             {canModerate && (
               <div className="mt-auto pt-4 flex flex-col gap-2">
-                <Button
-                  variant="outline"
-                  className="w-full rounded-[10px] border-red-600 text-red-600 hover:bg-red-50 gap-2 h-11"
-                  onClick={handleReject}
-                  disabled={document.isRejected}
-                >
-                  <Ban className="size-4" />
-                  Rejeter le document
-                </Button>
-                <Button
-                  className="w-full rounded-[10px] bg-emerald-600 hover:bg-emerald-700 text-white gap-2 h-11"
-                  onClick={handleValidate}
-                  loading={isUpdating}
-                  disabled={document.isValidated}
-                >
-                  <CheckCircle2 className="size-4" />
-                  Valider le document
-                </Button>
+                {!document.isRejected && (
+                  <Button
+                    variant="outline"
+                    className="w-full rounded-[10px] border-red-600 text-red-600 hover:bg-red-50 gap-2 h-11"
+                    onClick={handleReject}
+                  >
+                    <Ban className="size-4" />
+                    Rejeter le document
+                  </Button>
+                )}
+                {!document.isValidated && (
+                  <Button
+                    className="w-full rounded-[10px] bg-emerald-600 hover:bg-emerald-700 text-white gap-2 h-11"
+                    onClick={handleValidate}
+                    loading={isUpdating}
+                  >
+                    <CheckCircle2 className="size-4" />
+                    Valider le document
+                  </Button>
+                )}
               </div>
             )}
           </div>
