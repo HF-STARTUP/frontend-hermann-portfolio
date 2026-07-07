@@ -134,7 +134,7 @@ export function KycDetailHeader({
         )}
       </div>
 
-      <div className="flex items-center justify-end gap-3">
+      {/* <div className="flex items-center justify-end gap-3">
         <Button
           variant="outline"
           className="rounded-xl border-red-600 text-red-600 hover:bg-red-50 gap-2 h-11 px-5"
@@ -150,7 +150,7 @@ export function KycDetailHeader({
           <CheckCircle2 className="size-4" />
           Approuver le KYC
         </Button>
-      </div>
+      </div> */}
     </div>
   );
 }
