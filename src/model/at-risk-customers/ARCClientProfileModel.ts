@@ -92,14 +92,29 @@ class ARCClientProfileModel extends Model {
         }
     }
 
-    get primaryContactFullName(): string {
-        const { first_name, last_name } = this._instance.primary_contact;
-        return this.toName(`${first_name} ${last_name}`);
+    get firstName(){
+        if(!this._instance.primary_contact) return ""
+        return this._instance.primary_contact.first_name??""
     }
 
-    get primaryContactRoleLabel() { return this._instance.primary_contact.role_label; }
-    get primaryContactPhone() { return this._instance.primary_contact.phone; }
-    get primaryContactEmail() { return this._instance.primary_contact.email; }
+    get lastName(){
+        if(!this._instance.primary_contact) return "---"
+        return this._instance.primary_contact.last_name??""
+    }
+
+    get primaryContactFullName(): string {
+        return this.toName(`${this.firstName} ${this.lastName}`);
+    }
+
+    get primaryContactRoleLabel() {
+        if(!this._instance.primary_contact) return "---"    
+        return this._instance.primary_contact.role_label; }
+    get primaryContactPhone() { 
+        if(!this._instance.primary_contact) return "---"
+        return this._instance.primary_contact.phone; }
+    get primaryContactEmail() { 
+        if(!this._instance.primary_contact) return "---"
+        return this._instance.primary_contact.email; }
 
     get vehicleCount() { return this._instance.fleet.vehicle_count; }
     get fleetTierLabel() { return this._instance.fleet.tier_label; }
