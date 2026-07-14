@@ -21,6 +21,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Loader } from "lucide-react";
 import { BestFleet } from "./_components/BestFleetsSection";
 import AuthManagerGuard from "@/guard/AuthManagerGuard";
+import Link from "next/link";
 
 export default function DashboardPage() {
 
@@ -76,17 +77,36 @@ export default function DashboardPage() {
                                 <SelectItem value="particulier">Entrepreneur</SelectItem>
                                 <SelectItem value="professionnel">Professionnel</SelectItem>
                             </SelectContent>
-                        </Select>                       
+                        </Select>
                     </div>
                 }
             />
 
 
             {expiredSubscriptions && expiredSubscriptions.length > 0 &&
-                <NotificationBand content={subscriptionsBandContent} children={<ExpiredSubsList subs={expiredSubscriptions} />} dialogTitle={`Abonnements expirant bientôt (${totalExpiring})`} variant="error" />
+                <NotificationBand
+                    content={subscriptionsBandContent}
+                    variant="warning"
+                    children={<ExpiredSubsList subs={expiredSubscriptions} />}
+                    dialogTitle={
+                        <div className="flex items-center justify-between w-full pr-8">
+                            <p>
+                                Abonnements expirant bientôt ({totalExpiring})
+                            </p>
+                            <Link href={"/app/at-risk-customers"} className="text-vaBlue text-sm hover:underline transition-all duration-300">
+                                Voir plus
+                            </Link>
+                        </div>
+                    }
+                />
             }
             {inactiveFleets && inactiveFleets.length > 0 &&
-                <NotificationBand content={fleetBandContent} children={<InnactiveFleetList fleets={inactiveFleets} />} dialogTitle={`Flottes inactives (${totalInactives})`} variant="error" />
+                <NotificationBand content={fleetBandContent} children={<InnactiveFleetList fleets={inactiveFleets} />} dialogTitle={<div className="flex items-center justify-between w-full pr-8">
+                    <p>
+                        Flottes inactives ({totalInactives})
+                    </p>
+                    <Link href={"/app/at-risk-customers"} className="text-vaBlue text-sm hover:underline transition-all duration-300">Voir plus</Link>
+                </div>} variant="error" />
             }
 
             <HeadSection globalFilters={globalFilters} />

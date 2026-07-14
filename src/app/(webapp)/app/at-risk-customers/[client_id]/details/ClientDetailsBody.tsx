@@ -325,8 +325,8 @@ export const ClientDetailsBody = ({ id }: { id: string }) => {
                     <Plus size={16} className="mr-3" /> Nouvelle action
                 </Button>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
-                <div className="w-full max-h-[calc(100dvh-325px)] overflow-y-auto custom-scrollbar space-y-6 p-1">
+            <div className="grid grid-cols-1 xl:grid-cols-2 2xl:grid-cols-3 gap-4">
+                <div className="w-full xl:max-h-[calc(100dvh-325px)] overflow-y-auto custom-scrollbar space-y-6 p-1">
                     {isLoading ? (
                         <>
                             <RiskAnalysisShimmer />
@@ -598,7 +598,7 @@ export const ClientDetailsBody = ({ id }: { id: string }) => {
                         </>
                     )}
                 </div>
-                <div className="xl:col-span-2 rounded-2xl bg-white w-full border border-muted-foreground/20 shadow space-y-2 max-h-[calc(100dvh-325px)] overflow-y-auto custom-scrollbar pb-4">
+                <div className="2xl:col-span-2 rounded-2xl bg-white w-full border border-muted-foreground/20 shadow space-y-2 max-h-[calc(100dvh-325px)] overflow-y-auto custom-scrollbar pb-4">
                     <header className="sticky top-0 z-20 border-b p-4 flex items-center justify-between gap-8 bg-white/30 backdrop-blur-md">
                         <div className="flex items-center gap-4 text-foreground text-lg font-bold flex-wrap">
                             <Activity />

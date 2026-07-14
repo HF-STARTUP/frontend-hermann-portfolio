@@ -28,7 +28,7 @@ export const getBandVariantClasses = (variant?: BandVariant): string => {
     }
 }
 
-const NotificationBand = ({ dialogTitle, children, content, variant }: { dialogTitle: string, children: ReactNode, content: NotificationBandContent, variant: BandVariant }) => {
+const NotificationBand = ({ dialogTitle, children, content, variant }: { dialogTitle: ReactNode, children: ReactNode, content: NotificationBandContent, variant: BandVariant }) => {
     const [isOpened, setIsOpened] = useState<boolean>(false)
 
     return (

@@ -26,7 +26,7 @@ export interface SubscriptionRow {
 
 export const useFleetSubscriptionsHook = (fleetId?: string) => {
   const { currency } = useGetActiveCurrency();
-  
+
   const [dateRange, setDateRange] = useState<DateRange>();
   const [page, setPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(10);
@@ -108,16 +108,7 @@ export const useFleetSubscriptionsHook = (fleetId?: string) => {
       {
         header: "Moyen de paiement",
         accessor: (item) =>
-          React.createElement(
-            "div",
-            { style: { display: "flex", alignItems: "center", gap: "8px" } },
-            React.createElement("img", {
-              src: item.paymentMethod.icon,
-              alt: item.paymentMethod.name,
-              style: { width: "24px", height: "24px", objectFit: "contain" },
-            }),
-            React.createElement("span", null, item.paymentMethod.name),
-          ),
+          React.createElement("span", null, item.paymentMethod.name),
       },
       {
         header: "Statut",

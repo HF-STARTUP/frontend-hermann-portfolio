@@ -37,7 +37,7 @@ const DriversListPage:React.FC = () => {
 
     return(
         <div>
-            <AdminSubNav title={`Chaffeurs`} handleAdd={handleToggleEditDriverDialog} handleSecondLinkClick={handleToggleAllDriversIsOpen} withFilterSection={true} />
+            <AdminSubNav title={`Chauffeurs`} handleAdd={handleToggleEditDriverDialog} handleSecondLinkClick={handleToggleAllDriversIsOpen} withFilterSection={true} />
             <SimpleFilterSelect items={DRIVE_FILTER} />
             <div>
                 <DriverItems />

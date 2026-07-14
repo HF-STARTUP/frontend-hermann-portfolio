@@ -233,7 +233,7 @@ export class AbonResponseModel extends Model {
     }
 
     get paymentMethod(): string{
-       return this._instance.subscriptionType ??""
+       return this._instance.subscriptionType ?? ""
     }
 
     get renew() {

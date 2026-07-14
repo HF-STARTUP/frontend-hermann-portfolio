@@ -13,7 +13,7 @@ export const useFleetDetailsHook = (fleetId?:string) => {
     const ProfileItems: DetailRowProps[] = fleetProfileData?.profileItems || []
     const KpiItems: FleetKpiCardProps[] = [
         {
-            title: "Chaiffre d'affaires",
+            title: "Chiffre d'affaires",
             value: `${ data?.revenueAmount } ${currency}`,
             variation: data?.revenueTrend,
             variant: "green",

@@ -68,21 +68,16 @@ export const Sidebar = () => {
                 label={"Marketing & Campagnes"}
                 icon={<PiMegaphone className="size-5 -scale-x-100" />}
                 subItems={[
-                    // { label: "Dashboard", to: "/app/marketing/dashboard" },
-                    // { label: "Campagnes", to: "/app/marketing/campagnes" },
-                    // { label: "Leads & Conversations", to: "/app/marketing/leads" },
-                    // { label: "Pipeline Clients", to: "/app/marketing/pipeline" },
-                    { label:"Clients à risque", to:"/app/at-risk-customers"},
+                    { label: "Clients à risque", to: "/app/at-risk-customers" },
                     { label: "Code promo", to: "/app/marketing/code-promo" },
                     { label: "Commerciaux", to: "/app/marketing/commerciaux" },
-
                 ]}
             />
             <SidebarItem
                 label={"Paramètres"}
                 icon={<SettingIcon />}
                 to={"/app/settings"}
-            />           
+            />
         </motion.div>
     )
 }
@@ -122,14 +117,13 @@ const SidebarItemWithSubmenu: React.FC<{
     subItems: SubItem[]
     to?: string
 }> = ({ label, icon, subItems, to }) => {
-    const [isOpen, setIsOpen] = useState(false)
+    const [isOpen, setIsOpen] = useState(true)
     const cur_path = usePathname()
     const menuRef = useRef<HTMLDivElement>(null)
     const isActive = subItems.some(item => cur_path === item.to || cur_path.startsWith(item.to + '/'))
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            // Vérifie si on est sur mobile ET si le clic est en dehors
             if (window.innerWidth < 1024 && menuRef.current && !menuRef.current.contains(event.target as Node)) {
                 setIsOpen(false)
             }
@@ -152,7 +146,6 @@ const SidebarItemWithSubmenu: React.FC<{
 
     return (
         <div className="w-full lg:relative" ref={menuRef}>
-            {/* Overlay Mobile : Ferme le menu si on clique n'importe où ailleurs */}
             <AnimatePresence>
                 {isOpen && (
                     <div
@@ -184,7 +177,6 @@ const SidebarItemWithSubmenu: React.FC<{
                 </div>
             </div>
 
-            {/* Menu Déroulant DESKTOP */}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -212,7 +204,6 @@ const SidebarItemWithSubmenu: React.FC<{
                 )}
             </AnimatePresence>
 
-            {/* Menu SNACKBAR MOBILE */}
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
@@ -242,7 +233,6 @@ const SidebarItemWithSubmenu: React.FC<{
                                 </Link>
                             ))}
                         </div>
-                        {/* Petite flèche en bas du menu */}
                         <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-vaPrimary border-r border-b border-white/20 rotate-45" />
                     </motion.div>
                 )}

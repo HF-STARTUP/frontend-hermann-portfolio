@@ -17,10 +17,10 @@ export interface UserFilters {
 export const useUsersHook = () => {
   const [page, setPage] = useState(1);
   const [itemPerPage, setItemPerPage] = useState(20);
-  const [filters, setFilters] = useState<UserFilters>() 
+  const [filters, setFilters] = useState<UserFilters>()
   const [selectedUser, setSelectedUser] = useState<UserProfile>()
-  const [formAction, setFormAction] = useState<"add"| "edit">("add")
-  const [toggleAction, setToggleAction] = useState<"enable"| "disable">("enable")
+  const [formAction, setFormAction] = useState<"add" | "edit">("add")
+  const [toggleAction, setToggleAction] = useState<"enable" | "disable">("enable")
   const [isFormVisible, setIsFormVisible] = useState(false)
   const [isToggleVisible, setIsToggleVisible] = useState(false)
   const { data: citiesList, isLoading: isLoadingCities } = useCity({});
@@ -69,7 +69,7 @@ export const useUsersHook = () => {
       {
         header: "Utilisateur",
         accessor: (item) =>
-          React.createElement(UserNameAndInitials, { name: item.getUsername, imageUrl: item.image??undefined }),
+          React.createElement(UserNameAndInitials, { name: item.getUsername, imageUrl: item.image ?? undefined }),
       },
       {
         header: "Email",
@@ -81,8 +81,12 @@ export const useUsersHook = () => {
       },
       {
         header: "Accès géographique",
-        accessor: (item) => item.cities? item.cities.map((c) => c.name).join(", "):"-",
+        accessor: (item) => {
+          const citiesLabel = item.cities ? item.cities.map((c) => c.name).join(", ") : "-"
+          return React.createElement("div", { className: "max-w-96 w-full truncate line-clamp-2", title: citiesLabel }, citiesLabel)
+        }
       },
+
       {
         header: "Statut",
         accessor: (item) =>
@@ -93,20 +97,20 @@ export const useUsersHook = () => {
   );
 
 
-  const handleAdd = ()=>{
+  const handleAdd = () => {
     setSelectedUser(undefined)
     setFormAction("add");
     setIsFormVisible(true)
   }
 
-  const handleEdit = (user?:UserProfile)=>{
+  const handleEdit = (user?: UserProfile) => {
     setSelectedUser(user)
     setFormAction("edit");
     setIsFormVisible(true)
   }
 
-  const handleToggle = (user?:UserProfile)=>{
-    user?.status == "active"? setToggleAction("disable"): setToggleAction("enable")
+  const handleToggle = (user?: UserProfile) => {
+    user?.status == "active" ? setToggleAction("disable") : setToggleAction("enable")
     setSelectedUser(user)
     setIsToggleVisible(true)
   }
@@ -119,21 +123,21 @@ export const useUsersHook = () => {
           label: "Modifier",
           onClick: (user) => handleEdit(user),
           variant: "vaBlue",
-          icon: React.createElement(Edit, {size:16})
+          icon: React.createElement(Edit, { size: 16 })
         },
         {
           id: "toggle_state",
-          label: item.status=="active"  ? "Désactiver l'utilisateur":"Réactiver l'utilisateur",
-          variant: item.status=="active"  ? "destructive":"success",
+          label: item.status == "active" ? "Désactiver l'utilisateur" : "Réactiver l'utilisateur",
+          variant: item.status == "active" ? "destructive" : "success",
           onClick: (user) => handleToggle(user),
-          icon: item.status=="active"  ? React.createElement(UserRoundX, {size:16}): React.createElement(UserRoundCheck, {size:16}),
+          icon: item.status == "active" ? React.createElement(UserRoundX, { size: 16 }) : React.createElement(UserRoundCheck, { size: 16 }),
         },
         {
           id: "delete",
           label: "Supprimer l'utilisateur",
-          onClick: (user) => {alert("Pourquoi tu veux supprimer "+ user?.getUsername)},
+          onClick: (user) => { alert("Pourquoi tu veux supprimer " + user?.getUsername) },
           variant: "destructive",
-          icon: React.createElement(Trash, {size:16})
+          icon: React.createElement(Trash, { size: 16 })
         },
       ];
       return actions;
