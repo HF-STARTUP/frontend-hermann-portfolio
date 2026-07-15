@@ -3,14 +3,14 @@ import { CampagneStatus } from "@/app/(webapp)/app/marketing/campagnes/_hook/use
 import { CustomerStatus } from "@/app/(webapp)/app/marketing/pipeline/_hooks/usePipelineHook"
 import { PackageType, ProfileStatus } from "@/app/(webapp)/app/subscriptions/_hooks/usePackageList"
 import { AdminAccountStatus } from "@/types/__form/profile.type"
-import { FleetStatus, SubscriptionStatus } from "@/types/admin/fleet.type"
+import { FleetStatus, SubscriptionStatus, SubsPaymentStatus } from "@/types/admin/fleet.type"
 import { RootAccessType } from "@/types/admin/role-access.type"
 import { PromoCodeStatusApi, SalesAgentStatus } from "@/types/marketing.types"
 import { ReactNode } from "react"
 
 export type BadgeVariant = 'green' | "orange" | "red" | "purple" | "blue" | "light-blue" | "default"
 
-export type BadgeType = LeadStatus | CampagneStatus | PackageType | ProfileStatus | SubscriptionStatus | LeadStep | AdminAccountStatus | RootAccessType | FleetStatus | CustomerStatus | PromoCodeStatusApi | SalesAgentStatus
+export type BadgeType = LeadStatus | CampagneStatus | PackageType | ProfileStatus | SubscriptionStatus | LeadStep | AdminAccountStatus | RootAccessType | FleetStatus | CustomerStatus | PromoCodeStatusApi | SalesAgentStatus | SubsPaymentStatus
 
 export const getBadgeVariantClasses = (variant: BadgeVariant): string => {
     switch (variant) {
@@ -64,8 +64,6 @@ export const getBadgeText = (type?: BadgeType) => {
             return "Inactif"
         case "deleted":
             return "Supprimé"
-        case "suspended":
-            return "Suspendu"
         case "demo_planed":
             return "Démo planifiée"
         case "new":
@@ -128,6 +126,14 @@ export const getBadgeText = (type?: BadgeType) => {
             return "Suspendu"
         case "INACTIVE":
             return "Inactif"
+        case "paid_online":
+            return "Payé en ligne"
+        case "paid_cash_declared":
+            return "Payé en espèces (déclaré)"
+        case "unpaid":
+            return "Impayé"
+        case "trial":
+            return "Essai"
         default:
             return "Inconnu"
     }
@@ -227,6 +233,14 @@ export const getBadgeVariant = (type?: BadgeType): BadgeVariant => {
             return "blue"
         case "INACTIVE":
             return "red"
+        case "paid_online":
+            return "green"
+        case "paid_cash_declared":
+            return "light-blue"
+        case "unpaid":
+            return "red"
+        case "trial":
+            return "purple"
 
         default:
             return "default"
@@ -234,20 +248,16 @@ export const getBadgeVariant = (type?: BadgeType): BadgeVariant => {
 }
 
 const Badge = ({ variant, type, icon, children, className, iconOnly, isPackage }: { variant?: BadgeVariant, type?: BadgeType, icon?: ReactNode, children?: ReactNode, className?: string, iconOnly?: boolean, isPackage?: boolean }) => {
+    const label = children ?? (type ? getBadgeText(type) : undefined)
+
     return (
         <div className={`py-1 shrink-0 px-2 w-fit flex items-center justify-center gap-2 rounded-full text-xs font-semibold ${getBadgeVariantClasses(variant || getBadgeVariant(type))} ${iconOnly ? "!px-1 !py-1 !rounded-lg !size-8" : ""} ${className}`}>
             {icon && (
-                <span className="flex items-center size-4 [&>svg]:size-full">
+                <span className="size-4 [&>svg]:size-full">
                     {icon}
                 </span>
             )}
-            {(type && isPackage) && <span title={(getBadgeText(type) !== "Inconnu") ? getBadgeText(type) : ""}> {(getBadgeText(type) !== "Inconnu") ? getBadgeText(type) : children} </span>}
-
-            {(type && !isPackage) && <span title={getBadgeText(type)}> {getBadgeText(type)} </span>}
-
-
-
-            {(children && !isPackage) && children}
+            {label && <span title={type ? getBadgeText(type) : undefined}> {label} </span>}
         </div>
     )
 }

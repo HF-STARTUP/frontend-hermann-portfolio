@@ -22,7 +22,9 @@ export type ActivationStatus = "activated_7d" | "activated_14d" | "activated_30d
 
 export type FirstAction = "promo_code_used" | "vehicle_created" | "driver_created" | "first_payment" | "first_entretien" | "first_checkup";
 
-export type SubscriptionStatus  = "using" | "paid" | "expired" | "active" | "inactive" | "deleted" | "suspended" | "failed" | "free"
+export type SubscriptionStatus = "using" | "paid" | "expired" | "active" | "inactive" | "deleted" | "suspended" | "failed" | "free"
+export type SubsPaymentStatus = "paid_online" | "paid_cash_declared" | "failed" | "unpaid" | "free" | "trial"
+
 
 
 export type TransactionDirection = "incoming" | "outgoing";
@@ -55,45 +57,45 @@ export interface FleetRegisterFormData {
     demo_days?: string;
     logo?: File | string;
     profile_id?: string
-  }
+}
 
 export interface GetFleetsParams {
-  city_id?: string;
-  itemPerPage?: number;
-  page?: number;
-  type?: FleetType;
-  park_type?: ParkType;
-  status?: FleetStatus;
-  subscription_id?: string;
-  subscription_method?: PaymentMethodsType;
-  subscription_name?: SubscriptionName;
-  subscription_code?: string;
-  subscription_period?: SubscriptionPeriod;
-  park_id?: string;
-  name?: string;
-  created_from?: string;
-  created_to?: string;
-  start_date?: string;
-  end_date?: string;
-  sort?: SortOrder;
-  vehicles_count_min?: number;
-  vehicles_count_max?: number;
-  drivers_count_min?: number;
-  drivers_count_max?: number;
-  transactions_amount_min?: number;
-  transactions_amount_max?: number;
-  include_activation_tracking?: boolean;
-  activation_status?: ActivationStatus;
-  is_activated?: boolean;
-  has_vehicle?: boolean;
-  has_driver?: boolean;
-  has_piloting_action?: boolean;
-  first_actions?: FirstAction[];
+    city_id?: string;
+    itemPerPage?: number;
+    page?: number;
+    type?: FleetType;
+    park_type?: ParkType;
+    status?: FleetStatus;
+    subscription_id?: string;
+    subscription_method?: PaymentMethodsType;
+    subscription_name?: SubscriptionName;
+    subscription_code?: string;
+    subscription_period?: SubscriptionPeriod;
+    park_id?: string;
+    name?: string;
+    created_from?: string;
+    created_to?: string;
+    start_date?: string;
+    end_date?: string;
+    sort?: SortOrder;
+    vehicles_count_min?: number;
+    vehicles_count_max?: number;
+    drivers_count_min?: number;
+    drivers_count_max?: number;
+    transactions_amount_min?: number;
+    transactions_amount_max?: number;
+    include_activation_tracking?: boolean;
+    activation_status?: ActivationStatus;
+    is_activated?: boolean;
+    has_vehicle?: boolean;
+    has_driver?: boolean;
+    has_piloting_action?: boolean;
+    first_actions?: FirstAction[];
 }
 
 export type OperatorRevenusInputs = {
-    start_date: string
-    end_date: string
+    start_date: Date
+    end_date: Date
     currency_id?: string
     type?: string
     city_id?: string
@@ -105,8 +107,8 @@ export type FleetByCityInputs = {
 
 
 export type SubscriptionPlanRevenusInputs = {
-    start_date: string
-    end_date: string
+    start_date: Date
+    end_date: Date
     currency_id?: string
 }
 
@@ -125,6 +127,88 @@ export interface OperatorRevenueResponse {
     path?: string
 }
 
+export type FleetSubscriptionPlanType = {
+    id: string;
+    account_type: string;
+    subscription_type: string;
+    period: string;
+    code: string;
+    free: boolean;
+    name: string;
+    remise: number | null;
+    amount: number | null;
+    crossed_out_amount: number | null;
+    description: string;
+    vehicle_number: number;
+    driver_number: number;
+    plan_id: string | null;
+    pricing_version: string;
+    effective_date: Date;
+    annual_discount_percent: number;
+    quarterly_discount_percent: number;
+    ai_agent_price_percent: number;
+    gps: boolean;
+    gps_driver: boolean;
+    yango: boolean;
+    export_excel: boolean;
+    auto_daily_report: boolean;
+    performance_dashboard: boolean;
+    app_vtc_driver: boolean;
+    auto_lock_vehicle: boolean;
+    recipe_with_mobile_money: boolean;
+    vehicle_doc_reminder: boolean;
+    flollow_oil_change: boolean;
+    manage_course: boolean;
+    performance_yango: boolean;
+    entretien: boolean;
+    vehicle_group: boolean;
+    manage_admin: boolean;
+    fleet_management: boolean;
+    gps_tracking: boolean;
+    yango_driver_import: boolean;
+    maintenance_tracking: boolean;
+    oil_change_tracking: boolean;
+    multi_users: boolean;
+    roles_permissions: boolean;
+    profit_and_loss: boolean;
+    multi_cash_registers: boolean;
+    treasury_management: boolean;
+    driver_contracts: boolean;
+    owner_contracts: boolean;
+    owner_dashboard: boolean;
+    order_catalog_qrcode: boolean;
+    reports_export: boolean;
+    driver_app: boolean;
+    wallet_psapay: boolean;
+    financial_validation_steps: boolean;
+    account_statement_export: boolean;
+    activity_log: boolean;
+    alerts_email_sms: boolean;
+    priority_support: boolean;
+    support_response_hours: number;
+    text_remise: string | null;
+    text_limitation: string | null;
+    caisse_limit: number | null;
+    number_operation_limit: number | null;
+    is_range_plan: boolean;
+    vehicle_min: number;
+    vehicle_max: number;
+    is_quote: boolean;
+    parent_plan_code: string;
+    paystack_plan_code: string | null;
+    created_at: Date;
+    updated_at: Date;
+    enable: boolean;
+}
+
+export type FleetSubscriptionDataType = {
+    id: string;
+    subscription: FleetSubscriptionPlanType;
+    amount: number;
+    start_date: Date;
+    end_date: Date;
+}
+
 export type FleetListResponseType = {
     id: string;
     name?: string;
@@ -134,6 +218,7 @@ export type FleetListResponseType = {
     start_date: Date;
     end_date: Date;
     country_code: string;
+    country: string;
     city: string;
     currency: string;
     number_vehicle: number;
@@ -141,7 +226,11 @@ export type FleetListResponseType = {
     driver_number: number;
     created_at: Date;
     status: FleetStatus,
-    logo?: string
+    logo?: string;
+    legal_notice?: string;
+    subscription_data?: FleetSubscriptionDataType;
+    subscription_paid?: boolean;
+    subscription_paid_amount?: number;
 }
 
 type Owner = {
@@ -180,7 +269,7 @@ export interface FleetSubscriptionTransaction {
     invoice_id: string | null;
     collect_type: string;
     status: "success" | "pending" | "failed" | string;
-    subscription_end_date: string; // ISO Date string
+    subscription_end_date: Date; // ISO Date string
     yango_recipe: any | null;
     subscription_number_vehicle_upgrage: number | null;
     amount: number;
@@ -205,7 +294,7 @@ export interface FleetSubscriptionTransaction {
     vtc_withdraw_on_caisse_id: string | null;
     account_reference_id: string | null;
     bank_reference: string | null;
-    objective_date: string | null;
+    objective_date: Date | null;
     objective: any | null;
     created_at: string; // ISO Date string
     update_at: string;  // ISO Date string
@@ -222,23 +311,32 @@ export interface FleetSubscriptionTransaction {
     manager_profile_id: string | null;
     vehicle_owner_id: string | null;
     promo_code_id: string | null;
-  }
+}
 
-  export type FleetResponseType = {
+export type FleetResponseType = {
     id: string;
     start_date: Date;
     end_date: Date;
     is_active: boolean;
     subscription_plan: string;
-    vehicle_number: null;
+    vehicle_number: number | null;
     offer: SubscriptionStatus;
     renew: boolean;
-    amount: null;
+    amount: number | null;
     subscription?: Subscription;
-    info: Info;
+    info?: Info;
     transactions: FleetSubscriptionTransaction[];
-    status : SubscriptionStatus;
-    subscriptionType: string
+    status: SubscriptionStatus;
+    subscriptionType: string;
+    is_quote: boolean;
+    amount_label: string | null;
+    paid_amount: number | null;
+    payment_verified_online: boolean;
+    payment_status: SubsPaymentStatus
+    payment_status_label: string;
+    payment_method: string;
+    payment_method_label: string;
+    collect_type: string | null;
 }
 
 export interface FleetSubscriptionsResponseData extends PaginationResponse {
@@ -246,7 +344,7 @@ export interface FleetSubscriptionsResponseData extends PaginationResponse {
 }
 
 
-export interface FleetSubscriptionParams{
+export interface FleetSubscriptionParams {
     itemPerPage?: number;
     page?: number;
     type?: PackageType;
@@ -363,7 +461,7 @@ export type StProfitable = {
 export interface RevenusEvolution {
     currency: string;
     data: Datum[];
-    revenue: number,    
+    revenue: number,
     item: string,
 }
 
@@ -468,7 +566,7 @@ export interface FleetJournalItem {
     driver: FleetJournalDriver | null;
 }
 
-export interface FleetJournalData extends PaginationResponse{
+export interface FleetJournalData extends PaginationResponse {
     data: FleetJournalItem[];
 }
 
@@ -482,8 +580,8 @@ export interface FleetJournalData extends PaginationResponse{
 
 export interface TransactionKpiData {
     period: {
-        start_date: string;
-        end_date: string;
+        start_date: Date;
+        end_date: Date;
     };
     incoming: {
         count: number;
@@ -555,15 +653,15 @@ export type TransactionHistoryItem = {
     label: string;
 };
 
-export interface TransactionHistoryData extends PaginationResponse{
+export interface TransactionHistoryData extends PaginationResponse {
     data: TransactionHistoryItem[]
 }
 
 // FLeets KPI
 
 export interface Period {
-    start_date: string;
-    end_date: string;
+    start_date: Date;
+    end_date: Date;
 }
 
 export interface KpiMetric {
@@ -585,7 +683,7 @@ export interface FleetsKpiData {
 // //////////////////////////////////////////////////////////////
 
 // Suspend fleet data
-export interface SuspendFleetData{
+export interface SuspendFleetData {
     reason?: string,
-    park_id?: string 
+    park_id?: string
 }

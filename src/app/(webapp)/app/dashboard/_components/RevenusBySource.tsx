@@ -4,6 +4,7 @@ import React, { useMemo } from 'react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import { EmptyData } from "@/components/box/PageNetworkState";
+import CardTitle from '@/components/ui/custom/CardTitle';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -85,7 +86,7 @@ const RevenueBySourceChart = ({
 
   return (
     <div className="bg-white p-6 rounded-2xl h-full flex flex-col">
-      <h2 className="text-2xl font-semibold text-vaTextPrimary mb-6">Revenus par source</h2>
+      <CardTitle title='Revenus par source' />
       
       {!isLoading && !data.length ? (
         <div className="flex-1 flex items-center justify-center py-10">

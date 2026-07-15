@@ -2,10 +2,12 @@ import { StretchHorizontal } from "lucide-react";
 import { EmptyData } from "@/components/box/PageNetworkState";
 import InactiveFleetModel from "@/model/dashboard/InactiveFleets";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export function InnactiveFleetRow({ fleet }: { fleet: InactiveFleetModel }) {
+    const $router = useRouter()
     return (
-        <div className="p-2 rounded-2xl w-full bg-vaRed/5 border border-vaRed/20 flex items-center gap-4">
+        <div className="p-2 rounded-2xl w-full bg-vaRed/5 border border-vaRed/20 flex items-center gap-4 cursor-pointer" onClick={() => $router.push(`/app/at-risk-customers/${fleet.fleetId}/details`)}>
             {fleet.fleetLogo ?
                 <div className="rounded-full size-14 bg-vaRed/10 text-vaRed flex items-center justify-center overflow-hidden">
                     <Image

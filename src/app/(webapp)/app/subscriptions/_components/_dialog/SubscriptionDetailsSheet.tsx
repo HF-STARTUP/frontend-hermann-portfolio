@@ -12,9 +12,13 @@ import { PackageFeatures } from "../_detail_sections/PackageFeatures"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { AllSubscriptionsModel } from "@/model/subscription/AllSubscriptionsModel"
 import { cn } from "@/utils/ui/cn"
+import { useGetActiveCurrency } from "@/hooks/__globlal/useGlobalHook"
 
-const SubscriptionDetailsSheet = ({ isOpenned, onClose, packageId, packageData, onDelete, onEdit, onSuspend }: { isOpenned: boolean, onClose: () => void, packageId: string, packageData?: AllSubscriptionsModel | null, onDelete: ()=>void, onEdit: ()=>void, onSuspend: ()=>void }) => {
+const SubscriptionDetailsSheet = ({ isOpenned, onClose, packageId, packageData, onDelete, onEdit, onSuspend }: { isOpenned: boolean, onClose: () => void, packageId: string, packageData?: AllSubscriptionsModel | null, onDelete: () => void, onEdit: () => void, onSuspend: () => void }) => {
     const [activeTab, setActiveTab] = useState("desc");
+    const {
+        currency
+    } = useGetActiveCurrency()
     return (
         <Sheet open={isOpenned} onOpenChange={onClose} bgType="whited">
             <SheetContent variant={"2xl"}>
@@ -78,7 +82,7 @@ const SubscriptionDetailsSheet = ({ isOpenned, onClose, packageId, packageData, 
                             <label htmlFor="" className="text-sm text-vaTextPrimary font-semibold">
                                 Revenu total
                             </label>
-                            <p className="text-xl font-semibold"> {formatNumber(2450000)} XOF </p>
+                            <p className="text-xl font-semibold"> {formatNumber(2450000)} {currency} </p>
                         </div>
                     </div>
                     <Tabs defaultValue="desc" value={activeTab} onValueChange={(value) => setActiveTab(value)}>

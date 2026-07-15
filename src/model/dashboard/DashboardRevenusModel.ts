@@ -12,26 +12,26 @@ class DashboardRevenueChart extends Model {
     }
 
     get labels(): string[] {
-        return this._instance.series.map(item => item.period)??[];
+        return this._instance.series.map(item => item.period) ?? [];
     }
 
     get values(): number[] {
-        return this._instance.breakdown.map(item => item.amount)??[];
+        return this._instance.breakdown.map(item => (item.amount)) ?? [];
     }
 
     get total(): string {
-        return formatNumber(this._instance.totalRevenue??0);
+        return formatNumber(this._instance.totalRevenue ?? 0);
     }
 
     get previousTotal(): string {
-        return formatNumber(this._instance.previousPeriodTotal??0);
+        return formatNumber(this._instance.previousPeriodTotal ?? 0);
     }
 
     get percentChange(): string {
-        return `${this._instance.percentChange?this._instance.percentChange.toFixed(2):0}%`;
+        return `${this._instance.percentChange ? this._instance.percentChange.toFixed(2) : 0}%`;
     }
 
-    get variation (): 'up' | 'down' | 'constant' {
+    get variation(): 'up' | 'down' | 'constant' {
         if (this._instance.percentChange > 0) {
             return 'up';
         } else if (this._instance.percentChange < 0) {
@@ -46,7 +46,7 @@ class DashboardRevenueChart extends Model {
             category: item.category.charAt(0).toUpperCase() + item.category.slice(1),
             amount: formatNumber(item.amount),
             percentage: `${item.percentage.toFixed(2)}%`
-        }))??[];
+        })) ?? [];
     }
 
 }

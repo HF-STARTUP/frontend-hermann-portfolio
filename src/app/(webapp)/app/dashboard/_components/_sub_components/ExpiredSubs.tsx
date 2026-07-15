@@ -1,10 +1,12 @@
 import { Crown } from "lucide-react";
 import { EmptyData } from "@/components/box/PageNetworkState";
 import ExpiringSubscriptionsModel from "@/model/dashboard/ExpiringSubscriptionsModel";
+import { useRouter } from "next/navigation";
 
 export function ExpiredSubsRow({ subs }: { subs: ExpiringSubscriptionsModel }) {
+    const $router = useRouter()
     return (
-        <div className="p-2 rounded-2xl w-full bg-vaOrange/5 border border-vaOrange/40 flex items-center gap-4">
+        <div className="p-2 rounded-2xl w-full bg-vaOrange/5 border border-vaOrange/40 flex items-center gap-4 cursor-pointer" onClick={() => $router.push(`/app/at-risk-customers/${subs.accountId}/details`)}>
             <div className="rounded-full size-14 bg-vaOrange/10 text-vaOrange flex items-center justify-center">
                 <Crown className="size-8" strokeWidth={2} />
             </div>
@@ -16,7 +18,7 @@ export function ExpiredSubsRow({ subs }: { subs: ExpiringSubscriptionsModel }) {
                     Expire le : {subs.endDate}
                 </p>
                 <p className="text-vaRed font-medium text-sm">
-                    {subs.getDifference*-1} Jours restants
+                    {subs.getDifference * -1} Jours restants
                 </p>
             </div>
         </div>

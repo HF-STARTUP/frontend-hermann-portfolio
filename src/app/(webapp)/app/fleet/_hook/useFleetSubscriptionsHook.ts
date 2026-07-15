@@ -8,7 +8,7 @@ import {
 import Badge from "@/components/display/Badge";
 import { PackageType } from "../../subscriptions/_hooks/usePackageList";
 import { Crown } from "lucide-react";
-import { FleetSubscriptionParams, SubscriptionStatus } from "@/types/admin/fleet.type";
+import { FleetSubscriptionParams, SubscriptionStatus, SubsPaymentStatus } from "@/types/admin/fleet.type";
 import { DateRange } from "react-day-picker";
 import { toIsoDate } from "@/services/Service";
 
@@ -17,11 +17,9 @@ export interface SubscriptionRow {
   plan: PackageType;
   amount: number;
   period: "monthly" | "yearly";
-  paymentMethod: {
-    name: string;
-    icon: string;
-  };
-  status: SubscriptionStatus;
+  paymentMethod: string;
+  status: SubsPaymentStatus;
+  statusLabel?: string
 }
 
 export const useFleetSubscriptionsHook = (fleetId?: string) => {
@@ -50,13 +48,11 @@ export const useFleetSubscriptionsHook = (fleetId?: string) => {
     return fleetSubscriptions?.subscriptions.map((subs) => ({
       amount: subs.amount ?? 0,
       date: subs.startDate ?? "",
-      paymentMethod: {
-        icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSI3wzGW2Od0fwu9d0nGua0cme_mSiKlz2u4A&s",
-        name: subs.paymentMethod,
-      },
+      paymentMethod: subs.paymentMethod,
       period: subs.subscriptionPlan as "monthly" | "yearly",
       plan: subs.subscription.name as PackageType,
       status: subs.status,
+      statusLabel: subs.paymentStatusLabel
     })) ?? [];
   }, [fleetSubscriptions]);
 
@@ -108,11 +104,11 @@ export const useFleetSubscriptionsHook = (fleetId?: string) => {
       {
         header: "Moyen de paiement",
         accessor: (item) =>
-          React.createElement("span", null, item.paymentMethod.name),
+          React.createElement("span", null, item.paymentMethod),
       },
       {
         header: "Statut",
-        accessor: (item) => React.createElement(Badge, { type: item.status }),
+        accessor: (item) => React.createElement(Badge, { type: item.status }, item.statusLabel),
       },
     ],
     [currency]

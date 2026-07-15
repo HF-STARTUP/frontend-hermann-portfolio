@@ -1,13 +1,14 @@
 "use client"
 
 import React from "react"
-import {ComposableMap, Geographies, Geography, Marker} from "react-simple-maps"
-import {Card} from "@/components/ui/card"
-import {CustomComboBox} from "@/components/ui/custom/custom-comobo-box";
-import {Button} from "@/components/ui/button";
-import {RotateCcw, ZoomIn, ZoomOut} from "lucide-react";
-import {ScrollArea} from "@/components/ui/scroll-area";
-import {useDashboardFleetMapSection} from "@/app/(webapp)/app/dashboard/_hook/useDashboardSectionsHooks";
+import { ComposableMap, Geographies, Geography, Marker } from "react-simple-maps"
+import { Card } from "@/components/ui/card"
+import { CustomComboBox } from "@/components/ui/custom/custom-comobo-box";
+import { Button } from "@/components/ui/button";
+import { RotateCcw, ZoomIn, ZoomOut } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useDashboardFleetMapSection } from "@/app/(webapp)/app/dashboard/_hook/useDashboardSectionsHooks";
+import CardTitle from "@/components/ui/custom/CardTitle";
 
 // Chemin vers le fichier GeoJSON pour la carte du monde
 const geoUrl = "/map-raw.json"
@@ -23,7 +24,7 @@ interface FleetMapProps {
     fleets: Fleet[]
 }
 
-export default function FleetMap({fleets}: FleetMapProps) {
+export default function FleetMap({ fleets }: FleetMapProps) {
     const {
         selectedCountrie,
         setSelectedCountrie,
@@ -46,36 +47,36 @@ export default function FleetMap({fleets}: FleetMapProps) {
     return (
         <Card className="p-6 border-0 rounded-2xl shadow-none">
             <div className="flex justify-between items-center mb-6">
-                <p className="text-2xl font-semibold text-vaTextPrimary mb-6">Flottes actives</p>
-
-                <CustomComboBox
-                    options={countries ? [
-                        {label: "Tous", value: "999999"},
-                        ...countries.map((country) => ({
-                            label: country.name,
-                            value: String(country.id)
-                        }))
-                    ] : []}
-                    value={selectedCountrie}
-                    onValueChange={setSelectedCountrie}
-                    placeholder="Pays"
-                    label={"Pays"}
-                    searchPlaceholder="Rechercher un pays..."
-                    emptyMessage="Aucun pays trouvé."
-                />
-
+                <CardTitle title="Flottes actives" />
+                <div className="">
+                    <CustomComboBox
+                        options={countries ? [
+                            { label: "Tous les pays", value: "999999" },
+                            ...countries.map((country) => ({
+                                label: country.name,
+                                value: String(country.id)
+                            }))
+                        ] : []}
+                        value={selectedCountrie}
+                        onValueChange={setSelectedCountrie}
+                        placeholder="Pays"
+                        searchPlaceholder="Rechercher un pays..."
+                        emptyMessage="Aucun pays trouvé."
+                        className="w-fit"
+                    />
+                </div>
             </div>
 
             <div className="relative">
                 {/* Contrôles de zoom */}
                 <div className="absolute top-4 right-4 z-10 flex flex-col gap-2">
                     <Button variant="outline" size="icon" onClick={handleZoomIn}
-                            className="bg-white  hover:bg-gray-50">
-                        <ZoomIn className="h-4 w-4"/>
+                        className="bg-white  hover:bg-gray-50">
+                        <ZoomIn className="h-4 w-4" />
                     </Button>
                     <Button variant="outline" size="icon" onClick={handleZoomOut}
-                            className="bg-white  hover:bg-gray-50">
-                        <ZoomOut className="h-4 w-4"/>
+                        className="bg-white  hover:bg-gray-50">
+                        <ZoomOut className="h-4 w-4" />
                     </Button>
                     <Button
                         variant="outline"
@@ -84,14 +85,14 @@ export default function FleetMap({fleets}: FleetMapProps) {
                         className="bg-white  hover:bg-gray-50"
                         title="Réinitialiser la vue"
                     >
-                        <RotateCcw className="h-4 w-4"/>
+                        <RotateCcw className="h-4 w-4" />
                     </Button>
                 </div>
 
                 <div
                     id="map-container"
                     className="h-[359px] w-full mb-6 overflow-hidden cursor-grab active:cursor-grabbing"
-                    style={{cursor: isDragging ? "grabbing" : "grab"}}
+                    style={{ cursor: isDragging ? "grabbing" : "grab" }}
                 >
                     <ComposableMap
                         projection="geoMercator"
@@ -107,7 +108,7 @@ export default function FleetMap({fleets}: FleetMapProps) {
                         onMouseLeave={handleMouseLeave}
                     >
                         <Geographies geography={geoUrl}>
-                            {({geographies}) =>
+                            {({ geographies }) =>
                                 geographies.map((geo) => (
                                     <Geography
                                         key={geo.rsmKey}
@@ -116,9 +117,9 @@ export default function FleetMap({fleets}: FleetMapProps) {
                                         stroke="#D6D6DA"
                                         strokeWidth={0.5}
                                         style={{
-                                            default: {outline: "none"},
-                                            hover: {outline: "none"},
-                                            pressed: {outline: "none"},
+                                            default: { outline: "none" },
+                                            hover: { outline: "none" },
+                                            pressed: { outline: "none" },
                                         }}
                                     />
                                 ))
@@ -127,10 +128,10 @@ export default function FleetMap({fleets}: FleetMapProps) {
                         {nbFleets &&
                             nbFleets.map((city) => (
                                 <Marker className={""} key={`${city.city_id}`}
-                                        coordinates={[city.city_info.longitude, city.city_info.latitude]}>
+                                    coordinates={[city.city_info.longitude, city.city_info.latitude]}>
 
                                     <circle r={6 / 1} fill="#000" stroke="#fff" strokeWidth={2 / 1}
-                                            style={{cursor: "pointer"}}/>
+                                        style={{ cursor: "pointer" }} />
                                     {zoom > 5 ? <text
                                         className={""}
                                         textAnchor="middle"

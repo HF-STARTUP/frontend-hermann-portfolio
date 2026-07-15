@@ -81,7 +81,6 @@ export const useDashboardPaymentMethods = () => {
   };
 };
 
-// Meilleures flottes
 
 export interface BestFleetFilters {
   ville?: string;
@@ -90,24 +89,24 @@ export interface BestFleetFilters {
 
 export const useDashboardBestFleet = (globalFilters?: DashboardGlobalFilters) => {
   const { data: userProfileData } = useUserProfile();
-  
+
   const [bestFleetsLocalFilters, setBestFleetsLocalFilters] = React.useState<BestFleetFilters>({
     ville: String(AuthManagerGuard.getEnabledCity),
   });
-  
+
   const { currency } = useGetActiveCurrency();
 
   const [page, setPage] = React.useState(1);
   const [fleets, setFleets] = React.useState<BestFleetModel[]>([]);
   const [filterCityToken, setFilterCityToken] = React.useState("");
-  
+
   const sentinelRef = React.useRef<HTMLDivElement | null>(null);
   const pageRef = React.useRef(1);
 
   const queryParams = React.useMemo<DashboardParams>(() => ({
     account_type: globalFilters?.profileType,
     start_date: globalFilters?.dateRange?.from?.toISOString(),
-    end_date: globalFilters?.dateRange?.to?.toISOString(),      
+    end_date: globalFilters?.dateRange?.to?.toISOString(),
     currency_id: globalFilters?.currency as number,
     page,
     itemPerPage: 10,
@@ -122,24 +121,23 @@ export const useDashboardBestFleet = (globalFilters?: DashboardGlobalFilters) =>
   }, [data, page]);
 
   React.useEffect(() => {
-    if (data?.fleets) {
-      if (page === 1) {
-        setFleets(data.fleets);
-      } else {
-        setFleets((prev) => {
-          const existingIds = new Set(prev.map(f => f.id));
-          const newUniqueFleets = data.fleets.filter(f => !existingIds.has(f.id));
-          return [...prev, ...newUniqueFleets];
-        });
-      }
-    }
-  }, [data?.fleets, page]);
-
-  React.useEffect(() => {
     pageRef.current = 1;
     setPage(1);
     setFleets([]);
   }, [globalFilters, bestFleetsLocalFilters]);
+
+  React.useEffect(() => {
+    if (!data?.fleets) return;
+    if (page === 1) {
+      setFleets(data.fleets);
+    } else {
+      setFleets((prev) => {
+        const existingIds = new Set(prev.map(f => f.id));
+        const newUniqueFleets = data.fleets.filter(f => !existingIds.has(f.id));
+        return [...prev, ...newUniqueFleets];
+      });
+    }
+  }, [data?.fleets, page]);
 
   React.useEffect(() => {
     const sentinel = sentinelRef.current;
@@ -151,7 +149,7 @@ export const useDashboardBestFleet = (globalFilters?: DashboardGlobalFilters) =>
           const nextPage = pageRef.current + 1;
           pageRef.current = nextPage;
           setPage(nextPage);
-        }else{
+        } else {
           return;
         }
       },
@@ -160,7 +158,7 @@ export const useDashboardBestFleet = (globalFilters?: DashboardGlobalFilters) =>
 
     observer.observe(sentinel);
     return () => observer.disconnect();
-  }, [fleets.length]); 
+  }, [fleets.length]);
 
   const cityFiltered = React.useMemo(() => {
     if (!filterCityToken || filterCityToken.trim() === "") return userProfileData?.listPark;
@@ -382,21 +380,21 @@ export interface RevenueChartLocalFilters {
   groupBy: PeriodType;
 }
 
-export const useDashboardRevenusEvolution = (globalFilters?:DashboardGlobalFilters) => {
+export const useDashboardRevenusEvolution = (globalFilters?: DashboardGlobalFilters) => {
   const [localFilters, setLocalFilters] = React.useState<RevenueChartLocalFilters>({
     groupBy: "month",
   });
   const queryParams = React.useMemo<DashboardParams>(() => ({
-      account_type: globalFilters?.profileType,
-      start_date: globalFilters?.dateRange?.from?.toISOString(),
-      end_date: globalFilters?.dateRange?.to?.toISOString(),      
-      currency_id: AuthManagerGuard.getCurrencyId,
+    account_type: globalFilters?.profileType,
+    start_date: globalFilters?.dateRange?.from?.toISOString(),
+    end_date: globalFilters?.dateRange?.to?.toISOString(),
+    currency_id: AuthManagerGuard.getCurrencyId,
 
-      group_by: localFilters.groupBy as PeriodType,
-    }), [globalFilters, localFilters, AuthManagerGuard.getCurrencyId]);
+    group_by: localFilters.groupBy as PeriodType,
+  }), [globalFilters, localFilters, AuthManagerGuard.getCurrencyId]);
 
   const { currency } = useGetActiveCurrency();
-  const {data: chartData, isLoading: isLoadingRevenusChartData} = useGetDashboardRevenueChartData(queryParams);
+  const { data: chartData, isLoading: isLoadingRevenusChartData } = useGetDashboardRevenueChartData(queryParams);
 
   const chartValues: number[] = chartData?.values || [];
   const chartLabels: string[] = chartData?.labels || [];
@@ -407,12 +405,12 @@ export const useDashboardRevenusEvolution = (globalFilters?:DashboardGlobalFilte
   } = {
     amount: `${chartData?.previousTotal} ${currency}`,
     percent: chartData?.percentChange ?? "",
-    variation: chartData?.variation??"constant",
+    variation: chartData?.variation ?? "constant",
   };
 
   const totalRevenus = chartData?.total || "0";
 
-  const revenusBySource: RevenueData[] = chartData?.breakdown??[];
+  const revenusBySource: RevenueData[] = chartData?.breakdown ?? [];
 
   return {
     chartLabels,
@@ -420,7 +418,7 @@ export const useDashboardRevenusEvolution = (globalFilters?:DashboardGlobalFilte
     variation,
     totalRevenus,
     currency,
-    localFilters, 
+    localFilters,
     setLocalFilters,
     isLoadingRevenusChartData,
     revenusBySource

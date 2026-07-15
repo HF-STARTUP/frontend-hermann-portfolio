@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { useDashboardBestFleet } from "../_hook/useDashboardSectionsHooks"
 import { DashboardGlobalFilters } from "../_hook/useDashboardHook"
 import CardTitle from "@/components/ui/custom/CardTitle"
+import { CustomComboBox } from "@/components/ui/custom/custom-comobo-box"
 
 export const BestFleet = ({ globalFilters }: { globalFilters?: DashboardGlobalFilters }) => {
     const {
@@ -26,32 +27,25 @@ export const BestFleet = ({ globalFilters }: { globalFilters?: DashboardGlobalFi
     return (
         <div className={"flex flex-col bg-white p-6 rounded-2xl h-full max-w-full"}>
             <div className={"flex flex-col items-start justify-between"}>
-                <div className="flex items-center justify-between w-full">
+                <div className="flex items-center justify-between w-full flex-wrap">
                     <CardTitle title="Meilleures flottes" />
-                    <div className="flex items-center gap-2">
-                        <Select 
-                            value={bestFleetsLocalFilters?.ville} 
+                    <div className="max-w-52 w-full">
+                        <CustomComboBox
+                            options={cityFiltered ? [
+                                { label: "Toutes les villes", value: "all" },
+                                ...cityFiltered.map((city) => ({
+                                    label: city.name,
+                                    value: String(city.id)
+                                }))
+                            ] : []}
+                            value={bestFleetsLocalFilters?.ville}
                             onValueChange={(value) => setBestFleetsLocalFilters({ ...bestFleetsLocalFilters, ville: value })}
-                            defaultValue="all"
-                        >
-                            <SelectTrigger className="bg-vaLightGray/10 border-none rounded-xl text-vaTextPrimary px-4 font-semibold">
-                                <SelectValue placeholder="Ville"></SelectValue>
-                            </SelectTrigger>
-                            <SelectContent>
-                                <div className="px-2 py-2 mb-2">
-                                    <Input 
-                                        placeholder="Rechercher..." 
-                                        value={filterCityToken} 
-                                        onChange={(e) => setFilterCityToken(e.target.value)} 
-                                        onClick={(e) => e.stopPropagation()} 
-                                    />
-                                </div>
-                                <SelectItem value={"all"}>Toutes les villes</SelectItem>
-                                {cityFiltered?.map((item) => (
-                                    <SelectItem key={item.id} value={String(item.id)}>{item.name}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                            placeholder="Choisir une ville"
+                            searchPlaceholder="Rechercher une ville..."
+                            emptyMessage="Aucune ville trouvée."
+                            className="w-full"
+                            onSearch={(sq) => setFilterCityToken(sq)}
+                        />
                     </div>
                 </div>
 
@@ -89,7 +83,7 @@ export const BestFleet = ({ globalFilters }: { globalFilters?: DashboardGlobalFi
                                     </div>
                                 </div>
                             )}
-                            
+
                             {isLoading && fleetData.length === 0 && (
                                 <Loading className={"h-[150px]"} />
                             )}

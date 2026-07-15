@@ -110,9 +110,32 @@ const useFleetHook = () => {
             : "Aucun abonnement actif",
       },
       {
-        header: "Montant",
+        header: "Prix de l'abonnement",
         accessor: (item) => item.subscription_amount ?? "-",
       },
+      {
+        header: "Paiement",
+        accessor: (item) =>
+          item.hasSubscriptionData
+            ? React.createElement(
+              "span",
+              { className: item.subscriptionPaid ? "text-vaGreen font-semibold" : "text-vaRed font-semibold" },
+              item.subscriptionPaid ? "Payé" : "Impayé"
+            )
+            : "-",
+      },
+      {
+        header: "Montant payé",
+        accessor: (item) => item.hasSubscriptionData ? item.subscriptionPaidAmount : "-",
+      },
+      {
+        header: "Fin d'abonnement",
+        accessor: (item) => item.subscriptionData?.endDate ?? "-",
+      },
+      // {
+      //   header: "Expire",
+      //   accessor: (item) => item.subscriptionData?.remainingTime ?? "-",
+      // },
       {
         header: "Véhicules",
         accessor: (item) => item.number_vehicle ?? "-",
@@ -183,7 +206,7 @@ const useFleetHook = () => {
       const actions: RowAction<FleetModel>[] = [
         {
           id: "suspend",
-          label: item.statusDisplay == "locked" ?"Activer":"Suspendre",
+          label: item.statusDisplay == "locked" ? "Activer" : "Suspendre",
           onClick: (fleet) => handleSuspend(fleet),
           variant: "ghost",
         },

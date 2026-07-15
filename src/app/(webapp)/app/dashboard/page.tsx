@@ -111,8 +111,6 @@ export default function DashboardPage() {
 
             <HeadSection globalFilters={globalFilters} />
 
-
-
             <div className={"mt-8 grid grid-cols-12 gap-6"}>
                 <div className="col-span-12 space-y-6">
                     {/* <div className={" 2xl:col-span-5 "}>

@@ -1,14 +1,19 @@
 import { PackageType } from "@/app/(webapp)/app/subscriptions/_hooks/usePackageList";
+import { formatNumber } from "@/lib/utils";
 import Model from "@/model/Model";
 import {
     AdminOnFleetResponseType,
     FleetListResponseType,
     FleetResponseType,
+    FleetSubscriptionDataType,
+    FleetSubscriptionPlanType,
+    FleetSubscriptionTransaction,
     Info,
     Subscription,
-    SubscriptionStatus
+    SubscriptionStatus,
+    SubsPaymentStatus
 } from "@/types/admin/fleet.type";
-import {formatDistanceToNow} from "date-fns";
+import { formatDistanceToNow } from "date-fns";
 
 
 export class FleetModel extends Model {
@@ -28,7 +33,7 @@ export class FleetModel extends Model {
         return this._instance.id
     }
 
-    get logo(){
+    get logo() {
         return this.getFleetImage(this._instance.logo)
     }
 
@@ -42,6 +47,18 @@ export class FleetModel extends Model {
 
     get city() {
         return this._instance.city;
+    }
+
+    get countryCode() {
+        return this._instance.country_code;
+    }
+
+    get country() {
+        return this._instance.country;
+    }
+
+    get legalNotice() {
+        return this._instance.legal_notice ?? "";
     }
 
     get number_vehicle() {
@@ -69,15 +86,33 @@ export class FleetModel extends Model {
     }
 
     get subscription_amount() {
-        return (this._instance.subscription_amount ? this._instance.subscription_amount + " " : 0 + " ") + this._instance.currency
+        return (this._instance.subscription_amount ? formatNumber(this._instance.subscription_amount) + " " : 0 + " ") + this._instance.currency
     }
 
     get suscription_name(): PackageType | undefined {
-        return this._instance.subscription?this._instance.subscription.toUpperCase() as PackageType:undefined;
+        return this._instance.subscription ? this._instance.subscription.toUpperCase() as PackageType : undefined;
     }
 
     get hasActiveSubscription() {
         return !!this._instance.subscription;
+    }
+
+    get subscriptionPaid() {
+        return !!this._instance.subscription_paid;
+    }
+
+    get subscriptionPaidAmount() {
+        return this._instance.subscription_paid_amount
+            ? `${this._instance.subscription_paid_amount} ${this._instance.currency}`
+            : `0 ${this._instance.currency}`;
+    }
+
+    get subscriptionData() {
+        return this._instance.subscription_data ? new FleetSubscriptionDataModel(this._instance.subscription_data) : null;
+    }
+
+    get hasSubscriptionData() {
+        return !!this._instance.subscription_data;
     }
 
     get created_at() {
@@ -86,6 +121,223 @@ export class FleetModel extends Model {
 
     get statusDisplay() {
         return this._instance.status;
+    }
+}
+
+export class FleetSubscriptionPlanModel extends Model {
+    private _instance: FleetSubscriptionPlanType;
+
+    constructor(datas: FleetSubscriptionPlanType) {
+        super()
+        this._instance = datas;
+    }
+
+    get id() {
+        return this._instance.id;
+    }
+
+    get accountType() {
+        return this._instance.account_type;
+    }
+
+    get subscriptionType() {
+        return this._instance.subscription_type;
+    }
+
+    get period() {
+        return this._instance.period;
+    }
+
+    get code() {
+        return this._instance.code;
+    }
+
+    get free() {
+        return this._instance.free;
+    }
+
+    get name() {
+        return this._instance.name;
+    }
+
+    get remise() {
+        return this._instance.remise;
+    }
+
+    get amount() {
+        return this._instance.amount;
+    }
+
+    get crossedOutAmount() {
+        return this._instance.crossed_out_amount;
+    }
+
+    get description() {
+        return this._instance.description;
+    }
+
+    get vehicleNumber() {
+        return this._instance.vehicle_number;
+    }
+
+    get driverNumber() {
+        return this._instance.driver_number;
+    }
+
+    get pricingVersion() {
+        return this._instance.pricing_version;
+    }
+
+    get effectiveDate() {
+        return this.formatDate(this._instance.effective_date);
+    }
+
+    get annualDiscountPercent() {
+        return this._instance.annual_discount_percent;
+    }
+
+    get quarterlyDiscountPercent() {
+        return this._instance.quarterly_discount_percent;
+    }
+
+    get aiAgentPricePercent() {
+        return this._instance.ai_agent_price_percent;
+    }
+
+    get supportResponseHours() {
+        return this._instance.support_response_hours;
+    }
+
+    get textRemise() {
+        return this._instance.text_remise;
+    }
+
+    get textLimitation() {
+        return this._instance.text_limitation;
+    }
+
+    get caisseLimit() {
+        return this._instance.caisse_limit;
+    }
+
+    get numberOperationLimit() {
+        return this._instance.number_operation_limit;
+    }
+
+    get isRangePlan() {
+        return this._instance.is_range_plan;
+    }
+
+    get vehicleMin() {
+        return this._instance.vehicle_min;
+    }
+
+    get vehicleMax() {
+        return this._instance.vehicle_max;
+    }
+
+    get isQuote() {
+        return this._instance.is_quote;
+    }
+
+    get parentPlanCode() {
+        return this._instance.parent_plan_code;
+    }
+
+    get paystackPlanCode() {
+        return this._instance.paystack_plan_code;
+    }
+
+    get enable() {
+        return this._instance.enable;
+    }
+
+    get createdAt() {
+        return this.formatDate(this._instance.created_at);
+    }
+
+    get updatedAt() {
+        return this.formatDate(this._instance.updated_at);
+    }
+
+    get activeFeatures(): string[] {
+        const featureLabels: Record<string, string> = {
+            gps: "GPS",
+            gps_driver: "GPS Chauffeur",
+            yango: "Yango",
+            export_excel: "Export Excel",
+            auto_daily_report: "Rapport journalier auto",
+            performance_dashboard: "Tableau de bord performance",
+            app_vtc_driver: "App VTC Chauffeur",
+            auto_lock_vehicle: "Verrouillage auto véhicule",
+            recipe_with_mobile_money: "Recette Mobile Money",
+            vehicle_doc_reminder: "Rappel documents véhicule",
+            flollow_oil_change: "Suivi vidange",
+            manage_course: "Gestion des courses",
+            performance_yango: "Performance Yango",
+            entretien: "Entretien",
+            vehicle_group: "Groupe de véhicules",
+            manage_admin: "Gestion admin",
+            fleet_management: "Gestion de flotte",
+            gps_tracking: "Suivi GPS",
+            yango_driver_import: "Import chauffeurs Yango",
+            maintenance_tracking: "Suivi maintenance",
+            oil_change_tracking: "Suivi vidange",
+            multi_users: "Multi-utilisateurs",
+            roles_permissions: "Rôles et permissions",
+            profit_and_loss: "Compte de résultat",
+            multi_cash_registers: "Multi-caisses",
+            treasury_management: "Gestion de trésorerie",
+            driver_contracts: "Contrats chauffeurs",
+            owner_contracts: "Contrats propriétaires",
+            owner_dashboard: "Tableau de bord propriétaire",
+            order_catalog_qrcode: "Catalogue QR code",
+            reports_export: "Export de rapports",
+            driver_app: "Application chauffeur",
+            wallet_psapay: "Portefeuille PSA Pay",
+            financial_validation_steps: "Étapes de validation financière",
+            account_statement_export: "Export relevé de compte",
+            activity_log: "Journal d'activité",
+            alerts_email_sms: "Alertes email/SMS",
+            priority_support: "Support prioritaire",
+        };
+
+        return Object.entries(featureLabels)
+            .filter(([key]) => !!(this._instance as any)[key])
+            .map(([, label]) => label);
+    }
+}
+
+export class FleetSubscriptionDataModel extends Model {
+    private _instance: FleetSubscriptionDataType;
+
+    constructor(datas: FleetSubscriptionDataType) {
+        super()
+        this._instance = datas;
+    }
+
+    get id() {
+        return this._instance.id;
+    }
+
+    get plan() {
+        return new FleetSubscriptionPlanModel(this._instance.subscription);
+    }
+
+    get amount() {
+        return this._instance.amount;
+    }
+
+    get startDate() {
+        return this.formatDate(this._instance.start_date);
+    }
+
+    get endDate() {
+        return this.formatDate(this._instance.end_date);
+    }
+
+    get remainingTime() {
+        return formatDistanceToNow(new Date(this._instance.end_date), { addSuffix: true });
     }
 }
 
@@ -219,21 +471,24 @@ export class AbonResponseModel extends Model {
         return this._instance.subscription_plan;
     }
 
-    get status():SubscriptionStatus
-    {
-        return this._instance.status ?? this._instance.offer
+    get status(): SubsPaymentStatus {
+        return this._instance.payment_status
     }
 
     get vehicleNumber() {
-        return this._instance.vehicle_number;
+        return this._instance.vehicle_number ?? 0;
     }
 
     get offer() {
         return this._instance.offer;
     }
 
-    get paymentMethod(): string{
-       return this._instance.subscriptionType ?? ""
+    get paymentMethod(): string {
+        return this._instance.subscriptionType ?? ""
+    }
+
+    get paymentMethodLabel() {
+        return this._instance.payment_method_label ?? "";
     }
 
     get renew() {
@@ -241,7 +496,39 @@ export class AbonResponseModel extends Model {
     }
 
     get amount() {
-        return this._instance.amount;
+        return this._instance.amount ?? 0;
+    }
+
+    get isQuote() {
+        return this._instance.is_quote;
+    }
+
+    get amountLabel() {
+        return this._instance.amount_label ?? "";
+    }
+
+    get paidAmount() {
+        return this._instance.paid_amount ?? 0;
+    }
+
+    get isPaymentVerifiedOnline() {
+        return this._instance.payment_verified_online;
+    }
+
+    get paymentStatus() {
+        return this._instance.payment_status;
+    }
+
+    get paymentStatusLabel() {
+        return this._instance.payment_status_label;
+    }
+
+    get collectType() {
+        return this._instance.collect_type ?? "";
+    }
+
+    get hasCollectType() {
+        return !!this._instance.collect_type;
     }
 
     get subscription() {
@@ -249,9 +536,77 @@ export class AbonResponseModel extends Model {
     }
 
     get info() {
-        return new InfoModel(this._instance.info);
+        return this._instance.info ? new InfoModel(this._instance.info) : null;
     }
 
+    get hasInfo() {
+        return !!this._instance.info;
+    }
+
+    get transactions(): FleetSubscriptionTransactionModel[] {
+        return (this._instance.transactions ?? []).map((t) => new FleetSubscriptionTransactionModel(t));
+    }
+
+    get hasTransactions() {
+        return !!this._instance.transactions?.length;
+    }
+
+    get lastTransaction(): FleetSubscriptionTransactionModel | null {
+        const transactions = this.transactions;
+        return transactions.length ? transactions[transactions.length - 1] : null;
+    }
+}
+
+export class FleetSubscriptionTransactionModel {
+    private _instance: FleetSubscriptionTransaction;
+
+    constructor(datas: FleetSubscriptionTransaction) {
+        this._instance = datas;
+    }
+
+    get id() {
+        return this._instance.id;
+    }
+
+    get transactionType() {
+        return this._instance.transaction_type;
+    }
+
+    get paymentMethod() {
+        return this._instance.payment_method;
+    }
+
+    get collectType() {
+        return this._instance.collect_type;
+    }
+
+    get status() {
+        return this._instance.status;
+    }
+
+    get amount() {
+        return this._instance.amount ?? 0;
+    }
+
+    get fees() {
+        return this._instance.fees ?? 0;
+    }
+
+    get commission() {
+        return this._instance.commission ?? 0;
+    }
+
+    get payerPhoneNumber() {
+        return this._instance.payer_phone_number ?? "";
+    }
+
+    get createdAt() {
+        return this._instance.created_at ? new Date(this._instance.created_at).toLocaleDateString() : "-";
+    }
+
+    get isSuccess() {
+        return this._instance.status === "success";
+    }
 }
 
 export class SubscriptionModel {

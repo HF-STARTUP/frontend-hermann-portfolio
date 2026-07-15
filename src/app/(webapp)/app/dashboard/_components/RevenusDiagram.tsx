@@ -22,19 +22,16 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const ChartShimmer = () => (
     <div className="space-y-4">
-        {/* Header shimmer */}
         <div className="flex items-center justify-between mb-6">
             <div className="h-6 w-40 bg-gray-200 rounded animate-pulse" />
             <div className="h-10 w-32 bg-gray-200 rounded-xl animate-pulse" />
         </div>
 
-        {/* Stats shimmer */}
         <div className="mb-6 space-y-2">
             <div className="h-8 w-48 bg-gray-200 rounded animate-pulse" />
             <div className="h-6 w-56 bg-gray-200 rounded animate-pulse" />
         </div>
 
-        {/* Chart bars shimmer */}
         <div className="flex items-end justify-between gap-3 h-80 pt-8">
             {Array.from({ length: 12 }).map((_, i) => (
                 <div key={i} className="flex-1 flex flex-col items-center gap-2">
@@ -60,7 +57,7 @@ const RevenueChart = (
         isLoading
     }: {
         chartLabels: string[],
-        chartValues: number[], 
+        chartValues: number[],
         variation: {
             percent: string;
             variation: "up" | "down" | "constant";
@@ -75,6 +72,10 @@ const RevenueChart = (
     const labels = chartLabels
 
     const dataValues = chartValues
+
+    const minValue = dataValues.length ? Math.min(...dataValues) : 0
+
+    const shouldConvertToK = minValue >= 50
 
     const data = {
         labels,
@@ -96,7 +97,7 @@ const RevenueChart = (
             tooltip: {
                 callbacks: {
                     label: (ctx) =>
-                        `${ctx.raw?.toLocaleString()} ${currency}`,
+                        `${Math.round(Number(ctx.raw)).toLocaleString()} ${currency}`,
                 },
             },
         },
@@ -111,7 +112,10 @@ const RevenueChart = (
             y: {
                 beginAtZero: true,
                 ticks: {
-                    callback: (value) => `${Number(value) / 1000} K`,
+                    callback: (value) =>
+                        shouldConvertToK
+                            ? `${(Number(value) / 1000).toFixed(2)} K`
+                            : `${Math.round(Number(value))}`,
                     color: "#6b7290",
                 },
             },
@@ -120,7 +124,6 @@ const RevenueChart = (
 
     return (
         <div className="w-full rounded-2xl bg-white p-6 h-full">
-            {/* Header */}
             <div className="mb-6">
                 <div className="flex items-center justify-between">
                     <CardTitle title="Évolution des revenus" />
@@ -136,10 +139,7 @@ const RevenueChart = (
                         </SelectContent>
                     </Select>
                 </div>
-
-
             </div>
-            {/* Chart */}
             {isLoading ? <ChartShimmer /> :
                 <div className="h-[28rem]">
                     <div className="mb-8 flex flex-col gap-1">
@@ -159,11 +159,8 @@ const RevenueChart = (
                     <div className="h-[20rem]">
                         <Bar data={data} options={options} />
                     </div>
-
                 </div>
             }
-
-
         </div>
     );
 };

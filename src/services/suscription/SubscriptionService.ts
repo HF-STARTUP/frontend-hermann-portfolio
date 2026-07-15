@@ -137,7 +137,7 @@ class SubscriptionService extends Service {
   ) {
     const url = toQueriesString(
       SubscriptionApiPath.GetAllSubscriptionsPackages,
-      params,
+      params
     );
 
     const response =

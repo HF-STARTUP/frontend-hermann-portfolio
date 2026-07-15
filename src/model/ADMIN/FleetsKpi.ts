@@ -43,7 +43,6 @@ class FleetsKpiModel extends Model {
     return this._instance?.totalFleets?.label ?? "";
   }
 
-  // Flottes actives
   get activeCount() {
     return formatNumber(this._instance?.activeFleets?.current ?? 0);
   }

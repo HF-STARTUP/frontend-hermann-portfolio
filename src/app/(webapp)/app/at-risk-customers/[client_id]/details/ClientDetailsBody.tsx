@@ -440,8 +440,7 @@ export const ClientDetailsBody = ({ id }: { id: string }) => {
                                         <Sparkles strokeWidth={1.5} />
                                         <p className="uppercase font-semibold text-lg">Recommandations</p>
                                     </div>
-                                    <Badge variant="blue">
-                                        <Zap size={16} />
+                                    <Badge variant="blue" icon={<Zap size={16} />}>
                                         Suggéré
                                     </Badge>
                                 </div>
