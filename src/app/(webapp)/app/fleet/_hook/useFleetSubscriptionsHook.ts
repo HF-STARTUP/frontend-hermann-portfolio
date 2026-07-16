@@ -48,7 +48,7 @@ export const useFleetSubscriptionsHook = (fleetId?: string) => {
     return fleetSubscriptions?.subscriptions.map((subs) => ({
       amount: subs.amount ?? 0,
       date: subs.startDate ?? "",
-      paymentMethod: subs.paymentMethod,
+      paymentMethod: subs.paymentMethodLabel,
       period: subs.subscriptionPlan as "monthly" | "yearly",
       plan: subs.subscription.name as PackageType,
       status: subs.status,

@@ -86,7 +86,7 @@ export class FleetModel extends Model {
     }
 
     get subscription_amount() {
-        return (this._instance.subscription_amount ? formatNumber(this._instance.subscription_amount) + " " : 0 + " ") + this._instance.currency
+        return (this._instance.subscription_amount ? formatNumber(this._instance.subscription_amount) + " " : 0 + " ")
     }
 
     get suscription_name(): PackageType | undefined {

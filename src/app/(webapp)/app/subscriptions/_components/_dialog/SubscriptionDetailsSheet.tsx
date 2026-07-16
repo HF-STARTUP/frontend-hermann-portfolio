@@ -76,13 +76,13 @@ const SubscriptionDetailsSheet = ({ isOpenned, onClose, packageId, packageData, 
                             <label htmlFor="" className="text-sm text-vaTextPrimary font-semibold">
                                 Nombre d’abonnés
                             </label>
-                            <p className="text-xl font-semibold">23</p>
+                            <p className="text-xl font-semibold">{ packageData?.usersCount }</p>
                         </div>
                         <div className="rounded-xl p-4 border-2 bg-vaDarkGreen/50 border-vaDarkGreen flex flex-col gap-2">
                             <label htmlFor="" className="text-sm text-vaTextPrimary font-semibold">
                                 Revenu total
                             </label>
-                            <p className="text-xl font-semibold"> {formatNumber(2450000)} {currency} </p>
+                            <p className="text-xl font-semibold"> { packageData?.totalRevenue } {currency} </p>
                         </div>
                     </div>
                     <Tabs defaultValue="desc" value={activeTab} onValueChange={(value) => setActiveTab(value)}>

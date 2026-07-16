@@ -60,7 +60,7 @@ export enum FleetApiPath {
     DashboardSubscriptionEvolution = "/dashboard/city/subscription/evolution",
     ActivateSubscription = "/subscription/activate-subscription",
     CancelSubscription = "/subscription/cancel-active-subscription",
-    Currency = "currency",
+    Currency = "/currency",
     OperatorRevenus = "/dashboard/operator-revenue",
     FleetByCity = "/dashboard/fleet-by-city",
     SubscriptionPlanRevenus = "/dashboard/subscription-plan-revenue",

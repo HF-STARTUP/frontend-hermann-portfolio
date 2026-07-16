@@ -12,6 +12,7 @@ import notify from "@/utils/func/notification";
 import { DashboardParams } from "@/types/dashboard.type";
 import { toIsoDate } from "@/services/Service";
 import { FleetStatusMap } from "../utils";
+import { useGetActiveCurrency } from "@/hooks/__globlal/useGlobalHook";
 
 
 
@@ -84,6 +85,8 @@ const useFleetHook = () => {
     [paginationMeta, itemPerPage],
   );
 
+  const {currency} = useGetActiveCurrency()
+
   const tableColumns: Column<FleetModel>[] = useMemo(
     () => [
       {
@@ -111,7 +114,7 @@ const useFleetHook = () => {
       },
       {
         header: "Prix de l'abonnement",
-        accessor: (item) => item.subscription_amount ?? "-",
+        accessor: (item) => `${item.subscription_amount} ${currency}`,
       },
       {
         header: "Paiement",

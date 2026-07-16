@@ -18,6 +18,14 @@ export class AllSubscriptionsModel extends Model {
     return this._instance.id;
   }
 
+  get totalRevenue(){
+    return formatNumber(this._instance.revenue_total)
+  }
+
+  get usersCount(){
+    return this._instance.users_count
+  }
+
   get createdAt() {
     return this.formatDateTime(this._instance.created_at);
   }

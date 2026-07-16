@@ -144,6 +144,8 @@ export interface SubscriptionPricingItem {
   } | null;
   package: SubscriptionPricingItem;
   tariffs_by_period: TariffByPeriod[];
+  revenue_total: number
+  users_count: number
 }
 
 export interface SubscriptionPricingData extends PaginationResponse {

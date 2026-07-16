@@ -126,6 +126,7 @@ export const useGetMyPosition = () => {
 
 export const useGetActiveCurrency = () => {
   return{
-    currency: AuthManagerGuard.getCurrency ?? "XOF"
+    currency: AuthManagerGuard.getCurrency ?? "XOF",
+    id: AuthManagerGuard.getCurrencyId
   }
 }

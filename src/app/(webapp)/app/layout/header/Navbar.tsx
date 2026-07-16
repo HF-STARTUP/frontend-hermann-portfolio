@@ -30,6 +30,7 @@ import { Switch } from "@/components/ui/switch"
 import { useGetCurrenciesList } from "@/hooks/admin/useFleetHook"
 import { SwitchLoggingMode } from "./SwitchLogingModeDialog"
 import { useNavbarHook } from "./useNavbarHook"
+import { CustomComboBox } from "@/components/ui/custom/custom-comobo-box";
 
 export const Navbar = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -151,41 +152,40 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
 
     const { invalidateDependentQueries } = useNavbarHook()
 
+    const reloadPage = () => {
+        window.location.reload()
+    }
+
     return (
         <div className={cn("w-full flex gap-2", !isMobile && "hidden md:flex xl:w-[180px] items-center  gap-2")}>
-            <Select
+            <CustomComboBox
+                value={String(AuthManagerGuard.getEnabledCity)}
                 onValueChange={(new_city_id) => {
                     const prevCityId = AuthManagerGuard.getEnabledCity
 
                     AuthManagerGuard.setEnabledCityID(new_city_id)
                     invalidateDependentQueries({ prevCityId })
 
-                    if ($params.hasOwnProperty("fleetID")) $router.push("/app/fleet")
+                    if ($params.hasOwnProperty("fleetID")) {
+                        $router.push("/app/fleet")
+                    }
+
+                    reloadPage()
                 }}
-                defaultValue={AuthManagerGuard.getEnabledCity}
-                onOpenChange={setSelectOpen}
-                open={selectOpen}
-            >
-                <SelectTrigger className="bg-white/10 border border-vaTexttext-vaTextPrimary rounded-xl text-white h-9 lg:h-11 px-2 overflow-hidden" leftIcon={<MapPin className="size-4 mr-1 shrink-0" />}>
-                    <SelectValue placeholder="Sélectionnez une ville" />
-                </SelectTrigger>
-                <SelectContent className="z-[100]">
-                    <SelectGroup>
-                        <SelectLabel>
-                            <p className="text-xs">
-                                NB : <span className="text-xs font-normal text-vaTextPrimary"> La ville sélectionnée affecte les statistiques affichées</span>
-                            </p>
-                        </SelectLabel>
-                    </SelectGroup>
-                    <SelectGroup>
-                        <SelectLabel>Sélectionnez une ville</SelectLabel>
-                        <div className="px-2 mb-2"><Input placeholder="Rechercher..." value={filterCityToken} onChange={(e) => setFilterCityToken(e.target.value)} onClick={(e) => e.stopPropagation()} /></div>
-                        {cityFiltered?.map((item) => (<SelectItem key={item.id} value={String(item.id)}>{item.name}</SelectItem>))}
-                    </SelectGroup>
-                </SelectContent>
-            </Select>
-            
-            <Select
+                options={cityFiltered?.map((item) => ({
+                    label: item.name,
+                    value: String(item.id),
+                })) ?? []}
+                placeholder="Sélectionnez une ville"
+                searchPlaceholder="Rechercher..."
+                emptyMessage="Aucune ville trouvée."
+                onSearch={(sq) => setFilterCityToken(sq)}
+                triggerClassName="bg-white/10 border border-vaTexttext-vaTextPrimary text-white h-9 lg:h-11 px-2 overflow-hidden"
+                leftIcon={<MapPin className="size-4 mr-1 shrink-0" />}
+            />
+
+            <CustomComboBox
+                value={String(AuthManagerGuard.getCurrencyId)}
                 onValueChange={(value) => {
                     const selectedCurrency = currencies?.find(c => String(c.id) === value)
 
@@ -193,26 +193,19 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
                     AuthManagerGuard.setCurrency(selectedCurrency?.name)
 
                     invalidateDependentQueries()
+
+                    reloadPage()
                 }}
-                defaultValue={String(AuthManagerGuard.getCurrencyId)}
-            >
-                <SelectTrigger className="bg-white/10 border border-vaTexttext-vaTextPrimary rounded-xl text-white h-9 lg:h-11 px-2 overflow-hidden">
-                    <SelectValue placeholder="Devise" />
-                </SelectTrigger>
-                <SelectContent>
-                    {isloadingCurrencies && (
-                        <div className="flex items-center justify-center p-4 gap-2">
-                            <Loader className="animate-spin" />
-                            <span className="text-sm text-gray-500">Chargement des devises...</span>
-                        </div>
-                    )}
-                    {currencies?.map((currency) => (
-                        <SelectItem key={currency.id} value={String(currency.id)}>
-                            {currency.name}
-                        </SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
+                options={currencies?.map((currency) => ({
+                    label: currency.name,
+                    value: String(currency.id),
+                })) ?? []}
+                placeholder="Devise"
+                searchPlaceholder="Rechercher une devise..."
+                emptyMessage="Aucune devise trouvée."
+                isSearching={isloadingCurrencies}
+                triggerClassName="bg-white/10 border border-vaTexttext-vaTextPrimary text-white h-9 lg:h-11 px-2 overflow-hidden"
+            />
         </div>
     )
 }

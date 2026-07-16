@@ -24,6 +24,8 @@ interface ComboBoxProps {
     searchPlaceholder?: string
     emptyMessage?: string
     className?: string
+    triggerClassName?: string
+    leftIcon?: React.ReactNode
     variant?: "dialog"
     error?: FieldError
     required?: boolean
@@ -39,6 +41,8 @@ export function CustomComboBox({
     searchPlaceholder = "Recherche...",
     emptyMessage = "No option found.",
     className,
+    triggerClassName,
+    leftIcon,
     label,
     variant,
     error,
@@ -53,7 +57,6 @@ export function CustomComboBox({
         return options.find((option) => option.value === value)?.label || placeholder
     }, [options, value, placeholder])
 
-    // si onSearch est fourni, on laisse la lib externe filtrer — sinon on filtre localement
     const filteredOptions = React.useMemo(() => {
         if (onSearch) return options;
         if (!localSearch.trim()) return options;
@@ -68,7 +71,7 @@ export function CustomComboBox({
     }
 
     return (
-        <div className="w-full">
+        <div className={cn("w-full", className)}>
             {label && (
                 <Label required={required}>
                     {label}
@@ -78,7 +81,11 @@ export function CustomComboBox({
                 <PopoverTrigger asChild className={cn("w-full")}>
                     <div className="w-full">
                         <Select>
-                            <SelectTrigger inForm className={cn("w-full py-3 bg-transparent rounded-xl")} leftIcon={<Search size={18} />}>
+                            <SelectTrigger
+                                inForm
+                                className={cn("w-full py-3 bg-transparent rounded-xl", triggerClassName)}
+                                leftIcon={leftIcon ?? <Search size={18} />}
+                            >
                                 <SelectValue
                                     placeholder={
                                         label ? (
@@ -95,7 +102,6 @@ export function CustomComboBox({
                 <PopoverContent className="w-full p-0 rounded-2xl overflow-hidden">
                     <Command
                         className="w-full"
-                        // désactive le filtre interne de cmdk quand onSearch est fourni
                         filter={onSearch ? () => 1 : undefined}
                         shouldFilter={!onSearch}
                     >
@@ -107,7 +113,6 @@ export function CustomComboBox({
                         />
                         <CommandList
                             className="w-full max-h-60 overflow-y-auto custom-scrollbar"
-                            // empêche le popover de capturer la roulette avant le scroll de la liste
                             onWheel={(e) => e.stopPropagation()}
                         >
                             {isSearching ? (

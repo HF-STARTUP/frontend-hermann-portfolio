@@ -597,7 +597,7 @@ export const ClientDetailsBody = ({ id }: { id: string }) => {
                         </>
                     )}
                 </div>
-                <div className="2xl:col-span-2 rounded-2xl bg-white w-full border border-muted-foreground/20 shadow space-y-2 max-h-[calc(100dvh-325px)] overflow-y-auto custom-scrollbar pb-4">
+                <div className="2xl:col-span-2 rounded-2xl bg-white w-full border border-muted-foreground/20 shadow space-y-2 xl:max-h-[calc(100dvh-325px)] overflow-y-auto custom-scrollbar pb-4">
                     <header className="sticky top-0 z-20 border-b p-4 flex items-center justify-between gap-8 bg-white/30 backdrop-blur-md">
                         <div className="flex items-center gap-4 text-foreground text-lg font-bold flex-wrap">
                             <Activity />

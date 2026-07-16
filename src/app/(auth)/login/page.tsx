@@ -94,7 +94,7 @@ export default function LoginPage() {
 
                 <div className="absolute inset-0 z-0 bg-gradient-to-br from-[#1A3F8C] to-[#031334]"></div>
 
-                <form className="sm:w-[500px] bg-white p-8 rounded-2xl relative z-20" onSubmit={handleSubmit(onSubmit)}>
+                <form className="sm:w-[500px] bg-white p-8 rounded-2xl relative z-20 max-h-screen h-full overflow-y-auto custom-scrollbar" onSubmit={handleSubmit(onSubmit)}>
                     <div className="mb-4 m-auto w-full flex items-center justify-center">
                         <AppLogo />
                     </div>
