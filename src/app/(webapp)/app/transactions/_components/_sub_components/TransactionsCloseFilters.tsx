@@ -36,8 +36,7 @@ const TransactionCloseFilters = ({
                 </SelectContent>
             </Select>
 
-            {/* Deuxième Filtre : Devise */}
-            <Select onValueChange={(value) => setFilters(prev => ({
+            {/* <Select onValueChange={(value) => setFilters(prev => ({
                 ...prev,
                 currency_id: value
             }))}>
@@ -52,7 +51,7 @@ const TransactionCloseFilters = ({
                         )
                     }
                 </SelectContent>
-            </Select>
+            </Select> */}
         </div>
     );
 };

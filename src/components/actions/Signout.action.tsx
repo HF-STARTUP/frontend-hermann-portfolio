@@ -47,7 +47,7 @@ const SignOutAction: React.FC<SignOutProps> = ({ children, isOpen, onClose }) =>
                     </div>
                 </DialogMainBody>
                 <DialogFooter className="grid grid-cols-2 gap-8">
-                    <Button onClick={onClose} variant={'outline'} fullWidth>
+                    <Button onClick={onClose} loading={signingOut} variant={'outline'} fullWidth>
                         Annuler
                     </Button>
                     <Button

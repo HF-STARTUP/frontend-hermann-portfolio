@@ -5,32 +5,19 @@ import { cn, ConnexionMode } from "@/lib/utils"
 import logo_icon from "./logo.png"
 import { Button } from "@/components/ui/button"
 import { useUserProfile } from "@/hooks/__form/auth/useUserProfile"
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectLabel,
-    SelectTrigger,
-    SelectValue
-} from "@/components/ui/select"
 import * as React from "react"
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import AuthManagerGuard from "@/guard/AuthManagerGuard"
-import { queryClient } from "@/app/_utils/network/reactQuery"
 import { useParams, usePathname, useRouter } from "next/navigation"
 import Badge from "@/components/display/Badge"
-import { Input } from "@/components/ui/input"
 import { searchAndFilter } from "@/model/Model"
 import SignOutAction from "@/components/actions/Signout.action"
-import { Bell, ChevronDown, LogOut, MapPin, Search, Settings, User, Menu, X, Loader } from "lucide-react"
+import { ChevronDown, Globe, LogOut, MapPin, Menu } from "lucide-react"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import Link from "next/link"
-import { Switch } from "@/components/ui/switch"
 import { useGetCurrenciesList } from "@/hooks/admin/useFleetHook"
-import { SwitchLoggingMode } from "./SwitchLogingModeDialog"
 import { useNavbarHook } from "./useNavbarHook"
 import { CustomComboBox } from "@/components/ui/custom/custom-comobo-box";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const Navbar = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false)
@@ -130,6 +117,10 @@ const MobileExtraMenu = () => {
     )
 }
 
+const ALL_CITIES_VALUE = "all"
+const DEFAULT_CURRENCY_ID = 3
+const DEFAULT_CURRENCY_NAME = "XOF"
+
 const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
     const { data } = useUserProfile()
     const $router = useRouter()
@@ -139,25 +130,91 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
     const [selectOpen, setSelectOpen] = useState(false)
     const { data: currencies, isLoading: isloadingCurrencies } = useGetCurrenciesList()
 
-    const cityFiltered = useMemo(() => {
-        if (!filterCityToken || filterCityToken.trim() === "") return data?.listPark
-        if (data) {
-            const filteredCities = searchAndFilter(data.listPark, filterCityToken, ["name"])
-            const activeCity = AuthManagerGuard.getEnabledCity ?? String(data.listPark[0].id)
-            const cityEnabled = data.listPark.find((d) => String(d.id) === activeCity) ?? data.listPark[0]
-            const filteredDataContainActiveElement = filteredCities.find((d) => String(d.id) === activeCity)
-            return !filteredDataContainActiveElement ? [cityEnabled, ...filteredCities] : filteredCities
-        }
-    }, [filterCityToken, data])
-
     const { invalidateDependentQueries } = useNavbarHook()
 
+    useEffect(() => {
+        if (!data || !currencies || currencies.length === 0) return
+        if (AuthManagerGuard.getCurrencyId) return
+
+        const enabledCityId = AuthManagerGuard.getEnabledCity
+        const currentCity = data.listPark.find((c) => String(c.id) === enabledCityId)
+        const currencyCode = currentCity?.country?.currency ?? DEFAULT_CURRENCY_NAME
+        const matchedCurrency = currencies.find((c) => c.name === currencyCode)
+
+        AuthManagerGuard.setCurrencyId(matchedCurrency ? Number(matchedCurrency.id) : DEFAULT_CURRENCY_ID)
+        AuthManagerGuard.setCurrency(matchedCurrency ? matchedCurrency.name : DEFAULT_CURRENCY_NAME)
+    }, [data, currencies])
+
+    const countryOptions = useMemo(() => {
+        return data?.countries?.map((country) => ({
+            label: country.name,
+            value: String(country.id),
+        })) ?? []
+    }, [data])
+
+    const citiesSource = useMemo(() => {
+        if (!data) return []
+
+        const enabledCountryId = AuthManagerGuard.getEnabledCountry
+        if (!enabledCountryId) return data.listPark
+
+        const countryEntry = data.citiesByCountry.find((entry) => String(entry.country.id) === enabledCountryId)
+        return countryEntry?.cities ?? []
+    }, [data])
+
+    const cityFiltered = useMemo(() => {
+        if (!filterCityToken || filterCityToken.trim() === "") return citiesSource
+
+        const filteredCities = searchAndFilter(citiesSource, filterCityToken, ["name"])
+        const activeCity = AuthManagerGuard.getEnabledCity
+        const cityEnabled = citiesSource.find((d) => String(d.id) === activeCity)
+        const filteredDataContainActiveElement = filteredCities.find((d) => String(d.id) === activeCity)
+
+        return cityEnabled && !filteredDataContainActiveElement ? [cityEnabled, ...filteredCities] : filteredCities
+    }, [filterCityToken, citiesSource])
+
+    const cityOptions = useMemo(() => {
+        return [
+            { label: "Toutes les villes", value: ALL_CITIES_VALUE },
+            ...cityFiltered.map((item) => ({
+                label: item.name,
+                value: String(item.id),
+            })),
+        ]
+    }, [cityFiltered])
+
     const reloadPage = () => {
+        useQueryClient().invalidateQueries()
         window.location.reload()
     }
 
     return (
         <div className={cn("w-full flex gap-2", !isMobile && "hidden md:flex xl:w-[180px] items-center  gap-2")}>
+            <CustomComboBox
+                value={String(AuthManagerGuard.getEnabledCountry)}
+                onValueChange={(new_country_id) => {
+                    const prevCityId = AuthManagerGuard.getEnabledCity
+
+                    AuthManagerGuard.setEnabledCountryID(new_country_id)
+                    AuthManagerGuard.setEnabledCityID(ALL_CITIES_VALUE)
+                    setFilterCityToken("")
+
+                    invalidateDependentQueries({ prevCityId })
+
+                    if ($params.hasOwnProperty("fleetID")) {
+                        $router.push("/app/fleet")
+                    }
+
+                    reloadPage()
+                }}
+                options={countryOptions}
+                placeholder="Sélectionnez un pays"
+                searchPlaceholder="Rechercher un pays..."
+                emptyMessage="Aucun pays trouvé."
+                triggerClassName="bg-white/10 border border-vaTexttext-vaTextPrimary text-white h-9 lg:h-11 px-2 overflow-hidden"
+                leftIcon={<Globe className="size-4 mr-1 shrink-0" />}
+            />
+
             <CustomComboBox
                 value={String(AuthManagerGuard.getEnabledCity)}
                 onValueChange={(new_city_id) => {
@@ -172,10 +229,7 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
 
                     reloadPage()
                 }}
-                options={cityFiltered?.map((item) => ({
-                    label: item.name,
-                    value: String(item.id),
-                })) ?? []}
+                options={cityOptions}
                 placeholder="Sélectionnez une ville"
                 searchPlaceholder="Rechercher..."
                 emptyMessage="Aucune ville trouvée."

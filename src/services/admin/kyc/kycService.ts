@@ -47,7 +47,7 @@ class KycService extends Service {
   }
 
   public static async getSubmissions(params?: GetKycSubmissionsParams) {
-    const url = toQueriesString(KycApiPath.GetSubmissions, params);
+    const url = toQueriesString(KycApiPath.GetSubmissions, params, false);
     const response = await KycService.makeRequest<KycSubmissionsListResponse>(
       url,
       "GET",

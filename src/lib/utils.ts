@@ -3,6 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { animate } from "framer-motion";
 import { endOfMonth, format, parse, startOfMonth, subMonths } from "date-fns";
 import { fr } from "date-fns/locale";
+import AuthManagerGuard from "@/guard/AuthManagerGuard";
 export const imageBaseUrl = `https://s3.us-west-2.amazonaws.com/images.vtccontrol.com`;
 
 export function cn(...inputs: ClassValue[]) {
@@ -178,12 +179,24 @@ const formatString = "yyyy-MM-dd";
 export const parsedDate = (dateString: string | undefined) =>
   dateString ? parse(dateString, formatString, new Date()) : new Date();
 
-export const toQueriesString = (baseUri: string, params: any) => {
-  if (!params) return baseUri;
+export const toQueriesString = (
+  baseUri: string,
+  params: any,
+  add_default_params: boolean = true,
+) => {
+  const globalFilterParams = add_default_params
+    ? {
+        city_id: AuthManagerGuard.getEnabledCity,
+        country_id: AuthManagerGuard.getEnabledCountry,
+        currency_id: AuthManagerGuard.getCurrencyId,
+      }
+    : {};
+
+  const mergedParams = { ...globalFilterParams, ...(params ?? {}) };
 
   const queryParts: string[] = [];
 
-  Object.entries(params).forEach(([key, value]) => {
+  Object.entries(mergedParams).forEach(([key, value]) => {
     if (value === undefined || value === null) return;
     if (value == "all" || value == "") return;
     if (typeof value === "number" && isNaN(value)) return;
@@ -198,7 +211,6 @@ export const toQueriesString = (baseUri: string, params: any) => {
         );
       });
     } else {
-      // Gérer les valeurs simples
       queryParts.push(
         `${encodeURIComponent(key)}=${encodeURIComponent(value as string)}`,
       );
@@ -236,21 +248,24 @@ export async function exportToExcel<T extends Record<string, any>>({
 
   const rows = data.map((item) =>
     columns.map((col) => {
-      const value = typeof col.accessor === "function"
-        ? col.accessor(item)
-        : item[col.accessor];
+      const value =
+        typeof col.accessor === "function"
+          ? col.accessor(item)
+          : item[col.accessor];
       return value ?? "";
-    })
+    }),
   );
 
   const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
 
   worksheet["!cols"] = columns.map((col, idx) => ({
-    wch: col.width ?? Math.max(
-      headers[idx].length,
-      ...rows.map((r) => String(r[idx]).length),
-      10
-    ) + 2,
+    wch:
+      col.width ??
+      Math.max(
+        headers[idx].length,
+        ...rows.map((r) => String(r[idx]).length),
+        10,
+      ) + 2,
   }));
 
   const workbook = XLSX.utils.book_new();

@@ -75,24 +75,61 @@ export type PermissionType = {
 
 export type AdminAccountStatus = "active" | "inactive" | "deactivated";
 
+export type CountryType = {
+  id: number;
+  name: string;
+  iso_code: string;
+  currency: string;
+};
+
+export type AdminCityType = {
+  id: number;
+  name: string;
+  country_id: number;
+  country: CountryType;
+  role: RoleType | null;
+};
+
+export type AdminCountryType = {
+  id: number;
+  name: string;
+  iso_code: string;
+  currency: string;
+  cities_count: number;
+};
+
+export type CityByCountryType = {
+  id: number;
+  name: string;
+  country_id: number;
+  role: RoleType | null;
+};
+
+export type CitiesByCountryType = {
+  country: CountryType;
+  cities: CityByCountryType[];
+};
+
 export type AdminProfileResponseType = {
   id: string;
   first_name: string;
   last_name: string;
   desactivate_at?: string | null;
   Image?: {
-    name: string,
-    path: string,
+    name: string;
+    path: string;
   };
   status: AdminAccountStatus;
   user: User;
   roles: RoleType[];
   password: string;
-  admin_on_city: {
-    id: number;
-    name: string;
-    currency: string
-  }[];
+  admin_on_city: AdminCityType[];
+  admin_countries: AdminCountryType[];
+  cities_by_country: CitiesByCountryType[];
+  default_country_id: number;
+  default_country: CountryType;
+  default_city_id: number;
+  default_city: AdminCityType;
 };
 
 export interface AdminResponseData extends PaginationResponse {

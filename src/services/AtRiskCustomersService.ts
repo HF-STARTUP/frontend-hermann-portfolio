@@ -77,7 +77,7 @@ class ARCService extends Service {
     ): Promise<{ data: ARCInteractionModel[]; meta: Omit<ARCInteractionListResponseType, "data"> }> {
         const { park_id, ...otherParams } = params;
 
-        const url = toQueriesString(ARCApiPath.GetARCInteractions.replace("{park_id}", park_id ?? ""), otherParams)
+        const url = toQueriesString(ARCApiPath.GetARCInteractions.replace("{park_id}", park_id ?? ""), otherParams, false)
         const result = await ARCService.makeRequest<ARCInteractionListResponseType>(
             url,
             'GET'
@@ -114,7 +114,7 @@ class ARCService extends Service {
 
     public static async getARCAssignees(params: AtRiskCustomersParams): Promise<ARCAssigneeModel[]> {
         const result = await ARCService.makeRequest<ARCAssigneeResponseType[]>(
-            toQueriesString(ARCApiPath.GetAssignees, params), 'GET'
+            toQueriesString(ARCApiPath.GetAssignees, params, false), 'GET'
         );
         return ARCAssigneeModel.toArrays(result);
     }

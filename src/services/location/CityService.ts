@@ -30,7 +30,7 @@ export class CityService extends Service {
 
  
     public static async fetchCities(params: GetCitiesParams) {
-        const uri = toQueriesString(CityApiPath.GetCitiesPark, params);
+        const uri = toQueriesString(CityApiPath.GetCitiesPark, params, false);
 
         const response = await CityService.getInstance().execHttpRequest<CityPaginationData>({
             url: uri,

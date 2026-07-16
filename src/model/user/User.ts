@@ -77,8 +77,7 @@ class UserProfile extends Model {
   }
 
   get defaultPark() {
-    const default_park = this._instance?.admin_on_city?.[0];
-    return default_park ?? null;
+    return this.defaultCity ?? this._instance?.admin_on_city?.[0] ?? null;
   }
 
   get getID() {
@@ -119,20 +118,44 @@ class UserProfile extends Model {
     return [];
   }
 
+  get countries() {
+    return this._instance?.admin_countries ?? [];
+  }
+
+  get citiesByCountry() {
+    return this._instance?.cities_by_country ?? [];
+  }
+
+  get defaultCountryId() {
+    return this._instance?.default_country_id ?? null;
+  }
+
+  get defaultCountry() {
+    return this._instance?.default_country ?? null;
+  }
+
+  get defaultCityId() {
+    return this._instance?.default_city_id ?? null;
+  }
+
+  get defaultCity() {
+    return this._instance?.default_city ?? null;
+  }
+
   get getActiveCurrency() {
-    return "";
+    return this.defaultCity?.country?.currency ?? this.defaultCountry?.currency ?? "";
   }
 
   get getActiveRegion() {
-    return "Unknow";
+    return this.defaultCity?.name ?? this.defaultCountry?.name ?? "Unknow";
   }
 
   get getUserFirstRegionCurrency() {
-    return "Unknow";
+    return this.defaultCountry?.currency ?? this.defaultCity?.country?.currency ?? "Unknow";
   }
 
   get getCurrencyObj() {
-    return "Unknow";
+    return this.defaultCity?.country ?? this.defaultCountry ?? "Unknow";
   }
 
   get readRoles() {

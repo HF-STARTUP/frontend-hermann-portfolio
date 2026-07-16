@@ -143,8 +143,7 @@ class FleetService extends Service {
 
     public static async GetFleetByCityID(params: GetFleetsParams) {
 
-        const baseUri = FleetApiPath.GetFleetByCityID + (params.city_id && params.city_id!=="all"?`/${params.city_id}`:"")
-
+        const baseUri = FleetApiPath.GetFleetByCityID
         const uri = toQueriesString(baseUri, params)
 
         const { data, ...meta } = await FleetService.makeRequest<ResponseWithPagination<FleetListResponseType[]>>(

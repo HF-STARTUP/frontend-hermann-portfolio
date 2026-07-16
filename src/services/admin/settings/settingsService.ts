@@ -121,7 +121,7 @@ class SettingsService extends Service {
   }
 
   public static async getAdminList(params: GetAdminsParams) {
-    const uri = toQueriesString(SettingsApiPath.AdminList, params);
+    const uri = toQueriesString(SettingsApiPath.AdminList, params, false);
     const response = await SettingsService.makeRequest<AdminResponseData>(
       uri,
       "GET",
@@ -139,7 +139,7 @@ class SettingsService extends Service {
   public static async getAdmin(id?: string) {
     const uri = toQueriesString(
       SettingsApiPath.AdminData.replace("{profile_id}", id ?? ""),
-      {},
+      {}, false
     );
     const response =
       await SettingsService.makeRequest<AdminProfileResponseType>(uri, "GET");

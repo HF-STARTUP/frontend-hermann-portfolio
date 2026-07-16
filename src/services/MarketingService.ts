@@ -37,7 +37,7 @@ class MarketingService extends Service {
   async getPromoCodes(
     filters?: MarketingFilters,
   ): Promise<PromoCodeListResponse> {
-    const uri = toQueriesString("/promo-code", filters)
+    const uri = toQueriesString("/promo-code", filters, false)
     return this.execHttpRequest<PromoCodeListResponse>({
       url: uri,
       method: this.httpMethods.get,
@@ -55,9 +55,9 @@ class MarketingService extends Service {
     id: string,
     params?: { itemPerPage?: number; page?: number },
   ): Promise<PromoCodeEventsResponse> {
-    const queryParams = params ? this.toQueryString(params) : "";
+    const uri = toQueriesString(`promo-code/${id}/events`, params, false);
     return this.execHttpRequest<PromoCodeEventsResponse>({
-      url: `promo-code/${id}/events${queryParams ? `?${queryParams}` : ""}`,
+      url: uri,
       method: this.httpMethods.get,
     });
   }
@@ -181,9 +181,9 @@ class MarketingService extends Service {
   async getSalesAgents(
     filters?: SalesAgentFilters,
   ): Promise<SalesAgentListResponse> {
-    const queryParams = filters ? this.toQueryString(filters) : "";
+    const uri = toQueriesString("/sales-agent", filters, false);
     return this.execHttpRequest<SalesAgentListResponse>({
-      url: `sales-agent${queryParams ? `?${queryParams}` : ""}`,
+      url: uri,
       method: this.httpMethods.get,
     });
   }
