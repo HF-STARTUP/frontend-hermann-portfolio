@@ -23,7 +23,7 @@ export const Navbar = () => {
     const [isSearchOpen, setIsSearchOpen] = useState(false)
 
     return (
-        <nav className="bg-[#051534] h-[70px] lg:h-[94px] fixed top-0 left-0 w-full flex items-center justify-between px-3 lg:px-[40px] z-50 gap-2">
+        <nav className="bg-[#051534] h-[70px] md:h-[80px] lg:h-[94px] fixed top-0 left-0 w-full flex items-center justify-between px-2 md:px-4 z-50 gap-2">
             {/* Overlay de recherche Mobile & Tablette */}
             {/* {isSearchOpen && (
                 <div className="absolute inset-0 bg-vaPrimary flex items-center px-4 z-[60] animate-in fade-in duration-200">
@@ -44,12 +44,12 @@ export const Navbar = () => {
 
             <div className="flex items-center gap-2 md:gap-4 lg:gap-8 flex-1 min-w-0">
                 {/* Menu Burger (Mobile seulement) */}
-                <div className="md:hidden shrink-0">
+                <div className="lg:hidden shrink-0">
                     <MobileExtraMenu />
                 </div>
 
-                <div className="lg:w-[230px]">
-                    <Image className="h-[18px] lg:h-[23px] w-auto shrink-0" width={169} height={23} src={logo_icon} alt="Logo" />
+                <div className="lg:w-[230px] shrink-0">
+                    <Image className="h-[18px] md:h-[20px] lg:h-[23px] w-auto shrink-0" width={169} height={23} src={logo_icon} alt="Logo" />
                 </div>
                 {/* Recherche : Masquée jusqu'à 2xl pour laisser place aux stats */}
                 {/* <div className="hidden xl:block w-full max-w-xs">
@@ -62,7 +62,7 @@ export const Navbar = () => {
                 </div> */}
             </div>
 
-            <div className="flex items-center gap-1 lg:gap-4 shrink-0">
+            <div className="flex items-center gap-1 md:gap-2 lg:gap-4 shrink-0">
                 {/* Loupe : Visible jusqu'à 2xl */}
                 {/* <Button
                     variant="ghost"
@@ -72,7 +72,7 @@ export const Navbar = () => {
                 >
                     <Search className="size-5" />
                 </Button> */}
-                <UserOption />at-risk
+                <UserOption />
             </div>
         </nav>
     )
@@ -86,7 +86,7 @@ const MobileExtraMenu = () => {
                     <Menu className="size-6" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="w-[280px] bg-vaPrimary border-white/20 p-4 space-y-4 shadow-2xl">
+            <DropdownMenuContent align="start" className="w-[280px] md:w-[360px] bg-vaPrimary border-white/20 p-4 space-y-4 shadow-2xl md:ml-2">
                 <div className="space-y-2">
                     <p className="text-[10px] text-vaTextPrimary font-bold tracking-widest">Localisation</p>
                     <CitySelector isMobile />
@@ -184,12 +184,11 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
     }, [cityFiltered])
 
     const reloadPage = () => {
-        useQueryClient().invalidateQueries()
         window.location.reload()
     }
 
     return (
-        <div className={cn("w-full flex gap-2", !isMobile && "hidden md:flex xl:w-[180px] items-center  gap-2")}>
+        <div className={cn("w-full flex gap-2", !isMobile ? "hidden md:flex xl:flex items-center gap-2" : "flex-col")}>
             <CustomComboBox
                 value={String(AuthManagerGuard.getEnabledCountry)}
                 onValueChange={(new_country_id) => {
@@ -211,7 +210,10 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
                 placeholder="Sélectionnez un pays"
                 searchPlaceholder="Rechercher un pays..."
                 emptyMessage="Aucun pays trouvé."
-                triggerClassName="bg-white/10 border border-vaTexttext-vaTextPrimary text-white h-9 lg:h-11 px-2 overflow-hidden"
+                triggerClassName={cn(
+                    "bg-white/10 border border-vaTexttext-vaTextPrimary text-white px-2 overflow-hidden",
+                    isMobile ? "h-9 w-full" : "h-9 lg:h-11"
+                )}
                 leftIcon={<Globe className="size-4 mr-1 shrink-0" />}
             />
 
@@ -234,7 +236,10 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
                 searchPlaceholder="Rechercher..."
                 emptyMessage="Aucune ville trouvée."
                 onSearch={(sq) => setFilterCityToken(sq)}
-                triggerClassName="bg-white/10 border border-vaTexttext-vaTextPrimary text-white h-9 lg:h-11 px-2 overflow-hidden"
+                triggerClassName={cn(
+                    "bg-white/10 border border-vaTexttext-vaTextPrimary text-white px-2 overflow-hidden",
+                    isMobile ? "h-9 w-full" : "h-9 lg:h-11"
+                )}
                 leftIcon={<MapPin className="size-4 mr-1 shrink-0" />}
             />
 
@@ -258,7 +263,10 @@ const CitySelector = ({ isMobile = false }: { isMobile?: boolean }) => {
                 searchPlaceholder="Rechercher une devise..."
                 emptyMessage="Aucune devise trouvée."
                 isSearching={isloadingCurrencies}
-                triggerClassName="bg-white/10 border border-vaTexttext-vaTextPrimary text-white h-9 lg:h-11 px-2 overflow-hidden"
+                triggerClassName={cn(
+                    "bg-white/10 border border-vaTexttext-vaTextPrimary text-white px-2 overflow-hidden",
+                    isMobile ? "h-9 w-full" : "h-9 lg:h-11"
+                )}
             />
         </div>
     )
@@ -286,7 +294,9 @@ const UserOption: React.FC = () => {
                     </div>
                 </div>
             </div> */}
-            <CitySelector />
+            <div className="hidden lg:flex">
+                <CitySelector />
+            </div>
 
             {/* <div className="relative shrink-0">
                 <Button variant="ghost" size="icon" className="hover:bg-white/10 size-9 lg:size-10 text-white hover:text-white">
@@ -303,7 +313,7 @@ const UserOption: React.FC = () => {
                         <div className="size-8 lg:size-11 rounded-full bg-vaYellow overflow-hidden flex items-center justify-center ring-2 ring-white/20 shrink-0">
                             <Image src={data.image} alt={data.getUsername} width={200} height={200} className="object-cover size-12 lg:size-16" />
                         </div>
-                        <div className="hidden lg:flex flex-col text-white max-w-[80px] xl:max-w-none gap-0">
+                        <div className="flex flex-col text-white max-w-80 gap-0">
                             <p className="text-sm xl:text-lg font-bold leading-tight truncate" title={data.getUsername} >{data.getUsername}</p>
                             <p className="text-[10px] xl:text-xs text-vaLightGray truncate" title={data?.roleName}>
                                 {data?.roleName}
