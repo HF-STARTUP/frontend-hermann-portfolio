@@ -1,15 +1,17 @@
 import Service from "@/services/Service";
-import { SubscriptionModel } from "@/model/subscription/Subscription";
+import { SubscriptionModel, SubscriptionModelFactory } from "@/model/subscription/Subscription";
 import {
   ActiveSubscriptionResponseType,
   AllSubscriptionsKpiData,
   CreateSubscriptType,
+  GetSubscriptionPlansParams,
   GetSubscriptionsPricingParams,
   InitSubscriptionResponseType,
   OperatorResponseType,
   PackageFormData,
   SubscriptionEvolutionChartData,
   SubscriptionPackResponseType,
+  SubscriptionPlan,
   SubscriptionPricingData,
   SubscriptionPricingItem,
 } from "@/types/subscription.types";
@@ -24,6 +26,7 @@ import { SubscriptionsByPaymentMethodsModel } from "@/model/subscription/SubsByP
 
 export enum SubscriptionApiPath {
   GetSubscriptionPacks = "/subscription/by-country?country_code=",
+  GetNewSubscriptionsPacks = "/subscription/new-pricing/by-country",
   Subscribe = "/subscription/subscribe",
   Operator = "/operator",
   CheckTransaction = "/transaction/check-status",
@@ -32,7 +35,7 @@ export enum SubscriptionApiPath {
   GetAllSubscriptionsPackages = "/admin/subscription-packages",
   GetAllSubscriptionsPackagesKpis = "/admin-dashboard/subscriptions/summary",
   GetAllSubscriptionsEvolution = "/admin-dashboard/subscriptions/evolution-by-plan",
-  GetRenewalVsExpired= "/admin-dashboard/subscriptions/renewals-vs-expired",
+  GetRenewalVsExpired = "/admin-dashboard/subscriptions/renewals-vs-expired",
   GetSubsByPaymentMethods = "/admin-dashboard/subscriptions/by-payment-method",
   GetSubscription = "/admin/subscription-packages/{subscription_id}"
 }
@@ -117,21 +120,20 @@ class SubscriptionService extends Service {
     // )
   }
 
-  public static async getSubscriptions({
-    country_code,
-  }: {
-    country_code?: string;
-  }): Promise<SubscriptionModel[]> {
-    const uri = SubscriptionApiPath.GetSubscriptionPacks + country_code;
+  public static async getSubscriptions(params: GetSubscriptionPlansParams): Promise<SubscriptionModel[]> {
+    const uri = toQueriesString(SubscriptionApiPath.GetNewSubscriptionsPacks, params, false)
+
 
     const response = await SubscriptionService.makeRequest<
-      SubscriptionPackResponseType[]
+      { plans: SubscriptionPlan[] }
     >(uri, "GET", undefined, false);
 
-    return SubscriptionModel.fromArray(response);
+
+    return SubscriptionModelFactory.createSubscriptionModels(response.plans);
   }
 
-  // get fleet transactions data
+
+
   public static async getAllSubscriptions(
     params?: GetSubscriptionsPricingParams,
   ) {
@@ -275,7 +277,7 @@ class SubscriptionService extends Service {
     subsId?: string,
   ) {
     const url = toQueriesString(
-      SubscriptionApiPath.GetSubscription.replace("{subscription_id}", subsId??""),
+      SubscriptionApiPath.GetSubscription.replace("{subscription_id}", subsId ?? ""),
       {}
     );
 

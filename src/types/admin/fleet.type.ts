@@ -33,6 +33,9 @@ export type TransactionType = "vtc_recipe" | "course_recipe" | "withdrawal" | "r
 export type OrderBy = "asc" | "desc";
 
 
+
+
+
 // // Interface pour les données du formulaire
 export interface FleetRegisterFormData {
     first_name: string;
@@ -686,4 +689,118 @@ export interface FleetsKpiData {
 export interface SuspendFleetData {
     reason?: string,
     park_id?: string
+}
+
+// types/admin/fleet.type.ts
+
+export interface SubscriptionAdvantage {
+    id: string;
+    title: string;
+    description: string;
+    active: boolean;
+    display_order: number;
+    created_at: string;
+    updated_at: string;
+    subscription_id: string;
+}
+
+// export interface Subscription {
+//     id: string;
+//     account_type: string;
+//     subscription_type: string;
+//     period: string;
+//     code: string | null;
+//     free: boolean;
+//     name: string;
+//     remise: string | null;
+//     amount: number | null;
+//     crossed_out_amount: string | null;
+//     description: string;
+//     vehicle_number: number | null;
+//     driver_number: number | null;
+//     plan_id: string | null;
+//     pricing_version: string | null;
+//     effective_date: string | null;
+//     annual_discount_percent: number | null;
+//     quarterly_discount_percent: number | null;
+//     ai_agent_price_percent: number | null;
+//     gps: boolean;
+//     gps_driver: boolean | null;
+//     yango: boolean | null;
+//     export_excel: boolean;
+//     auto_daily_report: boolean;
+//     performance_dashboard: boolean;
+//     app_vtc_driver: boolean;
+//     auto_lock_vehicle: boolean;
+//     recipe_with_mobile_money: boolean;
+//     vehicle_doc_reminder: boolean;
+//     flollow_oil_change: boolean;
+//     manage_course: boolean;
+//     performance_yango: boolean;
+//     entretien: boolean;
+//     vehicle_group: boolean;
+//     manage_admin: boolean;
+//     fleet_management: boolean;
+//     gps_tracking: boolean;
+//     yango_driver_import: boolean;
+//     maintenance_tracking: boolean;
+//     oil_change_tracking: boolean;
+//     multi_users: boolean;
+//     roles_permissions: boolean;
+//     profit_and_loss: boolean;
+//     multi_cash_registers: boolean;
+//     treasury_management: boolean;
+//     driver_contracts: boolean;
+//     owner_contracts: boolean;
+//     owner_dashboard: boolean;
+//     order_catalog_qrcode: boolean;
+//     reports_export: boolean;
+//     driver_app: boolean;
+//     wallet_psapay: boolean;
+//     financial_validation_steps: boolean;
+//     account_statement_export: boolean;
+//     activity_log: boolean;
+//     alerts_email_sms: boolean;
+//     priority_support: boolean;
+//     support_response_hours: string | null;
+//     text_remise: string;
+//     text_limitation: string | null;
+//     caisse_limit: string | null;
+//     number_operation_limit: string | null;
+//     is_range_plan: boolean;
+//     vehicle_min: string | null;
+//     vehicle_max: string | null;
+//     is_quote: boolean;
+//     parent_plan_code: string | null;
+//     paystack_plan_code: string | null;
+//     created_at: string;
+//     updated_at: string;
+//     enable: boolean;
+//     subscriptionAdvantages: SubscriptionAdvantage[];
+//     advantages_subscriptions: any[];
+// }
+
+export interface ParkActivitySubscription {
+    subscription_id: string;
+    parkActivity_id: string;
+    subscription: Subscription;
+}
+
+export interface ParkActivityDescription {
+    id: string;
+    title: string;
+    description: string;
+    parkActivity_id: string;
+}
+
+export interface FleetActivityType {
+    id: string;
+    name: string;
+    overview: string;
+    code: string;
+    enable: boolean;
+    created_at: string;
+    updated_at: string;
+    parkActiivityDescriptions: ParkActivityDescription[];
+    parkActivitySubscription: ParkActivitySubscription[];
 }

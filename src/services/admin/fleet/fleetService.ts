@@ -4,6 +4,7 @@ import {
     BestDiverAndVehicleResponseType,
     CarburantEvolution,
     DashboardBestAndLeastProfilableResponseType,
+    FleetActivityType,
     FleetByCityInputs,
     FleetJournalData,
     FleetListResponseType,
@@ -41,9 +42,11 @@ import TransactionKpiModel from "@/model/ADMIN/FleetTransactionsKpi";
 import TransactionHistoryModel from "@/model/ADMIN/TransactionHistory";
 import { DashboardParams } from "@/types/dashboard.type";
 import FleetsKpiModel from "@/model/ADMIN/FleetsKpi";
+import FleetActivityModel from "@/model/ADMIN/FleetActivityModel";
 
 export enum FleetApiPath {
     GetFleetByCityID = '/park/by',
+    GetFleetActivities = '/park-activity',
     GetAdminByCityID = '/admin/by',
     ActiveSubscriptionList = "/subscription/history/by",
     ActiveSubscription = "/subscription/active-subscription",
@@ -159,6 +162,20 @@ class FleetService extends Service {
         }
     }
 
+    public static async getFleetActivities(params?: any): Promise<FleetActivityModel[]> {
+
+        const baseUri = FleetApiPath.GetFleetActivities
+        const uri = toQueriesString(baseUri, params)
+
+        const response = await FleetService.makeRequest<FleetActivityType[]>(
+            uri,
+            'GET',
+        )
+
+        return FleetActivityModel.fromArray(response)
+        
+    }
+
     public static async getAdminsOnFleet({ park_id }: { park_id: string }): Promise<AdminOnFleetModel[]> {
 
         const uri = FleetApiPath.GetAdminByCityID + "/" + park_id
@@ -173,8 +190,8 @@ class FleetService extends Service {
         return AdminOnFleetModel.fromArray(data)
     }
 
-    public static async getActiveSubscriptionList(params: FleetSubscriptionParams, park_id?: string){
-        const url = toQueriesString( FleetApiPath.ActiveSubscriptionList + "/" + park_id, params)
+    public static async getActiveSubscriptionList(params: FleetSubscriptionParams, park_id?: string) {
+        const url = toQueriesString(FleetApiPath.ActiveSubscriptionList + "/" + park_id, params)
 
         const response = await FleetService.getInstance().execHttpRequest<FleetSubscriptionsResponseData>({
             url: url,
@@ -512,8 +529,8 @@ class FleetService extends Service {
 
 
     // get fleet transactions history Kpi
-     public static async getFleetTransactionsKpi(fleetId?: string, params?: {start_date?: string, end_date?: string}) {
-        const url = toQueriesString(FleetApiPath.GetFleetTransactionsKpi.replace("{park_id}", fleetId??""), params)
+    public static async getFleetTransactionsKpi(fleetId?: string, params?: { start_date?: string, end_date?: string }) {
+        const url = toQueriesString(FleetApiPath.GetFleetTransactionsKpi.replace("{park_id}", fleetId ?? ""), params)
 
         const response = await FleetService.getInstance().execHttpRequest<TransactionKpiData>({
             url: url,

@@ -2,13 +2,16 @@ import AuthManagerGuard from "@/guard/AuthManagerGuard";
 import { useCreateFleet } from "@/hooks/admin/useFleetHook";
 import { useCity } from "@/hooks/location/useCity/useCity";
 import { useCountries } from "@/hooks/location/useCountry/useCountry";
-import { usGetSubscriptionPacks } from "@/hooks/subscription/useSubscription";
 import { FleetRegisterFormData } from "@/types/admin/fleet.type";
 import notify from "@/utils/func/notification";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+type FleetFormStep = 1 | 2 | 3;
 
 export const useFleetFormHook = (fleetId?: string) => {
   const [selectedCountry, setSelectedCountry] = useState<string>();
+  const [currentStep, setCurrentStep] = useState<FleetFormStep>(1);
+
   const {
     error,
     isError,
@@ -17,13 +20,19 @@ export const useFleetFormHook = (fleetId?: string) => {
     loading: isCreating,
   } = useCreateFleet();
 
+  useEffect(() => {
+    if (isSuccess) {
+      resetForm()
+      setCurrentStep(1)
+    }
+  }, [isSuccess])
+
+
   const { data: countries, isLoading: isLoadingCountries } = useCountries();
 
   const { data: cities, isLoading: isLoadingCities } = useCity({
     country_code: selectedCountry,
   });
-
-  const { isLoading: isLoadingSubscriptions, data: subscriptionsPacks } = usGetSubscriptionPacks(selectedCountry)
 
   const [formData, setFormData] = useState<FleetRegisterFormData>({
     first_name: "",
@@ -37,7 +46,6 @@ export const useFleetFormHook = (fleetId?: string) => {
     uuid_code: "",
     password: "",
     pin_code: "",
-    last_name: ".",
     parkActivity_id: "",
     subscription_id: "",
     fcm_token_vtc: "",
@@ -80,48 +88,66 @@ export const useFleetFormHook = (fleetId?: string) => {
     });
   };
 
-  const validateForm = () => {
-    if (!formData.owner_type) {
-      notify("Veuillez selectionner le type de compte", "error");
-      return false;
+  const validateStep = (step: FleetFormStep): boolean => {
+    if (step === 1) {
+      if (!formData.owner_type) {
+        notify("Veuillez selectionner le type de compte", "error");
+        return false;
+      }
+      if (!formData.email) {
+        notify("Veuillez entrer l'adresse email du compte", "error");
+        return false;
+      }
+      if (!formData.phone) {
+        notify("Veuillez entrer le numero de telephone du compte", "error");
+        return false;
+      }
+      if (!formData.first_name) {
+        notify("Veuillez entrer le prenom", "error");
+        return false;
+      }
     }
 
-    if (!formData.name) {
-      notify("Veuillez entrer le nom de la flotte", "error");
-      return false;
+    if (step === 2) {
+      if (!formData.name) {
+        notify("Veuillez entrer le nom de la flotte", "error");
+        return false;
+      }
+      if (!selectedCountry) {
+        notify("Veuillez selectionner un pays", "error");
+        return false;
+      }
+      if (!formData.city_id) {
+        notify("Veuillez selectionner une ville", "error");
+        return false;
+      }
+      if (!formData.parkActivity_id) {
+        notify("Veuillez selectionner une activite", "error");
+        return false;
+      }
     }
 
-    if (!selectedCountry) {
-      notify("Veuillez selectionner un pays pour continuer", "error");
-      return false;
-    }
-
-    if (!formData.city_id) {
-      notify("Veuillez selectionner une ville", "error");
-      return false;
-    }
-
-    if (!formData.email) {
-      notify("Veuillez entrer l'adresse email du compte", "error");
-      return false;
-    }
-
-    if (!formData.phone) {
-      notify("Veuillez entrer le numero de telephone du compte", "error");
-      return false;
-    }
-
-    if (!formData.subscription_id) {
-      notify("Veuillez selectionne un plan d'abonnement", "error");
-      return false;
+    if (step === 3) {
+      if (!formData.subscription_id) {
+        notify("Veuillez selectionner un plan d'abonnement", "error");
+        return false;
+      }
     }
 
     return true;
   };
 
+  const goToStep = (step: FleetFormStep) => {
+    setCurrentStep(step);
+  };
+
   const handleCreate = () => {
-    if (validateForm()) {
-      onCreateFleet(formData);
+    if (validateStep(3)) {
+      const payload = {
+        ...formData,
+        country_code: selectedCountry,
+      };
+      onCreateFleet(payload);
     }
 
     if (isError) {
@@ -144,9 +170,10 @@ export const useFleetFormHook = (fleetId?: string) => {
 
     handleCreate,
     isSubmiting: isCreating,
-    isSuccess: isSuccess,    
+    isSuccess: isSuccess,
 
-    subscriptionsPacks,
-    isLoadingSubscriptions
+    validateStep,
+    goToStep,
+    currentStep,
   };
 };

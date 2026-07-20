@@ -108,6 +108,19 @@ export const useGetFleetsList = (params: GetFleetsParams) => {
   return { isLoading, data, isFetching, isRefetching };
 };
 
+export const useGetFleetActivitiesList = (params?: any) => {
+
+  const { isLoading, data, isSuccess, isFetching, isRefetching } = useQuery({
+    queryKey: [
+      FleetApiPath.GetFleetActivities,
+      params,
+    ],
+    queryFn: () => FleetService.getFleetActivities(params),
+  });
+
+  return { isLoading, data, isFetching, isRefetching };
+};
+
 export const useCreateFleet = () => {
   const { data, loading, isSuccess, isError, error, handleMutation } =
     useMutationProvider({
@@ -500,7 +513,7 @@ export const useGetFleetJournal = (
 
 ////////////////////////////////////////////////////////////////////////////////
 export const useGetFleetTransactionsKpi = (
-  fleetId?: string, params?: {start_date?: string, end_date?: string}
+  fleetId?: string, params?: { start_date?: string, end_date?: string }
 ) => {
   const { isLoading, data } = useQueryProvider({
     queryKey: [FleetApiPath.GetFleetTransactionsKpi, fleetId, params],

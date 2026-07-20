@@ -4,103 +4,104 @@ import SubscriptionService, {
 } from "@/services/suscription/SubscriptionService";
 import { useGetMyPosition } from "@/hooks/__globlal/useGlobalHook";
 import {
+  GetSubscriptionPlansParams,
   GetSubscriptionsPricingParams,
   PackageFormData,
 } from "@/types/subscription.types";
 
-export const usGetSubscriptionPacks = (country_code?: string) => {
-    return useQueryProvider({
-        queryFn: () => SubscriptionService.getSubscriptions({country_code}),
-        queryKey: [SubscriptionApiPath.GetSubscriptionPacks, country_code],
-        enabled: !!country_code
-    })
+export const usGetSubscriptionPacks = (params: GetSubscriptionPlansParams) => {
+  return useQueryProvider({
+    queryFn: () => SubscriptionService.getSubscriptions(params),
+    queryKey: [SubscriptionApiPath.GetSubscriptionPacks, params],
+    enabled: !!params.country_code
+  })
 }
 
+
+
 export const useInitSubscription = () => {
-    return useMutationProvider({
-        mutationFn: SubscriptionService.initSubscription,
-        successMessage: "Transaction initiée",
-    })
+  return useMutationProvider({
+    mutationFn: SubscriptionService.initSubscription,
+    successMessage: "Transaction initiée",
+  })
 }
 
 export const useGetOperators = () => {
 
-    const {data} = useGetMyPosition()
-    //data.country_code
-
-    return useQueryProvider({
-        queryFn: () => SubscriptionService.getOperators({country_code: data?.country_code as string}),
-        queryKey: [SubscriptionApiPath.Operator],
-        enabled: !!data?.country_code
-    })
+  const { data } = useGetMyPosition()
+  return useQueryProvider({
+    queryFn: () => SubscriptionService.getOperators({ country_code: data?.country_code as string }),
+    queryKey: [SubscriptionApiPath.Operator],
+    enabled: !!data?.country_code
+  })
 }
 
 export const useCheckTransactionStatus = (id: string, refreshRate: number) => {
-    return useQueryProvider({
-        queryFn: () => SubscriptionService.checkTransactionStatus({id: id}),
-        queryKey: [SubscriptionApiPath.CheckTransaction, `pool-count-key:${refreshRate}}`],
-        enabled: !!id
-    })
+  return useQueryProvider({
+    queryFn: () => SubscriptionService.checkTransactionStatus({ id: id }),
+    queryKey: [SubscriptionApiPath.CheckTransaction, `pool-count-key:${refreshRate}}`],
+    enabled: !!id
+  })
 }
 
 export const useCheckActiveSubscriptionInfos = () => {
-    return useQueryProvider({
-        queryFn: () => SubscriptionService.checkActiveSubscriptionInfos(),
-        queryKey: [SubscriptionApiPath.CheckActiveSubscriptionInfos],
-    })
+  return useQueryProvider({
+    queryFn: () => SubscriptionService.checkActiveSubscriptionInfos(),
+    queryKey: [SubscriptionApiPath.CheckActiveSubscriptionInfos],
+  })
 }
 
 export const useCheckActiveSubscription = () => {
-    return useQueryProvider({
-        queryFn: () => SubscriptionService.checkActiveSubscription(),
-        queryKey: [SubscriptionApiPath.CheckActiveSubscription],
-    })
+  return useQueryProvider({
+    queryFn: () => SubscriptionService.checkActiveSubscription(),
+    queryKey: [SubscriptionApiPath.CheckActiveSubscription],
+  })
 }
 
 
 export const useGetAllSubscriptions = (params?: GetSubscriptionsPricingParams) => {
-    return useQueryProvider({
-        queryFn: () => SubscriptionService.getAllSubscriptions(params),
-        queryKey: [SubscriptionApiPath.GetAllSubscriptionsPackages, params],
-    })
+  return useQueryProvider({
+    queryFn: () => SubscriptionService.getAllSubscriptions(params),
+    queryKey: [SubscriptionApiPath.GetAllSubscriptionsPackages, params],
+  })
 }
 
 export const useGetAllSubscriptionsKpis = (params?: GetSubscriptionsPricingParams) => {
-    return useQueryProvider({
-        queryFn: () => SubscriptionService.getAllSubscriptionsKpi(params),
-        queryKey: [SubscriptionApiPath.GetAllSubscriptionsPackagesKpis, params],
-    })
+  return useQueryProvider({
+    queryFn: () => SubscriptionService.getAllSubscriptionsKpi(params),
+    queryKey: [SubscriptionApiPath.GetAllSubscriptionsPackagesKpis, params],
+  })
 }
 
 export const useGetAllSubscriptionsEvolution = (params?: GetSubscriptionsPricingParams) => {
-    return useQueryProvider({
-        queryFn: () => SubscriptionService.getAllSubscriptionsEvolution(params),
-        queryKey: [SubscriptionApiPath.GetAllSubscriptionsEvolution, params],
-    })
+  return useQueryProvider({
+    queryFn: () => SubscriptionService.getAllSubscriptionsEvolution(params),
+    queryKey: [SubscriptionApiPath.GetAllSubscriptionsEvolution, params],
+  })
 }
 
 
 export const useGetRenewalsVsExpired = (params?: GetSubscriptionsPricingParams) => {
-    return useQueryProvider({
-        queryFn: () => SubscriptionService.getRenewalVsExpired(params),
-        queryKey: [SubscriptionApiPath.GetRenewalVsExpired, params],
-    })
+  return useQueryProvider({
+    queryFn: () => SubscriptionService.getRenewalVsExpired(params),
+    queryKey: [SubscriptionApiPath.GetRenewalVsExpired, params],
+  })
 }
 
 export const useGetSubsByPayments = (params?: GetSubscriptionsPricingParams) => {
-    return useQueryProvider({
-        queryFn: () => SubscriptionService.getSubsByPaymentMethods(params),
-        queryKey: [SubscriptionApiPath.GetSubsByPaymentMethods, params],
-    })
+  return useQueryProvider({
+    queryFn: () => SubscriptionService.getSubsByPaymentMethods(params),
+    queryKey: [SubscriptionApiPath.GetSubsByPaymentMethods, params],
+  })
 }
 
 
 export const useGetSubscription = (subsId?: string) => {
-    return useQueryProvider({
-        queryFn: () => SubscriptionService.getSubsData(subsId),
-        queryKey: [SubscriptionApiPath.GetSubscription, subsId],
-        enabled: !!subsId,
-    })
+  return useQueryProvider({
+    queryFn: () => SubscriptionService.getSubsData(subsId),
+    queryKey: [SubscriptionApiPath.GetSubscription, subsId],
+    enabled: !!subsId,
+  })
 }
 
 export const useCreateSubscriptionPackage = () => {
