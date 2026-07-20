@@ -52,7 +52,7 @@ export default function ProfilStep({ formData, updateField }: ProfilStepProps) {
                         value={formData.phone}
                         onChange={(e) => updateField("phone", e.target.value)}
                         placeholder="Ex: 675 67 65 43"
-                        label="Numéro de téléphone"
+                        label={"Numéro de téléphone"}
                         required
                     />
                 </div>

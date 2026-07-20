@@ -191,7 +191,7 @@ class FleetService extends Service {
     }
 
     public static async getActiveSubscriptionList(params: FleetSubscriptionParams, park_id?: string) {
-        const url = toQueriesString(FleetApiPath.ActiveSubscriptionList + "/" + park_id, params)
+        const url = toQueriesString(FleetApiPath.ActiveSubscriptionList + "/" + park_id, params, false)
 
         const response = await FleetService.getInstance().execHttpRequest<FleetSubscriptionsResponseData>({
             url: url,
@@ -530,7 +530,7 @@ class FleetService extends Service {
 
     // get fleet transactions history Kpi
     public static async getFleetTransactionsKpi(fleetId?: string, params?: { start_date?: string, end_date?: string }) {
-        const url = toQueriesString(FleetApiPath.GetFleetTransactionsKpi.replace("{park_id}", fleetId ?? ""), params)
+        const url = toQueriesString(FleetApiPath.GetFleetTransactionsKpi.replace("{park_id}", fleetId ?? ""), params, false)
 
         const response = await FleetService.getInstance().execHttpRequest<TransactionKpiData>({
             url: url,
@@ -547,7 +547,7 @@ class FleetService extends Service {
 
     // get fleet transactions data
     public static async getFleetTransactions(params: TransactionHistoryParams) {
-        const url = toQueriesString(FleetApiPath.GetFleetTransactions, params)
+        const url = toQueriesString(FleetApiPath.GetFleetTransactions, params, false)
 
         const response = await FleetService.getInstance().execHttpRequest<TransactionHistoryData>({
             url: url,

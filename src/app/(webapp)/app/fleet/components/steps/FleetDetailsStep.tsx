@@ -1,5 +1,4 @@
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Plus, X } from "lucide-react";
 import { useState, useRef, ChangeEvent } from "react";
 import Image from "next/image";
@@ -7,6 +6,7 @@ import notify from "@/utils/func/notification";
 import { FleetTypeMap } from "../../utils";
 import { FleetRegisterFormData } from "@/types/admin/fleet.type";
 import { useGetFleetActivitiesList } from "@/hooks/admin/useFleetHook";
+import { CustomComboBox } from "@/components/ui/custom/custom-comobo-box";
 
 interface FlotteStepProps {
     formData: FleetRegisterFormData;
@@ -18,7 +18,7 @@ interface FlotteStepProps {
     selectedCountry?: string;
 }
 
-export default function FlotteStep({ formData, updateField, countries, cities, isLoadingCities, setSelectedCountry }: FlotteStepProps) {
+export default function FlotteStep({ formData, updateField, countries, cities, isLoadingCities, setSelectedCountry, selectedCountry }: FlotteStepProps) {
 
     const [selectedImage, setSelectedImage] = useState<File | null>(null);
     const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -54,50 +54,62 @@ export default function FlotteStep({ formData, updateField, countries, cities, i
 
     const {
         data: activities,
-        isLoading
+        isLoading: isLoadingActivities
     } = useGetFleetActivitiesList()
 
-    console.log(activities)
+    const ownerTypeOptions = Object.entries(FleetTypeMap).map(([value, label]) => ({
+        value,
+        label,
+    }));
+
+    const activityOptions = activities?.map((a: any) => ({
+        value: a.id,
+        label: a.name,
+    })) ?? [];
+
+    const countryOptions = countries?.map((c: any) => ({
+        value: c.isoCode,
+        label: c.name,
+    })) ?? [];
+
+    const cityOptions = cities?.map((c: any) => ({
+        value: c.id,
+        label: c.name,
+    })) ?? [];
+
+    const cityPlaceholder = !isLoadingCities && cities?.length
+        ? "Sélectionner la ville"
+        : !isLoadingCities
+            ? "Aucune ville disponible"
+            : "Chargement...";
 
     return (
         <div className="flex flex-col gap-6">
             {/* Type de compte et Activité sur la même ligne */}
             <div className="grid grid-cols-2 w-full gap-4">
                 <div className="flex flex-col gap-2">
-                    <label htmlFor="owner_type" className="text-sm font-medium">Type de compte <span className="text-vaRed">*</span> </label>
-                    <Select
+                    <CustomComboBox
+                        label="Type de compte"
+                        placeholder="Sélectionner le type de compte"
+                        searchPlaceholder="Rechercher un type de compte..."
+                        emptyMessage="Aucun type de compte trouvé"
+                        options={ownerTypeOptions}
                         value={formData.owner_type}
                         onValueChange={(value) => updateField("owner_type", value)}
-                    >
-                        <SelectTrigger className="w-full rounded-xl py-2.5" inForm>
-                            <SelectValue placeholder="Sélectionner le type de compte" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {Object.entries(FleetTypeMap).map(([value, label]) => (
-                                <SelectItem key={value} value={value}>
-                                    {label}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                        required
+                    />
                 </div>
                 <div className="flex flex-col gap-2">
-                    <label htmlFor="parkActivity_id" className="text-sm font-medium">Activité <span className="text-vaRed">*</span> </label>
-                    <Select
+                    <CustomComboBox
+                        label="Activité"
+                        placeholder={isLoadingActivities ? "Chargement..." : "Sélectionner votre activité"}
+                        searchPlaceholder="Rechercher une activité..."
+                        emptyMessage="Aucune activité trouvée"
+                        options={activityOptions}
                         value={formData.parkActivity_id}
                         onValueChange={(value) => updateField("parkActivity_id", value)}
-                    >
-                        <SelectTrigger className="w-full rounded-xl py-2.5" inForm>
-                            <SelectValue placeholder="Sélectionner votre activité" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {activities?.map((a, idx) => (
-                                <SelectItem key={idx} value={a.id}>
-                                    {a.name}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
+                        required
+                    />
                 </div>
             </div>
 
@@ -113,35 +125,28 @@ export default function FlotteStep({ formData, updateField, countries, cities, i
 
             <div className="grid grid-cols-2 w-full gap-4">
                 <div className="flex flex-col gap-2">
-                    <label htmlFor="country" className="text-sm font-medium">Pays <span className="text-vaRed">*</span> </label>
-                    <Select onValueChange={(value) => setSelectedCountry(value)}>
-                        <SelectTrigger className="w-full rounded-xl py-2.5" inForm>
-                            <SelectValue placeholder="Sélectionner le pays" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {countries?.map((c: any) =>
-                                <SelectItem value={c.isoCode} key={c.id}>{c.name}</SelectItem>
-                            )
-                            }
-                        </SelectContent>
-                    </Select>
+                    <CustomComboBox
+                        label="Pays"
+                        placeholder="Sélectionner le pays"
+                        searchPlaceholder="Rechercher un pays..."
+                        emptyMessage="Aucun pays trouvé"
+                        options={countryOptions}
+                        value={selectedCountry}
+                        onValueChange={(value) => setSelectedCountry(value)}
+                        required
+                    />
                 </div>
                 <div className="flex flex-col gap-2">
-                    <label htmlFor="city_id" className="text-sm font-medium">Ville <span className="text-vaRed">*</span> </label>
-                    <Select
+                    <CustomComboBox
+                        label="Ville"
+                        placeholder={cityPlaceholder}
+                        searchPlaceholder="Rechercher une ville..."
+                        emptyMessage="Aucune ville disponible"
+                        options={cityOptions}
                         value={formData.city_id}
                         onValueChange={(value) => updateField("city_id", value)}
-                    >
-                        <SelectTrigger className="w-full rounded-xl py-2.5" inForm>
-                            <SelectValue placeholder={!isLoadingCities && cities?.length ? "Sélectionner la ville" : !isLoadingCities ? "Aucune ville disponible" : "Chargement..."} />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {cities?.map((c: any) =>
-                                <SelectItem value={c.id} key={c.id}>{c.name}</SelectItem>
-                            )
-                            }
-                        </SelectContent>
-                    </Select>
+                        required
+                    />
                 </div>
             </div>
 

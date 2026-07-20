@@ -53,9 +53,9 @@ export function DetailRowList({ rows, isLoading, title="Détails du profil", onE
         <div className="flex flex-col gap-4 border border-[#E5E7EB] rounded-2xl p-4">
             <div className="mb-2 text-xl font-semibold flex items-center justify-between w-full">
                 {title}
-                <Button variant="ghost" size="icon" className="text-vaLightGray" onClick={onEdit}>
+                {/* <Button variant="ghost" size="icon" className="text-vaLightGray" onClick={onEdit}>
                     <Edit size={24} />
-                </Button>
+                </Button> */}
             </div>
             {rows.map((row) => (
                 <DetailRow key={row.label} {...row} />
