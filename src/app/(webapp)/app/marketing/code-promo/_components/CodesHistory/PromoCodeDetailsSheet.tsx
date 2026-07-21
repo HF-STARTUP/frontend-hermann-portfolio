@@ -35,7 +35,7 @@ import { PromoCodeActionsMenu } from "./PromoCodeActionsMenu"
 import { ProspectsList } from "./ProspectsList"
 import { PromoCodeStatsSection } from "./PromoCodeStatsSection"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { SimpleEmptyElement } from "@/components/box/PageNetworkState"
+import { EmptyData, SimpleEmptyElement } from "@/components/box/PageNetworkState"
 import { AiOutlineReload } from "react-icons/ai"
 import { CopyToClipboard } from "@/components/ui/copy-to-clipboard"
 
@@ -163,8 +163,8 @@ export const PromoCodeDetailsSheet: React.FC<PromoCodeDetailsSheetProps> = ({
   } = useGetPromoCodeMetricsById(open && codeId ? codeId : undefined)
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange} direction="right">
-      <SheetContent side="right" className="p-0 flex flex-col w-full max-w-xl">
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent side="right" className="p-0 flex flex-col w-full max-w-2xl">
         {isLoading && (
           <div className="absolute inset-0 z-10 flex items-center justify-center bg-background/80">
             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -226,6 +226,7 @@ export const PromoCodeDetailsSheet: React.FC<PromoCodeDetailsSheetProps> = ({
                     Informations générales
                   </TabsTrigger>
                   <TabsTrigger value="prospects">Prospects liés ({prospectsData?.totalRecords ?? 0})</TabsTrigger>
+                  <TabsTrigger value="users">Utilisateurs liés ({code.allowed_parks.length ?? 0})</TabsTrigger>
                   <TabsTrigger value="historique">Historique</TabsTrigger>
                 </TabsList>
                 <TabsContent value="general" className="mt-4">
@@ -286,6 +287,18 @@ export const PromoCodeDetailsSheet: React.FC<PromoCodeDetailsSheetProps> = ({
                       onReassign={() => onAssignCommercial?.(code)}
                     />
                   )}
+                </TabsContent>
+                <TabsContent value="users" className="mt-4">
+                  <div className="flex flex-col gap-2">
+                    {code.allowed_parks.length > 0 ? code.allowed_parks.map((alp) => (
+                      <div
+                        key={alp.id}
+                        className="flex items-center gap-3 rounded-2xl border p-2"
+                      >
+                        <span className="text-sm font-medium">{alp.name}</span>
+                      </div>
+                    )) : <EmptyData message="Tous les utilisateur y ont acces" />}
+                  </div>
                 </TabsContent>
                 <TabsContent value="prospects" className="mt-4">
                   <ProspectsList

@@ -54,11 +54,17 @@ const useFleetHook = () => {
       page,
       city_id: AuthManagerGuard.getEnabledCity,
     };
-  }, [page, itemPerPage, fleetFilters, AuthManagerGuard.getEnabledCity]);
+  }, [page, itemPerPage, fleetFilters, AuthManagerGuard.getEnabledCity, setFleetFilters]);
 
   const { data, isLoading, isFetching } = useGetFleetsList(apiParamsWithoutDates);
 
   const fleets = useMemo(() => data?.fleets ?? [], [data]);
+  const totalPages = useMemo(() => data?.totalPages ?? 1, [data]);
+  const currentPage = useMemo(() => data?.currentPage ?? 1, [data]);
+
+  const hasMore = useMemo(() => {
+    return currentPage < totalPages
+  }, [page, setPage, totalPages, currentPage, data])
 
   const paginationMeta = useMemo(
     () => ({
@@ -85,7 +91,7 @@ const useFleetHook = () => {
     [paginationMeta, itemPerPage],
   );
 
-  const {currency} = useGetActiveCurrency()
+  const { currency } = useGetActiveCurrency()
 
   const tableColumns: Column<FleetModel>[] = useMemo(
     () => [
@@ -329,6 +335,10 @@ const useFleetHook = () => {
     fleets,
     isLoading,
     isFetching,
+    totalPages,
+    hasMore,
+    setPage,
+    page,
 
     fleetFilters,
     resetFilters,

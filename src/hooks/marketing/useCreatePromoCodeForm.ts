@@ -47,6 +47,7 @@ function mapFormValuesToPayload(
     validity_days: Number(data.validity_days),
     max_usage_per_user: Number(data.max_usage_per_user),
     is_stackable: data.is_stackable,
+    allowed_park_ids: data.allowed_park_ids
   }
 }
 

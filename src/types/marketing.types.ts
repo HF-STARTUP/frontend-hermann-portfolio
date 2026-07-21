@@ -40,14 +40,15 @@ export interface PromoCode {
   stackable_codes: unknown[]
   application_modes: unknown[]
   usage_count: number
+  allowed_parks: { id: string, name: string }[]
 }
 
 export interface MarketingKpi {
   totalCodes: number
   totalCommercials: number
-  activeCodes: { 
+  activeCodes: {
     current: number
-    total: number 
+    total: number
   }
   monthlyGrowth: number
 }
@@ -188,6 +189,7 @@ export interface CreatePromoCodePayload {
   validity_days: number
   max_usage_per_user: number
   is_stackable: boolean
+  allowed_park_ids?: string[]
 }
 
 export interface CreatePromoCodeFormData {
@@ -198,6 +200,7 @@ export interface CreatePromoCodeFormData {
   validity_days: string
   max_usage_per_user: string
   is_stackable: boolean
+  allowed_park_ids?: string[]
 }
 
 export const CODE_TYPE_OPTIONS: { value: CodeType; label: string }[] = [
@@ -389,14 +392,14 @@ export const SALES_AGENT_CHANNEL_OPTIONS: {
   value: SalesAgentChannel
   label: string
 }[] = [
-  { value: "VISION", label: "Visio conférence" },
-  { value: "PRESENTIEL", label: "Présentiel" },
-]
+    { value: "VISION", label: "Visio conférence" },
+    { value: "PRESENTIEL", label: "Présentiel" },
+  ]
 
 export const SALES_AGENT_STATUS_OPTIONS: {
   value: SalesAgentStatus
   label: string
 }[] = [
-  { value: "ACTIVE", label: "Actif" },
-  { value: "INACTIVE", label: "Inactif" },
-]
+    { value: "ACTIVE", label: "Actif" },
+    { value: "INACTIVE", label: "Inactif" },
+  ]

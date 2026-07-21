@@ -40,6 +40,7 @@ export const createPromoCodeSchema = Joi.object<CreatePromoCodePayload>({
   is_stackable: Joi.boolean().required().messages({
     "any.required": "Champ requis",
   }),
+  allowed_park_ids: Joi.array().items(Joi.string()).optional(),
 });
 
 export const createPromoCodeFormSchema = Joi.object<CreatePromoCodeFormData>({
@@ -96,6 +97,7 @@ export const createPromoCodeFormSchema = Joi.object<CreatePromoCodeFormData>({
   is_stackable: Joi.boolean().required().messages({
     "any.required": "Champ requis",
   }),
+  allowed_park_ids: Joi.array().items(Joi.string()).optional(),
 });
 
 export const createSalesAgentSchema = Joi.object<CreateSalesAgentPayload>({

@@ -24,6 +24,7 @@ import {
   useFormContext,
   useFormState,
 } from "react-hook-form"
+import { ClientSelector } from "@/components/elements/ClientSelector"
 
 interface CreateCodeStep1Props {
   onStep1Submit: () => void
@@ -129,7 +130,7 @@ function CodeTypeSelectField() {
             value={field.value || undefined}
             onValueChange={(value) => field.onChange(value as CodeType)}
           >
-            <SelectTrigger className="h-[45px] rounded-[10px] border-neutral-300 border-opacity-60">
+            <SelectTrigger className="h-12 rounded-2xl w-full">
               <SelectValue placeholder="Sélectionner le type de code" />
             </SelectTrigger>
             <SelectContent>
@@ -170,7 +171,7 @@ function DiscountTypeSelectField() {
               field.onChange(value as DiscountType)
             }
           >
-            <SelectTrigger className="h-[45px] rounded-[10px] border-neutral-300 border-opacity-60">
+            <SelectTrigger className="h-12 rounded-2xl w-full">
               <SelectValue placeholder="Sélectionner le type de réduction" />
             </SelectTrigger>
             <SelectContent>
@@ -186,6 +187,32 @@ function DiscountTypeSelectField() {
       {errors.discount_type?.message ? (
         <p className="text-sm text-destructive">
           {String(errors.discount_type.message)}
+        </p>
+      ) : null}
+    </div>
+  )
+}
+
+function AllowedParkIdsField() {
+  const { control } = useFormContext<CreatePromoCodeFormData>()
+  const { errors } = useFormState({ name: "allowed_park_ids" })
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Controller
+        control={control}
+        name="allowed_park_ids"
+        render={({ field }) => (
+          <ClientSelector
+            className="w-full"
+            selectedItems={field.value ?? []}
+            onSelectionChange={field.onChange}
+          />
+        )}
+      />
+      {errors.allowed_park_ids?.message ? (
+        <p className="text-sm text-destructive">
+          {String(errors.allowed_park_ids.message)}
         </p>
       ) : null}
     </div>
@@ -219,7 +246,11 @@ export const CreateCodeStep1: React.FC<CreateCodeStep1Props> = ({
       <div className="grid grid-cols-2 gap-4">
         <ValidityDaysField />
         <MaxUsageField />
+        <div className="col-span-2 w-full">
+          <AllowedParkIdsField />
+        </div>
       </div>
+
 
       <BtnBase
         variant="contained"
