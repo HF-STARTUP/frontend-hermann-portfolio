@@ -83,7 +83,7 @@ class SubscriptionModelFactory {
     }
 
     static createSubscriptionModels(datas: SubscriptionPackResponseType[]): SubscriptionModel[] {
-        return datas.map(data => this.createSubscriptionModel(data)).reverse();
+        return datas.map(data => this.createSubscriptionModel(data));
     }
 }
 

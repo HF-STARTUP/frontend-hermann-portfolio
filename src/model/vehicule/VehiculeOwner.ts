@@ -23,7 +23,7 @@ class VehiculeOwner extends Model {
     }
 
     public static toVehiculeOwners(vehiculeOwners: VehiculeOwnerResponseType[]) {
-        return vehiculeOwners.map(v => new VehiculeOwner(v)).reverse()
+        return vehiculeOwners.map(v => new VehiculeOwner(v))
     }
 
     static toVSelect(vehiculeOwner: VehiculeOwner[] | undefined) {

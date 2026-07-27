@@ -14,7 +14,7 @@ export  class ClientModel extends Model {
     }
 
     static toArrays(datas: ClientResponseType[]): ClientModel[] {
-        return datas.map(data => new ClientModel(data)).reverse();
+        return datas.map(data => new ClientModel(data));
     }
 
     public get getFindToken(){
@@ -90,7 +90,7 @@ class DrawalModeModel extends Model {
     }
 
     static toArrays(datas: DrawalModeType[]): DrawalModeModel[] {
-        return datas.map(data => new DrawalModeModel(data)).reverse();
+        return datas.map(data => new DrawalModeModel(data));
     }
 
     get id(): string {

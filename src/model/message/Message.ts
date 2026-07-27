@@ -75,7 +75,7 @@ export class DiscussionMember extends Model {
     }
 
     public static toArrays(datas: DiscussionMemberResponseType[]): DiscussionMember[] {
-        return datas.map(data => new DiscussionMember(data)).reverse();
+        return datas.map(data => new DiscussionMember(data));
     }
 
     get id() {
@@ -122,7 +122,7 @@ export class MessageModel extends Model {
 
     public static toArrays(datas: MessageResponseType[] | undefined): MessageModel[] {
         if (!datas) return []
-        return datas.map(data => new MessageModel(data)).reverse();
+        return datas.map(data => new MessageModel(data));
     }
 
     get id() {

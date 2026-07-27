@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Search, Users, Loader2 } from "lucide-react";
+import { Search, Users, Loader2, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "../ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 import {
     Dialog,
     DialogContent,
@@ -18,6 +19,7 @@ import { ScrollContainer } from "../box/ScrollContainer";
 import useFleetHook from "@/app/(webapp)/app/fleet/_hook/useFleetHook";
 import { FleetModel } from "@/model/ADMIN/fleet";
 import { EmptyData } from "../box/PageNetworkState";
+import { DialogFooter } from "../display/DialogFooter";
 
 interface ClientSelectorProps {
     selectedItems?: string[];
@@ -54,6 +56,7 @@ export const ClientSelector = ({
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const [accumulatedFleets, setAccumulatedFleets] = useState<FleetModel[]>([]);
+    const [selectedClients, setSelectedClients] = useState<FleetModel[]>([]);
 
     const {
         fleets,
@@ -99,7 +102,6 @@ export const ClientSelector = ({
     }, [fleets]);
 
     const handleNearBottom = () => {
-        console.log("yesssjcnd", hasMore)
         if (isLoading || !hasMore) return;
 
         const nextPage = page + 1;
@@ -107,90 +109,130 @@ export const ClientSelector = ({
         setFleetFilters((prev) => ({ ...prev, page: nextPage }));
     };
 
-    const toggleClient = (clientId: string) => {
+    const toggleClient = (fleet: FleetModel) => {
         if (!onSelectionChange) return;
 
-        const isSelected = selectedItems.includes(clientId);
+        const isSelected = selectedItems.includes(fleet.id);
         const nextSelection = isSelected
-            ? selectedItems.filter((id) => id !== clientId)
-            : [...selectedItems, clientId];
+            ? selectedItems.filter((id) => id !== fleet.id)
+            : [...selectedItems, fleet.id];
 
+        const nextSelectedClients = isSelected
+            ? selectedClients.filter((client) => client.id !== fleet.id)
+            : [...selectedClients, fleet];
+
+        setSelectedClients(nextSelectedClients);
         onSelectionChange(nextSelection);
     };
 
+    const removeClient = (clientId: string) => {
+        if (!onSelectionChange) return;
+
+        setSelectedClients((prev) => prev.filter((client) => client.id !== clientId));
+        onSelectionChange(selectedItems.filter((id) => id !== clientId));
+    };
+
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button variant="outline" className={cn("justify-start gap-2", className)}>
-                    <Users className="h-4 w-4" />
-                    {selectedItems.length > 0
-                        ? `${selectedItems.length} client(s) sélectionné(s)`
-                        : placeholder}
-                </Button>
-            </DialogTrigger>
+        <div className="flex flex-col gap-2">
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                    <Button variant="outline" className={cn("justify-start gap-2", className)}>
+                        <Users className="h-4 w-4" />
+                        {selectedItems.length > 0
+                            ? `${selectedItems.length} client(s) sélectionné(s)`
+                            : placeholder}
+                    </Button>
+                </DialogTrigger>
 
-            <DialogContent className="flex h-[70vh] flex-col gap-2 p-0">
-                <DialogHeader className="p-4 pb-0">
-                    <DialogTitle>Sélectionner des clients</DialogTitle>
-                </DialogHeader>
+                <DialogContent className="flex h-[70vh] flex-col gap-2 p-0">
+                    <DialogHeader className="p-4 pb-0">
+                        <DialogTitle>Sélectionner des clients</DialogTitle>
+                    </DialogHeader>
 
-                <div className="relative px-4">
-                    <Search className="absolute left-6 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input
-                        type="search"
-                        value={searchValue}
-                        onChange={(event) => setSearchValue(event.target.value)}
-                        placeholder="Rechercher un client..."
-                        className="pl-9"
-                    />
+                    <div className="relative px-4">
+                        <Search className="absolute left-6 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                        <Input
+                            type="search"
+                            value={searchValue}
+                            onChange={(event) => setSearchValue(event.target.value)}
+                            placeholder="Rechercher un client..."
+                            className="pl-9"
+                        />
+                    </div>
+
+                    {isLoading && page <= 1 ? (
+                        <ClientSelectorSkeleton />
+                    ) : (
+                        <ScrollContainer
+                            className="flex-1 flex flex-col gap-2 p-4 pt-0"
+                            onNearBottom={handleNearBottom}
+                        >
+                            {accumulatedFleets.length === 0 ? (
+                                <EmptyData message="Aucun client trouvé" />
+                            ) : (
+                                accumulatedFleets.map((fleet: FleetModel) => {
+                                    const isSelected = selectedItems.includes(fleet.id);
+
+                                    return (
+                                        <Button
+                                            key={fleet.id}
+                                            type="button"
+                                            variant="secondary"
+                                            onClick={() => toggleClient(fleet)}
+                                            className={cn(
+                                                "flex h-auto items-center justify-start gap-3 rounded-2xl p-2 text-left",
+                                                isSelected && "bg-accent"
+                                            )}
+                                        >
+                                            <Checkbox
+                                                checked={isSelected}
+                                                tabIndex={-1}
+                                                className="pointer-events-none"
+                                            />
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-medium">{fleet.name}</span>
+                                                <span className="text-xs text-muted-foreground">
+                                                    {fleet.ownerName}
+                                                </span>
+                                            </div>
+                                        </Button>
+                                    );
+                                })
+                            )}
+
+                            {isLoading && page > 1 && (
+                                <ClientSelectorSkeleton />
+                            )}
+                        </ScrollContainer>
+                    )}
+                    <DialogFooter>
+                        <Button variant={"mainBlue"} fullWidth onClick={()=>setOpen(false)}>
+                            Valider
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            {selectedClients.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                    {selectedClients.map((client) => (
+                        <Badge
+                            key={client.id}
+                            variant="secondary"
+                            className="flex items-center gap-1 text-sm font-normal"
+                        >
+                            {client.name}
+                            <button
+                                type="button"
+                                onClick={() => removeClient(client.id)}
+                                className="ml-1 rounded-full hover:bg-muted-foreground/20"
+                            >
+                                <X className="h-3 w-3" />
+                            </button>
+                        </Badge>
+                    ))}
                 </div>
-
-                {isLoading && page <= 1 ? (
-                    <ClientSelectorSkeleton />
-                ) : (
-                    <ScrollContainer
-                        className="flex-1 flex flex-col gap-2 p-4 pt-0"
-                        onNearBottom={handleNearBottom}
-                    >
-                        {accumulatedFleets.length === 0 ? (
-                            <EmptyData message="Aucun client trouvé" />
-                        ) : (
-                            accumulatedFleets.map((fleet: FleetModel) => {
-                                const isSelected = selectedItems.includes(fleet.id);
-
-                                return (
-                                    <Button
-                                        key={fleet.id}
-                                        type="button"
-                                        variant="secondary"
-                                        onClick={() => toggleClient(fleet.id)}
-                                        className={cn(
-                                            "flex h-auto items-center justify-start gap-3 rounded-2xl p-2 text-left",
-                                            isSelected && "bg-accent"
-                                        )}
-                                    >
-                                        <Checkbox
-                                            checked={isSelected}
-                                            tabIndex={-1}
-                                            className="pointer-events-none"
-                                        />
-                                        <div className="flex flex-col">
-                                            <span className="text-sm font-medium">{fleet.name}</span>
-                                            <span className="text-xs text-muted-foreground">
-                                                {fleet.ownerName}
-                                            </span>
-                                        </div>
-                                    </Button>
-                                );
-                            })
-                        )}
-
-                        {isLoading && page > 1 && (
-                            <ClientSelectorSkeleton />
-                        )}
-                    </ScrollContainer>
-                )}
-            </DialogContent>
-        </Dialog>
+            )}
+        </div>
     );
 };

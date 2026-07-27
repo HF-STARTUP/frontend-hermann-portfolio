@@ -57,7 +57,7 @@ class Supplier extends Model{
     }
 
     public static toSuppliers(datas: SupplierResponseType[]): Supplier[] {
-        return datas.map(v => new Supplier(v)).reverse();
+        return datas.map(v => new Supplier(v));
     }
 
     public static toVSelect(datas: Supplier[] | undefined): VSelectProp[] {
@@ -130,7 +130,7 @@ export class SupplierCtg extends Model {
     }
 
     public static toSuppliers(datas: RoleResponseType[]): SupplierCtg[] {
-        return datas.map(v => new SupplierCtg(v)).reverse();
+        return datas.map(v => new SupplierCtg(v));
     }
 
     public static toVSelect(datas: SupplierCtg[] | undefined): VSelectProp[] {

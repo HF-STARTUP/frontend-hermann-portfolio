@@ -19,7 +19,7 @@ class Course extends Model {
     }
 
     static toArrays(datas: CourseResponseType[]): Course[] {
-        return datas.map(data => new Course(data)).reverse();
+        return datas.map(data => new Course(data));
     }
 
     get id() {

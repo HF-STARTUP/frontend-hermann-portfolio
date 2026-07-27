@@ -26,7 +26,7 @@ export class FleetModel extends Model {
     }
 
     static fromArray(datas: FleetListResponseType[]): FleetModel[] {
-        return datas.map(data => new FleetModel(data)).reverse();
+        return datas.map(data => new FleetModel(data));
     }
 
     get id() {
@@ -86,7 +86,7 @@ export class FleetModel extends Model {
     }
 
     get subscription_amount() {
-        return (this._instance.subscription_amount ? formatNumber(this._instance.subscription_amount) + " " : 0 + " ")
+        return (this._instance.subscription_data ? formatNumber(this._instance.subscription_data.amount) + " " : 0 + " ")
     }
 
     get suscription_name(): PackageType | undefined {
@@ -350,7 +350,7 @@ export class AdminOnFleetModel extends Model {
     }
 
     static fromArray(datas: AdminOnFleetResponseType[]): AdminOnFleetModel[] {
-        return datas.map(data => new AdminOnFleetModel(data)).reverse();
+        return datas.map(data => new AdminOnFleetModel(data));
     }
 
     get id() {
@@ -444,7 +444,7 @@ export class AbonResponseModel extends Model {
     }
 
     static fromArray(datas: FleetResponseType[]): AbonResponseModel[] {
-        return datas.map(data => new AbonResponseModel(data)).reverse();
+        return datas.map(data => new AbonResponseModel(data));
     }
 
     get id() {

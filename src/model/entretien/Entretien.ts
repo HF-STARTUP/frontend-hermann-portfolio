@@ -20,7 +20,7 @@ class Entretien extends Model {
     }
 
     static toArrays(datas: EntretienResponseType[]): Entretien[] {
-        return datas.map(data => new Entretien(data)).reverse();
+        return datas.map(data => new Entretien(data));
     }
 
     get id() {
@@ -77,7 +77,7 @@ export class RepairType extends Model {
 
     public static toArrays(datas: RepaitTypeResponse[] | undefined): RepairType[] {
         if (!datas) return []
-        return datas.map(data => new RepairType(data)).reverse();
+        return datas.map(data => new RepairType(data));
     }
 
     get id(): ENTRETIEN_REPAIR_TYPE {
@@ -101,7 +101,7 @@ export class CarComponent extends Model {
 
     public static toArrays(datas: CarComponentResponse[] | undefined): CarComponent[] {
         if (!datas) return []
-        return datas.map(data => new CarComponent(data)).reverse();
+        return datas.map(data => new CarComponent(data));
     }
 
     get name() {

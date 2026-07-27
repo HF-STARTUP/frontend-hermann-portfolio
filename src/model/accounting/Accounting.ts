@@ -56,7 +56,7 @@ export class AccountingModel extends Model {
 
 
     static toArrays(datas: AccountingResponseType[]): AccountingModel[] {
-        return datas.map(data => new AccountingModel(data)).reverse();
+        return datas.map(data => new AccountingModel(data));
     }
 
 

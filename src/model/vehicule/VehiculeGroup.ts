@@ -13,7 +13,7 @@ class VehiculeGroup extends Model {
     }
 
     public static toArray(vehiculeType: VehiculeGroupResponseType[]) {
-        return vehiculeType.map(v => new VehiculeGroup(v)).reverse()
+        return vehiculeType.map(v => new VehiculeGroup(v))
     }
 
     static toVSelect(vehiculeGroup: VehiculeGroup[] | undefined) {

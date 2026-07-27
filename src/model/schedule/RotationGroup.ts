@@ -25,7 +25,7 @@ class RotationGroup extends Model {
     }
 
     static toRotationGroups(rotationGroupsData: RotationGroupType[]): RotationGroup[] {
-        return rotationGroupsData.map(rotationGroupData => new RotationGroup(rotationGroupData)).reverse();
+        return rotationGroupsData.map(rotationGroupData => new RotationGroup(rotationGroupData));
     }
 
     get getDisplatName(){

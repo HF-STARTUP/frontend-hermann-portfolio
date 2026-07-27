@@ -16,7 +16,7 @@ class DrawalModeModel extends Model {
     }
 
     static toArrays(datas: DrawalModeType[]): DrawalModeModel[] {
-        return datas.map(data => new DrawalModeModel(data)).reverse();
+        return datas.map(data => new DrawalModeModel(data));
     }
 
     get id(): string {
@@ -94,7 +94,7 @@ export class PaymentInfoModel extends Model {
 
 
     static toArrays(datas: PaymentInfoType[]): PaymentInfoModel[] {
-        return datas.map(data => new PaymentInfoModel(data)).reverse();
+        return datas.map(data => new PaymentInfoModel(data));
     }
 
 }
