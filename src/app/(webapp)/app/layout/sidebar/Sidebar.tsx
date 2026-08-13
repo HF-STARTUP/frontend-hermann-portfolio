@@ -7,8 +7,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ChevronDown, ArrowRightLeft, Crown, ShieldCheck, AlertTriangle } from "lucide-react";
 import { motion, AnimatePresence } from 'framer-motion';
-import { LuMegaphone } from "react-icons/lu";
-import { PiMegaphone } from "react-icons/pi";
+import { PiMegaphone, PiWhatsappLogoFill } from "react-icons/pi";
+import { GrWhatsapp } from "react-icons/gr";
 
 export const Sidebar = () => {
 
@@ -72,6 +72,11 @@ export const Sidebar = () => {
                     { label: "Code promo", to: "/app/marketing/code-promo" },
                     { label: "Commerciaux", to: "/app/marketing/commerciaux" },
                 ]}
+            />
+            <SidebarItem
+                label={"Whatsap Business"}
+                icon={<PiWhatsappLogoFill />}
+                to={"/app/whatsapp-business"}
             />
             <SidebarItem
                 label={"Paramètres"}
