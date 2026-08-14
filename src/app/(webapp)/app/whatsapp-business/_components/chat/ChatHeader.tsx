@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { StatusBadge } from "../shared/StatusBadge";
 import WaConversationModel from "@/model/whatsapp/WaConversationModel";
+import { getAvatarInitials } from "@/lib/initials.avatar.util";
 
 interface ChatHeaderProps {
   conversation: WaConversationModel;
@@ -18,15 +19,6 @@ interface ChatHeaderProps {
   onAssignToMe: () => void;
   onClose: () => void;
   onReopen: () => void;
-}
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
 }
 
 export function ChatHeader({
@@ -45,7 +37,7 @@ export function ChatHeader({
       >
         <Avatar className="h-10 w-10 shrink-0">
           <AvatarFallback className="bg-vaPrimary text-sm font-medium text-white">
-            {getInitials(conversation.displayName)}
+            {getAvatarInitials(conversation.displayName)}
           </AvatarFallback>
         </Avatar>
         <div className="min-w-0">

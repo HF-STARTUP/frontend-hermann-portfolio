@@ -4,20 +4,12 @@ import { cn } from "@/lib/utils";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { UnreadBadge } from "./UnreadBadge";
 import WaConversationModel from "@/model/whatsapp/WaConversationModel";
+import { getAvatarInitials } from "@/lib/initials.avatar.util";
 
 interface ConversationListItemProps {
   conversation: WaConversationModel;
   active: boolean;
   onSelect: (id: string) => void;
-}
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
 }
 
 export function ConversationListItem({ conversation, active, onSelect }: ConversationListItemProps) {
@@ -32,7 +24,7 @@ export function ConversationListItem({ conversation, active, onSelect }: Convers
     >
       <Avatar className="h-11 w-11 shrink-0">
         <AvatarFallback className="bg-vaPrimary text-sm font-medium text-white">
-          {getInitials(conversation.displayName)}
+          {getAvatarInitials(conversation.displayName)}
         </AvatarFallback>
       </Avatar>
 

@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils"
 import { SimpleEmptyElement } from "@/components/box/PageNetworkState"
 import type { PromoCodeProspect } from "@/types/marketing.types"
 import { Building2, User, MapPin } from "lucide-react"
+import { getAvatarInitials } from "@/lib/initials.avatar.util"
 
 function formatProspectDate(iso: string | null): string {
   if (!iso) return "—"
@@ -33,15 +34,6 @@ function getSubscriptionStatusLabel(status: string): string {
   if (status === "paid") return "Payé"
   if (status === "unpaid") return "Impayé"
   return status
-}
-
-function getInitials(name: string): string {
-  const trimmed = name.trim()
-  if (!trimmed) return "?"
-  const parts = trimmed.split(/\s+/).filter(Boolean)
-  if (parts.length >= 2)
-    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
-  return trimmed.slice(0, 2).toUpperCase()
 }
 
 interface ProspectsListProps {
@@ -86,7 +78,7 @@ export const ProspectsList: React.FC<ProspectsListProps> = ({
             >
               <div className="flex gap-3 min-w-0">
                 <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-violet-100 text-violet-600 text-xs font-semibold">
-                  {getInitials(accountName) || <Building2 className="h-4 w-4" />}
+                  {getAvatarInitials(accountName) || <Building2 className="h-4 w-4" />}
                 </div>
                 <div className="min-w-0 flex-1 space-y-2">
                   <div className="flex flex-wrap items-center justify-between gap-2 gap-y-1">

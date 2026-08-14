@@ -82,7 +82,7 @@ export interface WhatsAppConversationsParams {
 }
 
 export interface WhatsAppMessagesParams {
-    conversation_id: string;
+    conversation_id?: string;
     page?: number;
     limit?: number;
 }

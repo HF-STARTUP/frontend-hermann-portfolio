@@ -23,6 +23,7 @@ export default function LoginPage() {
     const [isPhone, setIsPhone] = React.useState(false)
     const [phoneCode, setPhoneCode] = React.useState<number>(237)
     const { data: currencies, isLoading: loadingCurrency } = useGetCurrenciesList()
+    const [isProd, setIsProd] = React.useState(false)
 
 
     const $login = useLogin()
@@ -38,6 +39,15 @@ export default function LoginPage() {
     React.useEffect(() => {
         AuthManagerGuard.removeProfileID()
         AuthManagerGuard.removeParkID()
+
+        if (typeof window !== "undefined") {
+            const url = window.location.href;
+            const isProductionEnv = !url.includes("localhost") && !url.includes("staging");
+            setIsProd(isProductionEnv);
+            if (isProductionEnv) {
+                AuthManagerGuard.setConnexionMode(ConnexionMode.Production);
+            }
+        }
     }, [])
 
     useEffect(() => {
@@ -118,23 +128,25 @@ export default function LoginPage() {
                                 error={errors.password}
                                 {...register("password")}
                             />
-                            <Input
-                                as={"select"}
-                                label={'Mode de connexion'}
-                                onChange={(e) => {
-                                    AuthManagerGuard.setConnexionMode(e.currentTarget.value as ConnexionMode)
-                                }}
-                                options={[
-                                    {
-                                        label: "Production",
-                                        value: ConnexionMode.Production
-                                    },
-                                    {
-                                        label: "Staging",
-                                        value: ConnexionMode.Staging
-                                    }
-                                ]}
-                            />
+                            {!isProd && (
+                                <Input
+                                    as={"select"}
+                                    label={'Mode de connexion'}
+                                    onChange={(e) => {
+                                        AuthManagerGuard.setConnexionMode(e.currentTarget.value as ConnexionMode)
+                                    }}
+                                    options={[
+                                        {
+                                            label: "Production",
+                                            value: ConnexionMode.Production
+                                        },
+                                        {
+                                            label: "Staging",
+                                            value: ConnexionMode.Staging
+                                        }
+                                    ]}
+                                />
+                            )}
                         </FormGroup>
                     </AuthFormContainer>
                     <div className={`mt-[24px] lg:mt-[36.2px]`}>
