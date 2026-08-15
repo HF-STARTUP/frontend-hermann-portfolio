@@ -4,30 +4,45 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import Country from "@/model/location/Country";
 import { useCity } from "@/hooks/location/useCity/useCity";
 import { Loader } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface LocationAccordionProps {
   country: Country;
   selectedIds: (string | number)[];
   onSelectionChange: (ids: (string | number)[]) => void;
+  action: "add" | "edit";
 }
 
-export const LocationAccordion = ({ 
-  country, 
-  selectedIds, 
-  onSelectionChange 
+export const LocationAccordion = ({
+  country,
+  selectedIds,
+  onSelectionChange,
+  action
 }: LocationAccordionProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const { data: cities, isLoading: isLoadingCities } = useCity(
     { country_code: country.isoCode, itemPerPage: 500 },
-    { enabled: isExpanded }
+    { enabled: action === "edit" || isExpanded }
   );
 
   const countryKey = `country_${country.id}`;
 
-  const isAllCitiesSelected = !!cities?.length && cities.every(city => selectedIds.includes(city.id));
+  const selectedCityCount = cities?.filter((city) => selectedIds.includes(city.id)).length ?? 0;
+  const isAllCitiesSelected = !!cities?.length && selectedCityCount === cities.length;
+  const isPartiallySelected = selectedCityCount > 0 && !isAllCitiesSelected;
+  const isCountryChecked = isAllCitiesSelected || isPartiallySelected;
 
-  const toggleCountry = (checked: boolean) => {    
+  const countryCheckboxClassName = cn(
+    "size-3.5",
+    isAllCitiesSelected
+      ? "border-blue-primary data-[state=checked]:bg-blue-primary data-[state=checked]:border-blue-primary data-[state=checked]:text-white"
+      : isPartiallySelected
+        ? "border-vaLightGray data-[state=checked]:bg-vaLightGray data-[state=checked]:border-vaLightGray data-[state=checked]:text-white"
+        : "border-vaLightGray/40"
+  );
+
+  const toggleCountry = (checked: boolean) => {
     if (!cities) return;
 
     const otherSelectedIds = selectedIds.filter(
@@ -51,34 +66,34 @@ export const LocationAccordion = ({
   };
 
   return (
-    <Accordion 
-      type="single" 
-      collapsible 
+    <Accordion
+      type="single"
+      collapsible
       className="w-full space-y-4"
       value={isExpanded ? countryKey : ""}
       onValueChange={(value) => setIsExpanded(value === countryKey)}
     >
       <AccordionItem value={countryKey} className="border rounded-2xl overflow-hidden shadow-sm">
         <div className="flex items-center gap-3 px-3  bg-vaDarkBlue/20">
-          <Checkbox 
-            className="size-3.5 border-vaLightGray/50" 
-            id={countryKey} 
-            checked={isAllCitiesSelected}
-            onCheckedChange={(checked: boolean) => {
-                if (checked && !isExpanded) setIsExpanded(true);
-                toggleCountry(checked);
+          <Checkbox
+            className={countryCheckboxClassName}
+            id={countryKey}
+            checked={isCountryChecked}
+            onCheckedChange={() => {
+              if (!isExpanded) setIsExpanded(true);
+              toggleCountry(!isAllCitiesSelected);
             }}
           />
           <AccordionTrigger className="hover:no-underline flex-grow py-2.5">
             <span className="text-sm font-semibold text-[#1e293b]">
-                {country.flag} {country.name}
+              {country.flag} {country.name}
             </span>
           </AccordionTrigger>
         </div>
 
         <AccordionContent className="border-t">
           {isLoadingCities ? (
-            <div className="p-4 text-xs text-gray-400 italic text-center flex flex-col gap-2 items-center justify-center"> 
+            <div className="p-4 text-xs text-gray-400 italic text-center flex flex-col gap-2 items-center justify-center">
               <Loader className="animate-spin" size={20} /> Chargement des villes...
             </div>
           ) : (
@@ -86,14 +101,14 @@ export const LocationAccordion = ({
               {cities?.map((city) => (
                 <div key={city.id} className="flex items-center justify-between p-3 border-b last:border-0 hover:bg-gray-50/20 transition-colors">
                   <div className="flex items-center gap-3">
-                    <Checkbox 
-                      className="size-3.5 border-vaLightGray/50" 
-                      id={city.id.toString()} 
+                    <Checkbox
+                      className="size-3.5 border-vaLightGray/50"
+                      id={city.id.toString()}
                       checked={selectedIds.includes(city.id)}
                       onCheckedChange={(checked: boolean) => toggleCity(city.id, checked)}
                     />
-                    <label 
-                      htmlFor={city.id.toString()} 
+                    <label
+                      htmlFor={city.id.toString()}
                       className="text-sm cursor-pointer text-[#506D82] font-medium"
                     >
                       {city.name}
@@ -101,11 +116,11 @@ export const LocationAccordion = ({
                   </div>
                 </div>
               ))}
-              
+
               {cities?.length === 0 && (
-                  <div className="p-4 text-center text-xs text-gray-400">
-                      Aucune ville disponible pour ce pays.
-                  </div>
+                <div className="p-4 text-center text-xs text-gray-400">
+                  Aucune ville disponible pour ce pays.
+                </div>
               )}
             </div>
           )}

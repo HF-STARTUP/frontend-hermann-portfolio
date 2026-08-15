@@ -132,13 +132,13 @@ export const useUsersHook = () => {
           onClick: (user) => handleToggle(user),
           icon: item.status == "active" ? React.createElement(UserRoundX, { size: 16 }) : React.createElement(UserRoundCheck, { size: 16 }),
         },
-        {
-          id: "delete",
-          label: "Supprimer l'utilisateur",
-          onClick: (user) => { alert("Pourquoi tu veux supprimer " + user?.getUsername) },
-          variant: "destructive",
-          icon: React.createElement(Trash, { size: 16 })
-        },
+        // {
+        //   id: "delete",
+        //   label: "Supprimer l'utilisateur",
+        //   onClick: (user) => { alert("Pourquoi tu veux supprimer " + user?.getUsername) },
+        //   variant: "destructive",
+        //   icon: React.createElement(Trash, { size: 16 })
+        // },
       ];
       return actions;
     },

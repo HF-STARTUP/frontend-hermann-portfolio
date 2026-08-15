@@ -126,6 +126,7 @@ export const UserFormDialog = ({ isOpenned, onClose, userId, action = "add" }: U
                                     country={country}
                                     selectedIds={formData.cities_id}
                                     onSelectionChange={(ids) => handleChange("cities_id", ids)}
+                                    action={action}
                                 />
                             ))
                         )}

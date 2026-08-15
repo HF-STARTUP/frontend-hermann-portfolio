@@ -44,7 +44,7 @@ export const useUsersFormHook = (userId?: string) => {
         first_name: "",
         last_name: userData.getUsername,
         email: userData.user.email,
-        phone: userData.user.phone.slice(3),
+        phone: userData.user.phone,
         role_id: String(userData.role ? userData.role.id : undefined),
         cities_id: userData.cities.map((c) => c.id),
         password: userData.password

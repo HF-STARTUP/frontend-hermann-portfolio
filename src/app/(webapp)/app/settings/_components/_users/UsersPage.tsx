@@ -12,16 +12,16 @@ import { useState } from "react"
 import { UserToggleDialog } from "../_dialogs/ToggleUserDialog"
 
 const UsersPage = () => {
-    const { 
-        citiesList, 
-        isLoadingCities, 
-        isLoadingUsers, 
-        pagination, 
-        rowActions, 
-        tableColumns, 
-        usersList, 
-        filters, 
-        setFilters ,
+    const {
+        citiesList,
+        isLoadingCities,
+        isLoadingUsers,
+        pagination,
+        rowActions,
+        tableColumns,
+        usersList,
+        filters,
+        setFilters,
 
         formAction,
         handleAdd,
@@ -46,10 +46,12 @@ const UsersPage = () => {
                                 className="pl-9 h-10 w-80 bg-[#F4F7FE] border-none text-sm"
                                 leftIcon={<LuSearch className="text-vaTextPrimary" />}
                                 value={filters?.name}
-                                onChange={(e)=>setFilters(prev=>({
+                                onChange={(e) => setFilters(prev => ({
                                     ...prev,
                                     name: e.target.value
                                 }))}
+                                autoComplete="false"
+                                autoFocus
                             />
                         </div>
                     </div>
@@ -72,7 +74,7 @@ const UsersPage = () => {
                         </SelectContent>
                     </Select>
 
-                    <Select defaultValue="all" value={filters?.status} onValueChange={(value)=>setFilters(prev=>({
+                    <Select defaultValue="all" value={filters?.status} onValueChange={(value) => setFilters(prev => ({
                         ...prev,
                         status: value as AdminAccountStatus
                     }))}>
@@ -98,9 +100,9 @@ const UsersPage = () => {
                 </div>
             </div>
 
-            <DataTable columns={tableColumns} data={usersList || []} pagination={pagination} isLoading={isLoadingUsers}  rowActions={rowActions} />
-            <UserFormDialog isOpenned={ isFormVisible } onClose={()=>setIsFormVisible(false)} action={formAction} userId={selectedUser?.getID} />
-            <UserToggleDialog action={toggleAction} isOpenned={isToggleVisible} onClose={()=>setIsToggleVisible(false)} user={selectedUser} />
+            <DataTable columns={tableColumns} data={usersList || []} pagination={pagination} isLoading={isLoadingUsers} rowActions={rowActions} />
+            <UserFormDialog isOpenned={isFormVisible} onClose={() => setIsFormVisible(false)} action={formAction} userId={selectedUser?.getID} />
+            <UserToggleDialog action={toggleAction} isOpenned={isToggleVisible} onClose={() => setIsToggleVisible(false)} user={selectedUser} />
 
         </div>
     )
