@@ -73,11 +73,11 @@ export const Sidebar = () => {
                     { label: "Commerciaux", to: "/app/marketing/commerciaux" },
                 ]}
             />
-            {/* <SidebarItem
+            <SidebarItem
                 label={"Whatsap Business"}
                 icon={<PiWhatsappLogoFill />}
                 to={"/app/whatsapp-business"}
-            /> */}
+            />
             <SidebarItem
                 label={"Paramètres"}
                 icon={<SettingIcon />}
