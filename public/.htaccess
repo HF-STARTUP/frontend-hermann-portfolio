@@ -1,0 +1,13 @@
+# Copié tel quel dans out/ par `next build` — à déposer à la racine public_html.
+
+# Toute URL sans fichier correspondant (ex : /projects/<slug> créé après le
+# build) sert la page 404 de Next, qui rend côté client la bonne vue détail.
+ErrorDocument 404 /404.html
+
+# Les shells HTML ne doivent pas être cachés par le navigateur : le contenu
+# vient de l'API, seul le shell est figé.
+<IfModule mod_headers.c>
+    <FilesMatch "\.(html)$">
+        Header set Cache-Control "no-cache"
+    </FilesMatch>
+</IfModule>

@@ -17,6 +17,10 @@ export const TOKEN_KEYS = {
   connexion_mode: "connexion_mode",
   currency: "currency",
   currency_id: "currency_id",
+  // Session admin du portfolio (token opaque Sanctum, PAS un JWT —
+  // d'où une expiration stockée à part plutôt que isLoggedIn()).
+  pf_admin_token: "pf_admin_token",
+  pf_admin_expires_at: "pf_admin_expires_at",
 };
 
 export const COOKIES_CONFIG = {
@@ -173,6 +177,41 @@ class AuthManagerGuard {
 
   static get getParkID() {
     return Cookies.get(TOKEN_KEYS.park_id);
+  }
+
+  /* ---------------------------------------------------------------- */
+  /* Session admin du portfolio : token opaque Sanctum + expiration.   */
+  /* Contrairement aux tokens VTC (JWT), isLoggedIn() ne s'applique    */
+  /* pas ici — la validité se lit sur pf_admin_expires_at.             */
+  /* ---------------------------------------------------------------- */
+
+  static loginToPortfolio(token: string, expiresAt: string) {
+    Cookies.set(TOKEN_KEYS.pf_admin_token, token, COOKIES_CONFIG);
+    Cookies.set(TOKEN_KEYS.pf_admin_expires_at, expiresAt, COOKIES_CONFIG);
+  }
+
+  static get getPortfolioToken() {
+    return Cookies.get(TOKEN_KEYS.pf_admin_token);
+  }
+
+  static get getPortfolioExpiresAt() {
+    return Cookies.get(TOKEN_KEYS.pf_admin_expires_at);
+  }
+
+  /** True si une date d'expiration future est stockée. */
+  static get isPortfolioAuthenticated(): boolean {
+    const expiresAt = AuthManagerGuard.getPortfolioExpiresAt;
+    if (!expiresAt) return false;
+    try {
+      return new Date(expiresAt).getTime() > Date.now();
+    } catch {
+      return false;
+    }
+  }
+
+  static logoutFromPortfolio() {
+    Cookies.remove(TOKEN_KEYS.pf_admin_token);
+    Cookies.remove(TOKEN_KEYS.pf_admin_expires_at);
   }
 
   static signOut() {

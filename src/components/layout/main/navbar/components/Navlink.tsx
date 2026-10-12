@@ -1,6 +1,5 @@
 "use client";
 
-import LinkProvider from "next/link";
 import React from "react";
 import VLinkProvider from "@/components/helpers/VLinkProvider";
 

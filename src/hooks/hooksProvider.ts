@@ -18,7 +18,6 @@ export function useMutationProvider<TInput, TResult>({
     updateMessage = null,
     onSuccess,
 }: UseSuperMutationOptions<TInput, TResult>) {
-    const [loading, setLoading] = useState<boolean>(false);
     const [isUpdate, setIsUpdate] = useState<boolean>(false);
 
     const mutation = useMutation<TResult, Error, TInput>({
@@ -33,7 +32,6 @@ export function useMutationProvider<TInput, TResult>({
     useEffect(() => {
         if (isError && error) {
             notify(error.message, 'error');
-            setLoading(false);
         }
     }, [error, isError]);
 
@@ -43,20 +41,21 @@ export function useMutationProvider<TInput, TResult>({
             if (message) {
                 notify(message, 'success');
             }
-            setLoading(false);
         }
     }, [isSuccess, isUpdate, updateMessage, successMessage]);
 
     const handleMutation = (inputData: TInput, update = false): void => {
-        setLoading(true);
         setIsUpdate(update);
         mutate(inputData);
     };
 
+    // `loading` dérivé de l'état réel de la mutation : vrai pour mutate()
+    // comme pour mutateAsync(). L'ancien flag manuel ne s'allumait que via
+    // handleMutation — les boutons restaient inertes pendant les appels.
     return {
         ...mutation,
         handleMutation,
-        loading,
+        loading: mutation.isPending,
     };
 }
 
@@ -68,6 +67,9 @@ type UseSuperQueryOptions<TQueryFnData, TError> = {
 
 type UseSuperQueryReturn<TQueryFnData> = {
     isLoading: boolean;
+    isFetching: boolean;
+    isError: boolean;
+    error: Error | null;
     data?: TQueryFnData;
     isSuccess: boolean;
 };
@@ -75,12 +77,17 @@ type UseSuperQueryReturn<TQueryFnData> = {
 export function useQueryProvider<TQueryFnData, TError = Error>(
     options: UseSuperQueryOptions<TQueryFnData, TError>
 ): UseSuperQueryReturn<TQueryFnData> {
-    const {isLoading, data, isSuccess} = useQuery<TQueryFnData, TError>({
-        ...options
-    });
+    const { isPending, isFetching, isError, error, data, isSuccess } =
+        useQuery<TQueryFnData, TError>({...options});
 
     return {
-        isLoading,
+        // « Pas encore de données » — reste vrai après un échec réseau
+        // (isLoading v5 = isPending && isFetching retombe à false), pour
+        // qu'une vue affiche un squelette plutôt qu'un faux état vide.
+        isLoading: isPending,
+        isFetching,
+        isError,
+        error: error as Error | null,
         data,
         isSuccess,
     };
