@@ -14,7 +14,8 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                vaPrimary: "#0A255B",
+                vaPrimary: "#7f46f4",
+                vaSecondary: "#2550d9",
 
                 vaYellow: "#FFC700",
                 vaGreen: "#00A757",
@@ -27,10 +28,9 @@ module.exports = {
                 vaBlue: "#018BFB",
                 vaDarkBlue: "#D9E5FF",
                 vaMainBlue: "#2554AE",
-                vaTextPrimary: "#506D82",
+                vaTextPrimary: "#8E9BBA",
                 vaLightGray: "#8E9BBA",
 
-                'admin-primary': '#506D82',
                 'text-body': '#80878C',
                 'blue-primary': '#205DD3',
                 'blue-secondary': '#01BEFB',

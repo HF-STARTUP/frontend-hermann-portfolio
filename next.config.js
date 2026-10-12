@@ -1,13 +1,22 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-    // experimental: {
-    //     serverActions: {
-    //         allowedOrigins: ['*'],
-    //     },
-    // },
-    /** @type {import('next').NextConfig} */
-    experimental: {
-        disableOptimizedLoading: true, // Désactive les optimisations du chargement
+    // Export statique (dossier out/) déployé sur Hostinger — Apache sert
+    // chaque dossier via son index.html grâce à trailingSlash.
+    output: "export",
+    trailingSlash: true,
+    images: {
+        unoptimized: true, // requis par l'export : pas d'optimiseur serveur
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "**",
+            },
+            {
+                protocol: "http",
+                hostname: "**",
+            },
+        ],
+        minimumCacheTTL: 15000000,
     },
     logging: {
         fetches: {
@@ -32,52 +41,12 @@ const nextConfig = {
         
         return config;
     },
-    output: "standalone",
     eslint: {
         ignoreDuringBuilds: true,
     },
     typescript: {
         ignoreBuildErrors: true,
     },
-    images: {
-        remotePatterns: [
-            {
-                protocol: "https",
-                hostname: "**",
-            },
-            {
-                protocol: "http",
-                hostname: "**",
-            },
-        ],
-        minimumCacheTTL: 15000000,
-    },
-    async redirects() {
-        return [
-            {
-                source: '/',
-                destination: '/app/dashboard',
-                permanent: true,
-            },
-            {
-                source: '/dashboard/schedule/schedule-settings/add-group',
-                destination: '/dashboard/schedule/schedule-settings/add-group/planing',
-                permanent: true,
-            },
-
-            //ADMIN
-            // {
-            //     source: '/app/settings',
-            //     destination: '/app/settings/profile',
-            //     permanent: true,
-            // },
-            {
-                source: '/app',
-                destination: '/app/dashboard',
-                permanent: true,
-            }
-        ]
-    }
 }
 
 module.exports = nextConfig

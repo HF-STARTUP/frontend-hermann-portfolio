@@ -28,7 +28,6 @@ const SignOutAction: React.FC<SignOutProps> = ({ children, isOpen, onClose }) =>
         try {
             await AuthManagerGuard.logoutToApp();
             notify('Déconnexion réussie !', 'success');
-            router.replace("/login");
         } catch (error) {
             notify('Erreur lors de la déconnexion', 'error');
         } finally {

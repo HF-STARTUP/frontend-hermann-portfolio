@@ -14,7 +14,7 @@ export const DialogMainBody = React.forwardRef<HTMLDivElement, DialogMainBodyPro
       <div
         ref={ref}
         className={cn(
-          "flex-1 min-h-0 overflow-y-auto flex flex-col gap-4 py-4 custom-scrollbar p-4 max-h-[calc(90dvh-11rem)] flex-grow",
+          "flex-1 min-h-0 overflow-y-auto flex flex-col gap-4 py-4 custom-scrollbar p-4 max-h-[calc(90dvh-15rem)] flex-grow",
           className
         )}
       >

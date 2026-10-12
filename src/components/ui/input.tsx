@@ -6,8 +6,7 @@ import { useId } from "react";
 import { FieldError } from "react-hook-form";
 import { cn } from "@/utils/ui/cn";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import { ChevronDownIcon, WarningIcon } from "@/components/layout/admin/sidebar/_navIcons/NavIcons";
-import { useCountries } from "@/hooks/location/useCountry/useCountry";
+import { AlertTriangle, ChevronDown } from "lucide-react";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Image from "next/image";
 
@@ -48,6 +47,22 @@ const PHONE_LENGTH_BY_CODE: Record<string, number> = {
 
 const GENERIC_MAX_LENGTH = 15; // recommandation E.164 : 15 chiffres max au total
 
+/**
+ * Liste statique des indicatifs supportés pour les inputs de type "tel".
+ * TODO backend.hermannfomo.dev : remplacer par GET /location/country quand
+ * l'API portfolio sera disponible (ex-hook useCountries).
+ */
+const SUPPORTED_PHONE_CODES: {
+    isoCode: string;
+    name: string;
+    phoneCode: string;
+}[] = [
+    { isoCode: "CM", name: "Cameroun", phoneCode: "237" },
+    { isoCode: "FR", name: "France", phoneCode: "33" },
+    { isoCode: "US", name: "USA / Canada", phoneCode: "1" },
+    { isoCode: "GB", name: "Royaume-Uni", phoneCode: "44" },
+];
+
 function getPhoneRegex(phoneCode?: string) {
     const length = phoneCode ? PHONE_LENGTH_BY_CODE[phoneCode] : undefined;
     const max = length ?? GENERIC_MAX_LENGTH;
@@ -86,7 +101,7 @@ const Input = React.forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>
         const _isInputButton = isInputButton || rightIcon || leftIcon || _isPasswordInput
 
         // --- Gestion combinée code pays + numéro local pour les inputs de type "tel" ---
-        const { data: countries } = useCountries()
+        const countries = SUPPORTED_PHONE_CODES
 
         const [phoneCode, setPhoneCode] = React.useState<string>(
             fixedPhoneValue ? fixedPhoneValue.replace(/\D/g, "") : "237"
@@ -164,17 +179,17 @@ const Input = React.forwardRef<HTMLInputElement | HTMLSelectElement, InputProps>
             "block w-full rounded-xl px-5 py-2.5",
             "text-base leading-tight font-normal transition-all duration-200",
 
-            // 2. Look & Couleurs (Default)
-            "bg-transparent border border-solid border-neutral-300/60 text-neutral-700",
-            "placeholder:text-vaTextPrimary/50 bg-clip-padding",
+            // 2. Look & Couleurs (Default) — tokens, lisibles clair ET sombre
+            "bg-transparent border border-input text-foreground",
+            "placeholder:text-muted-foreground bg-clip-padding",
 
             // 3. Focus & Interactions
-            "focus:outline-none focus:ring focus:ring-vaBlue focus:border-none",
+            "focus-visible:outline-none focus:border-ring focus:ring-2 focus:ring-ring/30",
 
             // 4. États Conditionnels (Erreur vs Normal)
             error
-                ? "border-yRed/30 hover:border-yRed/80 focus:ring-yRed"
-                : "border-black/5 hover:border-yPrimary/30 focus:ring-yPrimary",
+                ? "border-destructive/60 hover:border-destructive focus:ring-destructive/40"
+                : "hover:border-primary/50",
 
             // 5. Ajustements dynamiques
             leftIcon && "pl-8",
@@ -273,7 +288,7 @@ export const InputErrorMessage: React.FC<React.HTMLAttributes<HTMLDivElement>> =
     return (
         <div className={`text-yRed font-yMulish text-[14px] flex items-center justify-start mt-1 gap-1`}>
             <div>
-                <WarningIcon />
+                <AlertTriangle size={16} />
             </div>
             <span className={"line-clamp-1"}>{children}</span>
         </div>
@@ -301,7 +316,7 @@ export function CountrySelect({ countries, activeValue, onValueChange }: Country
                 onCountriesSelect()
             }} className={"flex gap-1"}>
                 <div>{cleanPhoneNumber(`+${activeValue}`)}</div>
-                <ChevronDownIcon />
+                <ChevronDown size={16} />
             </button>
             <Select
                 open={isOpen}

@@ -25,7 +25,7 @@ const SelectTrigger = React.forwardRef<
             variant === "outline" && "border-input bg-background hover:bg-vaMainBlue/10",
             variant === "mainBlue" && "border-vaMainBlue bg-vaMainBlue text-white hover:bg-vaMainBlue/90",
             variant === "mainBlueOutline" && "border-vaMainBlue bg-white text-vaMainBlue hover:bg-vaMainBlue/10",
-            inForm && "focus:outline-none focus:ring focus:ring-vaBlue/30 focus:border-none bg-transparent border border-solid border-neutral-300/60 text-neutral-700 placeholder:text-vaTextPrimary/50 bg-clip-padding",
+            inForm && "focus-visible:outline-none focus:border-ring focus:ring-2 focus:ring-ring/30 bg-transparent border border-input text-foreground placeholder:text-muted-foreground hover:border-primary/50 bg-clip-padding",
             className
         )}
         {...props}

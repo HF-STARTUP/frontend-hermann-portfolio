@@ -3,10 +3,10 @@
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
-import Link from "next/link" // Ajout de l'import pour la navigation Next.js
+import Link from "next/link"
 
 import { cn } from "@/lib/utils"
-import { Loader } from "lucide-react";
+import { Loader, type LucideIcon } from "lucide-react";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
@@ -42,32 +42,62 @@ const buttonVariants = cva(
   }
 )
 
-// Extension des types pour accepter les attributs d'un lien si href est présent
+export type IconType = React.ReactNode | LucideIcon;
+
 export interface ButtonProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {
   asChild?: boolean
-  href?: string // Ajout de la prop href facultative
+  href?: string
+  fullWidth?: boolean
+  loading?: boolean
+  leftIcon?: IconType
+  rightIcon?: IconType
 }
 
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps & { fullWidth?: boolean, loading?: boolean }>(
-  ({ className, variant, size, asChild = false, loading = false, fullWidth = false, children, disabled, href, ...props }, ref) => {
-    
-    // Si un href est fourni, on utilise le composant Link de Next.js, sinon le Slot ou le bouton classique
+const renderIcon = (icon: IconType, className?: string) => {
+  if (!icon) return null;
+  if (React.isValidElement(icon)) return icon;
+  
+  const IconComponent = icon as LucideIcon;
+  return <IconComponent className={cn("h-4 w-4 shrink-0", className)} />;
+};
+
+const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+  (
+    {
+      className,
+      variant,
+      size,
+      asChild = false,
+      loading = false,
+      fullWidth = false,
+      leftIcon,
+      rightIcon,
+      children,
+      disabled,
+      href,
+      ...props
+    },
+    ref
+  ) => {
     const Comp = asChild ? Slot : href ? Link : "button"
-    
-    // Ajustement des propriétés selon le composant rendu (href attend un ancrage)
     const componentProps = href ? { href, ...props } : props;
-    
+
     return (
       <Comp
-        className={cn(buttonVariants({ variant, size, className }), fullWidth && "w-full")}
+        className={cn(buttonVariants({ variant, size, className }), fullWidth && "w-full", "gap-2")}
         ref={ref as any}
         disabled={disabled || loading}
         {...(componentProps as any)}
       >
-        {loading && <Loader className="mr-2 h-4 w-4 animate-spin" />}
+        {loading ? (
+          <Loader className="h-4 w-4 animate-spin shrink-0" />
+        ) : (
+          renderIcon(leftIcon)
+        )}
         {children}
+        {!loading && renderIcon(rightIcon)}
       </Comp>
     )
   }
